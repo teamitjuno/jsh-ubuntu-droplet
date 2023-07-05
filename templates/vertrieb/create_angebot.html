@@ -1,0 +1,16 @@
+{% extends 'vertrieb/base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="container">
+        <h2>Kunden Data</h2>
+        {{ form_kunden_data.as_p }}
+    </div>
+    <div class="container">
+        <h2>Add Positions</h2>
+        {{ form_position.as_p }}
+    </div>
+    <input type="submit" value="Save Invoice">
+</form>
+{% endblock %}

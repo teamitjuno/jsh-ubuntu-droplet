@@ -1,0 +1,80 @@
+
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>   
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/view_orders.css' %}">
+<style>
+    body {
+        background-image: url("{% static 'img/juno-background-dark.png' %}");
+        color: #FFF; 
+    }
+
+    /* Your CSS styles here */
+</style>
+<div class="container mt-4 text-white"> 
+    <a href="{% url 'invoices:home' %}" class="btn btn-primary" style="width: 120px;">Zurück</a>
+    <div class="search-bar-container">
+        <form method="get" action="" class="form-inline my-2 my-lg-0"> 
+            <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search..." aria-label="Search" value="{{ request.GET.q }}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+       
+    <div class="table-container">
+        <table class="table table-striped" id="calendarTable">
+        <thead>
+            <tr>
+                <th scope="col">Kalender ID</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Elektriker</th>
+                <!-- Add more headers if necessary -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for kalender in elektriker_kalenders %}
+                <tr>
+                    <td>{{ kalender.calendar_id }}</td>
+                    <td>{{ kalender.current_date }}</td>
+                    <td>{{ kalender.user.email }}</td>
+                    <!-- Add more data cells if necessary -->
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No calendar entries found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#calendarTable').DataTable();
+} );
+</script>
+{% endblock %}

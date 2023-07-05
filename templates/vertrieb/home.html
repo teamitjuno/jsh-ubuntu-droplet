@@ -1,0 +1,148 @@
+{% extends 'vertrieb/base.html'%}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block head %}
+<!DOCTYPE html>
+<html lang="de" data-menu-color="dark">
+        <meta charset="utf-8" />
+        <title>Home | Juno-Solar Administration Tool</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta content="Coderthemes" name="SamIvanov" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+        <!-- Theme Config Js -->
+        <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+
+        <!-- App css -->
+        <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- Icons css -->
+        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+    
+ 
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+                <!-- start page title -->
+            <div class="row">
+                <div class="col-7">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Juno Solar Vertriebsportal</h4>
+                    </div>
+                </div>
+            </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card d-block">
+                            <div class="card-body">
+                                <h5 class="card-title">Hallo, {{ user.first_name }} {{ user.role.id }}</h5>
+                                <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
+                            </div>
+                                <img class="img-fluid" style="margin: auto;" src="{% static 'img/junosolar_logo4.png' %}" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
+                                <div style="display: flex; gap: 15px;">
+                                    <a id="loadButton" href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-primary rounded-pill" onclick="disableFor30Seconds(event)">Aktuelle Aufträge laden</a>
+                                    <span id="loadingMessage" style="display: none;">Warten Sie bitte...</span>
+                                    <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="create_blank_angebot" value="1">
+                                        <button type="submit" class="btn btn-outline-primary rounded-pill">Neue Angebot erstellen</button>
+                                    </form>
+                                </div>                     
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                        <!-- end row -->
+{% endblock %}
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+<script>
+    function disableFor30Seconds(event) {
+        var loadButton = document.getElementById('loadButton');
+        var loadingMessage = document.getElementById('loadingMessage');
+
+        loadButton.disabled = true;
+        loadingMessage.style.display = 'inline'; // make the loading message visible
+
+        setTimeout(function(){
+            loadButton.disabled = false;
+            loadingMessage.style.display = 'none'; // hide the loading message
+        }, 30000);
+    }
+</script>
+<script>
+    function showProgressBar(event) {
+        event.preventDefault(); // prevent the page from navigating
+
+        // get the progress bar element
+        var progressBar = document.getElementById('progressBar');
+
+        // show the progress bar
+        progressBar.style.display = "block";
+
+        // disable the link for 30 seconds
+        setTimeout(function() {
+            progressBar.style.display = "none";
+        }, 30000); // hide it again after 30 seconds
+    }
+</script>
+
+<script>
+    // Wait until the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the link element
+        var link = document.getElementById("create-invoice-link");
+
+        // Add a click event listener to the link
+        link.addEventListener("click", function(event) {
+            // Prevent the link's default behavior
+            event.preventDefault();
+
+            // Submit the form
+            document.getElementById("create-invoice-form").submit();
+        });
+    });
+</script>
+    {% block extrajs %}
+        <!-- Vendor js -->
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+        <!-- Daterangepicker js -->
+        <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+        
+        <!-- Apex Charts js -->
+        <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+
+        <!-- Vector Map js -->
+        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+
+        <!-- Dashboard App js -->
+        <script src="{% static 'assets/js/pages/demo.dashboard.js' %}"></script>
+
+        <!-- App js -->
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}
+    </body>
+</html> 

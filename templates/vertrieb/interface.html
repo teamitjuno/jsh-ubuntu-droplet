@@ -1,0 +1,182 @@
+{% extends 'vertrieb/base.html' %}
+
+{% load static %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load widget_tweaks %}
+
+{% block head %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .tabs-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .tab-item.active {
+            border-bottom: 2px solid #333;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        form .column {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        form label, form input, form select {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<body>
+    <div class="container">
+        <header> <img src="data/JUNO-Solar.png" alt="JUNO-Solar"> </header>
+        <main>
+            <div class="tabs-container">
+                <ul class="tabs">
+                    <li class="tab-item active" data-content="info">Info</li>
+                    <li class="tab-item" data-content="wallbox">Wallbox</li>
+                    <li class="tab-item" data-content="module">Module & Zubehör</li>
+                    <li class="tab-item" data-content="ticket">Ticket</li>
+                </ul>
+                <div class="tabs-content"> <!-- Info Tab -->
+                    <div class="tab-content active" id="info">
+                        <form id="info-form">
+                            <div class="row">
+                                <div class="column"> <!-- Your code for Info Tab -->
+                                    {{ form.anrede }}
+                                    {{ form.name.label_tag }} {{ form.name }}
+                                    {{ form.firma.label_tag }} {{ form.firma }}
+                                    {{ form.strasse.label_tag }} {{ form.strasse }}
+                                    {{ form.ort.label_tag }} {{ form.ort }}
+                                    {{ form.anlagenstandort.label_tag }} {{ form.anlagenstandort }}
+                                    {{ form.verbrauch.label_tag }} {{ form.verbrauch }}
+                                    {{ form.grundpreis.label_tag }} {{ form.grundpreis }}
+                                    {{ form.arbeitspreis.label_tag }} {{ form.arbeitspreis }}
+                                    {{ form.prognose.label_tag }} {{ form.prognose }}
+                                    {{ form.zeitraum.label_tag }} {{ form.zeitraum }}
+                                    {{ form.bis10kWp.label_tag }} {{ form.bis10kWp }}
+                                    {{ form.bis40kWp.label_tag }} {{ form.bis40kWp }}
+                                    {{ form.speicher.label_tag }} {{ form.speicher }}
+                                    {{ form.anz_speicher.label_tag }} {{ form.anz_speicher }}
+                                    {{ form.wallbox.label_tag }} {{ form.wallbox }}
+                                    {{ form.ausrichtung.label_tag }} {{ form.ausrichtung }}
+                                    {{ form.komplex.label_tag }} {{ form.komplex }}
+                                </div>
+                                <div class="column"> <!-- Your code for Info Tab --> </div>
+                            </div>
+                        </form>
+                    </div> <!-- Wallbox Tab -->
+                    <div class="tab-content" id="wallbox">
+                        <form id="wallbox-form">
+                            <div class="row">
+                                <div class="column"> <!-- Your code for Wallbox Tab -->
+                                    {{ form_wallbox.wallboxtyp.label_tag }} {{ form_wallbox.wallboxtyp }}
+                                    {{ form_wallbox.anzahl.label_tag }} {{ form_wallbox.anzahl }}
+                                    {{ form_wallbox.kabelanschluss.label_tag }} {{ form_wallbox.kabelanschluss }}
+                                </div>
+                                <div class="column"> <!-- Your code for Wallbox Tab --> </div>
+                            </div>
+                        </form>
+                    </div> <!-- Module & Zubehör Tab -->
+                    <div class="tab-content" id="module">
+                        <form id="module-form">
+                            <div class="row">
+                                <div class="column"> <!-- Your code for Module & Zubehör Tab -->
+                                    {{ form_module.module.label_tag }} {{ form_module.module }}
+                                    {{ form_module.modulanzahl.label_tag }} {{ form_module.modulanzahl }}
+                                    {{ form_module.garantieWR.label_tag }} {{ form_module.garantieWR }}
+                                    {{ form_module.eddi.label_tag }} {{ form_module.eddi }}
+                                    {{ form_module.notstrom.label_tag }} {{ form_module.notstrom }}
+                                    {{ form_module.optimizer.label_tag }} {{ form_module.optimizer }}
+                                    {{ form_module.anzOptimizer.label_tag }} {{ form_module.anzOptimizer }}
+                                </div>
+                                <div class="column"> <!-- Your code for Module & Zubehör Tab --> </div>
+                            </div>
+                        </form>
+                    </div> <!-- Ticket Tab -->
+                    <div class="tab-content" id="ticket">
+                        <form id="ticket-form">
+                            <div class="row">
+                                <div class="column"> <!-- Your code for Ticket Tab -->
+                                    {{ form_ticket.modulleistung.label_tag }} {{ form_ticket.modulleistung }}
+                                    {{ form_ticket.leistung_bisher.label_tag }} {{ form_ticket.leistung_bisher }}
+                                    {{ form_ticket.leistungsgewinn.label_tag }} {{ form_ticket.leistungsgewinn }}
+                                    {{ form_ticket.gesamtleistung.label_tag }} {{ form_ticket.gesamtleistung }}
+                                    {{ form_ticket.modul.label_tag }} {{ form_ticket.modul }}
+                                    {{ form_ticket.optimizer.label_tag }} {{ form_ticket.optimizer }}
+                                    {{ form_ticket.batteriemodule.label_tag }} {{ form_ticket.batteriemodule }}
+                                    {{ form_ticket.notstrom.label_tag }} {{ form_ticket.notstrom }}
+                                    {{ form_ticket.eddi.label_tag }} {{ form_ticket.eddi }}
+                                </div>
+                                <div class="column"> <!-- Your code for Ticket Tab --> </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <aside class="actions"> <button id="create-offer">Angebots-PDF erstellen</button> <button
+                    id="calculate">Kalkulations-PDF erstellen</button> <button id="ticket">Ticket-PDF erstellen</button>
+                <button id="cancel">Abbrechen</button> </aside>
+        </main>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+{% endblock %}

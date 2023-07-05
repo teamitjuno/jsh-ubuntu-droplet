@@ -1,0 +1,634 @@
+#tab1 {
+  position: relative;
+}
+#tab2 {
+  position: relative;
+}
+#tab3 {
+  position: relative;
+}
+#tab3 {
+  position: relative;
+}
+#tab4 {
+  position: relative;
+}
+.new-outer {
+  position:absolute;
+  background: #f0f1f3;
+}
+
+.button {
+  height: 130px;
+  width: 55px;
+  border-radius: 50px;
+}
+
+.button-l {
+  height: 40px;
+  width: 110px;
+  border-radius: 50px;
+}
+
+.button-h {
+  height: 40px;
+  width: 110px;
+  border-radius: 50px;
+}
+
+.button-m {
+  height: 55px;
+  width: 170px;
+  border-radius: 50px;
+}
+
+.button-s {
+  height: 60px;
+  width: 130px;
+  border-radius: 50px;
+}
+
+.circle {
+  height: 110px;
+  width: 110px;
+  border-radius: 50%;
+}
+
+.new-outer button, .new-outer span {
+  position:inherit;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.new-outer button {
+  background: #111;
+  color: #f2f2f2;
+  outline: none;
+  border: none;
+  font-size: 20px;
+  z-index: 10;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  
+}
+
+.button button {
+  height: 120px;
+  width: 45px;
+  font-size: 26px;
+  font-weight: bold;
+  border-radius: 50px;
+}
+
+.button-l button {
+  height: 30px;
+  width: 100px;
+  border-radius: 50px;
+  text-transform: lowercase;
+  font-size: 16px;
+}
+
+.button-h button {
+  height: 30px;
+  width: 100px;
+  border-radius: 50px;
+  text-transform: lowercase;
+  font-size: 16px;
+}
+
+.button-m button {
+  height: 45px;
+  width: 160px;
+  border-radius: 50px;
+  text-transform: lowercase;
+  font-size: 16px;
+}
+
+.button-s button {
+  height: 50px;
+  width: 120px;
+  border-radius: 15px;
+  text-transform: lowercase;
+  font-size: 16px;
+}
+
+.circle button {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  text-transform: lowercase;
+}
+
+.new-outer span {
+  height: 100%;
+  width: 100%;
+  background: inherit;
+}
+
+.button-l span {
+  border-radius: 15px;
+}
+
+.button-h span {
+  border-radius: 15px;
+}
+
+.button-m span {
+  border-radius: 15px;
+}
+
+.button-s span {
+  border-radius: 15px;
+}
+
+.button span {
+  border-radius: 50px;
+}
+
+.circle span {
+  border-radius: 50%;
+}
+
+.new-outer:hover span:nth-child(1) {
+  filter: blur(7px);
+}
+
+.new-outer:hover span:nth-child(2) {
+  filter: blur(14px);
+}
+
+.new-outer:hover {
+  background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  animation: rotate 1.5s linear infinite;
+}
+ 
+
+#add-sls-btn-1 {
+  top: 73%;
+  left: 8%;
+  
+  }
+  #add-sls-btn-2-1 {
+    top: 73%;
+    left: 7%;
+    }  
+  #add-sls-btn-2-2 {
+    top: 73%;
+    left: 46%;
+    }
+      #add-sls-btn-3-1 {
+        top: 73%;
+        left: 8%;
+        }  
+      #add-sls-btn-3-2 {
+        top: 73%;
+        left: 41%;
+        }
+      #add-sls-btn-3-3 {
+        top: 73%;
+        left: 74%;
+        }    
+          #add-sls-btn-4-1 {
+            height: 115px;
+            width: 40px;
+            top: 74%;
+            left: 7%;
+            }
+            #add-sls-btn-4-1 button{
+              height: 105px;
+              width: 30px;
+              font-size: 22px;
+            }
+          #add-sls-btn-4-2 {
+            height: 115px;
+            width: 40px;
+            top: 74%;
+            left: 39%;
+            }
+            #add-sls-btn-4-2 button{
+              height: 105px;
+              width: 30px;
+              font-size: 22px;
+            }  
+          #add-sls-btn-4-3 {
+            height: 115px;
+            width: 40px;
+            top: 74%;
+            left: 70%;
+            }
+            #add-sls-btn-4-3 button{
+              height: 105px;
+              width: 30px;
+              font-size: 22px;
+            }
+          #add-sls-btn-4-4 {
+            height: 115px;
+            width: 40px;
+            top: 74%;
+            left: 101%;
+            }
+            #add-sls-btn-4-4 button{
+              height: 105px;
+              width: 30px;
+              font-size: 22px;
+            }
+
+
+#add-uss-btn-1 {
+  top: 73%;
+  left: 25%;
+    }
+    #add-uss-btn-2-1 {
+      top: 73%;
+      left: 24%;
+      }
+    #add-uss-btn-2-2 {
+      top: 73%;
+      left: 62.5%;
+      }
+        #add-uss-btn-3-1 {
+          top: 73%;
+          left: 22%;
+          }
+        #add-uss-btn-3-2 {
+          top: 73%;
+          left: 56%;
+          }
+        #add-uss-btn-3-3 {
+          top: 73%;
+          left: 89%;
+          }
+            #add-uss-btn-4-1 {
+              height: 115px;
+              width: 40px;
+              top: 74%;
+              left: 20%;
+              }
+              #add-uss-btn-4-1 button{
+                height: 105px;
+                width: 30px;
+                font-size: 22px;
+              }
+            #add-uss-btn-4-2 {
+              height: 115px;
+              width: 40px;
+              top: 74%;
+              left: 52%;
+              }
+              #add-uss-btn-4-2 button{
+                height: 105px;
+                width: 30px;
+                font-size: 22px;
+              }
+            #add-uss-btn-4-3 {
+              height: 115px;
+              width: 40px;
+              top: 74%;
+              left: 83%;
+              }
+              #add-uss-btn-4-3 button{
+                height: 105px;
+                width: 30px;
+                font-size: 22px;
+              }
+            #add-uss-btn-4-4 {
+                height: 115px;
+                width: 40px;
+                top: 74%;
+                left: 113%;
+                }
+                #add-uss-btn-4-4 button{
+                  height: 105px;
+                  width: 30px;
+                  font-size: 22px;
+                }
+
+  
+#add-b-material-btn-1 {
+  top: 74%;
+  left: 91%;
+  }
+    #add-b-material-btn-2-1 {
+      top: 76%;
+      left: 87%;
+    }
+    #add-b-material-btn-2-2 {
+      top: 510px;
+      left: 1200px;
+    }
+        #add-b-material-btn-3-1 {
+          top: 76%;
+          left: 106.5%;
+        }
+        
+            #add-b-material-btn-4-1 {
+              top: 76%;
+              left: 130%;
+            }
+            
+#add-leitungschutzschalter-btn-1{
+  top: 48%;
+  left: 88.5%;
+  }
+    #add-leitungschutzschalter-btn-2-1{
+      top: 48%;
+      left: 84%;
+      }
+    #add-leitungschutzschalter-btn-2-2{
+      top: 365px;
+      left: 1175px;
+      }
+        #add-leitungschutzschalter-btn-3-1{
+          top: 48%;
+          left: 105%;
+          }
+        
+            #add-leitungschutzschalter-btn-4-1{
+              top: 48%;
+              left: 128%;
+              }
+            
+
+
+#add-hauptabzweigklemme-btn-1{
+  top: 25%;
+  left: 5%;
+  }
+    #add-hauptabzweigklemme-btn-2-1{
+      top: 25%;
+      left: 5%;
+      }
+    #add-hauptabzweigklemme-btn-2-2{
+      top: 25%;
+      left: 44%;
+      } 
+        #add-hauptabzweigklemme-btn-3-1{
+        
+        top: 25%;
+        left: 6%;
+        }
+        #add-hauptabzweigklemme-btn-3-2{
+            top: 25%;
+            left: 39%;
+            }
+        #add-hauptabzweigklemme-btn-3-3{
+            top: 25%;
+            left: 72%;
+            }
+              #add-hauptabzweigklemme-btn-4-1{
+                top: 25%;
+                left: 4%;
+                } 
+              #add-hauptabzweigklemme-btn-4-2{
+              top: 25%;
+              left: 36%;
+              }
+              #add-hauptabzweigklemme-btn-4-3{
+                  top: 25%;
+                  left: 67%;
+                  }
+              #add-hauptabzweigklemme-btn-4-4{
+                  top: 25%;
+                  left: 98.5%;
+                  }
+
+#add-zahler_kabel-btn-1{
+  top: 59%;
+  left: 9%;
+  }
+    #add-zahler_kabel-btn-2-1{
+      top: 59%;
+      left: 9%;
+    }
+    #add-zahler_kabel-btn-2-2{
+      top: 59%;
+      left: 48%;
+    }  
+        #add-zahler_kabel-btn-3-1{
+          top: 59%;
+          left: 8%;
+          }
+        #add-zahler_kabel-btn-3-2{
+          top: 59%;
+          left: 41%;
+        }
+        #add-zahler_kabel-btn-3-3{
+          top: 59%;
+          left: 73.5%;
+        }
+            #add-zahler_kabel-btn-4-1{
+              top: 59%;
+              left: 4%;
+            }  
+            #add-zahler_kabel-btn-4-2{
+              top: 59%;
+              left: 36%;
+              }
+            #add-zahler_kabel-btn-4-3{
+              top: 59%;
+              left: 67%;
+            }
+            #add-zahler_kabel-btn-4-4{
+              top: 59%;
+              left: 98.5%;
+            }
+  
+
+#add-kabelkanal-btn-1{
+  top: 1%;
+  left: 5%;
+  }
+    #add-kabelkanal-btn-2-1{
+      top: 1%;
+      left: 5%;
+    }
+    #add-kabelkanal-btn-2-2{
+      top: 120px;
+      left: 950px;
+    }  
+        #add-kabelkanal-btn-3-1{
+          top: 1%;
+          left: 5%;
+          }
+            #add-kabelkanal-btn-4-1{
+              top: 1%;
+              left: 2%;
+            }
+
+
+
+#add-mantelleitung-btn-1{
+  top: 1%;
+  left: 51%;
+  }
+    #add-mantelleitung-btn-2-1{
+      top: 1%;
+      left: 51%;
+    }
+    #add-mantelleitung-btn-2-2{
+      top: 120px;
+      left: 1120px;
+    }
+        #add-mantelleitung-btn-3-1{
+          top: 1%;
+          left: 51%;
+          }
+            #add-mantelleitung-btn-4-1{
+              top: 1%;
+              left: 55%;
+            }
+
+            .list-of-positions-container {
+              width: 380px;
+              height: 560px;
+              overflow-y: auto;
+              overflow-x: hidden;
+              position: relative;
+              margin: 0.1em 0em;
+              padding: 1.5rem;
+              box-shadow: 0px 0px 15px rgb(47, 47, 47);
+              border-radius: 20px;
+              
+              background-color: #66666666;
+              opacity: 0.85;
+              }
+            .list-of-positions-container1 {
+              width: 380px;
+              height: 560px;
+              overflow-y: auto;
+              overflow-x: hidden;
+              position: relative;
+              margin: 0.1em 0em;
+              padding: 1.5rem;
+              box-shadow: 0px 0px 15px rgba(62, 96, 116, 0.743);
+              border-radius: 20px;
+              
+              background-color: #66666666;
+              opacity: 0.85;
+              }
+            .form-label {
+              display: block;
+              font-weight: bold;
+              font-size: 16px;
+              margin-left: auto;
+              margin-top: 9.5px;
+              margin-bottom: 7px;
+            }
+            .form-input {
+              width: 100%;
+              margin: 5px;
+              padding-bottom: 2px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+            }
+            #excel_lst_btn{
+              position: absolute;
+              left: 15px;
+              top: 510px;
+          
+            }
+            #pdf_lst_btn{
+              position: absolute;
+              left: 15px;
+              top: 470px;
+          
+            }
+            
+            .form-label{
+              font-weight: bold;
+              font-size: 18px;
+            }
+            p {
+              font-size: 16px;
+              font-weight: bold;
+            }
+            
+          table td, th {
+            padding: 6px;
+          }
+          
+          @media only screen 
+            and (min-device-width: 375px) 
+            and (max-device-width: 912px) 
+            and (-webkit-min-device-pixel-ratio: 2) {
+              body {
+
+   
+                
+                overflow-x: hidden;
+
+              }
+              .content-wrapper {
+                margin-bottom: 0;
+                background-color: #00000099;
+                flex-direction: column; /* This stacks the items vertically on an iPhone */
+                overflow-y: scroll; /* This enables vertical scrolling on an iPhone */
+                scroll-snap-type: y mandatory; /* This enables the snapping behavior in the y-axis */
+              }
+              .list-of-positions-container {
+                width: 100%;
+                height: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
+                margin-top: 5px;
+                padding: 1.5rem;
+                border-radius: 20px;
+                box-shadow: 0px 0px 0px rgba(62, 96, 116, 0.743);
+                background-color: #66666666;
+                opacity: 0.85;
+                }
+              .list-of-positions-container1 {
+                width: 100%;
+                height: auto;
+                overflow-y: hidden;
+                overflow-x: hidden;
+                margin: 1.1em 0em;
+          
+          
+                  padding: 1.5rem;
+                  box-shadow: 0px 0px 0px rgba(62, 96, 116, 0.743);
+                  border-radius: 20px;
+                  
+                  background-color: #66666666;
+                  opacity: 0.85;
+                  }
+                  .excel_lst_btn{
+                    margin-top: 30px;
+          
+                    left: 15px;
+                    top: 510px;
+                
+                  }
+                  .pdf_lst_btn{
+                    position: absolute;
+                    left: auto;
+                    top: auto;
+                
+                  }
+
+@keyframes rotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+@media (max-width: 800px) {
+  body {
+    overflow: scroll;
+  }
+  .center {
+    flex-wrap: wrap;
+    flex-direction: column;
+    overflow: scroll;
+  }
+
+  .new-outer {
+    margin: 50px 0px;
+  }
+}
+            }
+

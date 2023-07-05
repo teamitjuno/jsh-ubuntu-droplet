@@ -1,0 +1,67 @@
+{% extends 'vertrieb/base.html' %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/view_orders.css' %}">
+<style>
+    body {
+        background-image: url("{% static 'img/background.svg' %}");
+    }
+</style>
+
+<div class="container">
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+        <input type="submit" value="Search">
+    </form>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Kundennumer</th>
+                <th scope="col">Angebot ID</th>
+                <th scope="col">Angebot Status</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Kunde</th>
+                <th scope="col">Link</th>
+                <th scope="col">PDF generieren</th>
+                <th scope="col">Zugriff auf die Bearbeitung</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in angebots %}
+                <tr>
+                    <td>{{ invoice.zoho_kundennumer }}</td>
+                    <td>{{ invoice.angebot_id }}</td>
+                    <td>{{ invoice.status }}</td>
+                    <td>{{ invoice.anfrage_vom }}</td>
+                    <td>
+                        {{ invoice.name }}<br>
+                    </td>
+                    <td>
+                        
+                            <a href="{% url 'vertrieb_interface:edit_angebot' invoice.angebot_id %}">Zeigen</a>
+                    
+                    </td>
+                    
+                    <td>
+                        {% if invoice.is_locked %}
+                        <a href="#">PDF erstellen</a>
+                        {% endif %}
+                    </td>
+                    
+                    <td>{{ invoice.is_locked|yesno:"Nicht verfügbar,Verfügbar" }}</td>
+                    <td>{{ invoice.is_synced|yesno:"Synced,Not Synced" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No orders found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

@@ -1,0 +1,9 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+<div class="submit-row">
+    <a href="{% url 'invoices:create_pdf' original.invoice_id %}" class="btn btn-primary submit-btn">PDF erstellen</a>
+</div>
+{{ block.super }}
+{% endblock %}

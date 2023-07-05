@@ -1,0 +1,135 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block branding %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+{% endblock %}
+<style>
+  .button {
+    /* Styling for the button goes here. */
+  }
+  
+  .progress-container {
+    width: 100px;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 10px;
+    width: 0%;
+    background-color: white;
+    transition: width 1m linear;
+  }.button {
+  /* Styling for the button goes here. */
+}
+
+.progress-container {
+  width: 50px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 0%;
+  background-color: white;
+  transition: width 1m linear;
+}
+</style>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Juno-Solar Administration Interface</a></h1>
+
+<button id="update-users-button" class="button">Update Users</button>
+<div id="update-users-progress" class="progress-container" style="visibility: hidden; margin-left: 10px;">
+  <div id="update-users-bar" class="progress-bar"></div>
+</div>
+
+<button id="update-elektrikers-button" style="margin-left: 25px;" class="button">Update Elektrikers</button>
+<div id="update-elektrikers-progress" class="progress-container" style="visibility: hidden; margin-left: 10px;">
+  <div id="update-elektrikers-bar" class="progress-bar"></div>
+</div>
+
+{% endblock %}
+
+{% block extrahead %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+{{ block.super }}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('.collapse').removeClass('show');
+});
+</script>
+
+
+  <script>
+    $(document).ready(function(){
+      $('#update-users-button').click(function(){
+        $(this).prop('disabled', true);
+        $('.progress').show();
+  
+        // start the simulated progress
+        var progress = 0;
+        var progressInterval = setInterval(function(){
+          progress += 3;
+          if (progress > 100) progress = 100;  // cap the progress at 100%
+          $('#update-users-progress').css('width', progress + '%').attr('aria-valuenow', progress).text(progress + '%');
+        }, 1000);  // update progress every second
+        
+        $.ajax({
+          method: 'POST',
+          url: "{% url 'update_vertrieblers' %}",
+          data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(){
+            clearInterval(progressInterval);  // stop the simulated progress
+            $('#update-users-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('Users updated successfully.');
+          },
+          error: function(){
+            clearInterval(progressInterval);  // stop the simulated progress in case of an error
+            $('#update-users-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('An error occurred while updating users.');
+          }
+        });
+      });
+  
+      $('#update-elektrikers-button').click(function(){
+        $(this).prop('disabled', true);
+        $('.progress').show();
+  
+        // start the simulated progress
+        var progress = 0;
+        var progressInterval = setInterval(function(){
+          progress += 3;
+          if (progress > 100) progress = 100;  // cap the progress at 100%
+          $('#update-elektrikers-progress').css('width', progress + '%').attr('aria-valuenow', progress).text(progress + '%');
+        }, 1000);  // update progress every second
+        
+        $.ajax({
+          method: 'POST',
+          url: "{% url 'update_elektrikers' %}",
+          data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(){
+            clearInterval(progressInterval);  // stop the simulated progress
+            $('#update-elektrikers-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('Elektrikers updated successfully.');
+          },
+          error: function(){
+            clearInterval(progressInterval);  // stop the simulated progress in case of an error
+            $('#update-elektrikers-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('An error occurred while updating elektrikers.');
+          }
+        });
+      });
+    });
+  </script>
+  
+{% endblock %}

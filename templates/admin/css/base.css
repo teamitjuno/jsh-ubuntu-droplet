@@ -1,0 +1,17 @@
+body {
+      background-image: url('/static/img/admin-background.png'); 
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
+  }
+
+
+#content-main {
+
+    background-image: url('/static/img/admin-background.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-attachment: fixed !important;
+}
