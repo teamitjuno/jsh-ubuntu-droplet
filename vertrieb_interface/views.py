@@ -3,7 +3,7 @@ import io
 import json
 import datetime
 
-
+from urllib.parse import unquote
 from dotenv import load_dotenv
 
 from django.urls import reverse
@@ -18,31 +18,52 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, Http404, JsonResponse, FileResponse
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
-
+from django.core.mail import send_mail
 from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q
 from django.views.defaults import page_not_found
+from django.core.files.base import ContentFile
 
 from config import settings
-from config.settings import ENV_FILE
-
+from config.settings import ENV_FILE, EMAIL_BACKEND
+from django.utils.decorators import method_decorator
 from shared.chat_bot import handle_message
 
 from vertrieb_interface.get_user_angebots import (
     fetch_all_user_angebots,
     fetch_current_user_angebot,
 )
+from django.contrib import messages
+
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
-
+from .forms import VertriebAngebotUpdateKalkulationForm
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
     angebot_pdf_creator_user,
     calc_pdf_creator,
     ticket_pdf_creator,
 )
+from smtplib import SMTPServerDisconnected
 
+# In your Django view
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.conf import settings
+from django.utils.module_loading import import_string
+from django.shortcuts import get_object_or_404
+from django.core.mail import get_connection, EmailMessage
+from vertrieb_interface.permissions import (
+    user_required,
+    admin_required,
+    AdminRequiredMixin,
+)
+from django.http import JsonResponse
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.conf import settings
+from .models import User, VertriebAngebot
+from io import BytesIO
 
 NAMES_CHOICES = ""
 
@@ -184,12 +205,16 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.angebot_bekommen_am = (
                 item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
             )
-            vertrieb_angebot.ausrichtung = item["ausrichtung"]
-            vertrieb_angebot.verbrauch = item["verbrauch"]
+
+            print(vertrieb_angebot.verbrauch)
+            if vertrieb_angebot.verbrauch == 5000.0:
+                vertrieb_angebot.verbrauch = item["verbrauch"]
+
             vertrieb_angebot.leadstatus = (
                 item["leadstatus"] if item["leadstatus"] else ""
             )
             vertrieb_angebot.notizen = item["notizen"]
+            vertrieb_angebot.email = item["email"]
             vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
             vertrieb_angebot.termine_text = item["termine_text"]
             vertrieb_angebot.termine_id = item["termine_id"]
@@ -200,9 +225,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
         calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png")
+        calc_image_suffix = os.path.join(
+            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+        )
         relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(calc_image_suffix, start=settings.MEDIA_ROOT)
+        relative_path_suffix = os.path.relpath(
+            calc_image_suffix, start=settings.MEDIA_ROOT
+        )
 
         context = self.get_context_data()
         context["vertrieb_angebot"] = vertrieb_angebot
@@ -246,15 +275,11 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_queryset(self):
-        queryset = self.model.objects.filter( #type: ignore
+        queryset = self.model.objects.filter(  # type: ignore
             user=self.request.user, zoho_kundennumer__regex=r"^\d+$"
         )
-        queryset = queryset.annotate(
-            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
-        )
-        queryset = queryset.order_by("-zoho_kundennumer_int")
 
         query = self.request.GET.get("q")
         if query:
@@ -266,6 +291,11 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
                 | Q(anfrage_vom__icontains=query)
             )
 
+        queryset = queryset.annotate(
+            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
+        )
+        queryset = queryset.order_by("-zoho_kundennumer_int")
+
         return queryset
 
 
@@ -275,15 +305,18 @@ def load_user_angebots(request):
         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
+
         all_user_angebots_list = fetch_all_user_angebots(request)
 
         zoho_data = json.dumps(all_user_angebots_list)
         profile.zoho_data_text = zoho_data  # type: ignore
         profile.save()
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
-        return render(request, "vertrieb/home.html")
+        return JsonResponse({"status": "success"}, status=200)
     except Exception:
-        return page_not_found(request, Exception())
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )
 
 
 def create_ticket_pdf(request, angebot_id):
@@ -311,30 +344,10 @@ def create_ticket_pdf(request, angebot_id):
     return response
 
 
-def create_calc_pdf(request, angebot_id):
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = vertrieb_angebot.user
-    if request.user != vertrieb_angebot.user and not request.user.is_staff:
-        return page_not_found(request, Exception())
-    data = vertrieb_angebot.data
-
-    calc_pdf_creator.createCalcPdf(
-        data,
-        vertrieb_angebot,
-        user,
-    )
-    # Create the link to the PDF file
-    pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
-
-    # Redirect to the PDF file link
-    return HttpResponseRedirect(pdf_link)
-
-
+@admin_required
 def create_angebot_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = vertrieb_angebot.user
-    if not request.user.is_staff:
-        raise PermissionDenied()
     data = vertrieb_angebot.data
 
     if vertrieb_angebot.angebot_pdf_admin is None:
@@ -355,37 +368,119 @@ def create_angebot_pdf(request, angebot_id):
     return response
 
 
-@user_passes_test(vertrieb_check)
+# def create_angebot_pdf_user(request, angebot_id):
+#     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+#     user = request.user
+#     data = vertrieb_angebot.data
+
+#     if vertrieb_angebot.angebot_pdf is None:
+#         pdf_content = angebot_pdf_creator_user.createOfferPdf(
+#             data,
+#             vertrieb_angebot,
+#             user,
+#         )
+#         # Assuming createOfferPdf() returns a bytes-like object.
+#         vertrieb_angebot.angebot_pdf = pdf_content
+#         vertrieb_angebot.save()
+
+#     response = FileResponse(
+#         io.BytesIO(vertrieb_angebot.angebot_pdf), content_type="application/pdf"
+#     )
+#     response[
+#         "Content-Disposition"
+#     ] = f"inline; filename=Angebot_{vertrieb_angebot.angebot_id}.pdf"
+#     return response
+
+
+@login_required
 def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = vertrieb_angebot.user
-    if request.user != vertrieb_angebot.user and not request.user.is_staff:
-        raise PermissionDenied()
+    user = request.user
     data = vertrieb_angebot.data
 
-    if vertrieb_angebot.angebot_pdf is None:
-        pdf_content = angebot_pdf_creator_user.createOfferPdf(
-            data,
-            vertrieb_angebot,
-            user,
-        )
-        # Assuming createOfferPdf() returns a bytes-like object.
-        vertrieb_angebot.angebot_pdf = pdf_content
-        vertrieb_angebot.save()
-
-    response = FileResponse(
-        io.BytesIO(vertrieb_angebot.angebot_pdf), content_type="application/pdf"
+    pdf_content = angebot_pdf_creator_user.createOfferPdf(
+        data,
+        vertrieb_angebot,
+        user,
     )
-    response[
-        "Content-Disposition"
-    ] = f"inline; filename=Angebot_{vertrieb_angebot.angebot_id}.pdf"
-    return response
+    vertrieb_angebot.angebot_pdf = pdf_content
+    vertrieb_angebot.save()
+
+    return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
+
+
+@login_required
+def create_calc_pdf(request, angebot_id):
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+    user = request.user
+    data = vertrieb_angebot.data
+
+    pdf_content = calc_pdf_creator.createCalcPdf2(
+        data,
+        vertrieb_angebot,
+        user,
+    )
+    vertrieb_angebot.calc_pdf = pdf_content
+    vertrieb_angebot.save()
+    # Create the link to the PDF file
+    pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
+
+    # Redirect to the PDF file link
+    return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
+
+
+@login_required
+def document_view(request, angebot_id):
+    pdf_url = reverse("vertrieb_interface:serve_pdf", args=[angebot_id])
+    context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
+    return render(request, "vertrieb/document_view.html", context)
+
+
+@login_required
+def document_calc_view(request, angebot_id):
+    pdf_url = reverse("vertrieb_interface:serve_calc_pdf", args=[angebot_id])
+    context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
+    return render(request, "vertrieb/document_calc_view.html", context)
+
+
+# @login_required
+# @user_passes_test(vertrieb_check)
+# def pdf_angebots_list_view(request):
+#     user_angebots = VertriebAngebot.objects.filter(user=request.user)
+
+#     query = request.GET.get("q")
+#     if query:
+#         user_angebots = user_angebots.filter(
+#             Q(zoho_kundennumer__icontains=query)
+#             | Q(angebot_id__icontains=query)
+#             | Q(status__icontains=query)
+#             | Q(name__icontains=query)
+#             | Q(anfrage_vom__icontains=query)
+#         )
+
+#     angebots_and_files = []
+
+#     for angebot in user_angebots:
+#         user = angebot.user
+#         angebot_path = os.path.join(
+#             settings.MEDIA_URL,
+#             f"pdf/usersangebots/{user.username}/",  # type: ignore
+#             f"Angebot_{angebot.angebot_id}.pdf",
+#         )
+#         angebots_and_files.append((angebot, angebot_path))
+
+#     context = {
+#         "zipped_angebots": angebots_and_files,
+#         "angebots": user_angebots,
+#     }
+
+#     return render(request, "vertrieb/pdf_angebot_created.html", context)
 
 
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
-    user_angebots = VertriebAngebot.objects.all()
+    user_angebots = VertriebAngebot.objects.filter(user=request.user)
 
     query = request.GET.get("q")
     if query:
@@ -397,23 +492,89 @@ def pdf_angebots_list_view(request):
             | Q(anfrage_vom__icontains=query)
         )
 
-    angebots_and_files = []
+    angebots_and_urls = []
 
     for angebot in user_angebots:
-        user = angebot.user
-        angebot_path = os.path.join(
-            settings.MEDIA_URL,
-            f"pdf/usersangebots/{user.username}/",  # type: ignore
-            f"Angebot_{angebot.angebot_id}.pdf",
-        )
-        angebots_and_files.append((angebot, angebot_path))
+        # Only add to list if angebot_pdf field is not None
+        if angebot.angebot_pdf is not None:
+            angebot_url = reverse(
+                "vertrieb_interface:serve_pdf", args=[angebot.angebot_id]
+            )
+            angebots_and_urls.append((angebot, angebot_url))
 
     context = {
-        "zipped_angebots": angebots_and_files,
+        "zipped_angebots": angebots_and_urls,
         "angebots": user_angebots,
     }
 
     return render(request, "vertrieb/pdf_angebot_created.html", context)
+
+
+# class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
+#     model = VertriebAngebot
+#     template_name = "vertrieb/pdf_angebot_created.html"
+#     context_object_name = "angebots"
+
+#     def dispatch(self, request, *args, **kwargs):
+#         angebot_id = self.kwargs.get("angebot_id")
+#         vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
+#         user = vertrieb_angebot.user  # type: ignore
+#         if not request.user.is_authenticated and self.request.user != user:
+#             raise PermissionDenied()  # This will use your custom 403.html template
+#         return super().dispatch(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         angebot_id = self.kwargs.get("angebot_id")
+#         vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
+#         user = vertrieb_angebot.user  # type: ignore
+
+#         if self.request.user != user and not self.request.user.is_staff:  # type: ignore
+#             raise Http404()
+
+#         user_angebots = self.model.objects.filter(user=user)  # type: ignore
+
+#         angebot_path = os.path.join(
+#             settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/"
+#         )
+
+#         angebot_files = [
+#             os.path.join(angebot_path, f"Angebot_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
+#             for angebot in user_angebots
+#         ]
+
+#         self.extra_context = {
+#             "user": user,
+#             "zipped_angebots": zip(user_angebots, angebot_files),
+#         }
+
+
+#         return user_angebots
+@login_required
+@user_passes_test(vertrieb_check)
+def serve_pdf(request, angebot_id):
+    decoded_angebot_id = unquote(angebot_id)
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
+    filename = f"Angebot_{vertrieb_angebot.angebot_id}.pdf"
+
+    response = FileResponse(
+        vertrieb_angebot.angebot_pdf, content_type="application/pdf"
+    )
+    response["Content-Disposition"] = f"inline; filename={filename}"
+
+    return response
+
+
+@login_required
+@user_passes_test(vertrieb_check)
+def serve_calc_pdf(request, angebot_id):
+    decoded_angebot_id = unquote(angebot_id)
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
+    filename = f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf"
+
+    response = FileResponse(vertrieb_angebot.calc_pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename={filename}"
+
+    return response
 
 
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
@@ -439,18 +600,14 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
         user_angebots = self.model.objects.filter(user=user)  # type: ignore
 
-        angebot_path = os.path.join(
-            settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/"
-        )
-
-        angebot_files = [
-            os.path.join(angebot_path, f"Angebot_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
-            for angebot in user_angebots
+        angebot_urls = [
+            reverse("serve_pdf", args=[vertrieb_angebot.angebot_id]) #type:ignore
+            for vertrieb_angebot in user_angebots
         ]
 
         self.extra_context = {
             "user": user,
-            "zipped_angebots": zip(user_angebots, angebot_files),
+            "zipped_angebots": zip(user_angebots, angebot_urls),
         }
 
         return user_angebots
@@ -515,7 +672,7 @@ def PDFTicketListView(request, angebot_id):
 
 
 # views.py
-class UpdateAdminAngebot(LoginRequiredMixin, VertriebCheckMixin, UpdateView):
+class UpdateAdminAngebot(AdminRequiredMixin, VertriebCheckMixin, UpdateView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders_admin.html"
     fields = [
@@ -534,6 +691,25 @@ class UpdateAdminAngebot(LoginRequiredMixin, VertriebCheckMixin, UpdateView):
         return reverse("vertrieb_interface:view_orders")
 
 
+@method_decorator(csrf_exempt, name="dispatch")
+class UpdateVertriebAngebotView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        vertriebAngebot = get_object_or_404(
+            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
+        )
+        vertriebAngebot.verbrauch = data.get("verbrauch")
+        vertriebAngebot.grundpreis = data.get("grundpreis")
+        vertriebAngebot.arbeitspreis = data.get("arbeitspreis")
+        vertriebAngebot.prognose = data.get("prognose")
+        vertriebAngebot.zeitraum = data.get("zeitraum")
+        vertriebAngebot.bis10kWp = data.get("bis10kWp")
+        vertriebAngebot.bis40kWp = data.get("bis40kWp")
+        vertriebAngebot.ausrichtung = data.get("ausrichtung")
+        vertriebAngebot.save()
+        return JsonResponse({"status": "success"})
+
+
 def get_data(request):
     data = VertriebAngebot.objects.all().values()
     return JsonResponse(list(data), safe=False)
@@ -541,3 +717,124 @@ def get_data(request):
 
 def calc_graph_display(request):
     return render(request, "vertrieb/edit_angebot.html")
+
+
+# In your Django view
+def send_invoice(request, angebot_id):
+    if request.method == "POST":
+        # Assuming you have a method to generate your PDF invoice
+
+        # Get the necessary user and client information
+        user = request.user  # Fill in with appropriate filter
+
+        vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+        pdf = vertrieb_angebot.angebot_pdf
+
+        # Create email message
+        subject = user.smtp_subject
+        body = user.smtp_body
+
+        connection = get_connection(
+            backend=EMAIL_BACKEND,
+            host=user.smtp_server,
+            port=user.smtp_port,
+            username=user.smtp_username,
+            password=user.smtp_password,
+            use_tsl=True,  # or use_tls=True, depending on your server
+            fail_silently=False,
+        )
+
+        # email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, [vertrieb_angebot.email])
+        email = EmailMultiAlternatives(
+            subject,
+            body,
+            user.smtp_username,
+            [f"{vertrieb_angebot.email}"],
+            connection=connection,
+        )
+        # email = send_mail(
+        #     subject,
+        #     body,
+        #     EMAIL_HOST_USER,
+        #     [str(vertrieb_angebot.email)],
+        #     connection=connection
+        # )
+        file_data = vertrieb_angebot.angebot_pdf.tobytes() #type:ignore
+        email.attach(
+            f"Angebot_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+        )
+
+        try:
+            email.send()
+            messages.success(request, "Email sent successfully")
+
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    else:
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )
+
+
+def send_calc_invoice(request, angebot_id):
+    if request.method == "POST":
+        # Assuming you have a method to generate your PDF invoice
+
+        # Get the necessary user and client information
+        user = request.user  # Fill in with appropriate filter
+
+        vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+        pdf = vertrieb_angebot.angebot_pdf
+
+        # Create email message
+        subject = user.smtp_subject
+        body = user.smtp_body
+
+        connection = get_connection(
+            backend=EMAIL_BACKEND,
+            host=user.smtp_server,
+            port=user.smtp_port,
+            username=user.smtp_username,
+            password=user.smtp_password,
+            use_tsl=True,  # or use_tls=True, depending on your server
+            fail_silently=False,
+        )
+
+        # email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, [vertrieb_angebot.email])
+        email = EmailMultiAlternatives(
+            subject,
+            body,
+            user.smtp_username,
+            [f"{vertrieb_angebot.email}"],
+            connection=connection,
+        )
+        # email = send_mail(
+        #     subject,
+        #     body,
+        #     EMAIL_HOST_USER,
+        #     [str(vertrieb_angebot.email)],
+        #     connection=connection
+        # )
+        file_data = vertrieb_angebot.calc_pdf.tobytes() #type:ignore
+        email.attach(
+            f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf",
+            file_data,
+            "application/pdf",
+        )
+
+        try:
+            email.send()
+            messages.success(request, "Email sent successfully")
+
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    else:
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )

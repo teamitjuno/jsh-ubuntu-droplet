@@ -2,12 +2,12 @@ import json
 from functools import wraps
 
 from dotenv import load_dotenv
-
+from django.db.models.functions import Cast
 from django import forms
-
+from django.db.models import IntegerField, Q
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import ListView, UpdateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -18,6 +18,7 @@ from django.core.exceptions import PermissionDenied
 from config.settings import ENV_FILE
 from authentication.models import User
 from vertrieb_interface.models import VertriebAngebot
+from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 
 load_dotenv(ENV_FILE)
 
@@ -35,17 +36,6 @@ class VertriebCheckMixin(UserPassesTestMixin):
         return vertrieb_check(self.request.user)  # type: ignore
 
 
-def admin_required(function):
-    @wraps(function)
-    def wrap(request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.role_id == 1:
-            return function(request, *args, **kwargs)
-        else:
-            return HttpResponseForbidden()
-
-    return wrap
-
-
 class UpdateAdminAngebotForm(forms.ModelForm):
     is_locked = forms.BooleanField(
         widget=RadioSelect(choices=((True, "Locked"), (False, "Unlocked")))
@@ -56,7 +46,7 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         fields = ["is_locked"]  # Only include the 'is_locked' field
 
 
-class UpdateAdminAngebot(LoginRequiredMixin, UpdateView):
+class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
     model = VertriebAngebot
     form_class = UpdateAdminAngebotForm
     template_name = "vertrieb/view_orders_admin.html"
@@ -91,12 +81,13 @@ class UpdateAdminAngebot(LoginRequiredMixin, UpdateView):
         return response
 
 
+@admin_required
 def user_list_view(request):
     users = User.objects.all()
     return render(request, "vertrieb/user_list.html", {"users": users})
 
 
-class ViewAdminOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
+class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders_admin.html"
     context_object_name = "angebots"
@@ -104,4 +95,27 @@ class ViewAdminOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
+        self.user = get_object_or_404(User, pk=kwargs["user_id"])
         return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter( #type: ignore
+            user=self.user, zoho_kundennumer__regex=r"^\d+$"
+        )
+
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(
+                Q(zoho_kundennumer__icontains=query)
+                | Q(angebot_id__icontains=query)
+                | Q(status__icontains=query)
+                | Q(name__icontains=query)
+                | Q(anfrage_vom__icontains=query)
+            )
+
+        queryset = queryset.annotate(
+            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
+        )
+        queryset = queryset.order_by("-zoho_kundennumer_int")
+
+        return queryset

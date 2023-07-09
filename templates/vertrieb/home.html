@@ -23,6 +23,8 @@
 
         <!-- Icons css -->
         <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -39,7 +41,12 @@
             <div class="row">
                 <div class="col-7">
                     <div class="page-title-box">
+                        
+                        {% if user.kuerzel == 'FV' or user.kuerzel == 'MK' %}
+                        <h4 class="page-title">Juno Solar Vertriebsportal : {{ user.role.name }}</h4>
+                        {% else %}
                         <h4 class="page-title">Juno Solar Vertriebsportal</h4>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -48,15 +55,83 @@
                     <div class="col-xl-6">
                         <div class="card d-block">
                             <div class="card-body">
-                                <h5 class="card-title">Hallo, {{ user.first_name }} {{ user.role.id }}</h5>
+                                <h5 class="card-title">Hallo, {{ user.first_name }} </h5>
                                 <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
+                         
                             </div>
                                 <img class="img-fluid" style="margin: auto;" src="{% static 'img/junosolar_logo4.png' %}" alt="Card image cap">
                             <div class="card-body">
                                 <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
                                 <div style="display: flex; gap: 15px;">
-                                    <a id="loadButton" href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-primary rounded-pill" onclick="disableFor30Seconds(event)">Aktuelle Aufträge laden</a>
-                                    <span id="loadingMessage" style="display: none;">Warten Sie bitte...</span>
+                                    <a href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                        Aktuelle Aufträge aus ZOHO laden
+                                    </a>
+                                    <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content modal-filled bg-success">
+                                                <div class="modal-body p-4">
+                                                    <div class="text-center">
+                                                        <i class="ri-check-line h1"></i>
+                                                        <h4 class="mt-2">Erfolgreich!</h4>
+                                                        <p class="mt-3">Die Daten wurden erfolgreich hochgeladen!</p>
+                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                                    <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-body p-4">
+                                                    <div class="text-center">
+                                                        <i class="ri-information-line h1 text-info"></i>
+                                                        <h4 class="mt-2">Achtung! </h4>
+                                                        <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
+                                                        <button type="button" id="continueButton" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                        <script>
+                                                            $(document).ready(function(){
+                                                                $("#continueButton").click(function(){
+                                                                    // perform your action here
+                                                                    loadUserAngebots();
+                                                                });
+                                                            });
+                                                            
+                                                            function loadUserAngebots() {
+                                                                var url = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                                            
+                                                                // Simulating a long-lasting operation.
+                                                                setTimeout(function () {
+                                                                    fetch(url, {
+                                                                        method: 'GET', // Or whatever HTTP method you need
+                                                                        headers: {
+                                                                            'Content-Type': 'application/json',
+                                                                        },
+                                                                    })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        // When the data is received, show the success alert modal.
+                                                                        $('#success-alert-modal').modal('show');
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        console.error('Error:', error);
+                                                                    });
+                                                                }, 3000);
+                                                            }
+                                                            
+                                                            // Redirect to another page when the success modal is hidden
+                                                            $('#success-alert-modal').on('hidden.bs.modal', function (e) {
+                                                                window.location.href = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                                            });
+                                                            </script>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                                      
+                                      
+                                      
                                     <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="create_blank_angebot" value="1">
@@ -66,7 +141,124 @@
                             </div> <!-- end card-body-->
                         </div> <!-- end card-->
                     </div>
+                    <div class="col-xl-3 col-lg-6 order-lg-1">
+                        <div class="card">
+                            <div class="d-flex card-header justify-content-between align-items-center">
+                                <h4 class="header-title">Letzte Aktivitäten </h4>
+                                <h6>(in der Entwicklung...)</h6>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Verkaufsbericht</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Bericht exportieren</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Gewinn</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Aktion</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 403px;"> 
+                                <div class="timeline-alt py-0">
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Sie haben einen Artikel verkauft</a>
+                                            <small>Paul Burgess hat gerade ..... gekauft.</small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">vor 5 Minuten</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some action....</a>
+                                            <small>Some user added
+                                                <span class="fw-bold">Admin Dashboard</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">30 minutes ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some user or admin</a>
+                                            <small>Send you message
+                                                <span class="fw-bold">"Are you there?"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">2 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some user</a>
+                                            <small>Uploaded a photo
+                                                <span class="fw-bold">"Error.jpg"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">14 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some Event happened</a>
+                                            <small>Some Kunde just purchased  or made some action!</small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">16 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Product on the Bootstrap Market</a>
+                                            <small>Dave Gamache added
+                                                <span class="fw-bold">Admin Dashboard</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">22 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Robert Delaney</a>
+                                            <small>Send you message
+                                                <span class="fw-bold">"Are you there?"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">2 days ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end timeline -->
+                            </div> <!-- end slimscroll -->
+                        </div>
+                        <!-- end card-->
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -76,36 +268,38 @@
             <!-- ============================================================== -->
             <!-- End Page content -->
             <!-- ============================================================== -->
-<script>
-    function disableFor30Seconds(event) {
-        var loadButton = document.getElementById('loadButton');
-        var loadingMessage = document.getElementById('loadingMessage');
-
-        loadButton.disabled = true;
-        loadingMessage.style.display = 'inline'; // make the loading message visible
-
-        setTimeout(function(){
-            loadButton.disabled = false;
-            loadingMessage.style.display = 'none'; // hide the loading message
-        }, 30000);
-    }
-</script>
-<script>
-    function showProgressBar(event) {
-        event.preventDefault(); // prevent the page from navigating
-
-        // get the progress bar element
-        var progressBar = document.getElementById('progressBar');
-
-        // show the progress bar
-        progressBar.style.display = "block";
-
-        // disable the link for 30 seconds
-        setTimeout(function() {
-            progressBar.style.display = "none";
-        }, 30000); // hide it again after 30 seconds
-    }
-</script>
+            {% block scripts %}    
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+            
+                
+            <script>
+                function disableFor30Seconds(event) {
+                  event.preventDefault();
+                  var button = document.getElementById('loadButton');
+                  var spinner = document.getElementById('spinner');
+                  var buttonText = document.getElementById('buttonText');
+        
+                  spinner.style.display = 'inline-block';
+                  buttonText.style.display = 'none';
+        
+                  button.setAttribute("disabled", "true");
+                  setTimeout(function () {
+                    button.removeAttribute("disabled");
+                    spinner.style.display = 'none';
+                    buttonText.style.display = 'inline-block';
+                  }, 30000);
+        
+                  fetch('{% url "vertrieb_interface:load_user_angebots" %}')
+                    .then(response => response.text())
+                    .then(data => {
+                      // process data
+                      button.removeAttribute("disabled");
+                      spinner.style.display = 'none';
+                      buttonText.style.display = 'inline-block';
+                    });
+                }
+            </script>
 
 <script>
     // Wait until the DOM is fully loaded
@@ -123,9 +317,14 @@
         });
     });
 </script>
+{% endblock %}  
     {% block extrajs %}
         <!-- Vendor js -->
         <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+          <!-- Code Highlight js -->
+        <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+        <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
 
         <!-- Daterangepicker js -->
         <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>

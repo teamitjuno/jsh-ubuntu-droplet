@@ -42,13 +42,22 @@
 {% endfor %}
 
 {% block content %}
-
+<html>
+    <body>
 <div class="content-page">
     <div class="content">
 
         <!-- Start Content-->
         <div class="container-fluid">
-            
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                        </div>
+                        <h4 class="page-title">PDF Angebote</h4>
+                    </div>
+                </div>
+            </div>      
                         
                        <!-- start page title -->
             <!-- end page title -->
@@ -71,7 +80,8 @@
                                                     <th>Kunde</th>
                                                     <th>Datum</th>
                                                     <th>Link</th>
-                                                    <th>Angebot PDF</th>
+                                                    <th>Benutzer Ang PDF</th>
+                                                    <th>Admin Ang PDF</th>
                                                     <th>Ticket PDF</th>
                                                     <th>Kalkulation PDF</th>
 
@@ -151,23 +161,25 @@
                                                             <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-primary">Zeigen</a>
                                                         </td>
                                                         <td>
-                                                            {% if vertrieb_angebot.is_locked %}
-                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-primary">PDF erstellen</a>
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-primary">PDF erstellen</a>
+                                                            {% endif %}                 
+                                                        </td>
+                                                        <td>
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-primary">PDF erstellen</a>
                                                             {% endif %}
                                                         </td>
                                                         <td> 
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
                                                             <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info btn-sm">erstellen</a>
+                                                            {% endif %}
                                                         </td>
                                                         <td>
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
                                                             <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info btn-sm">erstellen</a>
+                                                            {% endif %}
                                                         </td>
-                                                        
-                                                        
-                                                        
-                                                        {% comment %} <td>{{ vertrieb_angebot.is_synced|yesno:"Synced,Not Synced" }}</td> {% endcomment %}
-                                                        {% comment %} <td> {% endcomment %}
-                                                            {% comment %} <input type="submit" value="Speichern"> {% endcomment %}
-                                                        {% comment %} </td> {% endcomment %}
                                                     </tr>
                                                 </form> 
                                                 {% endfor %}
@@ -192,54 +204,6 @@
 $(document).ready(function() {
     $('#invoiceTable').DataTable();
 } );
-</script>
-<script>
-    // TopBar Light Dark
-    var themeColorToggle = document.getElementById('light-dark-mode');
-
-    // On page load, check local storage for saved theme and apply it.
-    // If there is no saved theme, default to 'dark'
-    var savedTheme = localStorage.getItem('theme') || 'dark';
-    self.changeLayoutColor(savedTheme);
-    self.config.theme = savedTheme;
-
-    if (themeColorToggle) {
-        themeColorToggle.addEventListener('click', function (e) {
-
-            if (self.config.theme === 'dark') {
-                self.changeLayoutColor('light');
-                self.config.theme = 'light';
-                localStorage.setItem('theme', 'light');
-            } else {
-                self.changeLayoutColor('dark');
-                self.config.theme = 'dark';
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    }
-
-    var resetBtn = document.querySelector('#reset-layout')
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function (e) {
-            self.resetTheme();
-        });
-    }  
-</script>
-<script>
-    // Wait until the DOM is fully loaded
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get the link element
-        var link = document.getElementById("create-invoice-link");
-
-        // Add a click event listener to the link
-        link.addEventListener("click", function(event) {
-            // Prevent the link's default behavior
-            event.preventDefault();
-
-            // Submit the form
-            document.getElementById("create-invoice-form").submit();
-        });
-    });
 </script>
 {% endblock %}
 {% block extra_js %}
@@ -282,3 +246,5 @@ $(document).ready(function() {
 <!-- Datatable Demo Aapp js -->
 <script src="{% static 'assets/js/pages/demo.datatable-init.js' %}"></script>
 {% endblock %}
+</body>
+</html> 

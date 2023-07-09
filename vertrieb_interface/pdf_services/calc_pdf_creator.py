@@ -167,7 +167,7 @@ class PDF(FPDF):
             0, 5, f"{data['10bis40kWp']} ct/kWh".replace(".", ","), 0, 0, "R", fill=True
         )
 
-    def page2(self, data, user_folder, vertrieb_angebot ):
+    def page2(self, data, user_folder, vertrieb_angebot):
         self.add_page()
         self.set_fill_color(240)
         # Kostenkalkulation ohne Photovoltaikanlage anhand der Ausgangsdaten
@@ -368,8 +368,15 @@ class PDF(FPDF):
             ax.set_title("Visualisierung der voraussichtlichen Amortisationszeit")
             ax.legend()
 
-            ax.figure.savefig(f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png")
-            self.image(f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png", x=10, y=185, w=200)
+            ax.figure.savefig(
+                f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png"
+            )
+            self.image(
+                f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png",
+                x=10,
+                y=185,
+                w=200,
+            )
             calc_folder = f"{user_folder}/"
             calc_image = f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png"
         except Exception as e:
@@ -404,3 +411,22 @@ def createCalcPdf(data, vertrieb_angebot, user):
             user_folder, f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf"
         )
     pdf.output(output_file, "F")
+
+
+def createCalcPdf2(data, vertrieb_angebot, user):
+    global title, pages
+    title = f"{vertrieb_angebot.angebot_id}"
+    pages = "5"
+    pdf = PDF()
+    pdf.set_title(title)
+    pdf.set_author("JUNO Solar Home GmbH")
+    user_folder = os.path.join(
+        settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+    )
+    # create the offer-PDF
+    pdf.page1(data)
+    pdf.page2(data, user_folder, vertrieb_angebot)
+
+    # Generate the PDF and return it
+    pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
+    return pdf_content

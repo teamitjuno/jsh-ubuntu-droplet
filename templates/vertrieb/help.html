@@ -116,7 +116,12 @@
             const chatAvatar = document.createElement("div");
             chatAvatar.className = "chat-avatar";
             const img = document.createElement("img");
-            img.src = "assets/images/users/bot_avatar.png"; // Replace with the appropriate avatar
+            if(name === "Bot"){
+                img.src = "{% static 'assets/images/users/bot_avatar.jpg' %}"; // Replace with the appropriate avatar path
+            } else {
+                img.src = "{{ user.avatar.url }}"; // Replace with the appropriate avatar
+            }
+             // Replace with the appropriate avatar
             img.alt = name;
             const iTime = document.createElement("i");
             iTime.textContent = time;

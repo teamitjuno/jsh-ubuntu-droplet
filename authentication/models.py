@@ -1,3 +1,5 @@
+import os
+from smtplib import SMTP_PORT
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.db import models
 from django.db.models.signals import post_migrate
@@ -66,6 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     phone = models.CharField(
         ("phone"), max_length=15, unique=True, null=True, blank=True
     )
+    avatar = models.ImageField(upload_to="assets/images/users/", null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     beruf = models.CharField(
         max_length=30,
@@ -105,6 +108,45 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         null=True,
     )
 
+    smtp_server = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        unique=False,
+        default=os.getenv("EMAIL_HOST"),
+    )
+    smtp_port = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        unique=False,
+        default=os.getenv("EMAIL_PORT"),
+    )
+    smtp_username = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        unique=False,
+        default=os.getenv("EMAIL_HOST_USER"),
+    )
+    smtp_password = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        unique=False,
+        default=os.getenv("EMAIL_HOST_PASSWORD"),
+    )
+    smtp_subject = models.TextField(
+        blank=True, null=True, default="Juno-Solar Dokument-Anlage"
+    )
+    smtp_body = models.TextField(
+        blank=True,
+        null=True,
+        default="""Sehr geehrter Kunde, in diesem Schreiben finden Sie die beigefügten PDF-Dokumente.
+
+                                                                    Mit freundlichen Grüßen, Juno-Solar""",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -128,6 +170,8 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         return self.first_name
 
     def save(self, *args, **kwargs):
+        self.smtp_server = "send.one.com"
+
         super().save(*args, **kwargs)
 
     @receiver(post_migrate)

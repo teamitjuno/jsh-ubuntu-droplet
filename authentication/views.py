@@ -1,9 +1,13 @@
 from django.core.management import call_command
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseNotAllowed
-from django.http import StreamingHttpResponse
+from django.http import JsonResponse
+from django.http import StreamingHttpResponse, HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from schema_graph.views import Schema
+from .utils import handle_avatar_upload
+from django.shortcuts import render
+from authentication.forms import AvatarUploadForm
 
 
 @staff_member_required
@@ -51,3 +55,15 @@ def update_elektrikers(request):
     response["Cache-Control"] = "no-cache"
 
     return response
+
+
+def some_admin_view(request):
+    if request.method == "POST":
+        form = AvatarUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_avatar_upload(form.cleaned_data["user"], form.cleaned_data["avatar"])
+            return JsonResponse({"message": "Avatar uploaded successfully"}, status=200)
+        else:
+            return JsonResponse({"message": "Invalid form"}, status=400)
+    else:
+        return JsonResponse({"message": "Not a POST request"}, status=400)

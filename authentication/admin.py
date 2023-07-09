@@ -3,6 +3,22 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.core.management import call_command
 from .models import Role, User
+from django.contrib import admin
+from django.forms import FileInput
+from django.db import models
+from django import forms
+from django.core.exceptions import ValidationError
+import base64, binascii
+
+
+class Base64Field(forms.Field):
+    def clean(self, value):
+        value = super().clean(value)
+        try:
+            base64.b64decode(value, validate=True)
+            return value
+        except binascii.Error:
+            raise ValidationError("Invalid base64 string")
 
 
 def update_users(modeladmin, request, queryset):
@@ -65,6 +81,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
             _("Persönliche Info"),
             {
                 "fields": (
+                    "avatar",
                     "beruf",
                     "users_aufschlag",
                     "typ",
@@ -90,9 +107,16 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
             },
         ),
         (
-            _("ZOHO JSON data"),
+            _("SMTP and Email data"),
             {
-                "fields": ("zoho_data_text",),
+                "fields": (
+                    "smtp_server",
+                    "smtp_port",
+                    "smtp_username",
+                    "smtp_password",
+                    "smtp_subject",
+                    "smtp_body",
+                ),
             },
         ),
     )
@@ -108,6 +132,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "email",
                     "first_name",
                     "last_name",
+                    "avatar",
                     "beruf",
                     "users_aufschlag",
                     "typ",
@@ -122,10 +147,19 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "phone",
                     "age",
                     "role",
+                    "smtp_server",
+                    "smtp_port",
+                    "smtp_username",
+                    "smtp_password",
+                    "smtp_subject",
+                    "smtp_body",
                 ),
             },
         ),
     )
+    formfield_overrides = {
+        models.ImageField: {"widget": FileInput},
+    }
 
 
 @admin.register(User)

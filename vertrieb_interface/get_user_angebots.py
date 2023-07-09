@@ -3,6 +3,7 @@ import json
 import requests
 from dotenv import load_dotenv, find_dotenv, set_key
 from config.settings import ENV_FILE
+from vertrieb_interface.models import VertriebAngebot
 
 # Global constants
 
@@ -148,6 +149,7 @@ def fetch_current_user_angebot(request, zoho_id):
                 break
 
             ausrichtung = data_dict.get("Dachausrichtung")
+            email = data_dict.get("Email")
             angebot_bekommen_am = data_dict.get("Angebot_bekommen_am")
             status = data_dict.get("Status")
             verbrauch = data_dict.get("Stromverbrauch_pro_Jahr")
@@ -155,46 +157,50 @@ def fetch_current_user_angebot(request, zoho_id):
             anfrage_berr = data_dict.get("Anfrage_ber")
             notizen = data_dict.get("Notizen")
             empfohlen_von = data_dict.get("empfohlen_von")
+            try:
+                if ausrichtung in ["S\u00fcd", "Ost/West"]:
+                    termin = data_dict.get("Termine")
+                    current_angebot_list.append(
+                        {
+                            "email": email if email else "",
+                            "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
+                            "verbrauch": verbrauch if verbrauch else 0.0,
+                            "notizen": notizen if notizen else "",
+                            "status": status if status else "",
+                            "anfrage_berr": anfrage_berr if anfrage_berr else "",
+                            "angebot_bekommen_am": angebot_bekommen_am
+                            if angebot_bekommen_am
+                            else "",
+                            "empfohlen_von": empfohlen_von if empfohlen_von else "",
+                            "leadstatus": leadstatus if leadstatus else "",
+                            "termine_text": termin[0]["display_value"]
+                            if termin[0]["display_value"]
+                            else "",
+                            "termine_id": termin[0]["ID"] if termin[0]["ID"] else "",
+                        }
+                    )
+                else:
+                    termin = data_dict.get("Termine")
+                    current_angebot_list.append(
+                        {
+                            "ausrichtung": 0,
+                            "email": email if email else "",
+                            "status": status,
+                            "angebot_bekommen_am": angebot_bekommen_am,
+                            "anfrage_berr": anfrage_berr,
+                            "verbrauch": verbrauch if verbrauch else 0.0,
+                            "notizen": notizen,
+                            "leadstatus": leadstatus if leadstatus else "",
+                            "empfohlen_von": empfohlen_von,
+                            "termine_text": termin[0]["display_value"]
+                            if termin[0]["display_value"]
+                            else "none",
+                            "termine_id": termin[0]["ID"] if termin else "",
+                        }
+                    )
 
-            if ausrichtung in ["S\u00fcd", "Ost/West"]:
-                termin = data_dict.get("Termine")
-                current_angebot_list.append(
-                    {
-                        "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                        "verbrauch": verbrauch if verbrauch else 0.0,
-                        "notizen": notizen if notizen else "",
-                        "status": status if status else "",
-                        "anfrage_berr": anfrage_berr if anfrage_berr else "",
-                        "angebot_bekommen_am": angebot_bekommen_am
-                        if angebot_bekommen_am
-                        else "",
-                        "empfohlen_von": empfohlen_von if empfohlen_von else "",
-                        "leadstatus": leadstatus if leadstatus else "",
-                        "termine_text": termin[0]["display_value"]
-                        if termin[0]["display_value"]
-                        else "",
-                        "termine_id": termin[0]["ID"] if termin[0]["ID"] else "",
-                    }
-                )
-            else:
-                termin = data_dict.get("Termine")
-                current_angebot_list.append(
-                    {
-                        "ausrichtung": 0,
-                        "status": status,
-                        "angebot_bekommen_am": angebot_bekommen_am,
-                        "anfrage_berr": anfrage_berr,
-                        "verbrauch": verbrauch if verbrauch else 0.0,
-                        "notizen": notizen,
-                        "leadstatus": leadstatus if leadstatus else "",
-                        "empfohlen_von": empfohlen_von,
-                        "termine_text": termin[0]["display_value"]
-                        if termin
-                        else "none",
-                        "termine_id": termin[0]["ID"] if termin else "",
-                    }
-                )
-
+            except:
+                pass
             start_index += LIMIT_CURRENT
 
         if response.status_code == 401:
@@ -260,6 +266,7 @@ def process_current_user_data(data, current_angebot_list):
 
     for data_dict in data["data"]:
         ausrichtung = data_dict.get("Dachausrichtung")
+        email = data_dict.get("Email")
         verbrauch = data_dict.get("Stromverbrauch_pro_Jahr")
         notizen = data_dict.get("Notizen")
         empfohlen_von = data_dict.get("empfohlen_von")
@@ -270,6 +277,7 @@ def process_current_user_data(data, current_angebot_list):
                     "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
                     "verbrauch": verbrauch if verbrauch else 0.0,
                     "notizen": notizen,
+                    "email": email,
                     "empfohlen_von": empfohlen_von,
                 }
             )

@@ -97,13 +97,18 @@
 
                         <li class="dropdown">
                             
-                            <a class="nav-link dropdown-toggle arrow-none nav-user px-2 uil-user-circle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 <span class="account-user-avatar">
-                                    
+                                    {% if user.avatar %}
+                                        <img src="{{ user.avatar.url }}" alt="user-image" width="32" class="rounded-circle">
+                                    {% else %}
+                                        <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
+                                    {% endif %}
+
                                 </span>
                                 <span class="d-lg-flex flex-column gap-1 d-none">
-                                    
-                                    <h5 class="my-0">Profil</h5>
+                                    <h5 class="my-0">{{ user.first_name }} {{ user.last_name }}</h5>
+                                    <h6 class="my-0 fw-normal">{{ user.beruf }}</h6>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
@@ -227,13 +232,13 @@
                                     </li>
                                     <p></p>
                                     <li>
-                                        <button type="button" href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-link" id="loadButton">Aktuelle Angebote laden</button>
-                                        <div class="collapse" id="sidebarCrmm">                                        
-                                            <i class="spinner-border" role="status"></i>
-                                        </div>
-                                                
-            
-                                  </li>
+                                        
+                                        <button href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                            Aufträge aus ZOHO laden
+                                        </button>
+                                    </li>
+                                        
+                                  
 
                                                                       
                                 </ul>
@@ -275,8 +280,10 @@
                             </div>
                         </li>
 
-                        {% if user.kuerzel == 'FV' %}
+                        {% if user.kuerzel == 'FV' or user.kuerzel == 'MK' %}
+
                         <li class="side-nav-item">
+                            
                             <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">
                                 <i class="ri-apps-2-line font-22"></i>
                                 <span> User-Admin features</span>
@@ -321,6 +328,69 @@
             <!-- ========== Left Sidebar End ========== -->
 
                 {% block content %}
+                <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content modal-filled bg-success">
+                            <div class="modal-body p-4">
+                                <div class="text-center">
+                                    <i class="ri-check-line h1"></i>
+                                    <h4 class="mt-2">Erfolgreich!</h4>
+                                    <p class="mt-3">Die Daten wurden erfolgreich hochgeladen!</p>
+                                    <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter...</button>
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+                <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-body p-4">
+                                <div class="text-center">
+                                    <i class="ri-information-line h1 text-info"></i>
+                                    <h4 class="mt-2">Achtung! </h4>
+                                    <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
+                                    <button type="button" id="continueButton" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                    <script>
+                                        $(document).ready(function(){
+                                            $("#continueButton").click(function(){
+                                                // perform your action here
+                                                loadUserAngebots();
+                                            });
+                                        });
+                                        
+                                        function loadUserAngebots() {
+                                            var url = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                        
+                                            // Simulating a long-lasting operation.
+                                            setTimeout(function () {
+                                                fetch(url, {
+                                                    method: 'GET', // Or whatever HTTP method you need
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    // When the data is received, show the success alert modal.
+                                                    $('#success-alert-modal').modal('show');
+                                                })
+                                                .catch((error) => {
+                                                    console.error('Error:', error);
+                                                });
+                                            }, 3000);
+                                        }
+                                        
+                                        // Redirect to another page when the success modal is hidden
+                                        $('#success-alert-modal').on('hidden.bs.modal', function (e) {
+                                            window.location.href = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                        });
+                                        </script>
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
                 {% endblock %}
                 
 
@@ -1012,7 +1082,36 @@
           </div>
       </div>
   <!-- Bootstrap JavaScript Bundle -->
- 
+  <script>
+    function disableFor30Seconds(event) {
+        var loadButton = document.getElementById('loadButton');
+        var loadingMessage = document.getElementById('loadingMessage');
+
+        loadButton.disabled = true;
+        loadingMessage.style.display = 'inline'; // make the loading message visible
+
+        setTimeout(function(){
+            loadButton.disabled = false;
+            loadingMessage.style.display = 'none'; // hide the loading message
+        }, 30000);
+    }
+</script>
+<script>
+    function showProgressBar(event) {
+        event.preventDefault(); // prevent the page from navigating
+
+        // get the progress bar element
+        var progressBar = document.getElementById('progressBar');
+
+        // show the progress bar
+        progressBar.style.display = "block";
+
+        // disable the link for 30 seconds
+        setTimeout(function() {
+            progressBar.style.display = "none";
+        }, 30000); // hide it again after 30 seconds
+    }
+</script>   
 
 {% block extra_js %}  
       

@@ -1,12 +1,12 @@
 from pathlib import Path
-import os, sys, dj_database_url #type:ignore
+import os, sys, dj_database_url  # type:ignore
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENV_FILE = BASE_DIR / '.env'
+ENV_FILE = BASE_DIR / ".env"
 
 # Load the .env file
 load_dotenv(ENV_FILE)
@@ -30,7 +30,7 @@ PROJECT_APPS = [
     "invoices",
     "elektriker_kalender",
     "vertrieb_interface",
-    'adminfeautures',
+    "adminfeautures",
 ]
 
 
@@ -51,7 +51,6 @@ SERVICE_APPS = [
     "crispy_forms",
     "shared",
     "storages",
-
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + SERVICE_APPS
@@ -70,7 +69,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -83,7 +82,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
-                'django.template.context_processors.media',
+                "django.template.context_processors.media",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -108,7 +107,7 @@ ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_REFRESH_TOKEN")
 SERVER_UPLINK_KEY = os.getenv("SERVER_UPLINK_KEY")
 CLIENT_UPLINK_KEY = os.getenv("CLIENT_UPLINK_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", default="openaikey")
-DEVELOPEMENT_MODE=os.getenv(f"DEVELOPEMENT")
+DEVELOPEMENT_MODE = os.getenv(f"DEVELOPEMENT")
 
 
 DATABASES = {
@@ -136,8 +135,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -146,10 +145,10 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, "static"),
 ]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -159,18 +158,36 @@ MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '.debug.log',
-        },
-    },
-    'root': {
-        'handlers': ['file'],
-        'level': 'DEBUG',
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "file": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": ".debug.log",
+#         },
+#     },
+#     "root": {
+#         "handlers": ["file"],
+#         "level": "DEBUG",
+#     },
+# }
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'juno.dyntcb.de'
+# EMAIL_PORT =  '8843'
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+# EMAIL_HOST_USER = 'si@juno-solar.com'
+# EMAIL_HOST_PASSWORD = '301c81Pq8'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# EMAIL_HOST = 'send.one.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'teamit@juno-solar.com'
+# EMAIL_HOST_PASSWORD = 'ef1869Zb3'
+# Credentials for the SMTP server

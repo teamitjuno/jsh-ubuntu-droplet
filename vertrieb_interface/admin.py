@@ -20,7 +20,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "name",
         "zoho_id",
         "zoho_kundennumer",
-        "user",
+        "user__username",  # Search User model's username field
         "angebotsumme",
     )
 
@@ -151,6 +151,13 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "optimizer_angebot_price",
                     "angebotsumme",
                 ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "DEBUG ANGEBOT_DATA",
+            {
+                "fields": ("ag_data",),
                 "classes": ("collapse",),
             },
         ),

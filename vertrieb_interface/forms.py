@@ -44,6 +44,10 @@ ANREDE_CHOICES = (
     ("Herr Prof.", "Herr Prof."),
     ("Frau", "Frau"),
 )
+AUSRICHTUNG_CHOICES = (
+    ("Sud", "Sud"),
+    ("Ost/West", "Ost/West"),
+)
 LEADSTATUS_CHOICES = (
     ("ausstehend", "ausstehend"),
     ("reklamiert", "reklamiert"),
@@ -259,6 +263,19 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    email = forms.CharField(
+        label="Email",
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email",
+                "id": "id_email",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     firma = forms.CharField(
         label="Firma (optional)",
         max_length=100,
@@ -313,7 +330,7 @@ class VertriebAngebotForm(ModelForm):
     )
     verbrauch = forms.FloatField(
         label="Strom Verbrauch [€/Monat]",
-        initial=5000.00,
+        initial=0.0,
         required=True,
         validators=[validate_floats],
         widget=forms.NumberInput(
@@ -409,6 +426,17 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    speicher = forms.BooleanField(
+        label="Speichermodule inkl.",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "speicher",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     wallbox = forms.BooleanField(
         label="E-Ladestation (Wallbox)",
         required=False,
@@ -422,13 +450,13 @@ class VertriebAngebotForm(ModelForm):
     )
     ausrichtung = forms.ChoiceField(
         label="Ausrichtung PV-Anlage",
-        choices=ausrichtung_choices,
+        choices=AUSRICHTUNG_CHOICES,
         required=True,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
                 "id": "ausrichtung",
-                "style": "max-width: 100px",
+                "style": "max-width: 150px",
             }
         ),
     )
@@ -447,10 +475,10 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.Textarea(
             attrs={
-                "rows": 4,
+                "rows": 6,
                 "class": "form-control",
-                "style": "height: 100px",
-                "style": "max-width: 300px",
+                "style": "height: 150px",
+                "style": "max-width: 800px",
                 "id": "notizen",
             }
         ),
@@ -598,6 +626,7 @@ class VertriebAngebotForm(ModelForm):
 
     modul_anzahl_ticket = forms.IntegerField(
         label="Module Anzahl",
+        initial=0,
         required=False,
         validators=[validate_solar_module_ticket_anzahl],
         widget=forms.NumberInput(
@@ -639,17 +668,6 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
     )
 
-    @property
-    def get_modul_anzahl(self):
-        return self.modulanzahl
-
-    def validate_optimizer(self, value):
-        if value > self.modulanzahl or value < 0:
-            raise ValidationError(
-                ("%(value)s liegt nicht im gültigen Bereich"),
-                params={"value": value},
-            )
-
     class Meta:
         model = VertriebAngebot
         fields = [
@@ -666,7 +684,6 @@ class VertriebAngebotForm(ModelForm):
             "notizen",
             "angebot_bekommen_am",
             "status_change_date",
-            "empfohlen_von",
             "ablehnungs_grund",
             "name",
             "firma",
@@ -697,6 +714,7 @@ class VertriebAngebotForm(ModelForm):
             "indiv_price_included",
             "indiv_price",
             "module_ticket",
+            "modul_anzahl_ticket",
             "optimizer_ticket",
             "batteriemodule_ticket",
             "notstrom_ticket",
@@ -707,7 +725,7 @@ class VertriebAngebotForm(ModelForm):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
         profile = User.objects.get(zoho_id=user.zoho_id)
 
-        data = json.loads(profile.zoho_data_text or "[(), ()]")  # type: ignore
+        data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])
         self.fields["name"].choices = name_list
@@ -767,6 +785,21 @@ class VertriebAngebotForm(ModelForm):
                 "Länge der Telefonnummer muss + und 10 Ziffern sein"
             )
         return telefon_mobil
+
+
+class VertriebAngebotUpdateKalkulationForm(forms.ModelForm):
+    class Meta:
+        model = VertriebAngebot
+        fields = [
+            "verbrauch",
+            "grundpreis",
+            "arbeitspreis",
+            "prognose",
+            "zeitraum",
+            "bis10kWp",
+            "bis40kWp",
+            "ausrichtung",
+        ]
 
 
 class UpdateAdminAngebotForm(forms.ModelForm):

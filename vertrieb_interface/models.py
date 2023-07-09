@@ -92,7 +92,7 @@ STORNIERUNGSGRUND_CHOICES = (
 
 
 class VertriebAngebot(TimeStampMixin):
-    angebot_id = models.CharField(max_length=255, unique=True)
+    angebot_id = models.CharField(max_length=255, unique=True, primary_key=True)
     current_date = models.DateField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_locked = models.BooleanField(default=False)
@@ -105,7 +105,7 @@ class VertriebAngebot(TimeStampMixin):
     status_change_date = models.CharField(max_length=255, null=True, blank=True)
     telefon_festnetz = models.CharField(max_length=255, blank=True, null=True)
     telefon_mobil = models.CharField(max_length=255, blank=True, null=True)
-    zoho_kundennumer = models.CharField(max_length=255, primary_key=True)
+    zoho_kundennumer = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
     name_display_value = models.CharField(max_length=255, blank=True, null=True)
     vertriebler_display_value = models.CharField(max_length=255, blank=True, null=True)
@@ -145,7 +145,7 @@ class VertriebAngebot(TimeStampMixin):
         ("Frau", "Frau"),
     )
     AUSRICHTUNG_CHOICES = (
-        ("Süd", "Süd"),
+        ("Sud", "Sud"),
         ("Ost/West", "Ost/West"),
     )
     KOMPLEX_CHOICES = (
@@ -295,10 +295,11 @@ class VertriebAngebot(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     abzug_vergutung = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    Ersparnis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    Ersparnis = models.FloatField(default=0.00)
     kosten_fur_restenergie = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
+    ag_data = models.TextField(blank=True)
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -334,6 +335,7 @@ class VertriebAngebot(TimeStampMixin):
         self.abzug_vergutung = self.abzug
         self.Ersparnis = self.ersparnis
         self.kosten_fur_restenergie = self.kosten_rest_energie
+        self.ag_data = self.data
 
         super().save(*args, **kwargs)
 
@@ -430,7 +432,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def erzProJahr(self):
-        direction_map = {"Süd": "erzeugung_sued", "Ost/West": "erzeugung_ost_west"}
+        direction_map = {"Sud": "erzeugung_sued", "Ost/West": "erzeugung_ost_west"}
         direction = str(self.ausrichtung)
         if direction in direction_map:
             return OptionalAccessoriesPreise.objects.get(
@@ -659,7 +661,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def modul_ticket_preis(self):
         return self.calculate_price(
-            ModulePreise, "Phono-Solar", self.modul_anzahl_ticket
+            ModulePreise, "Phono-Solar", int(self.modul_anzahl_ticket)
         )
 
     @property
@@ -736,7 +738,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def full_wallbox_preis(self):
         if self.wallbox_anzahl:
-            preis = float(WallBoxPreise.objects.get(name=self.wallboxtyp).price)
+            preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
             if self.kabelanschluss and self.kabelanschluss >= 10:
                 preis += (self.kabelanschluss - 10) * self.get_optional_accessory_price(
@@ -753,8 +755,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += self.full_optimizer_preis
         if self.full_wallbox_preis:
             accessories_price += self.full_wallbox_preis
-        if self.batteriespeicher_preis:
-            accessories_price += self.batteriespeicher_preis
+        if self.batteriespeicher_angebot_price:
+            accessories_price += self.batteriespeicher_angebot_price
         if self.eddi:
             accessories_price += self.get_optional_accessory_price("eddi")
         if self.notstrom:
@@ -767,6 +769,7 @@ class VertriebAngebot(TimeStampMixin):
     def angebots_summe(self):
         def get_price(prefix, kw):
             name = prefix + str(kw)
+
             return float(ModulePreise.objects.get(name=name).price)
 
         def get_garantie_price(kw, years):
@@ -777,7 +780,7 @@ class VertriebAngebot(TimeStampMixin):
         ranges = (
             [(0, limits[0])]
             + list(zip(limits, limits[1:]))
-            + [(limits[-1], float("inf"))]
+            + [(limits[-1], float("30"))]
         )
 
         angebotsSumme = sum(

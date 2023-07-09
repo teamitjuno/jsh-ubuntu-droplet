@@ -57,14 +57,19 @@
                         <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
                             <div class="col-sm-12">
                                 <!-- Profile -->
-                                <div class="card bg-primary">
+                                <div class="card bg-gradient bg-primary">
                                     <div class="card-body profile-user-box">
                                         <div class="row">
                                             <div class="col-sm-8">
                                                 <div class="row align-items-center">
                                                     <div class="col-auto">
                                                         <div class="avatar-lg">
-                                                            <img src="assets/images/users/avatar-2.jpg" alt="" class="rounded-circle img-thumbnail">
+                                                            {% if user.avatar %}
+                                                            <img src="{{ user.avatar.url }}" alt="" class="rounded-circle img-thumbnail">
+                                                            {% else %}
+                                                            <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
+                                                            {% endif %}
+                                                            
                                                         </div>
                                                     </div>
                                                     <div class="col">
@@ -78,7 +83,7 @@
                                                                     <p class="mb-0 font-13 text-white-50">Kürzel</p>
                                                                 </li>
                                                                 <li class="list-inline-item">
-                                                                    <h5 class="mb-1 text-white">5482</h5>
+                                                                    <h5 class="mb-1 text-white">{{ user.date_joined }}</h5>
                                                                     <p class="mb-0 font-13 text-white-50">Date joined</p>
                                                                 </li>
                                                             </ul>
@@ -98,7 +103,7 @@
                             </div> <!-- end col-->
                         </div>
 
-                    </div>
+                    
                         <!-- end row -->
 
 
@@ -107,24 +112,24 @@
                                 <!-- Personal-Information -->
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="header-title mt-0 mb-3">{{ user.beruf }} Information</h4>
+                                        <h4 class="header-title mt-0 mb-3">{{ user.beruf }} Informationen</h4>
                                         
 
                                         <hr/>
 
                                         <div class="text-start">
-                                            <p class="text-muted"><strong>Full Name :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}</span></p>
+                                            <p class="text-muted"><strong>Name und Vorname :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}</span></p>
 
                                             <p class="text-muted"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
 
                                             <p class="text-muted"><strong>Email :</strong> <span class="ms-2">{{ user.email }}</span></p>
 
-                                            <p class="text-muted"><strong>Location :</strong> <span class="ms-2">Deutschland</span></p>
+                                            <p class="text-muted"><strong>Standort :</strong> <span class="ms-2">Deutschland</span></p>
 
-                                            <p class="text-muted"><strong>Languages :</strong>
-                                                <span class="ms-2"> English, German, Spanish </span>
+                                            <p class="text-muted"><strong>Sprache :</strong>
+                                                <span class="ms-2"> English, German </span>
                                             </p>
-                                            <p class="text-muted mb-0" id="tooltip-container"><strong>Elsewhere :</strong>
+                                            <p class="text-muted mb-0" id="tooltip-container"><strong>Anderswo :</strong>
                                                 <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Facebook"><i class="mdi mdi-facebook"></i></a>
                                                 <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Twitter"><i class="mdi mdi-twitter"></i></a>
                                                 <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Skype"><i class="mdi mdi-skype"></i></a>
@@ -133,6 +138,7 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                                 <!-- Personal-Information -->
 
                                 <!-- Toll free number box-->

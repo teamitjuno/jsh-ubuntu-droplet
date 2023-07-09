@@ -1,22 +1,30 @@
 {% extends 'vertrieb/base.html' %}
-{% load static %}
 {% load i18n %}
+{% load static %}
 {% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="de">
+
 {% block head %}
-<head>
+   
         <meta charset="utf-8" />
-        <title>Home | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-        <meta content="Coderthemes" name="author" />
+        <title>Alle Angebote | Juno-Solar Administration Tool</title>
+        <meta name="viewport" content="width=device-width, initial-scale=0.5">
+
+        <meta content="Coderthemes" name="Sam Ivanov" />
 
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 
         <!-- Theme Config Js -->
         <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+        <!-- Datatables css -->
+        <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
 
         <!-- App css -->
         <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
@@ -25,77 +33,67 @@
         <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
         <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
         <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
-</head>
-{% endblock %}
-{% block content %}
-            <!-- ============================================================== -->
-            <!-- Start Page Content here -->
-            <!-- ============================================================== -->
 
-            <div class="content-page">
-                <div class="content">
+{% endblock %}
+{% block content %}            <!-- ============================================================== -->
+<html>
+<body>
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
             
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-            
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                    </div>
-                                    <h4 class="page-title">PDF Angebote</h4>
+                        
+                       <!-- start page title -->
+                       <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box">
+                                <div class="page-title-right">
                                 </div>
+                                <h4 class="page-title">PDF Angebote</h4>
                             </div>
                         </div>
-                        <!-- end page title -->
-                        <div class="row">
+                    </div>           
+
+                    <div class="row">
                             <div class="col-12">
-                                <div class="card">                        
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
-                        </div> <!-- end col -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
+                                <div class="card d-block">
                                     <div class="card-body">
-                                        <h2 class="mb-4">PDF Angebote</h2>
-                                        <div class="row mb-2">
-                                            <div class="col-xl-8">
-                                                <form method="get" action="" class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" name="q" placeholder="Search..." aria-label="Search" value="{{ request.GET.q }}">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Suche</button>
-                                                    </div>
-                                                </form>                            
-                                            </div>
-                                            <div class="col-xl-4">
-                                                <div class="text-xl-end mt-xl-0 mt-2">
-                                                    <a href="{% url 'vertrieb_interface:home' %}" class="btn btn-primary mb-2 me-2">Zurück</a>
-                                                </div>
-                                            </div><!-- end col-->
-                                        </div>
-            
-                                        <!-- Your Pagination Code Here -->
-                            
-                                        <div class="table-responsive">
-                                            <table class="table table-centered table-nowrap mb-0" id="invoiceTable">
-                                                <thead class="table-light">
+        
+                                                
+                                        <div class="table-container">
+                                            <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
+                                                <thead>
                                                     <tr>
                                                         <th>Angebot ID</th>
+                                                        <th>Kunde</th>
                                                         <th>Datum</th>
-                                                        <th>is_locked</th>
+                                                        <th>Zugriff</th>
                                                         <th>Angebot File</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for angebot, angebot_file in zipped_angebots %}
                                                         <tr>
-                                                            <td>{{ angebot.angebot_id }}</td>
+                                                            <td>{% if angebot.angebot_id_assigned %}
+                                                                {{ angebot.angebot_id }}
+                                                                {% else %}
+                                                                 noch nicht zugeordnet 
+                                                                 {% endif %}
+                                                                </td>
+                                                            </td>
+                                                            <td>{{ angebot.name }}</td>
                                                             <td>{{ angebot.current_date }}</td>
-                                                            <td>{{ angebot.is_locked }}</td>
+                                                            
+                                                        <td>
+                                                            {% if angebot.is_locked %}
+                                                            <span class="badge bg-danger rounded-pill">Nein</span>
+                                                            {% else %}
+                                                            <span class="badge bg-success rounded-pill">Ja</span>
+                                                            {% endif %}
+                                                        </td>
+                                                       
                                                             <td>
                                                                 <a href="{{ angebot_file }}" target="_blank" class="text-body fw-bold">
                                                                     {% if angebot.is_locked %}
@@ -116,6 +114,9 @@
                                 </div> <!-- end card-->
                             </div> <!-- end col -->
                         </div>
+        </div>
+    </div>
+</div>
             {% endblock %}
             
 {% block scripts %}
@@ -124,56 +125,6 @@ $(document).ready(function() {
     $('#invoiceTable').DataTable();
 });
 </script>
-
-                    
-        <script>
-            // TopBar Light Dark
-            var themeColorToggle = document.getElementById('light-dark-mode');
-
-            // On page load, check local storage for saved theme and apply it.
-            // If there is no saved theme, default to 'dark'
-            var savedTheme = localStorage.getItem('theme') || 'dark';
-            self.changeLayoutColor(savedTheme);
-            self.config.theme = savedTheme;
-
-            if (themeColorToggle) {
-                themeColorToggle.addEventListener('click', function (e) {
-
-                    if (self.config.theme === 'dark') {
-                        self.changeLayoutColor('light');
-                        self.config.theme = 'light';
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        self.changeLayoutColor('dark');
-                        self.config.theme = 'dark';
-                        localStorage.setItem('theme', 'dark');
-                    }
-                });
-            }
-
-            var resetBtn = document.querySelector('#reset-layout')
-            if (resetBtn) {
-                resetBtn.addEventListener('click', function (e) {
-                    self.resetTheme();
-                });
-            }  
-        </script>
-        <script>
-            // Wait until the DOM is fully loaded
-            document.addEventListener("DOMContentLoaded", function() {
-                // Get the link element
-                var link = document.getElementById("create-invoice-link");
-        
-                // Add a click event listener to the link
-                link.addEventListener("click", function(event) {
-                    // Prevent the link's default behavior
-                    event.preventDefault();
-        
-                    // Submit the form
-                    document.getElementById("create-invoice-form").submit();
-                });
-            });
-        </script>
 
 {% endblock %}
 {% block extra_js %}
@@ -210,7 +161,6 @@ $(document).ready(function() {
 <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
 
 <!-- Dashboard App js -->
-<script src="{% static 'assets/js/pages/demo.dashboard.js' %}"></script>
 
 <!-- App js -->
 <script src="{% static 'assets/js/app.min.js' %}"></script>

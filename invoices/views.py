@@ -49,6 +49,7 @@ from shared.chat_bot import handle_message
 
 logger = logging.getLogger(__name__)
 
+
 # User's profession check decorators
 def elektriker_check(user):
     return User.objects.filter(id=user.id, beruf="Elektriker").exists()
