@@ -14,8 +14,6 @@ COPY ./media /app/media
 
 COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
 
 # Use daphne or asgiref to run the application
 CMD ["daphne", "config.asgi:application", "-b", "0.0.0.0", "-p", "8000"]

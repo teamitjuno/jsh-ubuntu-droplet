@@ -35,13 +35,14 @@
         <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
 
 {% endblock %}
+
+
+{% block content %}
 {% for message in messages %}
     <div class="alert alert-{{ message.tags }}">
         {{ message }}
     </div>
 {% endfor %}
-
-{% block content %}
 <html>
     <body>
 <div class="content-page">
@@ -54,7 +55,8 @@
                     <div class="page-title-box">
                         <div class="page-title-right">
                         </div>
-                        <h4 class="page-title">PDF Angebote</h4>
+                        
+                        <h4 class="page-title">PDF Angebote von {{ vertrieb_angebot.user.first_name}}</h4>
                     </div>
                 </div>
             </div>      
@@ -91,15 +93,17 @@
                                             </thead>
                                             <tbody>
                                                 {% for vertrieb_angebot in angebots %}
-                                                <form method="POST" action="{% url 'adminfeautures:update_admin_angebot' user_id=user.pk angebot_id=vertrieb_angebot.angebot_id %}">
-                                                    {% csrf_token %} 
+                                                
                                                     <tr>
                                                         <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
                                                         <td>{{ vertrieb_angebot.angebot_id }}</td>
                                                         <td>
+                                                        <form method="POST" action="{% url 'adminfeautures:update_admin_angebot' user_id=user.pk angebot_id=vertrieb_angebot.angebot_id %}">
+                                                                {% csrf_token %} 
                                                             <button class="btn btn-secondary toggle-lock" type="button" data-id="{{ vertrieb_angebot.angebot_id }}" data-is-locked="{{ vertrieb_angebot.is_locked }}">
                                                                 {{ vertrieb_angebot.is_locked|yesno:"Unlock,Lock" }}
                                                             </button>
+                                                        </form> 
                                                             <script>
                                                                 document.querySelectorAll('.toggle-lock').forEach((btn) => {
                                                                     btn.addEventListener('click', (e) => {
@@ -181,21 +185,33 @@
                                                             {% endif %}
                                                         </td>
                                                     </tr>
-                                                </form> 
+                                                
                                                 {% endfor %}
                                             </tbody>
-                                        </table>
+                                            </table>
                                         </div>
                                     </div> 
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <footer class="footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-md-end footer-links d-none d-md-block">
+                                        <a href="javascript: void(0);">Info</a>
+                                        <a href="javascript: void(0);">Support</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            
 
 {% endblock %}
 

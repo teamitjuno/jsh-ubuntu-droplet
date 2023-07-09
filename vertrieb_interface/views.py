@@ -234,6 +234,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
 
         context = self.get_context_data()
+        context["user"] = user
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
         context["calc_image"] = relative_path
@@ -248,7 +249,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
 
         if form.is_valid():
-            vertrieb_angebot.is_locked = True
+            if vertrieb_angebot.status == "bekommen":
+                vertrieb_angebot.is_locked = True
             vertrieb_angebot.angebot_id_assigned = True
             form.save()  # type: ignore
             return redirect(

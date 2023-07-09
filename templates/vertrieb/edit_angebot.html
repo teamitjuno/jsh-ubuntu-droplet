@@ -183,21 +183,37 @@
                                             <td>
                                                 <div class="custom-control custom-switch">
                                                     <input type="checkbox" class="custom-control-input" id="switch01" {% if form.speicher.value %}checked{% endif %} data-switch="success" name="{{ form.speicher.html_name }}" />
-                                                    <label class="custom-control-label" for="switch01" data-on-label="Yes" data-off-label="No"></label>
+                                                    <label class="custom-control-label" for="switch01" data-on-label="Ja" data-off-label="Nein"></label>
                                                 </div>
                                             </td>
                                         </tr>
 
                                             <tr>
                                                 <th>{{ form.anz_speicher.label_tag }}</th>
-                                                <td>{{ form.anz_speicher }} </td>
+                                                <td>
+                                                <input type="number" id="anz_speicher" class="form-control" name="{{ form.anz_speicher.html_name }}" value="{{ form.anz_speicher.value }}" />
+                                                </td>
                                             </tr>
+                                            <script>
+                                                document.getElementById("yourFormId").addEventListener("submit", function(event){
+                                                    // get values from the form
+                                                    let speicher = document.getElementById("switch01").checked;
+                                                    let anz_speicher = document.getElementById("anz_speicher").value;
+                                            
+                                                    // perform the validation
+                                                    if (speicher && (anz_speicher === null || anz_speicher <= 0)) {
+                                                        event.preventDefault(); // prevent form submission
+                                                        alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
+                                                    }
+                                                });
+                                            </script>
+                                            
                                             <tr>
                                                 <th>{{ form.wallbox.label_tag }}</th>
                                                 <td>
                                                     <div class="custom-control custom-switch">
                                                         <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                        <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Yes" data-off-label="No"></label>
+                                                        <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -267,16 +283,19 @@
                     </div>
                   </div>
                  </div>
-                      <!-- Close row here -->
+                     
                 </div>
               </div>
-              <div class="tab-pane" id="module" role="tabpanel">
+              
+             <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM -->
+               <div class="tab-pane" id="module" role="tabpanel">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row"> 
                         <div class="col-lg-6">
-                            <!-- Module Details -->
                             <div class="card mb-3">
-                                <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">Module Details</div>
+                                <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                    Module Details
+                                </div>
                                 <div class="card-body">
                                     <table class="table table-sm table-hover">
                                         <tr>
@@ -330,28 +349,15 @@
                                     </table>
                                 </div>
                             </div>
-            
-                            <div class="card mb-3">
-                              <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
-                                <div class="card-body">
-                                    <table class="table table-sm table-hover">
-                                        <tr>
-                                            <th>Preis Netto</th>
-                                            <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Preis Brutto</th>
-                                            <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
                         </div>
                         
+                    
                         <div class="col-lg-6">
-                            <!-- Energy Details -->
+                          
                             <div class="card mb-3">
-                                <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">Energy Details</div>
+                                <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                    Energy Details
+                                </div>
                                 <div class="card-body">
                                     <table class="table table-sm table-hover">
                                         <tr>
@@ -391,12 +397,92 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row"> 
+                        <div class="col-lg-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                    Gesamtpreis PV-Anlage (inkl. Monatge)
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-hover">
+                                        <tr>
+                                            <th>Preis Netto</th>
+                                            <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Preis Brutto</th>
+                                            <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Gesamtpreis PV-Anlage for admin -->
+                        {% if user.role.name == "admin" %}
+                            <div class="col-lg-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">
+                                        Individual Preis
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm table-hover">
+                                            <tr>
+                                                <th>{{ form.indiv_price_included.label_tag }}</th>
+                                                <td>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
+                                                        <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr>
+                                            <tr id="indiv_price_row">
+                                                <th>{{form.indiv_price.label_tag }}</th>
+                                                <td>{{ form.indiv_price }}</td>
+                                            </tr>
+                                        </table>
+                                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                        <script type="text/javascript">
+                                            $(document).ready(function() {
+                                                // Initial state of 'Inddiv Preis' row
+                                                updateIndivPreisRow();
+                                        
+                                                // On 'Indiv Preis inkl.' checkbox state change
+                                                $('#switch_indiv_price_included').change(function() {
+                                                    updateIndivPreisRow();
+                                                });
+                                        
+                                                function updateIndivPreisRow() {
+                                                    if ($('#switch_indiv_price_included').is(':checked')) {
+                                                        // If checkbox is checked, show 'Inddiv Preis' row
+                                                        $('#indiv_price_row').show();
+                                                    } else {
+                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                        $('#indiv_price_row').hide();
+                                                    }
+                                                }
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div> 
+                    <!-- End of Second Row -->
                 </div>
             </div>
             
+
+            
+                    
+            
+
+              <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
             <div class="tab-pane" id="ticket" role="presentation">
               <div class="card-body">
-                  <!-- Ticket Details -->
+                
                   <div class="row">
                       <div class="col-lg-6">
                           <div class="card mb-3">
@@ -450,7 +536,7 @@
                   {% endif %}
               </div>
           </div>
-          
+          <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
           
           <div class="tab-pane" id="kalkulationen" role="presentation">                       
             <div class="card-body">
@@ -510,6 +596,10 @@
                                 </table>
                             </div>
                         </div>
+                        {% if vertrieb_angebot.angebot_id_assigned %}
+                    
+                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Kalkulation PDF erstellen</a>
+                      {% endif %}
                     </div>
                 </div> <!-- End of row -->
             </div>
@@ -696,7 +786,7 @@
                           <div class="row"> <!-- Add row here -->
                             <div class="col-lg-12">
                                 <div class="card mb-3">
-                                    <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizens</div>
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizen</div>
                                     <div class="card-body">
                                         <table class="table table-sm table-hover">
                                           <tr>
@@ -753,184 +843,289 @@
                   </div>
                    
               
+                <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOOOOOOOOOOOOODULE -->
+                
                 <div class="tab-pane" id="module" role="tabpanel">
-                  <div class="card-body">
-                      <div class="row">
-                          <!-- First Column -->
-                          <div class="col-lg-6">
-                              <!-- Module Details -->
-                              <div class="card mb-3">
-                                  <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module Details</div>
-                                  <div class="card-body">
-                                      <table class="table table-sm table-hover">
-                                          <tr>
-                                              <th>{{ form.solar_module.label_tag }}</th>
-                                              <td>{{ form.solar_module }}</td>
-                                          </tr>
-                                          <tr>
-                                              <th>{{ form.modulanzahl.label_tag }}</th>
-                                                <td><input type="text" id="modulanzahl" class="form-control" name="{{ form.modulanzahl.name }}" value="{{ form.modulanzahl.value }}"></td>
-                                          </tr>
-                                          <tr>
-                                              <th>{{ form.garantieWR.label_tag }}</th>
-                                              <td>{{ form.garantieWR }}</td>
-                                          </tr>
-                                          <tr>
-                                              <th>{{ form.eddi.label_tag }}</th>
-                                              <td hidden>
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
-                                                    <label class="custom-control-label" for="switch03" data-on-label="Yes" data-off-label="No"></label>
-                                                </div>
-                                            </td>
-                                              {% if not vertrieb_angebot.eddi %}
-                                              <td>
-                                              <span class="badge bg-danger rounded-pill">Keine</span>
+                    <div class="card-body">
+                        <div class="row"> 
+                            <div class="col-lg-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                        Module Details
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm table-hover">
+                                            <tr>
+                                                <th>{{ form.solar_module.label_tag }}</th>
+                                                {% if user.role.name == "admin" %}
+                                                <td> {{ form.solar_module }} </td>
+                                                {% else %}
+                                                <td><input type="text" id="solar_module" class="form-control" name="{{ form.solar_module.name }}" value="{{ form.solar_module.value }}" readonly></td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.modulanzahl.label_tag }}</th>
+                                                {% if user.role.name == "admin" %}
+                                                <td> {{ form.modulanzahl }} </td>
+                                                {% else %}
+                                                  <td><input type="text" id="modulanzahl" class="form-control" name="{{ form.modulanzahl.name }}" value="{{ form.modulanzahl.value }}" readonly></td>
+                                                  {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.garantieWR.label_tag }}</th>
+                                                {% if user.role.name == "admin" %}
+                                                <td> {{ form.garantieWR }} </td>
+                                                {% else %}
+                                                <td><input type="text" id="garantieWR" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.eddi.label_tag }}</th>
+                                                {% if user.role.name == "admin" %}
+                                                <td>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
+                                                        <label class="custom-control-label" for="switch03" data-on-label="Yes" data-off-label="No"></label>
+                                                    </div>
+                                                </td>
+                                                {% else %}
+                                                <td hidden>
+                                                  <div class="custom-control custom-switch">
+                                                      <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
+                                                      <label class="custom-control-label" for="switch03" data-on-label="Yes" data-off-label="No"></label>
+                                                  </div>
                                               </td>
-                                              {% endif %}
-
-                                              {% if  vertrieb_angebot.eddi %}
-                                              <td>
-                                              <span class="badge bg-success rounded-pill">Ja</span>
+                                                {% if not vertrieb_angebot.eddi %}
+                                                <td>
+                                                <span class="badge bg-danger rounded-pill">Keine</span>
+                                                </td>
+                                                {% endif %}
+  
+                                                {% if  vertrieb_angebot.eddi %}
+                                                <td>
+                                                <span class="badge bg-success rounded-pill">Ja</span>
+                                                </td>
+                                                {% endif %}
+                                            {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.notstrom.label_tag }}</th>
+                                                <td hidden>
+                                                  <div class="custom-control custom-switch">
+                                                      <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
+                                                      <label class="custom-control-label" for="switch04" data-on-label="Yes" data-off-label="No"></label>
+                                                  </div>
                                               </td>
-                                              {% endif %}
-                                          </tr>
-                                          <tr>
-                                              <th>{{ form.notstrom.label_tag }}</th>
-                                              <td hidden>
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
-                                                    <label class="custom-control-label" for="switch04" data-on-label="Yes" data-off-label="No"></label>
-                                                </div>
-                                            </td>
-                                              {% if not vertrieb_angebot.notstrom %}
-                                              <td>
-                                              <span class="badge bg-danger rounded-pill">Keine</span>
-                                              </td>
-                                              {% endif %}
-
-                                              {% if  vertrieb_angebot.notstrom %}
-                                              <td>
-                                              <span class="badge bg-success rounded-pill">Ja</span>
-                                              </td>
-                                              {% endif %}
-                                          </tr>
-                                          <tr>
-                                              <th>{{ form.anzOptimizer.label_tag }}</th>
-                                              <td><input type="text" id="anzOptimizer" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}"></td>
-                                          </tr>
-                                          <tr>
-                                              <th>Modulleistung [Wp]</th>
-                                              <td>{{ vertrieb_angebot.modulleistungWp }}</td>
-                                          </tr>
-                                          <tr>
-                                              <th>Modullsumme [kWp]</th>
-                                              <td>{{ vertrieb_angebot.modulsumme_kWp }}</td>
-                                          </tr>
+                                                {% if not vertrieb_angebot.notstrom %}
+                                                <td>
+                                                <span class="badge bg-danger rounded-pill">Keine</span>
+                                                </td>
+                                                {% endif %}
+  
+                                                {% if  vertrieb_angebot.notstrom %}
+                                                <td>
+                                                <span class="badge bg-success rounded-pill">Ja</span>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                <td><input type="text" id="anzOptimizer" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Modulleistung [Wp]</th>
+                                                <td>{{ vertrieb_angebot.modulleistungWp }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Modullsumme [kWp]</th>
+                                                <td>{{ vertrieb_angebot.modulsumme_kWp }}</td>
+                                            </tr>
+                                          </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        
+                            <div class="col-lg-6">
+                              
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                        Energy Details
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm table-hover">
+                                            <tr>
+                                                <th>Erzeugte Energie pro Jahr [kWh]</th>
+                                                <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Nutzbare PV-Energie [kWh]</th>
+                                                <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Benögte Restenegie [kWh]</th>
+                                                <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
+                                            </tr>
+                                            <tr>
+                                                <th>kosten für Restenegie</th>
+                                                <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Einspreisevergütung gesamt [€]</th>
+                                                <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Stromkosten ohne PV-Anlage</th>
+                                                <td>{{ vertrieb_angebot.strom_ohne }} €</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Preis abzgl Vergütung und inkl. Restrom</th>
+                                                <td>{{ vertrieb_angebot.abzug }} €</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Ersparnis [€]</th>
+                                                <td>{{ vertrieb_angebot.ersparnis }} €</td>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>
-                      
-                      <!-- Gesamtpreis PV-Anlage (inkl. Montage) -->
-                        <!-- Gesamtpreis PV-Anlage (inkl. Montage) -->
-                        <div class="card mb-3">
-                          <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage</div>
-                            <div class="card-body">
-                              <table class="table table-sm table-hover">
-                                  <tr>
-                                      <th>Preis Netto</th>
-                                      <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Preis Brutto</th>
-                                      <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                  </tr>
-                              </table>
-                          </div>
-                        </div>
-                      </div>
-              
-                      <!-- Energy Details -->
-                      <div class="col-lg-6">
-                        <!-- Energy Details -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
-                            <div class="card-body">
-                               <table class="table table-sm table-hover">
-                                  <tr>
-                                      <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                      <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Nutzbare PV-Energie [kWh]</th>
-                                      <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Benögte Restenegie [kWh]</th>
-                                      <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
-                                  </tr>
-                                  <tr>
-                                      <th>kosten für Restenegie</th>
-                                      <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Einspreisevergütung gesamt [€]</th>
-                                      <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Stromkosten ohne PV-Anlage</th>
-                                      <td>{{ vertrieb_angebot.strom_ohne }} €</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Preis abzgl Vergütung und inkl. Restrom</th>
-                                      <td>{{ vertrieb_angebot.abzug }} €</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Ersparnis [€]</th>
-                                      <td>{{ vertrieb_angebot.ersparnis }} €</td>
-                                  </tr>
-                              </table>
                             </div>
-                          </div>
                         </div>
+                    
+                        <div class="row"> 
+                            <div class="col-lg-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-50 bg-gradient text-white">
+                                        Gesamtpreis PV-Anlage (inkl. Monatge)
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm table-hover">
+                                            <tr>
+                                                <th>Preis Netto</th>
+                                                <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Preis Brutto</th>
+                                                <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            {% if user.role.name == "admin" %}
+                                <div class="col-lg-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">
+                                            Individual Preis
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-sm table-hover">
+                                                <tr>
+                                                    <th>{{ form.indiv_price_included.label_tag }}</th>
+                                                    <td>
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
+                                                            <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
+                                                        </div>
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr id="indiv_price_row">
+                                                    <th>{{form.indiv_price.label_tag }}</th>
+                                                    <td>{{ form.indiv_price }}</td>
+                                                </tr>
+                                            </table>
+                                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                            <script type="text/javascript">
+                                                $(document).ready(function() {
+                                                    // Initial state of 'Inddiv Preis' row
+                                                    updateIndivPreisRow();
+                                            
+                                                    // On 'Indiv Preis inkl.' checkbox state change
+                                                    $('#switch_indiv_price_included').change(function() {
+                                                        updateIndivPreisRow();
+                                                    });
+                                            
+                                                    function updateIndivPreisRow() {
+                                                        if ($('#switch_indiv_price_included').is(':checked')) {
+                                                            // If checkbox is checked, show 'Inddiv Preis' row
+                                                            $('#indiv_price_row').show();
+                                                        } else {
+                                                            // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                            $('#indiv_price_row').hide();
+                                                        }
+                                                    }
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div> 
+                        <!-- End of Second Row -->
                     </div>
                 </div>
-              </div>          
-              <div class="tab-pane" id="ticket" role="tabpanel">
+                <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOOOOOOOOOOOOODULE -->
+                
+               <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
+            <div class="tab-pane" id="ticket" role="presentation">
                 <div class="card-body">
-                    <!-- Ticket Details -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Ticket Details</div>
-                        <div class="card-body">
-                            <table class="table table-sm table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{{ form.solar_module.label_tag }}</th>
-                                        <th>{{ form.module_anzahl_ticket.label_tag }}</th>
-                                        <th>{{ form.optimizer_ticket.label_tag }}</th>
-                                        <th>{{ form.batteriemodule_ticket.label_tag }}</th>
-                                        <th>{{ form.notstrom_ticket.label_tag }}</th>
-                                        <th>{{ form.eddi_ticket.label_tag }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{ vertrieb_angebot.solar_module }}</td>
-                                        <td>{{ form.module_anzahl_ticket }}</td>
-                                        <td>{{ form.optimizer_ticket }}</td>
-                                        <td>{{ form.batteriemodule_ticket }}</td>
-                                        <td>{{ form.notstrom_ticket }}</td>
-                                        <td>{{ form.eddi_ticket }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                  
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary p-2 bg-opacity-50 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <th>{{ form.solar_module.label_tag }}</th>
+                                                <td>{{ form.module_ticket }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.modul_anzahl_ticket.label_tag }}</th>
+                                                <td>{{ form.modul_anzahl_ticket }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="col-lg-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <th>{{ form.optimizer_ticket.label_tag }}</th>
+                                                <td>{{ form.optimizer_ticket }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.batteriemodule_ticket.label_tag }}</th>
+                                                <td>{{ form.batteriemodule_ticket }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.notstrom_ticket.label_tag }}</th>
+                                                <td>{{ form.notstrom_ticket }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.eddi_ticket.label_tag }}</th>
+                                                <td>{{ form.eddi_ticket }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- End of row -->
                     {% if vertrieb_angebot.angebot_id_assigned %}
-                    <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Ticket PDF erstellen</a>
+                        <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Ticket PDF erstellen</a>
                     {% endif %}
                 </div>
             </div>
+            <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
             
                 
             <div class="tab-pane" id="kalkulationen" role="tabpanel">
@@ -979,10 +1174,8 @@
                       </div>
                     </div>
                     {% if vertrieb_angebot.angebot_id_assigned %}
-                    
                     <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Kalkulation PDF erstellen</a>
                   {% endif %}
-                   
                 </div>
               </div>
           
@@ -1001,9 +1194,14 @@
                   {% else %}
                   <p style="font-size: 18px; text-align: left; margin-top: 5px;">AngebotID:  noch nicht zugeordnet  </p>
                   {% endif %}
+                  
 
                   <p style="font-size: 16px; text-align: left; margin-top: 5px;">{{ vertrieb_angebot.anfrage_vom }}</p>
-                  <p style="font-size: 16px; text-align: left; margin-top: 5px;">{{ form.status.label_tag}}: {{ form.status }} </p>
+                  {% if not vertrieb_angebot.is_locked %}
+                  <p style="font-size: 16px; text-align: left; margin-top: 5px;">{{ form.status.label_tag}}: {{ form.status }}</p>
+                  {% else %}
+                  <p style="font-size: 16px; text-align: left; margin-top: 5px;">{{ form.status.label_tag}}:<input type="text" class="form-select" style="width: 300px;" name="{{ form.status.name }}" value="{{ form.status.value }}" readonly></p>
+                  {% endif %}
                   
                     {% if vertrieb_angebot.status == 'bekommen' %} 
                     <p style="font-size: 14px; text-align: left; margin-top: 5x;">Angebotstatus Änderungsdatum:</p>
@@ -1045,9 +1243,14 @@
                 
                 </script>
                   <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info">PDF Files Liste</a>
+                  {% if vertrieb_angebot.angebot_id_assigned %}
+                    
+                    <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Kalkulation PDF erstellen</a>
+                  {% endif %}
                 
-                
+                {% if vertrieb_angebot.is_locked %}
                   <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Angebot PDF erstellen</a>
+                {% endif %}
                      
                   
                   
@@ -1071,6 +1274,23 @@
 
     </form>
 </div>
+    </div>
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">Info</a>
+                        <a href="javascript: void(0);">Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+  </div>
     
 
 <script src="{% static 'js/vertrieb_interface.js' %}"></script>

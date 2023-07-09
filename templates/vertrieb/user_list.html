@@ -89,7 +89,7 @@
                                                 <td>{{ user.users_aufschlag }}</td>
                                                 <td>{{ user.typ }}</td>
                                                 <td>{{ user.kuerzel }}</td>
-                                                <td><a href="{% url 'adminfeautures:user-orders' user.id %}">View Orders</a></td>
+                                                <td><a href="{% url 'adminfeautures:user-orders' user.id %}">Angebote Liste</a></td>
                                               </tr>
                                             {% empty %}
                                               <tr>
@@ -105,10 +105,23 @@
                         </div>
                     </div>
                 </div>
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-end footer-links d-none d-md-block">
+                                    <a href="javascript: void(0);">Info</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </div>
-        </div>
-    </div>
-</div>
+
     {% comment %} </div>
 </div> {% endcomment %}
 <!-- Datatable Demo Aapp js -->

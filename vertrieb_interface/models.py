@@ -143,6 +143,7 @@ class VertriebAngebot(TimeStampMixin):
         ("Herr Dr.", "Herr Dr."),
         ("Herr Prof.", "Herr Prof."),
         ("Frau", "Frau"),
+        ("Frau Dr.", "Frau Dr."),
     )
     AUSRICHTUNG_CHOICES = (
         ("Sud", "Sud"),
@@ -513,7 +514,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def batteriespeicher_preis(self):
         batteriePreis = 0
-        if self.speicher == True:
+        if self.speicher == True and self.anz_speicher != 0:
             leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
             batteriePreis = self.calculate_price(
@@ -552,7 +553,7 @@ class VertriebAngebot(TimeStampMixin):
         nutzEnergie = float(self.verbrauch)
         if self.erzeugte_energie < nutzEnergie:
             nutzEnergie = float(self.erzProJahr) * float(self.modulsumme_kWp)
-        if self.speicher:
+        if self.speicher and self.anz_speicher != 0:
             nutzEnergie = nutzEnergie * BATT_DICT[self.anz_speicher]
         else:
             nutzEnergie = nutzEnergie * DEFAULT_BATT_USAGE

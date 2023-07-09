@@ -166,7 +166,7 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-select",
                 "id": "id_status",
-                "style": "max-width: 300px",
+                "style": "max-width: 200px",
             }
         ),
         required=False,
@@ -777,6 +777,22 @@ class VertriebAngebotForm(ModelForm):
                 ("Dieses Feld ist erforderlich"),
                 params={"anrede": anrede},
             )
+        speicher = cleaned_data.get("speicher")
+        anz_speicher = cleaned_data.get("anz_speicher")
+        if speicher == True and anz_speicher is not None:
+            if anz_speicher <= 0: 
+                self.add_error(
+                    "anz_speicher",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkl. = True"
+                        ),
+                        params={
+                            "anz_speicher": anz_speicher,
+                            "speicher": speicher,
+                        },
+                    ),
+                )
 
     def clean_phone(self):
         telefon_mobil = self.cleaned_data["phone"]
