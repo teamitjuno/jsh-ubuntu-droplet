@@ -423,6 +423,8 @@ def createCalcPdf2(data, vertrieb_angebot, user):
     user_folder = os.path.join(
         settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
     )
+    if not os.path.exists(user_folder):
+        os.makedirs(user_folder)
     # create the offer-PDF
     pdf.page1(data)
     pdf.page2(data, user_folder, vertrieb_angebot)

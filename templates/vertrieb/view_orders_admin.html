@@ -162,7 +162,9 @@
                                                         <td>{{ vertrieb_angebot.name }}</td>
                                                         <td>{{ vertrieb_angebot.anfrage_vom }}</td>
                                                         <td>
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
                                                             <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-primary">Zeigen</a>
+                                                            {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}

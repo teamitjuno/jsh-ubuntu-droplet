@@ -64,7 +64,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from .models import User, VertriebAngebot
 from io import BytesIO
-
+from django.db.models import Count
+from django.utils import timezone
 NAMES_CHOICES = ""
 
 
@@ -85,9 +86,26 @@ class VertriebCheckMixin(UserPassesTestMixin):
         return vertrieb_check(self.request.user)  # type: ignore
 
 
-@user_passes_test(vertrieb_check)
 def home(request):
-    return render(request, "vertrieb/home.html")
+    # Get the current month and year.
+    now = timezone.now()
+    month = now.month
+    year = now.year
+
+    # Annotate each user with the count of their VertriebAngebot's for this month and
+    # limit the query to the top 5 users.
+    users = User.objects.annotate(
+        num_vertriebangebots=Count(
+            'vertriebangebot',
+            filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__current_date__month=month)
+        )
+    ).order_by('-num_vertriebangebots')[:5]
+
+    # Pass the users to the template.
+    context = {
+        'users': users,
+    }
+    return render(request, 'vertrieb/home.html', context)
 
 
 @user_passes_test(vertrieb_check)

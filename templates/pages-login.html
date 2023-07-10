@@ -30,8 +30,14 @@
         background-attachment: fixed;   
     }
 </style>
-    
+
     <body class="authentication-bg position-relative">
+                    <!-- Pre-loader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
+        </div>
+    </div>
         <div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100">
             <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 800 800'>
                 <g fill-opacity='0.22'>
@@ -49,7 +55,8 @@
                 <div class="row justify-content-center">
                     <div class="col-xxl-4 col-lg-5">
                         <div class="card">
-                            <div class="card-body p-4 ">
+
+                            <div class="card-body p-4 bg-opacity-75">
                                 <div class="text-center w-75 m-auto">
                                     <h4 class="text-dark-50 text-center pb-0 fw-bold">Anmelden</h4>
                                     <p class="text-muted mb-4"></p>

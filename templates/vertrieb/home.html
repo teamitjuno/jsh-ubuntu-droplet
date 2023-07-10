@@ -42,7 +42,7 @@
                 <div class="col-7">
                     <div class="page-title-box">
                         
-                        {% if user.kuerzel == 'FV' or user.kuerzel == 'MK' %}
+                        {% if user.role.name == "admin" %}
                         <h4 class="page-title">Juno Solar Vertriebsportal : {{ user.role.name }}</h4>
                         {% else %}
                         <h4 class="page-title">Juno Solar Vertriebsportal</h4>
@@ -257,6 +257,50 @@
                         </div>
                         <!-- end card-->
                     </div>
+
+                    {% if user.role.name == "admin" %}
+                    <div class="col-xl-4 col-lg-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="header-title">Top Verkäufer des Monats</h4>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="card-body pt-2">
+                                {% for user in users %}
+                                <div class="d-flex align-items-start mt-3">
+                                    {% if not user.avatar %}
+                                    <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
+                                    {% else %}
+                                    <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                    {% endif %}
+                                    <div class="w-100 overflow-hidden">
+                                        <h5 class="mt-0 mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
+                                        <span class="font-13">{{ user.email }}</span>
+                                        <span class="badge badge-success-lighten float-end">{{ user.num_vertriebangebots }}</span>
+                                        <p>Anzahl der erledigten Aufträge : {{ user.num_vertriebangebots }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <!-- end card-body -->
+                        </div>
+                        <!-- end card-->
+                    </div>
+                    {% endif %}
+                    
+                
+
                 </div>
 
             </div>

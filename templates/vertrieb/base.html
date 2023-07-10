@@ -24,6 +24,13 @@
         {% endblock %}
         
     <body>
+
+        <!-- Pre-loader -->
+        <div id="preloader">
+            <div id="status">
+                <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
+            </div>
+        </div>
         <!-- Begin page -->
         <div class="wrapper">
 
@@ -38,7 +45,7 @@
                             <!-- Logo light -->
                             <a href="{% url 'vertrieb_interface:home' %}" class="logo-light">
                                 <span class="logo-lg">
-                                    <img src="{% static 'img/JUNO-Solar.png' %}" alt="logo">
+                                    <img src="{% static 'img/JUNO-Solar-.png' %}" alt="logo">
                                 </span>
                                 <span class="logo-sm">
                                     <img src="{% static 'assets/images/logo-sm.png' %}" alt="small logo">
@@ -280,7 +287,7 @@
                             </div>
                         </li>
 
-                        {% if user.kuerzel == 'FV' or user.kuerzel == 'MK' %}
+                        {% if user.role.name == "admin" %}
 
                         <li class="side-nav-item">
                             

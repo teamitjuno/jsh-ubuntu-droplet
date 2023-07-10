@@ -65,30 +65,39 @@
                                             <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
                                             <thead>
                                                 <tr>
+                                                    <th></th>
+                                                  <th>Vorname</th>
+                                                  <th>Nachname</th>
+                                                  <th>Kuerzel</th>
                                                   <th>Zoho ID</th>
                                                   <th>Email</th>
-                                                  <th>First Name</th>
-                                                  <th>Last Name</th>
-                                                  <th>Phone</th>
+                                                  <th>Mobil</th>
                                                   <th>Beruf</th>
                                                   <th>Users Aufschlag</th>
                                                   <th>Typ</th>
-                                                  <th>Kuerzel</th>
+
                                                   <th>User's Angebote zeigen</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                               {% for user in users %}
                                               <tr>
-                                                <td>{{ user.zoho_id }}</td>
-                                                <td>{{ user.email }}</td>
+                                                <td> {% if user.avatar %}
+                                                    <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                                    {% else %}
+                                                    <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
+                                                    {% endif %}
+                                                </td>
                                                 <td>{{ user.first_name }}</td>
                                                 <td>{{ user.last_name }}</td>
+                                                <td>{{ user.kuerzel }}</td>
+                                                <td>{{ user.zoho_id }}</td>
+                                                <td>{{ user.email }}</td>
                                                 <td>{{ user.phone }}</td>
                                                 <td>{{ user.beruf }}</td>
                                                 <td>{{ user.users_aufschlag }}</td>
                                                 <td>{{ user.typ }}</td>
-                                                <td>{{ user.kuerzel }}</td>
+
                                                 <td><a href="{% url 'adminfeautures:user-orders' user.id %}">Angebote Liste</a></td>
                                               </tr>
                                             {% empty %}
