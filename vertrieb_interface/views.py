@@ -97,13 +97,44 @@ def home(request):
     users = User.objects.annotate(
         num_vertriebangebots=Count(
             'vertriebangebot',
-            filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__current_date__month=month)
+            filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__current_date__month=month, vertriebangebot__angebot_id_assigned=True)
         )
     ).order_by('-num_vertriebangebots')[:5]
 
-    # Pass the users to the template.
+    current_user_vertriebangebots = VertriebAngebot.objects.filter(
+        user=request.user, angebot_id_assigned =True,
+    ).count()
+    # Get the count of the current user's VertriebAngebot's for this month.
+    current_user_vertriebangebots_month = VertriebAngebot.objects.filter(
+        user=request.user,
+        angebot_id_assigned = True,
+        current_date__year=year,
+        current_date__month=month
+    ).count()
+    vertriebangebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned = True)
+
+    angenommen_count = vertriebangebots.filter(status="angenommen").count()
+    bekommen_count = vertriebangebots.filter(status="bekommen").count()
+    in_kontakt_count = vertriebangebots.filter(status="in Kontakt").count()
+    kontaktversuch_count = vertriebangebots.filter(status="Kontaktversuch").count()
+    abgelehnt_count = vertriebangebots.filter(status="abgelehnt").count()
+    abgelaufen_count = vertriebangebots.filter(status="abgelaufen").count()
+    on_hold_count = vertriebangebots.filter(status="on Hold").count()
+    storniert_count = vertriebangebots.filter(status="storniert").count()
+
+    # Pass the users and the count to the template.
     context = {
         'users': users,
+        'current_user_vertriebangebots_month': current_user_vertriebangebots_month,
+        'current_user_vertriebangebots': current_user_vertriebangebots,
+        "angenommen": angenommen_count,
+        "bekommen": bekommen_count,
+        "in_Kontakt": in_kontakt_count,
+        "Kontaktversuch": kontaktversuch_count,
+        "abgelehnt": abgelehnt_count,
+        "abgelaufen": abgelaufen_count,     
+        "on Hold": on_hold_count,
+        "storniert": storniert_count,
     }
     return render(request, 'vertrieb/home.html', context)
 
@@ -250,7 +281,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         relative_path_suffix = os.path.relpath(
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
-
+        print(vertrieb_angebot.Rest_liste, "RLISTE")
+        print(vertrieb_angebot.Arbeits_liste, "ARbLISTE")
         context = self.get_context_data()
         context["user"] = user
         context["vertrieb_angebot"] = vertrieb_angebot

@@ -76,12 +76,12 @@
                         
                         <ul class="topbar-menu d-flex align-items-center gap-3">
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link" href="#" onclick="history.back();" data-bs-toggle="tooltip" title="Zurück">
+                                <a class="nav-link" href="#" onclick="history.back();">
                                     <i class="ri-arrow-go-back-line font-22"></i>
                                 </a>
                             </li>
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link" data-bs-toggle="tooltip" href="#" onclick="window.location.reload();" title="Refresh Page">
+                                <a class="nav-link" href="#" onclick="window.location.reload();">
                                     <i class="uil-sync"></i>
                                 </a>
                             </li>
@@ -470,11 +470,11 @@
                             
                                     <ul class="mb-0 list-inline">
                                         <li class="list-inline-item me-3">
-                                            <h5 class="mb-1">{{ user.kuerzel }}</h5>
-                                            <p class="mb-0 font-13">{{ user.beruf }}</p>
+                                            <h5 class="mb-1">$ {{ current_user_vertriebangebots_month}}</h5>
+                                            <p class="mb-0 font-13">in diesem Monat</p>
                                         </li>
                                         <li class="list-inline-item">
-                                            <h5 class="mb-1"> {{ current_user_vertriebangebots_month}} </h5>
+                                            <h5 class="mb-1">{{ current_user_vertriebangebots}}</h5>
                                             <p class="mb-0 font-13">Gesamtzahl aller Angebote</p>
                                         </li>
                                     </ul>

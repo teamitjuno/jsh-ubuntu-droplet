@@ -301,6 +301,8 @@ class VertriebAngebot(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     ag_data = models.TextField(blank=True)
+    Rest_liste = models.TextField(blank=True, null=True)
+    Arbeits_liste = models.TextField(blank=True, null=True)
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -337,6 +339,8 @@ class VertriebAngebot(TimeStampMixin):
         self.Ersparnis = self.ersparnis
         self.kosten_fur_restenergie = self.kosten_rest_energie
         self.ag_data = self.data
+        self.Rest_liste = self.rest_liste
+        self.Arbeits_liste = self.arbeits_liste
 
         super().save(*args, **kwargs)
 

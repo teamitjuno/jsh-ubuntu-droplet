@@ -1,0 +1,573 @@
+{% extends 'vertrieb/base.html'%}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block head %}
+<!DOCTYPE html>
+<html lang="de" data-menu-color="dark">
+        <meta charset="utf-8" />
+        <title>Home | Juno-Solar Administration Tool</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta content="Coderthemes" name="SamIvanov" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+        <!-- Theme Config Js -->
+        <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+
+        <!-- App css -->
+        <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- Icons css -->
+        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% endblock %}
+
+{% block content %}
+    
+ 
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+                <!-- start page title -->
+            <div class="row">
+                <div class="col-7">
+                    <div class="page-title-box">
+                        
+                        {% if user.role.name == "admin" %}
+                        <h4 class="page-title">Juno Solar Vertriebsportal : {{ user.role.name }}</h4>
+                        {% else %}
+                        <h4 class="page-title">Juno Solar Vertriebsportal</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card d-block">
+                            <div class="card-body">
+                                <h5 class="card-title">Hallo, {{ user.first_name }} </h5>
+                                <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
+                         
+                            </div>
+                                <img class="img-fluid" style="margin: auto;" src="{% static 'img/junosolar_logo4.png' %}" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
+                                <div style="display: flex; gap: 15px;">
+                                    <a href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                        Aktuelle Aufträge aus ZOHO laden
+                                    </a>
+                                    <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content modal-filled bg-success">
+                                                <div class="modal-body p-4">
+                                                    <div class="text-center">
+                                                        <i class="ri-check-line h1"></i>
+                                                        <h4 class="mt-2">Erfolgreich!</h4>
+                                                        <p class="mt-3">Die Daten wurden erfolgreich hochgeladen!</p>
+                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                                    <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-body p-4">
+                                                    <div class="text-center">
+                                                        <i class="ri-information-line h1 text-info"></i>
+                                                        <h4 class="mt-2">Achtung! </h4>
+                                                        <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
+                                                        <button type="button" id="continueButton" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                        <script>
+                                                            $(document).ready(function(){
+                                                                $("#continueButton").click(function(){
+                                                                    // perform your action here
+                                                                    loadUserAngebots();
+                                                                });
+                                                            });
+                                                            
+                                                            function loadUserAngebots() {
+                                                                var url = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                                            
+                                                                // Simulating a long-lasting operation.
+                                                                setTimeout(function () {
+                                                                    fetch(url, {
+                                                                        method: 'GET', // Or whatever HTTP method you need
+                                                                        headers: {
+                                                                            'Content-Type': 'application/json',
+                                                                        },
+                                                                    })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        // When the data is received, show the success alert modal.
+                                                                        $('#success-alert-modal').modal('show');
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        console.error('Error:', error);
+                                                                    });
+                                                                }, 3000);
+                                                            }
+                                                            
+                                                            // Redirect to another page when the success modal is hidden
+                                                            $('#success-alert-modal').on('hidden.bs.modal', function (e) {
+                                                                window.location.href = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                                            });
+                                                            </script>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                                      
+                                      
+                                      
+                                    <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="create_blank_angebot" value="1">
+                                        <button type="submit" class="btn btn-outline-primary rounded-pill">Neue Angebot erstellen</button>
+                                    </form>
+                                </div>                     
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+                    <div class="col-xl-3 col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="float-start m-2 me-4">
+                                    {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" style="height: 100px;" alt="avatar-2" class="rounded-circle img-thumbnail">
+                                    {% endif %}
+                                </span>
+                                <div class="">
+                                    <h4 class="mt-1 mb-1">{{ user.first_name}} {{ user.last_name}}</h4>
+                                    <p class="font-13"> {{ user.beruf }} </p>
+                            
+                                    <ul class="mb-0 list-inline">
+                                        <li class="list-inline-item me-3">
+                                            <h5 class="mb-1">{{ user.kuerzel }}</h5>
+                                            <p class="mb-0 font-13">{{ user.beruf }}</p>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <h5 class="mb-1"> {{ current_user_vertriebangebots_month}} </h5>
+                                            <p class="mb-0 font-13">Gesamtzahl aller Angebote</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- end div-->
+                            </div>
+                            <!-- end card-body-->
+                        </div>
+                    
+                        <div class="card">
+                            <div class="d-flex card-header justify-content-between align-items-center">
+                                <h4 class="header-title">Letzte Aktivitäten </h4>
+                                <h6>(in der Entwicklung...)</h6>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Verkaufsbericht</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Bericht exportieren</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Gewinn</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Aktion</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 343px;"> 
+                                <div class="timeline-alt py-0">
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Sie haben einen Artikel verkauft</a>
+                                            <small>Paul Burgess hat gerade ..... gekauft.</small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">vor 5 Minuten</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some action....</a>
+                                            <small>Some user added
+                                                <span class="fw-bold">Admin Dashboard</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">30 minutes ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some user or admin</a>
+                                            <small>Send you message
+                                                <span class="fw-bold">"Are you there?"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">2 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some user</a>
+                                            <small>Uploaded a photo
+                                                <span class="fw-bold">"Error.jpg"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">14 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some Event happened</a>
+                                            <small>Some Kunde just purchased  or made some action!</small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">16 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Product on the Bootstrap Market</a>
+                                            <small>Dave Gamache added
+                                                <span class="fw-bold">Admin Dashboard</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">22 hours ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
+                                        <div class="timeline-item-info">
+                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Robert Delaney</a>
+                                            <small>Send you message
+                                                <span class="fw-bold">"Are you there?"</span>
+                                            </small>
+                                            <p class="mb-0 pb-2">
+                                                <small class="text-muted">2 days ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end timeline -->
+                            </div> <!-- end slimscroll -->
+                        </div>
+                        <!-- end card-->
+                    </div>
+
+                   
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="header-title">Top Verkäufer des Monats</h4>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="card-body pt-2">
+                                {% for user in users %}
+                                <div class="d-flex align-items-start mt-3">
+                                    {% if not user.avatar %}
+                                    <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
+                                    {% else %}
+                                    <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                    {% endif %}
+                                    <div class="w-100 overflow-hidden">
+                                        <h5 class="mt-0 mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
+                                        <span class="font-13">{{ user.email }}</span>
+                                        <span class="badge badge-success-lighten float-end">{{ user.num_vertriebangebots }}</span>
+                                        <p>Anzahl der erledigten Aufträge : {{ user.num_vertriebangebots }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <!-- end card-body -->
+                        </div>
+                        <!-- end card-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xxl-6">
+                        <div class="card card-h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="header-title">Angebote Statusübersicht</h4>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Today</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Yesterday</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Last Week</a>
+                                        <!-- item-->
+                                        <a href="javascript:void(0);" class="dropdown-item">Last Month</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-0">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 order-2 order-md-1">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-primary-lighten text-primary"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="fw-semibold mt-0 mb-1">Angenommen</h5>
+                                                <ul class="list-inline mb-0 text-muted">
+                                                    <li class="list-inline-item"><b>{{ angenommen }}</b> Angebote</li>
+                                                   
+                                                   
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-danger-lighten text-danger"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="fw-semibold mt-0 mb-1">Abgelehnt</h5>
+                                                <ul class="list-inline mb-0 text-muted">
+                                                    <li class="list-inline-item"><b>{{ abgelehnt }}</b> abgelehnt</li>
+                                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                                    <li class="list-inline-item"><b>{{ abgelaufen }}</b> abgelaufen</li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-success-lighten text-success"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="fw-semibold mt-0 mb-1">Bekommen</h5>
+                                                <ul class="list-inline mb-0 text-muted">
+                                                    <li class="list-inline-item"><b>{{ bekommen }}</b> Angebote</li>
+                                                   
+                                                   
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-warning-lighten text-warning"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="fw-semibold mt-0 mb-1">in Kontakt und Kontaktversuch</h5>
+                                                <ul class="list-inline mb-0 text-muted">
+                                                    <li class="list-inline-item"><b>{{ in_Kontakt }}</b> Angebote in Kontakt</li>
+                                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                                    <li class="list-inline-item"><b>{{ Kontaktversuch }}</b> in Kontaktversuch</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                    </div>
+
+                                    <div class="col-md-6 order-1 order-md-2">
+                                        <div class="mb-3 mb-md-0">
+                                            <div id="project-overview-chart" class="apex-charts" data-colors="#727cf5,#ff679b,#0acf97,#ffbc00"></div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">Info</a>
+                            <a href="javascript: void(0);">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+                <!-- end row -->
+{% endblock %}
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+            {% block scripts %}    
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+            
+                
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+    <script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <!-- Code Highlight js -->
+    <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+    
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
+ 
+        <script>
+             (function(o) {
+                o(function() {
+                    const projectOverviewChartEl = document.querySelector("#unique-project-overview-chart");
+                    const chartColors = ["#727cf5", "#0acf97", "#fa5c7c", "#ffbc00"];
+                    const dataColors = o(projectOverviewChartEl).data("colors");
+                    const totalOffers = {{ current_user_vertriebangebots }};
+                    const series = [
+                        Math.round({{ angenommen }} * 1000 / totalOffers) / 10,
+                        Math.round({{ abgelehnt }} * 1000 / totalOffers) / 10,
+                        Math.round({{ bekommen }} * 1000 / totalOffers) / 10,
+                        Math.round(({{ in_Kontakt }} + {{ Kontaktversuch }}) * 1000 / totalOffers) / 10,
+                    ];
+        
+                    const chartOptions = {
+                        chart: {
+                            height: 328,
+                            type: "radialBar",
+                        },
+                        colors: dataColors ? dataColors.split(",") : chartColors,
+                        series: series,
+                        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch"],
+                        plotOptions: {
+                            radialBar: {
+                                track: {
+                                    margin: 7,
+                                },
+                            },
+                        },
+                    };
+        
+                    const chart = new ApexCharts(projectOverviewChartEl, chartOptions);
+                    chart.render();
+                });
+            })(window.jQuery);
+        </script>
+        
+ 
+            <script>
+                function disableFor30Seconds(event) {
+                  event.preventDefault();
+                  var button = document.getElementById('loadButton');
+                  var spinner = document.getElementById('spinner');
+                  var buttonText = document.getElementById('buttonText');
+        
+                  spinner.style.display = 'inline-block';
+                  buttonText.style.display = 'none';
+        
+                  button.setAttribute("disabled", "true");
+                  setTimeout(function () {
+                    button.removeAttribute("disabled");
+                    spinner.style.display = 'none';
+                    buttonText.style.display = 'inline-block';
+                  }, 30000);
+        
+                  fetch('{% url "vertrieb_interface:load_user_angebots" %}')
+                    .then(response => response.text())
+                    .then(data => {
+                      // process data
+                      button.removeAttribute("disabled");
+                      spinner.style.display = 'none';
+                      buttonText.style.display = 'inline-block';
+                    });
+                }
+            </script>
+
+<script>
+    // Wait until the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the link element
+        var link = document.getElementById("create-invoice-link");
+
+        // Add a click event listener to the link
+        link.addEventListener("click", function(event) {
+            // Prevent the link's default behavior
+            event.preventDefault();
+
+            // Submit the form
+            document.getElementById("create-invoice-form").submit();
+        });
+    });
+</script>
+{% endblock %}  
+    {% block extrajs %}
+        <!-- Vendor js -->
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+          <!-- Code Highlight js -->
+        <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+        <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+
+        <!-- Daterangepicker js -->
+        <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+        
+        <!-- Apex Charts js -->
+        <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+
+        <!-- Vector Map js -->
+        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+
+        <!-- Dashboard App js -->
+        <script src="{% static 'assets/js/pages/demo.dashboard.js' %}"></script>
+
+        <!-- App js -->
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}
+    </body>
+</html> 
