@@ -72,11 +72,6 @@ urlpatterns = [
         name="pdf_angebots_list_view",
     ),
     path(
-        "vertrieb/pdf_angebots/<str:angebot_id>/",
-        views.PDFAngebotsListView.as_view(),
-        name="pdf_angebots_list",
-    ),
-    path(
         "PDFCalculationsListView/<str:angebot_id>/",
         views.PDFCalculationsListView,
         name="PDFCalculationsListView",
@@ -90,17 +85,30 @@ urlpatterns = [
     path(
         "serve_calc_pdf/<str:angebot_id>/", views.serve_calc_pdf, name="serve_calc_pdf"
     ),
+    path(
+        "serve_ticket_pdf/<str:angebot_id>/", views.serve_ticket_pdf, name="serve_ticket_pdf"
+    ),
     path("document/<str:angebot_id>/", views.document_view, name="document_view"),
     path(
         "document_calc/<str:angebot_id>/",
         views.document_calc_view,
         name="document_calc_view",
     ),
+    path(
+        "document_ticket/<str:angebot_id>/",
+        views.document_ticket_view,
+        name="document_ticket_view",
+    ),
     path("send_invoice/<str:angebot_id>/", views.send_invoice, name="send_invoice"),
     path(
         "send_calc_invoice/<str:angebot_id>/",
         views.send_calc_invoice,
         name="send_calc_invoice",
+    ),
+    path(
+        "send_ticket_invoice/<str:angebot_id>/",
+        views.send_ticket_invoice,
+        name="send_ticket_invoice",
     ),
 ] + [
     re_path(

@@ -120,9 +120,18 @@ def validate_integers(value):
             params={"value": value},
         )
 
+def validate_integers_ticket(value):
+    if not isinstance(value, int):
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."
+            ),
+            params={"value": value},
+        )
+
 
 def validate_solar_module_anzahl(value):
-    if value < 6:
+    if value < 6 and value != 0:
         raise ValidationError(
             (
                 "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 6 oder mehr betragen."
@@ -136,6 +145,15 @@ def validate_solar_module_ticket_anzahl(value):
         raise ValidationError(
             (
                 "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
+            ),
+            params={"value": value},
+        )
+
+def validate_optimizer_ticket_anzahl(value):
+    if value > 4:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
             ),
             params={"value": value},
         )
@@ -293,6 +311,7 @@ class VertriebAngebotForm(ModelForm):
         label="Straße & Hausnummer",
         max_length=100,
         required=True,
+        validators=[validate_empty],
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -306,6 +325,7 @@ class VertriebAngebotForm(ModelForm):
         label="PLZ & Ort",
         max_length=100,
         required=True,
+        validators=[validate_empty],
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -329,7 +349,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     verbrauch = forms.FloatField(
-        label="Strom Verbrauch [€/Monat]",
+        label="Strom Verbrauch [kWh]",
         initial=0.0,
         required=True,
         validators=[validate_floats],
@@ -355,7 +375,7 @@ class VertriebAngebotForm(ModelForm):
     )
     arbeitspreis = forms.FloatField(
         label="Strom Arbeitspreis [ct/kWh]",
-        initial=30,
+        initial=46,
         required=True,
         validators=[validate_floats],
         widget=forms.NumberInput(
@@ -370,7 +390,7 @@ class VertriebAngebotForm(ModelForm):
         label="Prognose Strompreiserhöhung pro Jahr [%]",
         decimal_places=2,
         max_digits=10,
-        initial=2.2,
+        initial=6,
         required=True,
         validators=[validate_two_decimal_places],
         widget=forms.NumberInput(
@@ -625,7 +645,7 @@ class VertriebAngebotForm(ModelForm):
     )
 
     modul_anzahl_ticket = forms.IntegerField(
-        label="Module Anzahl",
+        label="Module Ticket-Anzahl",
         initial=0,
         required=False,
         validators=[validate_solar_module_ticket_anzahl],
@@ -634,37 +654,37 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     optimizer_ticket = forms.IntegerField(
-        label="Optimizer",
+        label="Optimizer Ticket-Anzahl",
         required=False,
         initial=0,
-        validators=[validate_integers],
+        validators=[validate_integers_ticket],
         widget=forms.NumberInput(
             attrs={"class": "form-control", "id": "optimizer_ticket"}
         ),
     )
     batteriemodule_ticket = forms.IntegerField(
-        label="Batteriemodule",
+        label="Batteriemodule Ticket-Anzahl",
         required=False,
         initial=0,
-        validators=[validate_integers],
+        validators=[validate_integers_ticket],
         widget=forms.NumberInput(
             attrs={"class": "form-control", "id": "batteriemodule_ticket"}
         ),
     )
     notstrom_ticket = forms.IntegerField(
-        label="Notstrom",
+        label="Notstrom Ticket-Anzahl",
         required=False,
         initial=0,
-        validators=[validate_integers],
+        validators=[validate_integers_ticket],
         widget=forms.NumberInput(
             attrs={"class": "form-control", "id": "notstrom_ticket"}
         ),
     )
     eddi_ticket = forms.IntegerField(
-        label="Eddi",
+        label="Eddi Ticket-Anzahl",
         required=False,
         initial=0,
-        validators=[validate_integers],
+        validators=[validate_integers_ticket],
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
     )
 
@@ -757,7 +777,6 @@ class VertriebAngebotForm(ModelForm):
 
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
-        anrede = cleaned_data.get("anrede")
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
                 self.add_error(
@@ -772,6 +791,7 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        anrede = cleaned_data.get("anrede")
         if anrede is None or anrede == "":
             raise ValidationError(
                 ("Dieses Feld ist erforderlich"),
@@ -785,11 +805,41 @@ class VertriebAngebotForm(ModelForm):
                     "anz_speicher",
                     ValidationError(
                         (
-                            "Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkl. = True"
+                            "Die Anzahl der Speicher kann nicht 0 sein wenn speicher inkl. = True"
                         ),
                         params={
                             "anz_speicher": anz_speicher,
                             "speicher": speicher,
+                        },
+                    ),
+                )
+        modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
+        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4 :
+            self.add_error(
+                    "modul_anzahl_ticket",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Ticket kann nicht mehr als 4 sein"
+                        ),
+                        params={
+                            "modul_anzahl_ticket": modul_anzahl_ticket,
+                        },
+                    ),
+                )
+        wallbox = cleaned_data.get("wallbox")
+        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
+        
+        if wallbox is not None and wallbox_anzahl is not None:
+            if wallbox == True and wallbox_anzahl == 0:
+                self.add_error(
+                    "wallbox",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
+                        ),
+                        params={
+                            "wallbox": anzOptimizer,
+                            "wallbox_anzahl": modulanzahl,
                         },
                     ),
                 )
@@ -827,20 +877,3 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         model = VertriebAngebot
         fields = ["is_locked"]  # Add other fields as needed
 
-    # @receiver(pre_save, sender=VertriebAngebot)
-    # def handle_status_change(sender, instance, **kwargs):
-    #     if instance.status is not None:
-    #         old_instance = sender.objects.get(zoho_id=instance.zoho_id)
-    #         if old_instance.status != instance.status and instance.status == 'bekommen':
-    #             instance.status_change_date = timezone.now()
-
-    #     else:
-    #         instance.angebot_bekommen_am = timezone.now().date()
-
-    # def clean_phone_2(self):
-    #     telefon_festnetz = self.cleaned_data["phone"]
-    #     if len(telefon_festnetz) != 11:
-    #         raise forms.ValidationError(
-    #             "Length of phone number must be + and 10 digits"
-    #         )
-    #     return telefon_festnetz

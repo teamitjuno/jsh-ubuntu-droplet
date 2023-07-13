@@ -164,18 +164,18 @@ class VertriebAngebot(TimeStampMixin):
     ort = models.CharField(max_length=100, blank=True)
     anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
     verbrauch = models.FloatField(
-        default=5000, validators=[MinValueValidator(0)]  # type: ignore
+        default=15000, validators=[MinValueValidator(0)]  # type: ignore
     )
     grundpreis = models.FloatField(
         default=9.8, validators=[MinValueValidator(0)]  # type: ignore
     )
     arbeitspreis = models.FloatField(
-        default=28.6, validators=[MinValueValidator(0)]  # type: ignore
+        default=46.8, validators=[MinValueValidator(0)]  # type: ignore
     )
     prognose = models.FloatField(
-        default=2.2, validators=[MinValueValidator(0)]  # type: ignore
+        default=5.2, validators=[MinValueValidator(0)]  # type: ignore
     )
-    zeitraum = models.PositiveIntegerField(default=5)
+    zeitraum = models.PositiveIntegerField(default=15)
     bis10kWp = models.FloatField(
         default=8.20, validators=[MinValueValidator(0)]  # type: ignore
     )
@@ -210,7 +210,7 @@ class VertriebAngebot(TimeStampMixin):
     )
     modulleistungWp = models.PositiveIntegerField(default=420)
     modulanzahl = models.PositiveIntegerField(
-        default=6, validators=[MinValueValidator(6)]
+        default=0, validators=[MinValueValidator(0)]
     )
     garantieWR = models.CharField(
         max_length=10, choices=GARANTIE_WR_CHOICES, default="keine"
@@ -247,11 +247,11 @@ class VertriebAngebot(TimeStampMixin):
         blank=True,
         null=True,
     )
-    modul_anzahl_ticket = models.PositiveIntegerField(default=0)
-    optimizer_ticket = models.PositiveIntegerField(default=0)
-    batteriemodule_ticket = models.PositiveIntegerField(default=0)
-    notstrom_ticket = models.PositiveIntegerField(default=0)
-    eddi_ticket = models.PositiveIntegerField(default=0)
+    modul_anzahl_ticket = models.IntegerField(default=0)
+    optimizer_ticket = models.IntegerField(default=0)
+    batteriemodule_ticket = models.IntegerField(default=0)
+    notstrom_ticket = models.IntegerField(default=0)
+    eddi_ticket = models.IntegerField(default=0)
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     angebot_id_assigned = models.BooleanField(default=False)
@@ -303,6 +303,7 @@ class VertriebAngebot(TimeStampMixin):
     ag_data = models.TextField(blank=True)
     Rest_liste = models.TextField(blank=True, null=True)
     Arbeits_liste = models.TextField(blank=True, null=True)
+    Full_ticket_preis = models.FloatField(default=0.00)
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -341,6 +342,7 @@ class VertriebAngebot(TimeStampMixin):
         self.ag_data = self.data
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
+        self.Full_ticket_preis = self.full_ticket_preis
 
         super().save(*args, **kwargs)
 
@@ -665,8 +667,9 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def modul_ticket_preis(self):
+        name = self.module_ticket
         return self.calculate_price(
-            ModulePreise, "Phono-Solar", int(self.modul_anzahl_ticket)
+            ModulePreise, name, int(self.modul_anzahl_ticket)
         )
 
     @property
@@ -832,12 +835,14 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def abzug(self):
-        res = (
-            self.kosten_pva
-            + self.rest_strom_preis
-            + self.stromgrundpreis_gesamt
-            - self.einsp_verg
-        )
+        res = 0.0
+        if self.kosten_pva and self.rest_strom_preis and self.stromgrundpreis_gesamt and self.einsp_verg:
+            res += (
+                self.kosten_pva
+                + self.rest_strom_preis
+                + self.stromgrundpreis_gesamt
+                - self.einsp_verg
+            )
         return round(res, 2)
 
     @property
