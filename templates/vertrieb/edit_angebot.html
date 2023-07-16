@@ -708,6 +708,7 @@
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
                                             <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
+                                            <p hidden>{{ form.zoho_kundennumer}}</p>
                                             
                                             <p class="mb-0 text-muted">
                                             {% if not vertrieb_angebot.termine_text %}
@@ -1565,6 +1566,7 @@
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
                                                 <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
+                                                <p hidden>{{ form.zoho_kundennumer}}</p>
                                                 <p></p>
                                             <p class="mb-0 text-muted">
                                             {% if not vertrieb_angebot.termine_text %}
@@ -1612,8 +1614,12 @@
                                         <div class="card-body">
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
                                             <div class="row">
-                                                <div class="col-sm-4">
-                                                    <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>                 <!-- form save-->     
+                                                <div class="col-sm-4">                 {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' %}
+                                                                                    <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
+                                                                                    <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
+                                                                                        {% else %}
+                                                    <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>                 <!-- form save--> 
+                                                                                        {% endif %}    
                                                     <script>
                                                         // Your existing getCookie function
                                                         function getCookie(name) {
