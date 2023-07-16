@@ -800,6 +800,7 @@ class VertriebAngebotForm(ModelForm):
         form = super(VertriebAngebotForm, self).save(commit=False)
 
         # Check if status is 'bekommen'
+        
         if form.status == "bekommen":
             try:
                 # Try to get the object from the database
@@ -825,7 +826,9 @@ class VertriebAngebotForm(ModelForm):
                 pass
 
             form.save()
-        
+        else:
+            form.status_change_field = None
+            
         if commit:
             form.save()
 
