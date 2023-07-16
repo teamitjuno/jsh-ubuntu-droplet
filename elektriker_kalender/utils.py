@@ -30,7 +30,6 @@ def create_instances(data_list, kurz):
                 data["Elektriktermin_am"], "%d-%b-%Y %H:%M:%S"
             )
             elektriker_calfield = int(data["Elektriker_calfield"])
-            pva_klein1_calfield = int(data["PVA_klein1_calfield"])
 
             calendar = ElectricCalendar(
                 calendar_id=generate_angebot_id(str(elektriktermin_am), kurz),
@@ -39,7 +38,7 @@ def create_instances(data_list, kurz):
                 anschluss_PVA=data["Anschluss_PVA"],
                 elektriker_calfield=elektriker_calfield,
                 kundenname=data["Kundenname"],
-                pva_klein1_calfield=pva_klein1_calfield,
+
                 privatkunde_adresse_pva=data["Privatkunde.Adresse_PVA"],
                 besonderheiten=data["Besonderheiten"],
                 elektriktermin_am=elektriktermin_am,

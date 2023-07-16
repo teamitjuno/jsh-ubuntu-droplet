@@ -38,7 +38,7 @@ from django.contrib import messages
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
-from .forms import VertriebAngebotUpdateKalkulationForm
+from .forms import UpdateVertriebAngebotTicketForm, VertriebAngebotUpdateKalkulationForm, UpdateAdminAngebotForm
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
     angebot_pdf_creator_user,
@@ -67,7 +67,11 @@ from io import BytesIO
 from django.db.models import Count
 from django.utils import timezone
 NAMES_CHOICES = ""
+from django.utils.formats import date_format
 
+now = timezone.now()
+now_localized = timezone.localtime(now)
+now_german = date_format(now_localized, 'DATETIME_FORMAT')
 
 load_dotenv(ENV_FILE)
 User = get_user_model()
@@ -212,8 +216,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     context_object_name = "vertrieb_angebot"
 
     def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")   
         if not request.user.is_authenticated:
             raise PermissionDenied()  # This will use your custom 403.html template
+        self.handle_status_change(angebot_id)
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
@@ -231,6 +237,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+    
+    def handle_status_change(self, angebot_id):        
+        for angebot in VertriebAngebot.objects.filter(angebot_id=angebot_id, status="bekommen"):
+            if angebot.status_change_field:
+                if (timezone.now() - angebot.status_change_field).total_seconds() >= 14*24*60*60:
+                    angebot.status = "abgelehnt"
+                    angebot.save()
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
@@ -240,15 +253,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
         data = fetch_current_user_angebot(request, zoho_id)
         for item in data:
-            vertrieb_angebot.status = item["status"] if item["status"] else ""
-            if (
-                vertrieb_angebot.status == "bekommen"
-                and not vertrieb_angebot.status_change_date
-            ):
-                current_datetime = datetime.datetime.now()
-                vertrieb_angebot.status_change_date = (
-                    f"{current_datetime.strftime('%d.%m.%Y')}"
-                )
+                
             vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
 
             vertrieb_angebot.angebot_bekommen_am = (
@@ -264,6 +269,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item["notizen"]
             vertrieb_angebot.email = item["email"]
+            
             vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
             vertrieb_angebot.termine_text = item["termine_text"]
             vertrieb_angebot.termine_id = item["termine_id"]
@@ -281,9 +287,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         relative_path_suffix = os.path.relpath(
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
-        print(vertrieb_angebot.Rest_liste, "RLISTE")
-        print(vertrieb_angebot.Arbeits_liste, "ARbLISTE")
+
         context = self.get_context_data()
+        countdown = vertrieb_angebot.countdown()
+        context["countdown"] = vertrieb_angebot.countdown()
         context["user"] = user
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
@@ -291,26 +298,44 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context["calc_image_suffix"] = relative_path_suffix
 
         return render(request, self.template_name, context)
-
     def post(self, request, *args, **kwargs):
-        vertrieb_angebot = self.get_object()
-        form = self.form_class(  # type: ignore
-            request.POST, instance=vertrieb_angebot, user=request.user  # type: ignore
+        vertrieb_angebot = get_object_or_404(
+            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
         )
+        user = request.user    
+        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user) #type: ignore
 
-        if form.is_valid():
-            if vertrieb_angebot.status == "bekommen":
-                vertrieb_angebot.is_locked = True
+        if "change_status_button" in request.POST:
+            if form.is_valid():
+                form.instance.status = "angenommen" #type:ignore
+                form.save() #type:ignore
+                return redirect(
+                    "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                )
+
+        elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
-            form.save()  # type: ignore
+
+            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
+            name = form.cleaned_data['name']
+            kundennumer = name_to_kundennumer[name]
+            vertrieb_angebot.zoho_kundennumer = kundennumer
+
+            form.save()  # type:ignore
             return redirect(
                 "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
             )
 
         return self.form_invalid(form, vertrieb_angebot)
 
-    def form_invalid(self, form, vertrieb_angebot):
+
+    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
         context = self.get_context_data()
+        countdown = vertrieb_angebot.countdown()
+        context["status_change_field"] = vertrieb_angebot.status_change_field
+        context["countdown"] = vertrieb_angebot.countdown()
+       
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
         print(form.errors)
@@ -363,6 +388,7 @@ def load_user_angebots(request):
         zoho_data = json.dumps(all_user_angebots_list)
         profile.zoho_data_text = zoho_data  # type: ignore
         profile.save()
+        print(all_user_angebots_list)
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         return JsonResponse({"status": "success"}, status=200)
     except Exception:
@@ -373,13 +399,10 @@ def load_user_angebots(request):
 
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = vertrieb_angebot.user
     data = vertrieb_angebot.data
 
     pdf_content = ticket_pdf_creator.createTicketPdf(
         data,
-        vertrieb_angebot,
-        user,
     )
     vertrieb_angebot.ticket_pdf = pdf_content
     vertrieb_angebot.save()
@@ -410,31 +433,6 @@ def create_angebot_pdf(request, angebot_id):
         "Content-Disposition"
     ] = f"inline; filename=Angebot_{vertrieb_angebot.angebot_id}.pdf"
     return response
-
-
-# def create_angebot_pdf_user(request, angebot_id):
-#     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-#     user = request.user
-#     data = vertrieb_angebot.data
-
-#     if vertrieb_angebot.angebot_pdf is None:
-#         pdf_content = angebot_pdf_creator_user.createOfferPdf(
-#             data,
-#             vertrieb_angebot,
-#             user,
-#         )
-#         # Assuming createOfferPdf() returns a bytes-like object.
-#         vertrieb_angebot.angebot_pdf = pdf_content
-#         vertrieb_angebot.save()
-
-#     response = FileResponse(
-#         io.BytesIO(vertrieb_angebot.angebot_pdf), content_type="application/pdf"
-#     )
-#     response[
-#         "Content-Disposition"
-#     ] = f"inline; filename=Angebot_{vertrieb_angebot.angebot_id}.pdf"
-#     return response
-
 
 @login_required
 def create_angebot_pdf_user(request, angebot_id):

@@ -56,7 +56,7 @@
             <div class="content">
                 <div class="container-fluid">     
                     {% if form.errors %}
-                    <div class="alert alert-danger">Please correct the following errors:
+                    <div class="alert alert-danger">Bitte korrigieren Sie die folgenden Fehler:
                         <ul>
                             {% for field in form %}
                                 {% if field.errors %}
@@ -70,9 +70,9 @@
                         <div class="col-7">
                             <div class="page-title-box">
                                 {% if user.role.name == "admin" %}
-                                <h4 class="page-title">Juno Solar Vertriebsportal : {{ user.role.name }}</h4>
+                                <h4 class="page-title">Angebotstool 2.0 : {{ user.role.name }}</h4>
                                 {% else %}
-                                <h4 class="page-title">Juno Solar Vertriebsportal</h4>
+                                <h4 class="page-title">Angebotstool 2.0</h4>
                                 {% endif %}
                             </div>
                         </div>
@@ -124,6 +124,15 @@
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
+                                                                        <tr hidden>
+                                                                            <th></th>
+                                                                            <td hidden>
+                                                                                <div class="custom-control custom-switch">
+                                                                                    <input type="checkbox" class="custom-control-input" id="switch10" {% if form.is_locked.value %}checked{% endif %} data-switch="success" name="{{ form.is_locked.html_name }}"/>
+                                                                                    <label class="custom-control-label" for="switch10" data-on-label="Yes" data-off-label="No"></label>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.anrede.label_tag }}</th>
                                                                             <td> {{ form.anrede }}</td>
@@ -530,9 +539,10 @@
                                                     {% if vertrieb_angebot.angebot_id_assigned %}
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-success p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
                                                             <div class="card-body">
-                                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Ticket PDF erstellen</a>
+                                                                
+                                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Ticket Erstellen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -647,9 +657,9 @@
                                                     {% if vertrieb_angebot.angebot_id_assigned %}
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-success p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
                                                             <div class="card-body">
-                                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Kalkulation PDF erstellen</a>
+                                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Kalkulation Erstellen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -667,13 +677,17 @@
                                     <div class="card widget-flat">
                                         <div class="card-body">
                                             <div class="float-end">
-                                                <i class="mdi mdi-receipt widget-icon"></i>
+                                                <i class="mdi mdi-file-document widget-icon"></i>
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id }}</h3>
+                                                <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
                                             {% else %}
                                                 <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
+                                            {% endif %}
+                                            {% if vertrieb_angebot.countdown %}
+                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
+                                            <p></p>
                                             {% endif %}
                                             <p class="mb-0 text-muted">
                                                 {% if not vertrieb_angebot.is_locked %}
@@ -693,7 +707,8 @@
                                                 <i class="mdi mdi-account widget-icon"></i>
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.zoho_kundennumer }}</h3>
+                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
+                                            
                                             <p class="mb-0 text-muted">
                                             {% if not vertrieb_angebot.termine_text %}
                                                 <span class="text-danger me-2"></i> Kein Termin</span>
@@ -710,9 +725,11 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
+                                            {% if vertrieb_angebot.status == 'bekommen' %} 
                                             <div class="float-end">
-                                                <i class="mdi mdi-list-status widget-icon"></i>
+                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
                                             </div>
+                                            {% endif %}
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
                                             <p></p>
                                             {% if not vertrieb_angebot.is_locked %}
@@ -720,13 +737,15 @@
                                                 <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
                                             {% else %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h5 class="text-muted fw-normal mt-0" title="Number of Orders"><input type="text" class="form-select" style="width: 300px;" name="{{ form.status.name }}" value="{{ form.status.value }}" readonly></h5>
+
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                                
                                             {% endif %}
-
-
                                             {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <p style="font-size: 14px; text-align: left; margin-top: 5x;">Angebotstatus Änderungsdatum:</p>
-                                            <p style="font-size: 14px; text-align: left; margin-top: 5x;">{{ vertrieb_angebot.status_change_date }}</p>
+                                            <p class="mb-0 text-muted">
+                                                    <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
+                                                    <span class="text-nowrap">Änderungsdatum</span>
+                                            </p>
                                             {% endif %}
                                         </div> <!-- end card-body-->
                                     </div> <!-- end card-->
@@ -734,14 +753,10 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-application-settings widget-icon"></i>
-                                            </div>
-
-                                            <p style="font-size: 16px; text-align: left; margin-top: 5px;">verfügbare Aktionen:</p>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</p>
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success">Speichern</button>                 <!-- form save-->     
+                                                <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>                 <!-- form save-->     
                                                 <script>
                                                     // Your existing getCookie function
                                                     function getCookie(name) {
@@ -775,28 +790,28 @@
                                                     </script>
                                                 </div>
                                                 <div class="col-sm-5">
-                                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info">PDF Files Liste</a>
+                                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info rounded-pill">PDF Files Liste</a>
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
                                                 {% if vertrieb_angebot.angebot_id_assigned %}
                                                     <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success">Kalkulation PDF erstellen</a>
+                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Kalkulation PDF erstellen</a>
                                                     </div>
                                                 {% else %}
                                                     <div class="col-sm-5">
-                                                        <button href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25" disabled>Kalkulation PDF erstellen</button>
+                                                        <button href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Kalkulation PDF erstellen</button>
                                                     </div>
 
                                                 {% endif %}
                                                 {% if vertrieb_angebot.is_locked %}
                                                     <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success">Angebot PDF erstellen</a>
+                                                        <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
                                                     </div>
                                                 {% else %}
                                                 <div class="col-sm-5">
-                                                    <button href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25" disabled>Angebot PDF erstellen</button>
+                                                    <button href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Angebot PDF erstellen</button>
                                                 </div>
                                                 {% endif %}
                                             </div>
@@ -906,6 +921,15 @@
                                                                 <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kunde Info</div>
                                                                 <div class="card-body">
                                                                     <table class="table table-sm table-hover">
+                                                                        <tr hidden>
+                                                                            <th></th>
+                                                                            <td hidden>
+                                                                                <div class="custom-control custom-switch">
+                                                                                    <input type="checkbox" class="custom-control-input" id="switch10" {% if form.is_locked.value %}checked{% endif %} data-switch="success" name="{{ form.is_locked.html_name }}"/>
+                                                                                    <label class="custom-control-label" for="switch10" data-on-label="Yes" data-off-label="No"></label>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.anrede.label_tag }}</th>
                                                                             <td><input type="text" class="form-control" name="{{ form.anrede.name }}" value="{{ form.anrede.value }}" readonly></td>
@@ -949,16 +973,7 @@
                                                                 <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Auftrag Info</div>
                                                                 <div class="card-body">
                                                                     <table class="table table-sm table-hover">
-                                                                        <tr>
-                                                                            <th>{{ form.status.label_tag }}</th>
-                                                                            <td><input type="text" class="form-control" name="{{ form.status.name }}" value="{{ form.status.value }}" readonly></td>
-                                                                        </tr>
-                                                                        {% if vertrieb_angebot.status == 'bekommen' %} 
-                                                                            <tr>
-                                                                                <th>Angebotstatus Änderungsdatum:</th>
-                                                                                <td>{{ vertrieb_angebot.status_change_date }}</td>
-                                                                            </tr>
-                                                                        {% endif %}
+                                                                        
                                                                         {% if vertrieb_angebot.status == 'abgelehnt' %} 
                                                                             <tr>
                                                                                 <th>{{ form.ablehnungs_grund.label_tag }}</th>
@@ -1311,91 +1326,91 @@
                                                 </div>
                                             </div>
                                                     <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
-                                            <div class="tab-pane" id="ticket" role="presentation">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
-                                                            <div class="card mb-3">
-                                                                <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
-                                                                <div class="card-body">
-                                                                    <table class="table table-sm table-hover">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <th>{{ form.solar_module.label_tag }}</th>
-                                                                                <td>{{ form.module_ticket }}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>{{ form.modul_anzahl_ticket.label_tag }}</th>
-                                                                                <td>{{ form.modul_anzahl_ticket }}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
+                                        <div class="tab-pane" id="ticket" role="presentation">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th>{{ form.solar_module.label_tag }}</th>
+                                                                            <td>{{ form.module_ticket }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.modul_anzahl_ticket.label_tag }}</th>
+                                                                            <td>{{ form.modul_anzahl_ticket }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-6">
-                                                            <div class="card mb-3">
-                                                                <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
-                                                                <div class="card-body">
-                                                                    <table class="table table-sm table-hover">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <th>{{ form.optimizer_ticket.label_tag }}</th>
-                                                                                <td>{{ form.optimizer_ticket }}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>{{ form.batteriemodule_ticket.label_tag }}</th>
-                                                                                <td>{{ form.batteriemodule_ticket }}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>{{ form.notstrom_ticket.label_tag }}</th>
-                                                                                <td>{{ form.notstrom_ticket }}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>{{ form.eddi_ticket.label_tag }}</th>
-                                                                                <td>{{ form.eddi_ticket }}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div> <!-- End of row -->
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
-                                                            <div class="card mb-3">
-                                                                <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
-                                                                <div class="card-body">
-                                                                    <table class="table table-sm table-hover">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <th>Gesamtticketpreis Netto</th>
-                                                                                <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Gesamtticketpreis Brutto</th>
-                                                                                <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <div class="col-lg-3">
-                                                                <div class="card mb-3">
-                                                                    <div class="card-header bg-success p-2 text-white bg-opacity-75 bg-gradient text-white">
-                                                                        Pdf-Erstellung verfügbar
-                                                                    </div>
-                                                                    <div class="card-body">
-                                                                        <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Ticket PDF erstellen</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
                                                     </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th>{{ form.optimizer_ticket.label_tag }}</th>
+                                                                            <td>{{ form.optimizer_ticket }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.batteriemodule_ticket.label_tag }}</th>
+                                                                            <td>{{ form.batteriemodule_ticket }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.notstrom_ticket.label_tag }}</th>
+                                                                            <td>{{ form.notstrom_ticket }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.eddi_ticket.label_tag }}</th>
+                                                                            <td>{{ form.eddi_ticket }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- End of row -->
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th>Gesamtticketpreis Netto</th>
+                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Gesamtticketpreis Brutto</th>
+                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% if vertrieb_angebot.angebot_id_assigned %}
+                                                    <div class="col-lg-3">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
+                                                            <div class="card-body">
+                                                                
+                                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Ticket Erstellen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
+                                            
+                                    </div>
                                             <div class="tab-pane" id="kalkulationen" role="tabpanel">
                                                 <div class="card-body">
                                                     <div class="row">
@@ -1499,9 +1514,9 @@
                                                         {% if vertrieb_angebot.angebot_id_assigned %}
                                                             <div class="col-lg-3">
                                                                 <div class="card mb-3">
-                                                                    <div class="card-header bg-success p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
+                                                                    <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
                                                                     <div class="card-body">
-                                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-info">Kalkulation PDF erstellen</a>
+                                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Kalkulation Erstellen</a>    
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1523,9 +1538,13 @@
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id }}</h3>
+                                                <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
                                             {% else %}
                                                 <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
+                                            {% endif %}
+                                            {% if vertrieb_angebot.countdown %}
+                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
+                                            <p></p>
                                             {% endif %}
                                             <p class="mb-0 text-muted">
                                                 {% if not vertrieb_angebot.is_locked %}
@@ -1545,7 +1564,8 @@
                                                 <i class="mdi mdi-account widget-icon"></i>
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.zoho_kundennumer }}</h3>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
+                                                <p></p>
                                             <p class="mb-0 text-muted">
                                             {% if not vertrieb_angebot.termine_text %}
                                                 <span class="text-danger me-2"></i> Kein Termin</span>
@@ -1562,37 +1582,38 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
+                                            {% if vertrieb_angebot.status == 'bekommen' %} 
                                             <div class="float-end">
-                                                <i class="mdi mdi-list-status widget-icon"></i>
+                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
                                             </div>
+                                            {% endif %}
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
                                             <p></p>
                                             {% if not vertrieb_angebot.is_locked %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
                                                 <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
                                             {% else %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h5 class="text-muted fw-normal mt-0" title="Number of Orders"><input type="text" class="form-select" style="width: 300px;" name="{{ form.status.name }}" value="{{ form.status.value }}" readonly></h5>
+                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                            <h5 hidden class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
+                                                <h4><input type="text" readonly class="form-control-plaintext h2" id="id_angebot_status" value="{{ form.status.value }}"></h4>                                                
                                             {% endif %}
-
-
                                             {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <p style="font-size: 14px; text-align: left; margin-top: 5x;">Angebotstatus Änderungsdatum:</p>
-                                            <p style="font-size: 14px; text-align: left; margin-top: 5x;">{{ vertrieb_angebot.status_change_date }}</p>
+                                                <p class="mb-0 text-muted">                                         
+                                                    <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
+                                                    <span class="text-nowrap">Änderungsdatum</span>
+                                                </p>
                                             {% endif %}
+                                            
                                         </div> <!-- end card-body-->
                                     </div> <!-- end card-->
                                 </div> <!-- end col-->
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-application-settings widget-icon"></i>
-                                            </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success">Speichern</button>                 <!-- form save-->     
+                                                    <!-- form save-->               <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>                 <!-- form save-->     
                                                     <script>
                                                         // Your existing getCookie function
                                                         function getCookie(name) {
@@ -1626,28 +1647,27 @@
                                                         </script>
                                                 </div>
                                                 <div class="col-sm-5">
-                                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info">PDF Files Liste</a>
+                                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info rounded-pill">PDF Files Liste</a>
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
-                                                {% if vertrieb_angebot.angebot_id_assigned %}
+                                                {% comment %} {% if vertrieb_angebot.angebot_id_assigned %}
                                                     <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success">Kalkulation PDF erstellen</a>
+                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Kalkulation PDF erstellen</a>
                                                     </div>
                                                 {% else %}
                                                     <div class="col-sm-5">
-                                                        <button href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25" disabled>Kalkulation PDF erstellen</button>
+                                                        <button href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Kalkulation PDF erstellen</button>
                                                     </div>
-
-                                                {% endif %}
+                                                {% endif %} {% endcomment %}
                                                 {% if vertrieb_angebot.is_locked %}
                                                     <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success">Angebot PDF erstellen</a>
+                                                        <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
                                                     </div>
                                                 {% else %}
                                                 <div class="col-sm-5">
-                                                    <button href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25" disabled>Angebot PDF erstellen</button>
+                                                    <button href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Angebot PDF erstellen</button>
                                                 </div>
                                                 {% endif %}
                                             </div>
@@ -1700,23 +1720,6 @@
 <script src="{% static 'js/vertrieb_interface.js' %}"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const leadstatus = document.getElementById('status');
-        const ablehnungs_grund = document.getElementById('ablehnungs_grund');
-
-        // Hide the ablehnungs_grund field by default
-        ablehnungs_grund.style.display = 'none';
-
-        leadstatus.addEventListener('change', function() {
-            if (this.value === 'abgelehnt') {
-                ablehnungs_grund.style.display = 'block';
-            } else {
-                ablehnungs_grund.style.display = 'none';
-            }
-        });
-    });
-</script>
 <script>
   function getCookie(name) {
       let cookieValue = null;
@@ -1772,6 +1775,7 @@ $(document).ready(function() {
             success: function(data) {
                 // Fill the form fields with data
                 $("#id_anrede").val(data.anrede);
+                $("#zoho_kundennumer").val(data.zoho_kundennumer);
                 $("#id_strasse").val(data.strasse);
                 $("#id_email").val(data.email);
                 $("#id_telefon_mobil").val(data.telefon_mobil);
@@ -1779,8 +1783,8 @@ $(document).ready(function() {
                 $("#id_ort").val(data.ort);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
                 $("#id_verbrauch").val(data.verbrauch);
-                $("#leadstatus").val(data.leadstatus);
-                $("#id_status").val(data.status)
+                
+                
                 
 
                 // ... and so on for the rest of your fields
@@ -1842,8 +1846,29 @@ $(document).ready(function() {
                             top: 8
                         }
                     },
+                    markers: {
+                        size: 5,
+                        strokeColors: undefined,
+                        strokeWidth: 2,
+                        strokeOpacity: 0.9,
+                        fillOpacity: 1,
+                        radius: 1,
+                        customHTML: undefined,
+                        onClick: undefined,
+                        offsetX: 0,
+                        offsetY: 0,
+                        
+                    },
                     dataLabels: {
-                        enabled: !1
+                        enabled: !1,
+                        formatter: undefined,
+                        textAnchor: 'middle',
+                        offsetX: 1,
+                        offsetY: 0,
+                        style: {
+                            fontSize: '22px', // Increase this value to increase the font size
+                            colors: undefined
+                        },
                     },
                     stroke: {
                         curve: "straight",
@@ -1851,7 +1876,11 @@ $(document).ready(function() {
                     },
                     series: [{
                         name: "ohne PVA",
-                        data: arbeitsListe
+                        data: arbeitsListe,
+                        style: {
+                            fontSize: '18px', // Increase this value to increase the font size
+                            
+                        },
                     }, {
                         name: "mit PVA",
                         data: restListe
@@ -1879,11 +1908,23 @@ $(document).ready(function() {
                         },
                         labels: {
                             formatter: function(t) {
-                                return t;
+                                return t.toFixed(2);
                             },
                             offsetX: -5
                         }
-                    }
+                    },
+                    legend: {
+                        show: true,
+                        labels: {
+                            colors: undefined,
+                            useSeriesColors: false,
+                            formatter: undefined,
+                            fontSize: '20px', // Increase this value for a larger font size
+                            fontFamily: undefined,
+                            cssClass: undefined,
+                        }
+                    },
+
                 };
             new ApexCharts(document.querySelector("#revenue-statistics-chart"), e).render()
         }, n.CrmManagement = new t, n.CrmManagement.Constructor = t

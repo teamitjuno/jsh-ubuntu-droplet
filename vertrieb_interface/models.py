@@ -15,11 +15,14 @@ import datetime
 from datetime import timedelta
 from math import ceil
 
-
+from django.utils import timezone
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
-
+from django.utils.formats import date_format
+import dateparser
+now = timezone.now()
+now_german = date_format(now, 'DATETIME_FORMAT')
 User = get_user_model()
 
 
@@ -102,6 +105,7 @@ class VertriebAngebot(TimeStampMixin):
     status = models.CharField(
         choices=ANGEBOT_STATUS_CHOICES, max_length=255, blank=True, null=True
     )
+    status_change_field = models.DateTimeField(null=True, blank=True)
     status_change_date = models.CharField(max_length=255, null=True, blank=True)
     telefon_festnetz = models.CharField(max_length=255, blank=True, null=True)
     telefon_mobil = models.CharField(max_length=255, blank=True, null=True)
@@ -304,6 +308,7 @@ class VertriebAngebot(TimeStampMixin):
     Rest_liste = models.TextField(blank=True, null=True)
     Arbeits_liste = models.TextField(blank=True, null=True)
     Full_ticket_preis = models.FloatField(default=0.00)
+    countdown_on = models.BooleanField(default=False)
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -357,6 +362,39 @@ class VertriebAngebot(TimeStampMixin):
 
     def get_absolute_url(self):
         return reverse("edit_angebot", args=[str(self.angebot_id)])
+
+    def assign_status_change_field(self):
+        self.status_change_field = timezone.now()
+
+    def countdown(self):
+        if self.status_change_field:
+            status_change_datetime = self.status_change_field
+
+
+            delta = timezone.now() - status_change_datetime
+             # get the difference in time
+
+        # Check that status_change_field is within the past 14 days
+            if delta.days < 0 or delta.days > 14:
+                return None
+
+            total_seconds = 14*24*60*60 - delta.total_seconds()  # convert the difference to seconds
+
+            # calculate days, hours, minutes
+            days, remaining_seconds = divmod(total_seconds, 60*60*24)
+            hours, remaining_seconds = divmod(remaining_seconds, 60*60)
+            minutes = remaining_seconds // 60
+
+            if total_seconds <= 0:
+                return "0 days, 0 hours, 0 minutes"
+
+            return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
+        else:
+            return None
+
+
+
+
 
     @property
     def google_maps_url(self):

@@ -51,7 +51,7 @@ class ElektrikerKalenderView(LoginRequiredMixin, View):
         user = request.user
         kurz = user.kuerzel
         create_instances(kalender_user_data, kurz)
-        return render(request, "elektriker_kalender_list.html")
+        return render(request, "invoices/elektriker_kalender.html")
         # return JsonResponse(
         #     {"status": "success", "elektriker_kaleder": kalender_user_data}
         # )
@@ -72,7 +72,7 @@ class ElektrikerCheckMixin(UserPassesTestMixin):
 
 class CalendarView(LoginRequiredMixin, DetailView):
     model = ElectricCalendar
-    template_name = "elektriker_kalender.html"
+    template_name = "invoices/elektriker_kalender.html"
     context_object_name = "elektriker_kalender"
 
     def get_object(self, queryset=None):
@@ -108,7 +108,7 @@ class CalendarView(LoginRequiredMixin, DetailView):
 
 class ViewCalendarList(ElektrikerCheckMixin, ListView):
     model = ElectricCalendar
-    template_name = "elektriker_kalender_list.html"
+    template_name = "invoices/elektriker_kalender_list.html"
     context_object_name = "elektriker_kalenders"
 
 

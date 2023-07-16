@@ -293,7 +293,7 @@ class PDF(FPDF):
             fill=True,
         )
         self.set_y(45)
-        sum = data["ticketPreis"]
+        sum = float(data["ticketPreis"])
         brutto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
@@ -370,9 +370,8 @@ class PDF(FPDF):
         )
 
 
-def createTicketPdf(data, vertrieb_angebot, user):
-    print("TICKET", data)
-
+def createTicketPdf(data):
+    
     global title, pages
     title = f"Kalkulation-{data['kunde']}"
 

@@ -67,6 +67,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Angebot ID</th>
+                                                        <th>Status</th>
                                                         <th>Kunde</th>
                                                         <th>Datum</th>
                                                         <th>Zugriff</th>
@@ -83,6 +84,7 @@
                                                                  {% endif %}
                                                                 </td>
                                                             </td>
+                                                            <td>{{ angebot.status }}</td>
                                                             <td>{{ angebot.name }}</td>
                                                             <td>{{ angebot.current_date }}</td>
                                                             

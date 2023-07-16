@@ -9,10 +9,13 @@ import decimal
 import ast
 from dotenv import load_dotenv, get_key
 from django.utils import timezone
-from django.utils import timezone
 import json
 from django.contrib.auth import get_user_model
+from django.utils.formats import date_format
 
+now = timezone.now()
+now_localized = timezone.localtime(now)
+now_german = date_format(now_localized, 'DATETIME_FORMAT')
 load_dotenv(ENV_FILE)
 
 User = get_user_model()
@@ -35,6 +38,8 @@ ANGEBOT_STATUS_CHOICES = [
     ("Kontaktversuch", "Kontaktversuch"),
     ("abgelehnt", "abgelehnt"),
     ("abgelaufen", "abgelaufen"),
+    ("on Hold", "on Hold"),
+    ("storniert", "storniert"),
 ]
 ANREDE_CHOICES = (
     ("Familie", "Familie"),
@@ -177,14 +182,25 @@ def validate_empty(value):
 
 
 class VertriebAngebotForm(ModelForm):
+    is_locked = forms.BooleanField(
+        
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "is_locked",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     status = forms.ChoiceField(
         label="Angebotstatus",
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
-                "id": "id_status",
-                "style": "max-width: 200px",
+                "id": "id_angebot_status",
+                "style": "max-width: 400px",
             }
         ),
         required=False,
@@ -197,6 +213,18 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Angebotstatus Änderungsdatum:",
                 "id": "status_change_date",
+            }
+        ),
+    )
+
+    zoho_kundennumer = forms.CharField(
+        label="Kundennumer",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Kundennumer",
+                "id": "zoho_kundennumer",
             }
         ),
     )
@@ -497,7 +525,7 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "rows": 6,
                 "class": "form-control",
-                "style": "height: 150px",
+                
                 "style": "max-width: 800px",
                 "id": "notizen",
             }
@@ -702,8 +730,10 @@ class VertriebAngebotForm(ModelForm):
             "adresse_pva_display_value",
             "vertriebler_id",
             "notizen",
+            "zoho_kundennumer",
             "angebot_bekommen_am",
             "status_change_date",
+            "status_change_field",
             "ablehnungs_grund",
             "name",
             "firma",
@@ -743,12 +773,16 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
+        # Save the initial status so we can check if it's changed in the save method
         profile = User.objects.get(zoho_id=user.zoho_id)
 
         data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])
         self.fields["name"].choices = name_list
+        name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
+
+
 
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
         self.fields["indiv_price_included"].widget.attrs.update(
@@ -764,19 +798,59 @@ class VertriebAngebotForm(ModelForm):
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
-        # Check if status is 'bekommen' and status_change_date is empty
-        if form.status == "bekommen" and not form.status_change_date:
-            # Set status_change_date to the current date
-            form.status_change_date = timezone.now().date().isoformat()
+
+        # Check if status is 'bekommen'
+        if form.status == "bekommen":
+            try:
+                # Try to get the object from the database
+                db_object = VertriebAngebot.objects.get(angebot_id=form.angebot_id)
+                db_countdown_on = db_object.countdown_on
+                if db_countdown_on == False:
+                    form.status = "bekommen"
+                    form.is_locked = True
+                    form.status_change_field = now_localized
+                    form.status_change_date = timezone.now().date().isoformat()
+                    db_object.countdown_on = True
+
+                    db_object.save()
+                
+                if db_countdown_on == True:
+                    form.status_change_date = db_object.status_change_date
+                    form.status_change_field = db_object.status_change_field
+
+                    
+                        
+
+            except VertriebAngebot.DoesNotExist:
+                pass
+
+            form.save()
+        
         if commit:
             form.save()
+
         return form
 
     def clean(self):
         cleaned_data = super().clean()
+        verbrauch = cleaned_data.get("verbrauch")
+        if not verbrauch:
+            self.add_error(
+                    "verbrauch",
+                    ValidationError(
+                        (
+                            "Dieses Feld kann nicht leer sein"
+                        ),
+                        params={
+                            "verbrauch": verbrauch,
+                            
+                        },
+                    ),
+                )
 
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
+        
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
                 self.add_error(
@@ -877,3 +951,98 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         model = VertriebAngebot
         fields = ["is_locked"]  # Add other fields as needed
 
+
+class UpdateVertriebAngebotTicketForm(forms.ModelForm):
+    module_ticket = forms.ChoiceField(
+        label="Zusätzlich & Abzüge: Module",
+        choices=[
+            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
+            (
+                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+            ),
+        ],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "id": "module_ticket"}),
+    )
+
+    modul_anzahl_ticket = forms.IntegerField(
+        label="Module Ticket-Anzahl",
+        initial=0,
+        required=False,
+        validators=[validate_solar_module_ticket_anzahl],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
+        ),
+    )
+    optimizer_ticket = forms.IntegerField(
+        label="Optimizer Ticket-Anzahl",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "optimizer_ticket"}
+        ),
+    )
+    batteriemodule_ticket = forms.IntegerField(
+        label="Batteriemodule Ticket-Anzahl",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "batteriemodule_ticket"}
+        ),
+    )
+    notstrom_ticket = forms.IntegerField(
+        label="Notstrom Ticket-Anzahl",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "notstrom_ticket"}
+        ),
+    )
+    eddi_ticket = forms.IntegerField(
+        label="Eddi Ticket-Anzahl",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
+    )
+    class Meta:
+        model = VertriebAngebot
+        fields = [
+            "is_locked",
+            "module_ticket",
+            "modul_anzahl_ticket",
+            "optimizer_ticket",
+            "batteriemodule_ticket",
+            "notstrom_ticket",
+            "eddi_ticket",
+        ]
+    
+    def __init__(self, *args, user, **kwargs):
+        super(UpdateVertriebAngebotTicketForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        form = super(UpdateVertriebAngebotTicketForm, self).save(commit=False)
+        if commit:
+            form.save()
+        return form
+    
+
+    def clean(self):
+        cleaned_data = super().clean()
+        modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
+        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4 :
+            self.add_error(
+                    "modul_anzahl_ticket",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Ticket kann nicht mehr als 4 sein"
+                        ),
+                        params={
+                            "modul_anzahl_ticket": modul_anzahl_ticket,
+                        },
+                    ),
+                )

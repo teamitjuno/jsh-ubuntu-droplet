@@ -129,6 +129,7 @@ class Command(BaseCommand):
 
                 # Check if a User with the provided zoho_id exists
                 user_exists = User.objects.filter(zoho_id=zoho_id).exists()
+                
 
                 # If the User does not exist, create a new User
                 if not user_exists:

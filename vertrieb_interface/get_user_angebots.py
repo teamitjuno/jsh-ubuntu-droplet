@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from dotenv import load_dotenv, find_dotenv, set_key
-from config.settings import ENV_FILE
+from config.settings import ENV_FILE, ZOHO_ACCESS_TOKEN, ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN
 from vertrieb_interface.models import VertriebAngebot
 
 # Global constants
@@ -18,8 +18,6 @@ LIMIT_CURRENT = 10
 MAX_RETRIES = 5
 SLEEP_TIME = 1
 
-load_dotenv(ENV_FILE)
-
 
 class APIException(Exception):
     pass
@@ -34,14 +32,16 @@ class RateLimitExceededException(APIException):
 
 
 def get_headers():
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+    access_token = ZOHO_ACCESS_TOKEN
+    if not access_token:
+        access_token = refresh_access_token()
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
 
 def refresh_access_token():
-    client_id = os.getenv("ZOHO_CLIENT_ID")
-    client_secret = os.getenv("ZOHO_CLIENT_SECRET")
-    refresh_token = os.getenv("ZOHO_REFRESH_TOKEN")
+    client_id = ZOHO_CLIENT_ID
+    client_secret = ZOHO_CLIENT_SECRET
+    refresh_token = ZOHO_REFRESH_TOKEN
 
     url = f"{ACCESS_TOKEN_URL}?refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token"
     response = requests.post(url)
@@ -49,6 +49,7 @@ def refresh_access_token():
         raise APIException(f"Error refreshing token: {response.status_code}")
 
     data = response.json()
+    print(data)
     new_access_token = data.get("access_token")
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
@@ -73,10 +74,10 @@ def handle_response(response, headers, params):
 
 def fetch_all_user_angebots(request):
     user = request.user
-    load_dotenv(ENV_FILE)
     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-
-    headers = get_headers()
+    if not access_token:
+        access_token = refresh_access_token()
+    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
     start_index = 1
     all_user_angebots_list = []
@@ -94,7 +95,7 @@ def fetch_all_user_angebots(request):
             "vertrieb_interface/json_tests/all_vertriebler_angebot.json", "w"
         ) as f:
             json.dump(json_data, f)
-
+        print(response)
         data = handle_response(response, headers, params)
 
         if data:
@@ -116,7 +117,6 @@ def fetch_all_user_angebots(request):
 
 
 def fetch_current_user_angebot(request, zoho_id):
-    load_dotenv(ENV_FILE)
     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
 
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1/{zoho_id}"
@@ -151,7 +151,6 @@ def fetch_current_user_angebot(request, zoho_id):
             ausrichtung = data_dict.get("Dachausrichtung")
             email = data_dict.get("Email")
             angebot_bekommen_am = data_dict.get("Angebot_bekommen_am")
-            status = data_dict.get("Status")
             verbrauch = data_dict.get("Stromverbrauch_pro_Jahr")
             leadstatus = data_dict.get("Leadstatus")
             anfrage_berr = data_dict.get("Anfrage_ber")
@@ -166,7 +165,7 @@ def fetch_current_user_angebot(request, zoho_id):
                             "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
                             "verbrauch": verbrauch if verbrauch else 0.0,
                             "notizen": notizen if notizen else "",
-                            "status": status if status else "",
+                            
                             "anfrage_berr": anfrage_berr if anfrage_berr else "",
                             "angebot_bekommen_am": angebot_bekommen_am
                             if angebot_bekommen_am
@@ -185,7 +184,6 @@ def fetch_current_user_angebot(request, zoho_id):
                         {
                             "ausrichtung": 0,
                             "email": email if email else "",
-                            "status": status,
                             "angebot_bekommen_am": angebot_bekommen_am,
                             "anfrage_berr": anfrage_berr,
                             "verbrauch": verbrauch if verbrauch else 0.0,
