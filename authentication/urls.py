@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.urls import path
 from django.conf.urls.static import static
-
+from django.urls import path, re_path
+from django.views import defaults as default_views
 from authentication.api import LoginView, LogoutView
 from invoices.views import home
 from authentication.views import (
@@ -19,6 +20,23 @@ urlpatterns = [
     path("", home, name="home"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
+] + [
+    re_path(
+        r"^400/$",
+        default_views.bad_request,
+        kwargs={"exception": Exception("Bad Request!")},
+    ),
+    re_path(
+        r"^403/$",
+        default_views.permission_denied,
+        kwargs={"exception": Exception("Permission Denied")},
+    ),
+    re_path(
+        r"^404/$",
+        default_views.page_not_found,
+        kwargs={"exception": Exception("Page not Found")},
+    ),
+    re_path(r"^500/$", default_views.server_error),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
