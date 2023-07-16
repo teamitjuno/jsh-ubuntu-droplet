@@ -348,6 +348,7 @@ class VertriebAngebot(TimeStampMixin):
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
+        
 
         super().save(*args, **kwargs)
 
@@ -363,8 +364,10 @@ class VertriebAngebot(TimeStampMixin):
     def get_absolute_url(self):
         return reverse("edit_angebot", args=[str(self.angebot_id)])
 
+    @property
     def assign_status_change_field(self):
-        self.status_change_field = timezone.now()
+        status_change_field = timezone.localtime(timezone.now())
+        return status_change_field
 
     def countdown(self):
         if self.status_change_field:

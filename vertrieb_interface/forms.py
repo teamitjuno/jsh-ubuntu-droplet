@@ -809,16 +809,19 @@ class VertriebAngebotForm(ModelForm):
                 if db_countdown_on == False:
                     form.status = "bekommen"
                     form.is_locked = True
+                    now = timezone.now()
+                    now_localized = timezone.localtime(now)
                     form.status_change_field = now_localized
                     form.status_change_date = timezone.now().date().isoformat()
                     db_object.countdown_on = True
 
                     db_object.save()
+                    form.save()
                 
                 if db_countdown_on == True:
                     form.status_change_date = db_object.status_change_date
                     form.status_change_field = db_object.status_change_field
-
+                    form.save()
                     
                         
 
@@ -827,8 +830,10 @@ class VertriebAngebotForm(ModelForm):
 
             form.save()
         else:
+            form.status_change_date = None 
             form.status_change_field = None
-            
+            form.save()
+
         if commit:
             form.save()
 
