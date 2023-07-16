@@ -98,7 +98,7 @@ def home(request):
 
     # Annotate each user with the count of their VertriebAngebot's for this month and
     # limit the query to the top 5 users.
-    users = User.objects.annotate(
+    users = User.objects.filter(beruf="Vertrieb").annotate(
         num_vertriebangebots=Count(
             'vertriebangebot',
             filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__current_date__month=month, vertriebangebot__angebot_id_assigned=True)
