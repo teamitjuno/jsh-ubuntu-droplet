@@ -242,7 +242,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         for angebot in VertriebAngebot.objects.filter(angebot_id=angebot_id, status="bekommen"):
             if angebot.status_change_field:
                 if (timezone.now() - angebot.status_change_field).total_seconds() >= 14*24*60*60:
-                    angebot.status = "abgelehnt"
+                    angebot.status = "abgelaufen"
                     angebot.save()
 
     def get(self, request, angebot_id, *args, **kwargs):
