@@ -42,7 +42,7 @@ def get_price(model, name):
 # Model properties
 MODULE_NAME_MAP = {
     "Phono Solar PS420M7GFH-18/VNH": "Phono Solar PS420M7GFH-18/VNH",
-    "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+    "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
 }
 ACCESSORY_NAME = "leistungsmodul"
 BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
@@ -206,8 +206,8 @@ class VertriebAngebot(TimeStampMixin):
         choices=[
             ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
             (
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
             ),
         ],
         default="Phono Solar PS420M7GFH-18/VNH",
@@ -244,8 +244,8 @@ class VertriebAngebot(TimeStampMixin):
         choices=[
             ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
             (
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
             ),
         ],
         blank=True,
@@ -493,7 +493,7 @@ class VertriebAngebot(TimeStampMixin):
     def get_leistungsgarantie(self):
         if str(self.solar_module) == "Phono Solar PS420M7GFH-18/VNH":
             return "30 Jahre"
-        elif str(self.solar_module) == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B":
+        elif str(self.solar_module) == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B":
             return "0,4 % Jährliche Degradation"
 
     @property

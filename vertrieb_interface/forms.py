@@ -598,8 +598,8 @@ class VertriebAngebotForm(ModelForm):
         choices=[
             ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
             (
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
             ),
         ],
         widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
@@ -664,8 +664,8 @@ class VertriebAngebotForm(ModelForm):
         choices=[
             ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
             (
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
             ),
         ],
         required=False,
@@ -966,8 +966,8 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         choices=[
             ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
             (
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
             ),
         ],
         required=False,
