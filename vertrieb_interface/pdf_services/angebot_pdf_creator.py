@@ -715,7 +715,7 @@ class PDF(FPDF):
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
                 y += 15
-            if data["optimierer"] > 0:
+            if data["anzOptimierer"] > 0:
                 # Tabelle Eintrag Optimierer
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.set_y(y)
@@ -730,7 +730,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, str(data["optimierer"]), 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, str(data["anzOptimierer"]), 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
@@ -902,7 +902,7 @@ class PDF(FPDF):
             y += 15
         else:
             y_tmp += 15
-        if data["optimierer"] > 0:
+        if data["anzOptimierer"] > 0:
             # self.line(10, y + 3, 200, y + 3)
             # self.line(25, y + 7.5, 83, y + 7.5)
             # Tabelle Eintrag Optimierer
