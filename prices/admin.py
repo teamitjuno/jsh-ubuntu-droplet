@@ -4,6 +4,7 @@ from prices.models import (
     ModuleGarantiePreise,
     ModulePreise,
     WallBoxPreise,
+    SolarModulePreise,
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
     Prices,
@@ -49,6 +50,17 @@ class ModulePreisAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
     inlines = [PricesInline]
+
+@admin.register(SolarModulePreise)
+class SolarModulePreisAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "price",
+        "actual_price",
+        "old_price",
+        "in_stock",
+    )
+    search_fields = ("name",)
 
 
 @admin.register(WallBoxPreise)
