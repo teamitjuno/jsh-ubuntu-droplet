@@ -65,7 +65,7 @@ class SolarModulePreise(models.Model):
 
     @staticmethod
     def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
-        new_position = ModulePreise.objects.create(
+        new_position = SolarModulePreise.objects.create(
             name=name, price=price, actual_price=actual_price, old_price=old_price
         )
         new_position.save()
