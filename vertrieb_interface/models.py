@@ -8,6 +8,7 @@ from prices.models import (
     ModulePreise,
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
+    SolarModulePreise,
     WallBoxPreise,
 )
 from django.contrib.auth import get_user_model
@@ -203,13 +204,6 @@ class VertriebAngebot(TimeStampMixin):
     ]
     solar_module = models.CharField(
         max_length=100,
-        choices=[
-            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
-            (
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-            ),
-        ],
         default="Phono Solar PS420M7GFH-18/VNH",
     )
     modulleistungWp = models.PositiveIntegerField(default=420)
@@ -226,12 +220,6 @@ class VertriebAngebot(TimeStampMixin):
 
     wallboxtyp = models.CharField(
         max_length=100,
-        choices=[
-            ("Pulsar Plus", "Pulsar Plus"),
-            ("Pulsar Plus inkl. Power Boost", "Pulsar Plus inkl. Power Boost"),
-            ("Commander 2", "Commander 2"),
-            ("Commander 2 Inkl. Power Boost", "Commander 2 Inkl. Power Boost"),
-        ],
         blank=True,
         null=True,
     )
@@ -241,13 +229,6 @@ class VertriebAngebot(TimeStampMixin):
 
     module_ticket = models.CharField(
         max_length=100,
-        choices=[
-            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
-            (
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-            ),
-        ],
         blank=True,
         null=True,
     )
@@ -314,7 +295,7 @@ class VertriebAngebot(TimeStampMixin):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
 
     def get_module_preis(self, name):
-        return float(ModulePreise.objects.get(name=name).price)
+        return float(SolarModulePreise.objects.get(name=name).price)
 
     def get_module_garantie_preis(self, name):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
@@ -323,11 +304,7 @@ class VertriebAngebot(TimeStampMixin):
         if not self.pk:
             self.angebot_id = self.generate_angebot_id()
 
-        self.solar_module_angebot_price = (
-            self.solar_module_gesamt_preis
-            if self.solar_module_gesamt_preis is not None
-            else 0.00
-        )
+
 
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -495,6 +472,9 @@ class VertriebAngebot(TimeStampMixin):
             return "30 Jahre"
         elif str(self.solar_module) == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B":
             return "0,4 % Jährliche Degradation"
+        else:
+            return "0,4 % Jährliche Degradation"
+        
 
     @property
     def get_komplexity(self):
@@ -529,7 +509,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @staticmethod
     def get_module_prices():
-        return {obj.name: obj.price for obj in ModulePreise.objects.all()}
+        return {obj.name: obj.price for obj in SolarModulePreise.objects.all()}
 
     def calculate_price(self, model, name, multiplier):
         try:
@@ -547,16 +527,13 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def solar_module_gesamt_preis(self):
         module_prices = self.get_module_prices()
-        module_name = MODULE_NAME_MAP.get(
-            self.solar_module, "Phono Solar PS420M7GFH-18/VNH"
-        )  # Add default value
-        if module_name in module_prices:
+        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        try:
             return float(module_prices[module_name]) * int(self.modulanzahl)
-        else:
-            if self.modulanzahl and module_name:
-                return float(module_prices[module_name]) * int(self.modulanzahl)
-            else:
-                return 0.00
+        except KeyError:
+            # handle the error, maybe return a default value or raise a more descriptive error
+            return 0.0
+
 
     @property
     def batteriespeicher_preis(self):
@@ -579,7 +556,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def modulsumme(self):
         values = self.get_values()
-        module_name = MODULE_NAME_MAP.get(self.solar_module)
+        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
         if module_name and (value := values.get(module_name + "_leistung")):
             return int(value * int(self.modulanzahl)) / 1000
         else:
@@ -588,9 +565,8 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def get_zuschlag(self):
         values = self.get_values()
-        module_name = MODULE_NAME_MAP.get(
-            self.solar_module, ""
-        ).lower()  # Add default value
+        module_name = self.solar_module.lower() if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH").lower()
+        print(module_name)
         return values.get(
             module_name, "Phono Solar PS420M7GFH-18/VNH"
         )  # Add default value
@@ -710,7 +686,7 @@ class VertriebAngebot(TimeStampMixin):
     def modul_ticket_preis(self):
         name = self.module_ticket
         return self.calculate_price(
-            ModulePreise, name, int(self.modul_anzahl_ticket)
+            SolarModulePreise, name, int(self.modul_anzahl_ticket)
         )
 
     @property
@@ -818,6 +794,7 @@ class VertriebAngebot(TimeStampMixin):
     def angebots_summe(self):
         def get_price(prefix, kw):
             name = prefix + str(kw)
+            print(name)
 
             return float(ModulePreise.objects.get(name=name).price)
 
@@ -831,6 +808,7 @@ class VertriebAngebot(TimeStampMixin):
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
+        print(ranges)
 
         angebotsSumme = sum(
             (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)

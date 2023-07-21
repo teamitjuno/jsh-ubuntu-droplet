@@ -322,7 +322,7 @@
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch03" data-on-label="Yes" data-off-label="No"></label>
+                                                                                <label class="custom-control-label" for="switch03" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -332,10 +332,11 @@
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch04" data-on-label="Yes" data-off-label="No"></label>
+                                                                                <label class="custom-control-label" for="switch04" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    
                                                                     
                                                                     <tr>
                                                                         <th>{{ form.anzOptimizer.label_tag }}</th>
@@ -1140,6 +1141,7 @@
                                                                             <td><input type="text" id="garantieWR" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
                                                                             {% endif %}
                                                                         </tr>
+                                                                        
                                                                         <tr>
                                                                             <th>{{ form.eddi.label_tag }}</th>
                                                                             {% if user.role.name == "admin" %}

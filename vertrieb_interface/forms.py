@@ -1,8 +1,10 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelChoiceField, ModelForm
 from matplotlib import widgets
 from config.settings import ENV_FILE
 import ast
+
+from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot
 from django.core.exceptions import ValidationError
 import decimal
@@ -19,7 +21,10 @@ now_german = date_format(now_localized, 'DATETIME_FORMAT')
 load_dotenv(ENV_FILE)
 
 User = get_user_model()
-
+class ModulePreiseChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.name}" #type: ignore
+    
 VERTRIEB_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Elektrikkalender"
 ACCESS_TOKEN_URL = "https://accounts.zoho.eu/oauth/v2/token"
@@ -181,6 +186,7 @@ def validate_empty(value):
         )
 
 
+    
 class VertriebAngebotForm(ModelForm):
     is_locked = forms.BooleanField(
         
@@ -544,12 +550,6 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     wallboxtyp = forms.ChoiceField(
-        choices=[
-            ("Pulsar Plus", "Pulsar Plus"),
-            ("Pulsar Plus inkl. Power Boost", "Pulsar Plus inkl. Power Boost"),
-            ("Commander 2", "Commander 2"),
-            ("Commander 2 Inkl. Power Boost", "Commander 2 Inkl. Power Boost"),
-        ],
         required=False,
         widget=forms.Select(
             attrs={
@@ -569,7 +569,6 @@ class VertriebAngebotForm(ModelForm):
                 "id": "wallbox_anzahl",
                 "data-toggle": "touchspin",
                 "value": "0",
-                "type": "text",
                 "style": "max-width: 300px",
             }
         ),
@@ -584,7 +583,6 @@ class VertriebAngebotForm(ModelForm):
                 "id": "kabelanschluss",
                 "data-toggle": "touchspin",
                 "value": "10.0",
-                "type": "text",
                 "data-step": "0.1",
                 "data-decimals": "2",
                 "data-bts-postfix": "m",
@@ -595,15 +593,8 @@ class VertriebAngebotForm(ModelForm):
 
     solar_module = forms.ChoiceField(
         label="Solar Module",
-        choices=[
-            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
-            (
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-            ),
-        ],
         widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
-    )
+        )
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
         initial=0,
@@ -614,7 +605,6 @@ class VertriebAngebotForm(ModelForm):
                 "id": "modulanzahl",
                 "data-toggle": "touchspin",
                 "value": "0",
-                "type": "text",
             }
         ),
     )
@@ -760,6 +750,7 @@ class VertriebAngebotForm(ModelForm):
             "garantieWR",
             "eddi",
             "notstrom",
+
             "anzOptimizer",
             "indiv_price_included",
             "indiv_price",
@@ -775,7 +766,9 @@ class VertriebAngebotForm(ModelForm):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
         # Save the initial status so we can check if it's changed in the save method
         profile = User.objects.get(zoho_id=user.zoho_id)
-
+        self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
+        self.fields['module_ticket'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
+        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.all()]
         data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])
@@ -788,7 +781,8 @@ class VertriebAngebotForm(ModelForm):
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )
-        self.fields["indiv_price"].widget.attrs.update({"id": "indiv_price"})
+        self.fields["email"].widget.attrs.update({"id": "id_email"})
+        
 
         for field in self.fields:
             if self.initial.get(field):
