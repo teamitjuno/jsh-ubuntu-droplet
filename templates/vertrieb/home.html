@@ -508,7 +508,7 @@
                         
 
 
-                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 290px;"> 
+                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 390px;"> 
                                 <div class="timeline-alt py-0">
                                     <div class="timeline-item">
                                         <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
@@ -621,7 +621,7 @@
                                 </div>
                             </div>
                     
-                            <div class="card-body pt-2">
+                            <div class="card-body pt-2" >
                                 {% for user in users %}
                                 <div class="d-flex align-items-start mt-3">
                                     {% if user.avatar %}
@@ -737,6 +737,38 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-xl-3 col-lg-6 order-lg-2 order-xl-1">
+                            <div class="card">
+                                <div class="d-flex card-header justify-content-between align-items-center">
+                                    <h4 class="header-title">Anzahl der verkauften Solarmodule </h4>
+                                    
+                                </div>
+
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-centered table-nowrap table-hover mb-0">
+                                            <tbody>
+                                                {% for stat in solar_module_stats %}
+                                                <tr>
+                                                    <td>
+                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.solar_module }}</h5>
+                                                        <span class="text-muted font-13">Solarmodule Model</span>
+                                                    </td>
+                                                    <td>
+                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.total_modulanzahl }}</h5>
+                                                        <span class="text-muted font-13">Menge</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div> <!-- end table-responsive-->
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </div> <!-- end col-->
+
+
                     </div>
             
         

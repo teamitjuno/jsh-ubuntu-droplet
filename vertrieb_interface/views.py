@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db.models.functions import Cast
-from django.db.models import IntegerField, Q
+from django.db.models import IntegerField, Q, Sum
 from django.views.defaults import page_not_found
 from django.core.files.base import ContentFile
 
@@ -117,6 +117,14 @@ def home(request):
     ).count()
     vertriebangebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned = True)
 
+    solar_module_stats = VertriebAngebot.objects.filter(
+        user=request.user,
+        angebot_id_assigned=True,
+        status="angenommen",
+    ).values('solar_module').annotate(
+        total_modulanzahl=Sum('modulanzahl')
+    ).order_by('solar_module')
+
     angenommen_count = vertriebangebots.filter(status="angenommen").count()
     bekommen_count = vertriebangebots.filter(status="bekommen").count()
     in_kontakt_count = vertriebangebots.filter(status="in Kontakt").count()
@@ -139,6 +147,7 @@ def home(request):
         "abgelaufen": abgelaufen_count,     
         "on Hold": on_hold_count,
         "storniert": storniert_count,
+        "solar_module_stats": solar_module_stats,
     }
     return render(request, 'vertrieb/home.html', context)
 
