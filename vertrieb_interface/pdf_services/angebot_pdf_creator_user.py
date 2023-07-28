@@ -882,7 +882,7 @@ class PDF(FPDF):
             self.cell(0, 6, "inklusive", 0, 0, "R")
             y += 15
         else:
-            y_tmp += 15
+            y += 15
         # Optionales Zubehör zur Anlagenoptimierung
         self.add_page()
         y = 30

@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from django.shortcuts import render, redirect
 from authentication.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
-
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
 
 def handler500(request):
     return render(request, "500.html", status=500)
@@ -32,6 +33,8 @@ class ElektrikerCheckMixin(UserPassesTestMixin):
         return elektriker_check(self.request.user)  # type: ignore
 
 
+
+@method_decorator(csrf_protect, name='dispatch')
 class LoginView(APIView):
     def get(self, request):
         return render(request, "pages-login.html")
