@@ -2,10 +2,12 @@ import os
 import io
 import json
 import datetime
-
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from django.contrib.contenttypes.models import ContentType
 from urllib.parse import unquote
 from dotenv import load_dotenv
-
+from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
@@ -35,7 +37,7 @@ from vertrieb_interface.get_user_angebots import (
 )
 from django.contrib import messages
 
-from vertrieb_interface.models import VertriebAngebot
+from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
 from .forms import UpdateVertriebAngebotTicketForm, VertriebAngebotUpdateKalkulationForm, UpdateAdminAngebotForm
@@ -95,7 +97,6 @@ def home(request):
     now = timezone.now()
     month = now.month
     year = now.year
-
     # Annotate each user with the count of their VertriebAngebot's for this month and
     # limit the query to the top 5 users.
     users = User.objects.filter(beruf="Vertrieb").annotate(
@@ -134,6 +135,48 @@ def home(request):
     on_hold_count = vertriebangebots.filter(status="on Hold").count()
     storniert_count = vertriebangebots.filter(status="storniert").count()
 
+    recent_activities = CustomLogEntry.objects.filter(
+        user_id=request.user.id
+    ).select_related('content_type', 'user').order_by('-action_time')[:15] 
+
+    # Prepare the recent activities for the context 
+    activities = []
+    for entry in recent_activities:
+        vertrieb_angebot = entry.get_vertrieb_angebot()
+        status = vertrieb_angebot.status if vertrieb_angebot else "noch nicht zugeordnet"
+        activity = {
+            'action_time': entry.action_time,
+            'module': entry.content_type.model_class()._meta.verbose_name_plural,
+            'action': {
+                'message': entry.get_change_message(),
+                'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
+                'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
+                'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
+                'text-primary' if entry.action_flag == ADDITION
+                        else 'text-info' if entry.action_flag == CHANGE
+                        else 'text-danger',  
+            },
+            'user': entry.user,
+            'object': {
+                'repr': entry.object_repr,
+                'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
+                'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
+                'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
+                'text-primary' if entry.action_flag == ADDITION
+                        else 'text-info' if entry.action_flag == CHANGE
+                        else 'text-danger',  
+            },
+            'icon': 'mdi-delete bg-danger-lighten text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" 
+                    else 'mdi-minus bg-warning-lighten text-warning' if entry.get_vertrieb_angebot().status == "bekommen"
+                    else 'mdi-update bg-success-lighten text-success' if entry.get_vertrieb_angebot().status == "angenommen"   
+                    else 'mdi-plus bg-primary-lighten text-primary' if entry.action_flag == ADDITION
+                    else 'mdi-update bg-info-lighten text-info' if entry.action_flag == CHANGE
+                    else 'mdi-delete bg-danger-lighten text-danger',  
+            'status': status,
+        }
+
+        if not any(a['action_time'] == activity['action_time'] or a['object'] == activity['object'] for a in activities):
+            activities.append(activity)
     # Pass the users and the count to the template.
     context = {
         'users': users,
@@ -148,6 +191,7 @@ def home(request):
         "on Hold": on_hold_count,
         "storniert": storniert_count,
         "solar_module_stats": solar_module_stats,
+        'activities': activities,
     }
     return render(request, 'vertrieb/home.html', context)
 
@@ -192,6 +236,13 @@ def create_angebot(request):
         blank_angebot.created_at = timezone.now()
         blank_angebot.current_date = datetime.datetime.now()
         blank_angebot.save()
+        # CustomLogEntry.objects.log_action(
+        #         user_id=request.user.id,
+        #         content_type_id=ContentType.objects.get_for_model(blank_angebot).pk,
+        #         object_id=blank_angebot.angebot_id,
+        #         object_repr=str(blank_angebot),
+        #         action_flag=ADDITION
+        #     )
         return HttpResponseRedirect(
             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
         )
@@ -253,6 +304,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if (timezone.now() - angebot.status_change_field).total_seconds() >= 14*24*60*60:
                     angebot.status = "abgelaufen"
                     angebot.save()
+                    CustomLogEntry.objects.log_action(
+                        user_id=angebot.user_id,  
+                        content_type_id=ContentType.objects.get_for_model(angebot).pk,
+                        object_id=angebot.pk,
+                        object_repr=str(angebot),
+                        action_flag=CHANGE,
+                        status=angebot.status,
+                    )
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
@@ -318,6 +377,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             if form.is_valid():
                 form.instance.status = "angenommen" #type:ignore
                 form.save() #type:ignore
+                CustomLogEntry.objects.log_action(
+                        user_id=vertrieb_angebot.user_id,  
+                        content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
+                        object_id=vertrieb_angebot.pk,
+                        object_repr=str(vertrieb_angebot),
+                        
+                        action_flag=CHANGE,
+                        status=vertrieb_angebot.status,
+                    )
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
@@ -332,6 +400,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.zoho_kundennumer = kundennumer
 
             form.save()  # type:ignore
+            CustomLogEntry.objects.log_action(
+                user_id=vertrieb_angebot.user_id,  
+                content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
+                object_id=vertrieb_angebot.pk,
+                object_repr=str(vertrieb_angebot),
+                action_flag=CHANGE,
+                status=vertrieb_angebot.status,
+            )
             return redirect(
                 "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
             )

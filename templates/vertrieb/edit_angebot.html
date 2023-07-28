@@ -204,7 +204,7 @@
                                                                             </td>
                                                                         </tr>
                                                                             <script>
-                                                                                document.getElementById("yourFormId").addEventListener("submit", function(event){
+                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
                                                                                     // get values from the form
                                                                                     let speicher = document.getElementById("switch01").checked;
                                                                                     let anz_speicher = document.getElementById("anz_speicher").value;
@@ -213,6 +213,34 @@
                                                                                     if (speicher && (anz_speicher === null || anz_speicher <= 0)) {
                                                                                         event.preventDefault(); // prevent form submission
                                                                                         alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
+                                                                                    }
+                                                                                });
+                                                                            </script>
+                                                                        <tr>
+                                                                            <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
+                                                                            <td>
+                                                                                <div class="custom-control custom-switch">
+                                                                                    <input type="checkbox" class="custom-control-input" id="switch31" {% if form.wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.wandhalterung_fuer_speicher.html_name }}" />
+                                                                                    <label class="custom-control-label" for="switch31" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
+                                                                            <td>
+                                                                                <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                            <script>
+                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
+                                                                                    // get values from the form
+                                                                                    let wandhalterung_fuer_speicher = document.getElementById("switch31").checked;
+                                                                                    let anz_wandhalterung_fuer_speicher = document.getElementById("anz_wandhalterung_fuer_speicher").value;
+                                                                            
+                                                                                    // perform the validation
+                                                                                    if (wandhalterung_fuer_speicher && (anz_wandhalterung_fuer_speicher === null || anz_wandhalterung_fuer_speicher <= 0)) {
+                                                                                        event.preventDefault(); // prevent form submission
+                                                                                        alert("Die Anzahl der Wandhalterung für Speicher kann nicht 0 seinwenn Wandhalterung inkludet = True.");
                                                                                     }
                                                                                 });
                                                                             </script>
@@ -1003,6 +1031,14 @@
                                                                             {% endif %}
                                                                         </tr>
                                                                         <tr>
+                                                                            <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
+                                                                            {% if vertrieb_angebot.anz_wandhalterung_fuer_speicher == 0 %}
+                                                                                <td><span class="badge bg-danger rounded-pill">Keine</span></td>
+                                                                            {% else %}
+                                                                                <td> {{ vertrieb_angebot.anz_wandhalterung_fuer_speicher }}</td>
+                                                                            {% endif %}
+                                                                        </tr>
+                                                                        <tr>
                                                                             <th>{{ form.wallbox.label_tag }}</th>
                                                                             {% if user.role.name == "admin" %}
                                                                                 <td>
@@ -1586,7 +1622,7 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
+                                            {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
                                             <div class="float-end">
                                                 <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
                                             </div>
@@ -1601,7 +1637,7 @@
                                             <h5 hidden class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
                                                 <h4><input type="text" readonly class="form-control-plaintext h2" id="id_angebot_status" value="{{ form.status.value }}"></h4>                                                
                                             {% endif %}
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
+                                            {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
                                                 <p class="mb-0 text-muted">                                         
                                                     <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
                                                     <span class="text-nowrap">Änderungsdatum</span>
@@ -1616,7 +1652,7 @@
                                         <div class="card-body">
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
                                             <div class="row">
-                                                <div class="col-sm-4">                 {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' %}
+                                                <div class="col-sm-4">                 {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
                                                                                     <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
                                                                                     <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                                                         {% else %}

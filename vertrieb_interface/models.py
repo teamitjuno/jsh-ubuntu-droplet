@@ -22,9 +22,62 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.utils.formats import date_format
 import dateparser
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from django.contrib.contenttypes.models import ContentType
 now = timezone.now()
 now_german = date_format(now, 'DATETIME_FORMAT')
 User = get_user_model()
+
+
+class LogEntryManager(models.Manager):
+    def log_action(self, user_id, content_type_id, object_id, object_repr, action_flag, status=None):
+        if status is not None:
+            if status == "angenommen":
+                change_message = f"<<Angenommen>>"
+            elif status == "bekommen":
+                change_message = f'Status geändert zu <<{status}>> '
+            elif status == "abgelaufen":
+                change_message = f"<<Abgelaufen>>"
+            elif status == "in Kontakt":
+                change_message = f"Status geändert zu <<{status}>>"
+            elif status == "Kontaktversuch":
+                change_message = f"Status geändert zu <<{status}>>"
+        else:
+            change_message = ""
+
+        return self.model.objects.create(
+            action_time=timezone.now(),
+            user_id=user_id,
+            content_type_id=content_type_id,
+            object_id=object_id,
+            object_repr=object_repr,
+            action_flag=action_flag,
+            change_message=change_message,
+        )
+    
+class CustomLogEntry(LogEntry):
+    class Meta:
+        proxy = True
+
+    objects = LogEntryManager()  # don't forget to set the manager
+
+    def get_vertrieb_angebot(self):
+        from vertrieb_interface.models import VertriebAngebot  
+        if self.content_type.model_class() == VertriebAngebot:
+            return VertriebAngebot.objects.get(angebot_id=self.object_id)
+        return None
+
+    def get_change_message(self):
+        if self.is_addition():
+            return f"Ein neues Angebot erstellt"
+        elif self.is_change():
+            if self.get_vertrieb_angebot() is not None:
+                return f"Der Angebot aktualisiert -  {self.change_message}"
+            else:
+                return f"Der Angebot aktualisiert"
+        else:
+            return "LogEntry Object"
+
 
 
 def get_price(model, name):
@@ -189,6 +242,8 @@ class VertriebAngebot(TimeStampMixin):
     )
     speicher = models.BooleanField(default=False)
     anz_speicher = models.PositiveIntegerField(default=0)
+    wandhalterung_fuer_speicher = models.BooleanField(default=False)
+    anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
     wallbox = models.BooleanField(default=False)
     ausrichtung = models.CharField(
         max_length=10, choices=AUSRICHTUNG_CHOICES, default="Ost/West"
@@ -303,8 +358,9 @@ class VertriebAngebot(TimeStampMixin):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.angebot_id = self.generate_angebot_id()
-
-
+            action_flag = ADDITION
+        else:
+            action_flag = CHANGE
 
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -326,8 +382,15 @@ class VertriebAngebot(TimeStampMixin):
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
         
-
         super().save(*args, **kwargs)
+
+        CustomLogEntry.objects.log_action(
+            user_id=self.user_id, 
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.pk,
+            object_repr=str(self),
+            action_flag=action_flag
+        )
 
     def __str__(self) -> str:
         return f"AngebotID: {self.angebot_id}"
@@ -534,6 +597,16 @@ class VertriebAngebot(TimeStampMixin):
             # handle the error, maybe return a default value or raise a more descriptive error
             return 0.0
 
+    @property
+    def wandhalterung_fuer_speicher_preis(self):
+        wandhalterung_preis = 0
+        if self.wandhalterung_fuer_speicher == True and self.anz_wandhalterung_fuer_speicher != 0:
+            anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
+            wandhalterung_preis = self.calculate_price(
+                OptionalAccessoriesPreise, "wandhalterung_fuer_speicher", anz_wandhalterung_fuer_speicher
+            )
+
+            return wandhalterung_preis
 
     @property
     def batteriespeicher_preis(self):
@@ -566,7 +639,7 @@ class VertriebAngebot(TimeStampMixin):
     def get_zuschlag(self):
         values = self.get_values()
         module_name = self.solar_module.lower() if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH").lower()
-        print(module_name)
+        
         return values.get(
             module_name, "Phono Solar PS420M7GFH-18/VNH"
         )  # Add default value
@@ -788,13 +861,15 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += self.get_optional_accessory_price("backup_box")
         if self.hub_included == True:
             accessories_price += self.get_optional_accessory_price("hub")
+        if self.wandhalterung_fuer_speicher_preis:
+            accessories_price += float(self.wandhalterung_fuer_speicher_preis)
         return accessories_price
 
     @property
     def angebots_summe(self):
         def get_price(prefix, kw):
             name = prefix + str(kw)
-            print(name)
+            
 
             return float(ModulePreise.objects.get(name=name).price)
 
@@ -808,7 +883,7 @@ class VertriebAngebot(TimeStampMixin):
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
-        print(ranges)
+        
 
         angebotsSumme = sum(
             (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
@@ -908,6 +983,9 @@ class VertriebAngebot(TimeStampMixin):
             "standort": self.anlagen_standort,
             "garantieJahre": self.garantieWR,
             "batterieVorh": self.batteriespeicher_preis,
+            "wandhalterungSpeicher": self.wandhalterung_fuer_speicher,
+            "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
+            "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
             "batterieAnz": self.anz_speicher,
             "wallboxVorh": self.full_wallbox_preis,
             "wallboxText": self.wallbox_text,

@@ -27,9 +27,9 @@ class Command(BaseCommand):
             "IMei": "imei",
             "Handynummer": "phone",
             "Anbieter": "anbieter",
-            "Mail ": "google_account",
-            "Passwort ": "google_passwort",
-            "Sim Pin ": "sim_pin",
+            "Mail": "google_account",
+            "Passwort": "google_passwort",
+            "Sim Pin": "sim_pin",
             "SMTP_PASS" : "smtp_password",
             "SMTP_USER" : "smtp_username"
         }

@@ -487,7 +487,31 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-check-input",
                 "id": "speicher",
-                "style": "max-width: 300px",
+                
+            }
+        ),
+    )
+    wandhalterung_fuer_speicher = forms.BooleanField(
+        label="Wandhalterung für Speicher inkl.",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "wandhalterung_fuer_speicher",
+                
+            }
+        ),
+    )
+    anz_wandhalterung_fuer_speicher = forms.IntegerField(
+        label="Anzahl Wandhalterung (kann sein 0)",
+        required=False,
+        initial=0,
+        validators=[validate_integers],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "anz_wandhalterung_fuer_speicher",
+                "style": "max-width: 100px",
             }
         ),
     )
@@ -739,6 +763,8 @@ class VertriebAngebotForm(ModelForm):
             "bis40kWp",
             "speicher",
             "anz_speicher",
+            "wandhalterung_fuer_speicher",
+            "anz_wandhalterung_fuer_speicher",
             "wallbox",
             "ausrichtung",
             "komplex",
@@ -750,7 +776,6 @@ class VertriebAngebotForm(ModelForm):
             "garantieWR",
             "eddi",
             "notstrom",
-
             "anzOptimizer",
             "indiv_price_included",
             "indiv_price",
@@ -775,9 +800,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name"].choices = name_list
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
-
-
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
+        self.fields["wandhalterung_fuer_speicher"].widget.attrs.update({"id": "wandhalterung_fuer_speicher"})
+        self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "anz_wandhalterung_fuer_speicher"})
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )

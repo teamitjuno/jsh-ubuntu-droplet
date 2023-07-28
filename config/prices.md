@@ -123,6 +123,7 @@ OptionalAccessoriesPreise.objects.create(name='einspreis_vergutung_bis10kWp', pr
 OptionalAccessoriesPreise.objects.create(name='einspreis_vergutung_10bis40kWp', price=7.10, actual_price=0.00, old_price=0.00)
 OptionalAccessoriesPreise.objects.create(name='erzeugung_sued', price=950.00, actual_price=0.00, old_price=0.00)
 OptionalAccessoriesPreise.objects.create(name='erzeugung_ost_west', price=880.00, actual_price=0.00, old_price=0.00)
+OptionalAccessoriesPreise.objects.create(name='wandhalterung_fuer_speicher', price=120.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import SolarModulePreise
 SolarModulePreise.objects.create(name='Phono Solar PS420M7GFH-18/VNH', price=530.00, actual_price=0.00,old_price=0.00)

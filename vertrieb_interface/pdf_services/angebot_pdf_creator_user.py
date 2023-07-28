@@ -813,6 +813,7 @@ class PDF(FPDF):
             0,  # type: ignore
             "L",  # type: ignore
         )
+
         if not data["batterieVorh"]:
             self.line(10, y + 7, 51, y + 7)
             # self.line(10, y + 13, 200, y + 13)
@@ -851,16 +852,37 @@ class PDF(FPDF):
             self.set_x(25)
             # self.set_font('JUNO Solar Lt', '', 10)
             self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, "L")
-            self.set_y(y + 45)
+            self.set_y(y + 40)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 5, str(ceil(data["batterieAnz"] / 3)) + "\n" + str(data["batterieAnz"]), 0, 0, "L")  # type: ignore
+            self.multi_cell(0, 6, str(ceil(data["batterieAnz"] / 3)) + "\n" + str(data["batterieAnz"]), 0, 0, "L")  # type: ignore
             self.set_y(y + 40)
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
+
         # Seite voll
-        y = y + 70
+        y = y + 60
         self.set_y(y)
+        if data["anzWandhalterungSpeicher"] > 0:
+            # self.line(10, y + 3, 200, y + 3)
+            # self.line(25, y + 7.5, 83, y + 7.5)
+            # Tabelle Eintrag Optimierer
+            self.set_font("JUNO Solar Lt", "", 11)
+            self.set_y(y)
+            eintrag += 1
+            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+            self.set_x(25)
+            self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
+            self.set_y(y + 0)
+            self.set_x(150)
+            self.set_font("JUNO Solar Lt", "", 11)
+            self.multi_cell(0, 6, str(data["anzWandhalterungSpeicher"]), 0, 0, "L")  # type: ignore
+            self.set_y(y)
+            self.set_x(170)
+            self.cell(0, 6, "inklusive", 0, 0, "R")
+            y += 15
+        else:
+            y_tmp += 15
         # Optionales Zubehör zur Anlagenoptimierung
         self.add_page()
         y = 30
@@ -926,6 +948,7 @@ class PDF(FPDF):
             y += 15
         else:
             y_tmp += 15
+        
         if data["notstrom"]:
             # self.line(10, y + 3, 200, y + 3)
             # self.line(25, y + 7.5, 109, y + 7.5)
