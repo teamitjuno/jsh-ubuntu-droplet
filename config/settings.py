@@ -14,7 +14,7 @@ load_dotenv(ENV_FILE)
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "jsh-home.app", "www.jsh-home.app", "https://jsh-home.app", "http://46.101.104.229:8000"]
 LOGIN_URL = "/login"
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
@@ -75,7 +75,7 @@ MIDDLEWARE = [
     # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 CORS_ALLOWED_ORIGINS = [
-    "https://jsh-home.app",
+    "https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000",
 ]
 
 ROOT_URLCONF = "config.urls"
