@@ -63,6 +63,10 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = "authentication.User"
+CORS_ALLOWED_ORIGINS = [
+    "https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000",
+]
+CSRF_TRUSTED_ORIGINS = ["https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000"]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -74,9 +78,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-CORS_ALLOWED_ORIGINS = [
-    "https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000",
-]
+
 
 ROOT_URLCONF = "config.urls"
 
