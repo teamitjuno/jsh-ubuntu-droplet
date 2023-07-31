@@ -37,12 +37,12 @@ MAX_RETRIES = 5
 SLEEP_TIME = 1
 
 ANGEBOT_STATUS_CHOICES = [
-    ("angenommen", "angenommen"),
+    # ("angenommen", "angenommen"),
     ("bekommen", "bekommen"),
     ("in Kontakt", "in Kontakt"),
     ("Kontaktversuch", "Kontaktversuch"),
     ("abgelehnt", "abgelehnt"),
-    ("abgelaufen", "abgelaufen"),
+    # ("abgelaufen", "abgelaufen"),
     ("on Hold", "on Hold"),
     ("storniert", "storniert"),
 ]
@@ -800,6 +800,8 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name"].choices = name_list
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
+        self.fields["wallboxtyp"].widget.attrs.update({"id": "wallbox-checkbox"})
+        self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox-checkbox"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update({"id": "wandhalterung_fuer_speicher"})
         self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "anz_wandhalterung_fuer_speicher"})

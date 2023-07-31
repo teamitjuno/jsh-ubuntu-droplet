@@ -1078,6 +1078,9 @@
               </div>
           </div>
       </div>
+{% block javascript %}{% endblock %}
+
+      
   <!-- Bootstrap JavaScript Bundle -->
   <script>
     function disableFor30Seconds(event) {
@@ -1109,7 +1112,6 @@
         }, 30000); // hide it again after 30 seconds
     }
 </script>   
-
 {% block extra_js %}  
       
       

@@ -5,8 +5,6 @@
 
 
 {% block head %}
-<!DOCTYPE html>
-<html lang="de">
     <head>
         <meta charset="utf-8" />
         <title>AngebotsTool | Juno-Solar Administration Tool</title>
@@ -88,7 +86,7 @@
                                                     <span class="d-none d-md-block">Info</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item" role="presentation">
+                                            <li class="nav-item" role="tabpanel">
                                                 <a href="#wallbox" id="wallbox-tab" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-account-circle d-md-none d-block"></i>
                                                     <span class="d-none d-md-block">Wallbox</span>
@@ -294,7 +292,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="tab-pane" id="wallbox" role="presentation">
+                                        <div class="tab-pane" id="wallbox" role="tabpanel">
                                             <div class="card-body">
                                                 <div class="row"> 
                                                     <div class="col-lg-6">
@@ -918,7 +916,7 @@
                                             </a>
                                         </li>
                                         <li class="nav-item" role="presentation">
-                                            <a href="#wallbox" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
+                                            <a href="#wallbox" id="wallbox-tab" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                 <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                                 <span class="d-none d-md-block">Wallbox</span>
                                             </a>
@@ -1105,7 +1103,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane" id="wallbox" role="presentation">
+                                            <div class="tab-pane" id="wallbox" role="tabpanel">
                                                 <div class="card-body">
                                                     <div class="row"> 
                                                         <div class="col-lg-6">
@@ -1761,8 +1759,31 @@
         </footer>
 </div>
     
-<script src="{% static 'js/vertrieb_interface.js' %}"></script>
+{% comment %} <script src="{% static 'js/vertrieb_interface.js' %}"></script> {% endcomment %}
+{% block javascript %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    function checkWallboxStatus() {
+        // Check the state of the checkbox and hide/show the tab and tab navigation item accordingly
+        if ($('#wallbox-checkbox').prop('checked')) {
+            $('#wallbox-tab').show();
+            
+        } else {
+            $('#wallbox-tab').hide();
+        
+        }
+    }
+
+    // Check the initial status of the wallbox
+    checkWallboxStatus();
+
+    // Listen for changes on the checkbox
+    $('#wallbox-checkbox').change(function(){
+        checkWallboxStatus();
+    });
+});
+</script>
 
 <script>
   function getCookie(name) {
@@ -1837,6 +1858,7 @@ $(document).ready(function() {
     });
 });
 </script>
+{% endblock %}
 <script src="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
 
 <!-- Code Highlight js -->
