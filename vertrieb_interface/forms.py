@@ -793,7 +793,7 @@ class VertriebAngebotForm(ModelForm):
         profile = User.objects.get(zoho_id=user.zoho_id)
         self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
         self.fields['module_ticket'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
-        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.all()]
+        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.filter(in_stock=True)]
         data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])

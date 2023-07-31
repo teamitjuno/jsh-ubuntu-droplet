@@ -53,6 +53,7 @@ SERVICE_APPS = [
     "shared",
     "storages",
     'corsheaders',
+    "templatetags.custom_filters",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + SERVICE_APPS
@@ -64,9 +65,9 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = "authentication.User"
 CORS_ALLOWED_ORIGINS = [
-    "https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000",
+    "https://jsh-home.app", "https://www.jsh-home.app", "http://46.101.104.229:8000",
 ]
-CSRF_TRUSTED_ORIGINS = ["https://jsh-home.app", "jsh-home.app", "www.jsh-home.app", "http://46.101.104.229:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://jsh-home.app", "https://www.jsh-home.app", "http://46.101.104.229:8000"]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",

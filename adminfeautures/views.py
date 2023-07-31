@@ -1,6 +1,10 @@
 import json
+from prices.models import SolarModulePreise
 from functools import wraps
-
+from django.db.models import F, ExpressionWrapper, IntegerField
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear, TruncMonth, Coalesce
+import calendar
 from dotenv import load_dotenv
 from django.db.models.functions import Cast
 from django import forms
@@ -80,11 +84,36 @@ class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
         messages.success(self.request, "Data saved successfully!")
         return response
 
-
-@admin_required
 def user_list_view(request):
     users = User.objects.all()
-    return render(request, "vertrieb/user_list.html", {"users": users})
+    solar_module_names = [module.name for module in SolarModulePreise.objects.filter(in_stock=True)]
+    
+    monthly_sold_solar_modules = (
+        VertriebAngebot.objects.filter(status="angenommen", solar_module__in=solar_module_names)
+        .annotate(month=ExtractMonth('current_date'), year=ExtractYear('current_date'))
+        .values('month', 'year', 'solar_module')
+        .annotate(total_sold=Coalesce(Sum('modulanzahl') + Sum('modul_anzahl_ticket'), 0))
+        .order_by('year', 'month')
+    )
+
+    monthly_sold_solar_modules_dict = {}
+    for entry in monthly_sold_solar_modules:
+        month_name = f'{calendar.month_abbr[entry["month"]]} {entry["year"]}'
+        if month_name not in monthly_sold_solar_modules_dict:
+            monthly_sold_solar_modules_dict[month_name] = []
+        monthly_sold_solar_modules_dict[month_name].append({
+            'solar_module': entry['solar_module'],
+            'total_sold': entry['total_sold'],
+            'month': entry['month']
+        })
+
+    context = {
+        'users': users,
+        'monthly_sold_solar_modules_dict': monthly_sold_solar_modules_dict,
+        'solar_module_names': solar_module_names
+    }
+
+    return render(request, "vertrieb/user_list.html", context)
 
 
 class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
@@ -119,3 +148,4 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
         queryset = queryset.order_by("-zoho_kundennumer_int")
 
         return queryset
+

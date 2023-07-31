@@ -70,9 +70,10 @@ class WallBoxPreisAdmin(admin.ModelAdmin):
         "price",
         "actual_price",
         "old_price",
+        "in_stock",
     )
     search_fields = ("name",)
-    inlines = [PricesInline]
+
 
 
 @admin.register(OptionalAccessoriesPreise)
