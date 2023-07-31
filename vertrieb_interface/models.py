@@ -730,7 +730,7 @@ class VertriebAngebot(TimeStampMixin):
             if "Zappi" in str(self.wallboxtyp)
             else "\n1"
             if "Power Boost" in str(self.wallboxtyp)
-            else ""
+            else "\n1"
         )
 
     @property
@@ -988,6 +988,7 @@ class VertriebAngebot(TimeStampMixin):
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
             "batterieAnz": self.anz_speicher,
             "wallboxVorh": self.full_wallbox_preis,
+            "wallboxTyp" : self.wallboxtyp,
             "wallboxText": self.wallbox_text,
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,

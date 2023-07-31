@@ -1002,7 +1002,7 @@ class PDF(FPDF):
             self.cell(0, 6, "Ladestation für E-Fahrzeug (Wallbox)", 0, 0, "L")
             self.set_y(y + 30)
             self.set_x(25)
-            self.multi_cell(0, 5, data["wallboxText"], 0, "L")
+            self.multi_cell(0, 5, str(data["wallboxTyp"]), 0, "L")
             self.set_y(y + 30)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
