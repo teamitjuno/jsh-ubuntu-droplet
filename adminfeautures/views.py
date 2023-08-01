@@ -83,37 +83,38 @@ class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, "Data saved successfully!")
         return response
-
+    
 def user_list_view(request):
     users = User.objects.all()
-    solar_module_names = [module.name for module in SolarModulePreise.objects.filter(in_stock=True)]
+    solar_module_names = [module.name for module in SolarModulePreise.objects.all()]
     
     monthly_sold_solar_modules = (
         VertriebAngebot.objects.filter(status="angenommen", solar_module__in=solar_module_names)
         .annotate(month=ExtractMonth('current_date'), year=ExtractYear('current_date'))
         .values('month', 'year', 'solar_module')
         .annotate(total_sold=Coalesce(Sum('modulanzahl') + Sum('modul_anzahl_ticket'), 0))
-        .order_by('year', 'month')
+        .order_by('year', 'month', 'solar_module')
     )
 
-    monthly_sold_solar_modules_dict = {}
+    # Initialize the dictionaries for each solar_module.
+    modules_data = {name: {i: 0 for i in range(1, 13)} for name in solar_module_names}
+    print(modules_data)
+    # Iterate over the query result to populate the dictionaries.
     for entry in monthly_sold_solar_modules:
-        month_name = f'{calendar.month_abbr[entry["month"]]} {entry["year"]}'
-        if month_name not in monthly_sold_solar_modules_dict:
-            monthly_sold_solar_modules_dict[month_name] = []
-        monthly_sold_solar_modules_dict[month_name].append({
-            'solar_module': entry['solar_module'],
-            'total_sold': entry['total_sold'],
-            'month': entry['month']
-        })
-
+        month = entry['month']
+        solar_module = entry['solar_module']
+        total_sold = entry['total_sold']
+        modules_data[solar_module][month] += total_sold
+    print(modules_data)
+    # Include the dictionaries in the context.
     context = {
         'users': users,
-        'monthly_sold_solar_modules_dict': monthly_sold_solar_modules_dict,
-        'solar_module_names': solar_module_names
+        'modules_data': modules_data,
+        'solar_module_names': solar_module_names,
     }
 
     return render(request, "vertrieb/user_list.html", context)
+
 
 
 class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):

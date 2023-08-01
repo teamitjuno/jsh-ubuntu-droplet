@@ -1,9 +1,9 @@
 {% extends 'vertrieb/base.html' %}
+{% load custom_filters %}
+{% load dict_helper %}
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="de">
 
 {% block head %}
    
@@ -36,8 +36,7 @@
 
 {% endblock %}
 {% block content %}
-<html>
-    <body>
+
 <div class="content-page">
     <div class="content">
 
@@ -49,71 +48,127 @@
                     <div class="page-title-box">
                         <div class="page-title-right">
                         </div>
-                        <h4 class="page-title">Benutzer Liste</h4>
+                        <h4 class="page-title">Admin Sei Liste</h4>
                     </div>
                 </div>
             </div>      
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card d-block">
-                        <div class="card-body">
+        <div class="row">
 
-                                        
-                                        <div class="table-container">
-                                            <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
-                                            <thead>
+            <div class="col-xl-12 col-lg-12 order-lg-2 order-xl-1">
+                <div class="card">
+                    <div class="d-flex card-header justify-content-between align-items-center">
+                        <h4 class="header-title">Anzahl der verkauften Solarmodule für jeden Monat</h4>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-light">Export <i class="mdi mdi-download ms-1"></i></a>
+                    </div>
+
+                        <div class="card-body pt-0">
+                            <div class="table-responsive">
+                                <table class="table table-centered table-nowrap table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Solar Module</th>
+                                            <th scope="col">Jan</th>
+                                            <th scope="col">Feb</th>
+                                            <th scope="col">March</th>
+                                            <th scope="col">April</th>
+                                            <th scope="col">May</th>
+                                            <th scope="col">June</th>
+                                            <th scope="col">July</th>
+                                            <th scope="col">August</th>
+                                            <th scope="col">Sept</th>
+                                            <th scope="col">Oct</th>
+                                            <th scope="col">Nov</th>
+                                            <th scope="col">Dec</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for solar_module_name in solar_module_names %}
+                                            {% with solar_module_dict=modules_data|get_item:solar_module_name %}
                                                 <tr>
-                                                    <th></th>
-                                                  <th>Vorname</th>
-                                                  <th>Nachname</th>
-                                                  <th>Kuerzel</th>
-                                                  <th>Zoho ID</th>
-                                                  <th>Email</th>
-                                                  <th>Mobil</th>
-                                                  <th>Beruf</th>
-                                                  <th>Users Aufschlag</th>
-                                                  <th>Typ</th>
-
-                                                  <th>User's Angebote zeigen</th>
+                                                    <td>{{ solar_module_name }}</td>
+                                                    <td>{{ solar_module_dict.1 }}</td>
+                                                    <td>{{ solar_module_dict.2 }}</td>
+                                                    <td>{{ solar_module_dict.3 }}</td>
+                                                    <td>{{ solar_module_dict.4 }}</td>
+                                                    <td>{{ solar_module_dict.5 }}</td>
+                                                    <td>{{ solar_module_dict.6 }}</td>
+                                                    <td>{{ solar_module_dict.7 }}</td>
+                                                    <td>{{ solar_module_dict.8 }}</td>
+                                                    <td>{{ solar_module_dict.9 }}</td>
+                                                    <td>{{ solar_module_dict.10 }}</td>
+                                                    <td>{{ solar_module_dict.11 }}</td>
+                                                    <td>{{ solar_module_dict.12 }}</td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                              {% for user in users %}
-                                              <tr>
-                                                <td> {% if user.avatar %}
-                                                    <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
-                                                    {% else %}
-                                                    <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ user.first_name }}</td>
-                                                <td>{{ user.last_name }}</td>
-                                                <td>{{ user.kuerzel }}</td>
-                                                <td>{{ user.zoho_id }}</td>
-                                                <td>{{ user.email }}</td>
-                                                <td>{{ user.phone }}</td>
-                                                <td>{{ user.beruf }}</td>
-                                                <td>{{ user.users_aufschlag }}</td>
-                                                <td>{{ user.typ }}</td>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div> <!-- end table-responsive-->
+                        </div> <!-- end card-body-->
 
-                                                <td><a href="{% url 'adminfeautures:user-orders' user.id %}">Angebote Liste</a></td>
-                                              </tr>
-                                            {% empty %}
-                                              <tr>
-                                                <td colspan="30">No users found</td>
-                                              </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        </div>
-                                    </div> 
-                                </div>
-                            </div>
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="header-title">Alle Benutzer</h4>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-dots-vertical"></i>
+                            </a>
                         </div>
                     </div>
+                    <div class="card d-block">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Vor und Nachname</th>
+                                            <th scope="col"> Kuerzel</th></th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Aufschlag</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users %}
+                                        <tr>
+                                            <td> {% if user.avatar %}
+                                                <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                                {% else %}
+                                                <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
+                                                {% endif %}
+                                                {{ user.first_name }}
+                                                {{ user.last_name }}
+                                            </td>
+                                            <td>{{ user.kuerzel }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.users_aufschlag }}</td>
+                                            <td>
+                                                <a href="{% url 'adminfeautures:user-orders' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                            <tr>
+                                            <td colspan="30">No users found</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> 
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        
+                            
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
@@ -129,6 +184,9 @@
                         </div>
                     </div>
                 </footer>
+            </div>
+            </div>
+            </div>
             </div>
 
     {% comment %} </div>
@@ -232,5 +290,3 @@ $(document).ready(function() {
 <!-- Datatable Demo Aapp js -->
 <script src="{% static 'assets/js/pages/demo.datatable-init.js' %}"></script>
 {% endblock %}
-</body>
-</html> 
