@@ -2,18 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="de">
-
 {% block head %}
-   
-        <meta charset="utf-8" />
-        <title>Home | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <meta content="Coderthemes" name="SamIvanov" />
-
-        <!-- App favicon -->
         <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 
         <!-- Theme Config Js -->
@@ -28,167 +17,130 @@
         <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
 
 {% endblock %}
-    <body>
 {% block content%}
-            
-            <!-- ============================================================== -->
-            <!-- Start Page Content here -->
-            <!-- ============================================================== -->
+<div class="content-page">
+    <div class="content">
 
-            <div class="content-page">
-                <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-
-                        <!-- start page title -->
-                        <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                    </div>
-                                    <h4 class="page-title">Profile</h4>
-                                </div>
-                            </div>
+            <!-- start page title -->
+            <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
                         </div>
-                        <!-- end page title -->
+                        <h4 class="page-title">Profile</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
+                <div class="col-sm-12">
+                    <!-- Profile -->
+                    <div class="card bg-gradient bg-primary">
+                        <div class="card-body profile-user-box">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="avatar-lg">
+                                                {% if user.avatar %}
+                                                <img src="{{ user.avatar.url }}" alt="" class="rounded-circle img-thumbnail">
+                                                {% else %}
+                                                <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div>
+                                                <h4 class="mt-1 mb-1 text-white">{{ user.first_name }} {{ user.last_name }}</h4>
+                                                <p class="font-13 text-white-50"> {{ user.beruf }}</p>
 
-
-                        <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
-                            <div class="col-sm-12">
-                                <!-- Profile -->
-                                <div class="card bg-gradient bg-primary">
-                                    <div class="card-body profile-user-box">
-                                        <div class="row">
-                                            <div class="col-sm-8">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <div class="avatar-lg">
-                                                            {% if user.avatar %}
-                                                            <img src="{{ user.avatar.url }}" alt="" class="rounded-circle img-thumbnail">
-                                                            {% else %}
-                                                            <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
-                                                            {% endif %}
-                                                            
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        <div>
-                                                            <h4 class="mt-1 mb-1 text-white">{{ user.first_name }} {{ user.last_name }}</h4>
-                                                            <p class="font-13 text-white-50"> {{ user.beruf }}</p>
-    
-                                                            <ul class="mb-0 list-inline text-light">
-                                                                <li class="list-inline-item me-3">
-                                                                    <h5 class="mb-1 text-white"> {{ user.kuerzel }}</h5>
-                                                                    <p class="mb-0 font-13 text-white-50">Kürzel</p>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <h5 class="mb-1 text-white">{{ user.date_joined }}</h5>
-                                                                    <p class="mb-0 font-13 text-white-50">Date joined</p>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> <!-- end col-->
-
-                                            <div class="col-sm-4">
-                                                <div class="text-center mt-sm-0 mt-3 text-sm-end">
-                                                </div>
-                                            </div> <!-- end col-->
-                                        </div> <!-- end row -->
-
-                                    </div> <!-- end card-body/ profile-user-box-->
-                                </div><!--end profile/ card -->
-                            </div> <!-- end col-->
-                        </div>
-
-                    
-                        <!-- end row -->
-
-
-                  
-                            <div class="col-xl-4">
-                                <!-- Personal-Information -->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="header-title mt-0 mb-3">{{ user.beruf }} Informationen</h4>
-                                        
-
-                                        <hr/>
-
-                                        <div class="text-start">
-                                            <p class="text-muted"><strong>Name und Vorname :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}</span></p>
-
-                                            <p class="text-muted"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
-
-                                            <p class="text-muted"><strong>Email :</strong> <span class="ms-2">{{ user.email }}</span></p>
-
-                                            <p class="text-muted"><strong>Standort :</strong> <span class="ms-2">Deutschland</span></p>
-
-                                            <p class="text-muted"><strong>Sprache :</strong>
-                                                <span class="ms-2"> English, German </span>
-                                            </p>
-                                            <p class="text-muted mb-0" id="tooltip-container"><strong>Anderswo :</strong>
-                                                <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Facebook"><i class="mdi mdi-facebook"></i></a>
-                                                <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Twitter"><i class="mdi mdi-twitter"></i></a>
-                                                <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Skype"><i class="mdi mdi-skype"></i></a>
-                                            </p>
-
+                                                <ul class="mb-0 list-inline text-light">
+                                                    <li class="list-inline-item me-3">
+                                                        <h5 class="mb-1 text-white"> {{ user.kuerzel }}</h5>
+                                                        <p class="mb-0 font-13 text-white-50">Kürzel</p>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <h5 class="mb-1 text-white">{{ user.date_joined }}</h5>
+                                                        <p class="mb-0 font-13 text-white-50">Date joined</p>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                                <!-- Personal-Information -->
-
-                                <!-- Toll free number box-->
-
-                                <!-- End Toll free number box-->
-
-                                <!-- Messages-->
-                              
-                  
-                            <div class="col-xl-8">
-
-                                <!-- Chart-->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="header-title mb-3">Orders & Revenue</h4>
-                                        <div dir="ltr">
-                                            <div style="height: 260px;" class="chartjs-chart">
-                                                <canvas id="high-performing-product"></canvas>
-                                            </div>
-                                        </div>        
-                                    </div>
-                                </div>
-                                <!-- End Chart-->
-
-   
-
-                            </div>
-                            <!-- end col -->
-
-                        </div>
-                        <!-- end row -->
-                        
-                    </div> <!-- container -->
-
-                </div> <!-- content -->
-
-
+                                </div> <!-- end col-->
+                            </div> <!-- end row -->
+                        </div> <!-- end card-body/ profile-user-box-->
+                    </div><!--end profile/ card -->
+                </div> <!-- end col-->
             </div>
-          </div>
+            <div class="row">                 
+                <div class="col-xl-4">
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title mt-0 mb-3">{{ user.beruf }} Informationen</h4>
+                            
+                            <hr/>
 
-            <!-- ============================================================== -->
-            <!-- End Page content -->
-            <!-- ============================================================== -->
+                            <div class="text-start">
+                                <p class="text-muted"><strong>Name und Vorname :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}</span></p>
 
+                                <p class="text-muted"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
+
+                                <p class="text-muted"><strong>Email :</strong> <span class="ms-2">{{ user.email }}</span></p>
+
+                                <p class="text-muted"><strong>Standort :</strong> <span class="ms-2">Deutschland</span></p>
+
+                                <p class="text-muted"><strong>Sprache :</strong>
+                                    <span class="ms-2"> English, German </span>
+                                </p>
+                                <p class="text-muted mb-0" id="tooltip-container"><strong>Anderswo :</strong>
+                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Facebook"><i class="mdi mdi-facebook"></i></a>
+                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Twitter"><i class="mdi mdi-twitter"></i></a>
+                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Skype"><i class="mdi mdi-skype"></i></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-8">
+                    <!-- Chart-->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title mb-3">Orders & Revenue</h4>
+                            <div dir="ltr">
+                                <div style="height: 260px;" class="chartjs-chart">
+                                    <canvas id="high-performing-product"></canvas>
+                                </div>
+                            </div>        
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- END wrapper -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">Info</a>
+                            <a href="javascript: void(0);">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
 {% endblock %}
-        <!-- Theme Settings -->
-       
-{% block extrajs %}
+{% block extra_js %}
         <!-- Vendor js -->
         <script src="{% static 'assets/js/vendor.min.js' %}"></script>
 
@@ -201,5 +153,3 @@
         <!-- App js -->
         <script src="{% static 'assets/js/app.min.js' %}"></script>
 {% endblock %}
-    </body>
-</html>

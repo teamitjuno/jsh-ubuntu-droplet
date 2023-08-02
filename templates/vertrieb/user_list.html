@@ -5,36 +5,6 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %}
-   
-        <meta charset="utf-8" />
-        <title>Alle Angebote | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=0.5">
-
-        <meta content="Coderthemes" name="Sam Ivanov" />
-
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
-
-        <!-- Theme Config Js -->
-        <script src="{% static 'assets/js/hyper-config.js' %}"></script>
-        <!-- Datatables css -->
-        <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-
-        <!-- App css -->
-        <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
-
-        <!-- Icons css -->
-        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
-
-{% endblock %}
 {% block content %}
 
 <div class="content-page">
@@ -48,212 +18,329 @@
                     <div class="page-title-box">
                         <div class="page-title-right">
                         </div>
-                        <h4 class="page-title">Admin Sei Liste</h4>
+                        <h4 class="page-title">Admin Feautures</h4>
                     </div>
                 </div>
             </div>      
             <!-- end page title -->
 
         <div class="row">
-
-            <div class="col-xl-12 col-lg-12 order-lg-2 order-xl-1">
-                <div class="card">
+            <div class="col-lg-8">
+                <div class="card border-primary border">
                     <div class="d-flex card-header justify-content-between align-items-center">
                         <h4 class="header-title">Anzahl der verkauften Solarmodule für jeden Monat</h4>
                         <a href="javascript:void(0);" class="btn btn-sm btn-light">Export <i class="mdi mdi-download ms-1"></i></a>
                     </div>
-
-                        <div class="card-body pt-0">
-                            <div class="table-responsive">
-                                <table class="table table-centered table-nowrap table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Solar Module</th>
-                                            <th scope="col">Jan</th>
-                                            <th scope="col">Feb</th>
-                                            <th scope="col">March</th>
-                                            <th scope="col">April</th>
-                                            <th scope="col">May</th>
-                                            <th scope="col">June</th>
-                                            <th scope="col">July</th>
-                                            <th scope="col">August</th>
-                                            <th scope="col">Sept</th>
-                                            <th scope="col">Oct</th>
-                                            <th scope="col">Nov</th>
-                                            <th scope="col">Dec</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for solar_module_name in solar_module_names %}
-                                            {% with solar_module_dict=modules_data|get_item:solar_module_name %}
-                                                <tr>
-                                                    <td>{{ solar_module_name }}</td>
-                                                    <td>{{ solar_module_dict.1 }}</td>
-                                                    <td>{{ solar_module_dict.2 }}</td>
-                                                    <td>{{ solar_module_dict.3 }}</td>
-                                                    <td>{{ solar_module_dict.4 }}</td>
-                                                    <td>{{ solar_module_dict.5 }}</td>
-                                                    <td>{{ solar_module_dict.6 }}</td>
-                                                    <td>{{ solar_module_dict.7 }}</td>
-                                                    <td>{{ solar_module_dict.8 }}</td>
-                                                    <td>{{ solar_module_dict.9 }}</td>
-                                                    <td>{{ solar_module_dict.10 }}</td>
-                                                    <td>{{ solar_module_dict.11 }}</td>
-                                                    <td>{{ solar_module_dict.12 }}</td>
-                                                </tr>
-                                            {% endwith %}
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div> <!-- end table-responsive-->
-                        </div> <!-- end card-body-->
-
+                    <div class="card-body pt-0">
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Solar Module</th>
+                                        <th scope="col">Jan</th>
+                                        <th scope="col">Feb</th>
+                                        <th scope="col">March</th>
+                                        <th scope="col">April</th>
+                                        <th scope="col">May</th>
+                                        <th scope="col">June</th>
+                                        <th scope="col">July</th>
+                                        <th scope="col">August</th>
+                                        <th scope="col">Sept</th>
+                                        <th scope="col">Oct</th>
+                                        <th scope="col">Nov</th>
+                                        <th scope="col">Dec</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for solar_module_name in solar_module_names %}
+                                        {% with solar_module_dict=modules_data|get_item:solar_module_name %}
+                                            <tr>
+                                                <td>{{ solar_module_name }}</td>
+                                                <td>{{ solar_module_dict.1 }}</td>
+                                                <td>{{ solar_module_dict.2 }}</td>
+                                                <td>{{ solar_module_dict.3 }}</td>
+                                                <td>{{ solar_module_dict.4 }}</td>
+                                                <td>{{ solar_module_dict.5 }}</td>
+                                                <td>{{ solar_module_dict.6 }}</td>
+                                                <td>{{ solar_module_dict.7 }}</td>
+                                                <td>{{ solar_module_dict.8 }}</td>
+                                                <td>{{ solar_module_dict.9 }}</td>
+                                                <td>{{ solar_module_dict.10 }}</td>
+                                                <td>{{ solar_module_dict.11 }}</td>
+                                                <td>{{ solar_module_dict.12 }}</td>
+                                            </tr>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> <!-- end table-responsive-->
+                    </div> <!-- end card-body-->
                 </div> <!-- end card-->
-            </div> <!-- end col-->
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <div class="card">
+            <div class="card border-primary border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="header-title">Alle Benutzer</h4>
-                        <div class="dropdown">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical"></i>
-                            </a>
-                        </div>
                     </div>
-                    <div class="card d-block">
-                        <div class="card-body">
-                            <div class="table-container">
-                                <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Vor und Nachname</th>
-                                            <th scope="col"> Kuerzel</th></th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Aufschlag</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for user in users %}
-                                        <tr>
-                                            <td> {% if user.avatar %}
-                                                <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
-                                                {% else %}
-                                                <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
-                                                {% endif %}
-                                                {{ user.first_name }}
-                                                {{ user.last_name }}
-                                            </td>
+                    <div class="card-body pt-0">
+                        <div class="table-container">
+                            <table id="alternative-page-datatable" class="table dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Vor und Nachname</th>
+                                        <th> Kuerzel</th></th>
+                                        <th>Email</th>
+                                        <th>Aufschlag</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td> {% if user.avatar %}
+                                            <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                            {% else %}
+                                            <img class="me-3 rounded-circle" src="{% static 'assets/images/users/user_avatar.jpg' %}" width="40" alt="Generic placeholder image">
+                                            {% endif %}
+                                            {{ user.first_name }}
+                                            {{ user.last_name }}
+                                        </td>
                                             <td>{{ user.kuerzel }}</td>
                                             <td>{{ user.email }}</td>
                                             <td>{{ user.users_aufschlag }}</td>
                                             <td>
                                                 <a href="{% url 'adminfeautures:user-orders' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
                                             </td>
-                                        </tr>
-                                        {% empty %}
-                                            <tr>
+                                    </tr>
+                                    {% empty %}
+                                        <tr>
                                             <td colspan="30">No users found</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> 
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="header-title">Preise Liste</h4>
-                        <div class="dropdown">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical"></i>
-                            </a>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="card d-block">
-                        <div class="card-body">
-                            <div class="table-container">
-                                
-                            </div>
-                        </div> 
-                    </div>
                 </div>
-            </div>
 
-        </div>
-
-        
-                            
-                <footer class="footer">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+            </div> <!-- end col-->
+            
+             
+            <div class="col-lg-4">
+                <div class="card border-success border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="header-title">SolarModule Preise Liste</h5>
+                    </div>
+                    <div class="card mb-md-0 mb-3">
+                        <div class="card-body pt-0">
+                            <div class="card-widgets">
+                                <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                <a data-bs-toggle="collapse" href="#cardCollpase1" role="button" aria-expanded="false" aria-controls="cardCollpase1"><i class="mdi mdi-minus"></i></a>
+                                <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
                             </div>
-                            <div class="col-md-6">
-                                <div class="text-md-end footer-links d-none d-md-block">
-                                    <a href="javascript: void(0);">Info</a>
-                                    <a href="javascript: void(0);">Support</a>
+                            <div id="cardCollpase1" class="collapse pt-3 show">
+                                <div class="table-responsive">
+                                    <table class="table table-centered table-nowrap table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Price</th>
+                                                <th>In Stock</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for model in solar_module_preise %}
+                                            <tr>
+                                                <td>{{ model.name }}</td>
+                                                <td>{{ model.price }}</td>
+                                                
+                                                {% if not model.in_stock %}
+                                                    <td>
+                                                        <span class="badge bg-danger rounded-pill">Keine</span>
+                                                    </td>
+                                                {% else %}
+                                                    <td>
+                                                        <span class="badge bg-success rounded-pill">Ja</span>
+                                                    </td>
+                                                {% endif %}
+                                                <td>
+                                                    <a href="{% url 'adminfeautures:update_solar_module_preise' model.id %}" class="btn btn-primary">Update</a>
+
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </footer>
-            </div>
-            </div>
-            </div>
+                </div>
+
+                <div class="card border-success border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="header-title">WallBox Preise Liste</h5>
+                    </div>
+                    <div class="card mb-md-0 mb-3">
+                        <div class="card-body pt-0">
+                            <div class="card-widgets">
+                                <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                <a data-bs-toggle="collapse" href="#cardCollpase2" role="button" aria-expanded="false" aria-controls="cardCollpase2"><i class="mdi mdi-minus"></i></a>
+                                <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div id="cardCollpase2" class="collapse pt-3 show">
+                                <div class="table-responsive">
+                                    <table class="table table-centered table-nowrap table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Price</th>
+                                                <th>In Stock</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for wallbox in wall_box_preise %}
+                                            <tr>
+                                                <td>{{ wallbox.name }}</td>
+                                                <td>{{ wallbox.price }}</td>
+                                                {% if not wallbox.in_stock %}
+                                                    <td>
+                                                        <span class="badge bg-danger rounded-pill">Keine</span>
+                                                    </td>
+                                                {% else %}
+                                                    <td>
+                                                        <span class="badge bg-success rounded-pill">Ja</span>
+                                                    </td>
+                                                {% endif %}
+                                                    <td>
+                                                        <a href="{% url 'adminfeautures:update_wallbox_preise' wallbox.id %}" class="btn btn-primary">Update</a>
+                                                    </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="card border-success border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="header-title">Opzional Zubehör Preise Liste</h5>
+                    </div>
+                    <div class="card mb-md-0 mb-3">
+                        <div class="card-body pt-0">
+                            <div class="card-widgets">
+                                <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                <a data-bs-toggle="collapse" href="#cardCollpase3" role="button" aria-expanded="false" aria-controls="cardCollpase3"><i class="mdi mdi-minus"></i></a>
+                                <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div id="cardCollpase3" class="collapse pt-3">
+                                <div class="table-responsive">
+                                    <table class="table table-centered table-nowrap table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for accessories in optional_accessories_preise %}
+                                    <tr>
+                                        <td>{{ accessories.name }}</td>
+                                        <td>{{ accessories.price }}</td>
+                                        <td>
+                                            <a href="{% url 'adminfeautures:update_optional_accessories_preise' accessories.id %}" class="btn btn-primary">Update</a>
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-    {% comment %} </div>
-</div> {% endcomment %}
-<!-- Datatable Demo Aapp js -->
+            
+                <div class="card border-success border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="header-title">Andere Konfiguration Werte Liste</h5>
+                    </div>
+                    <div class="card mb-md-0 mb-3">
+                        <div class="card-body pt-0">
+                            <div class="card-widgets">
+                                <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                <a data-bs-toggle="collapse" href="#cardCollpase4" role="button" aria-expanded="false" aria-controls="cardCollpase4"><i class="mdi mdi-minus"></i></a>
+                                <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div id="cardCollpase4" class="collapse pt-3">
+                                <div class="table-responsive">
+                                    <table class="table table-centered table-nowrap table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Werte</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for andere_konfiguration in andere_konfiguration_werte %}
+                                            <tr>
+                                                <td>{{ andere_konfiguration.name }}</td>
+                                                <td>{{ andere_konfiguration.value }}</td>
+                                                <td>
+                                                    <a href="{% url 'adminfeautures:update_andere_konfiguration_werte' andere_konfiguration.id %}" class="btn btn-primary">Update</a>
+                                                </td>
+                                            
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+        <div class="col-4">
+                
+            </div>
+            
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">Info</a>
+                            <a href="javascript: void(0);">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
 
 {% endblock %}
 
-{% block scripts %}
-<script>
+{% block javascript %}
+{% comment %} <script>
 $(document).ready(function() {
     $('#invoiceTable').DataTable();
 } );
-</script>
-<script>
-    // TopBar Light Dark
-    var themeColorToggle = document.getElementById('light-dark-mode');
+</script> {% endcomment %}
 
-    // On page load, check local storage for saved theme and apply it.
-    // If there is no saved theme, default to 'dark'
-    var savedTheme = localStorage.getItem('theme') || 'dark';
-    self.changeLayoutColor(savedTheme);
-    self.config.theme = savedTheme;
-
-    if (themeColorToggle) {
-        themeColorToggle.addEventListener('click', function (e) {
-
-            if (self.config.theme === 'dark') {
-                self.changeLayoutColor('light');
-                self.config.theme = 'light';
-                localStorage.setItem('theme', 'light');
-            } else {
-                self.changeLayoutColor('dark');
-                self.config.theme = 'dark';
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    }
-
-    var resetBtn = document.querySelector('#reset-layout')
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function (e) {
-            self.resetTheme();
-        });
-    }  
-</script>
 <script>
     // Wait until the DOM is fully loaded
     document.addEventListener("DOMContentLoaded", function() {

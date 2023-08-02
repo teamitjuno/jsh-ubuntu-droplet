@@ -8,8 +8,10 @@ import calendar
 from dotenv import load_dotenv
 from django.db.models.functions import Cast
 from django import forms
+from prices.models import ElektrikPreis, ModuleGarantiePreise, ModulePreise, WallBoxPreise, OptionalAccessoriesPreise, AndereKonfigurationWerte
+from prices.forms import SolarModulePreiseForm, WallBoxPreiseForm, OptionalAccessoriesPreiseForm, AndereKonfigurationWerteForm
 from django.db.models import IntegerField, Q
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import ListView, UpdateView
@@ -98,22 +100,98 @@ def user_list_view(request):
 
     # Initialize the dictionaries for each solar_module.
     modules_data = {name: {i: 0 for i in range(1, 13)} for name in solar_module_names}
-    print(modules_data)
+    
     # Iterate over the query result to populate the dictionaries.
     for entry in monthly_sold_solar_modules:
         month = entry['month']
         solar_module = entry['solar_module']
         total_sold = entry['total_sold']
         modules_data[solar_module][month] += total_sold
-    print(modules_data)
-    # Include the dictionaries in the context.
+
+    # Getting all the instances of your models
+    elektrik_preis = ElektrikPreis.objects.all()
+    module_garantie_preise = ModuleGarantiePreise.objects.all()
+    module_preise = ModulePreise.objects.all()
+    solar_module_preise = SolarModulePreise.objects.all()
+    wall_box_preise = WallBoxPreise.objects.all()
+    optional_accessories_preise = OptionalAccessoriesPreise.objects.all()
+    andere_konfiguration_werte = AndereKonfigurationWerte.objects.all()
+
+    # Include the dictionaries and models instances in the context.
     context = {
         'users': users,
         'modules_data': modules_data,
         'solar_module_names': solar_module_names,
+        'elektrik_preis': elektrik_preis,
+        'module_garantie_preise': module_garantie_preise,   
+        'module_preise': module_preise,
+        'solar_module_preise': solar_module_preise,
+        'wall_box_preise': wall_box_preise,
+        'optional_accessories_preise': optional_accessories_preise,
+        'andere_konfiguration_werte': andere_konfiguration_werte,
     }
 
     return render(request, "vertrieb/user_list.html", context)
+
+def update_solar_module_preise_view(request, module_id):
+    module = get_object_or_404(SolarModulePreise, id=module_id)
+    if request.method == "POST":
+        form = SolarModulePreiseForm(request.POST, instance=module)
+        if form.is_valid():
+            form.save()
+            return redirect('adminfeautures:user_list')
+    else:
+        form = SolarModulePreiseForm(instance=module)
+    context = {
+        'form': form,
+        'module': module,
+    }
+    return render(request, 'vertrieb/update_solar_module_preise.html', context)
+
+def update_wallbox_preise_view(request, wallbox_id):
+    wallbox = get_object_or_404(WallBoxPreise, id=wallbox_id)
+    if request.method == "POST":
+        form = WallBoxPreiseForm(request.POST, instance=wallbox)
+        if form.is_valid():
+            form.save()
+            return redirect('adminfeautures:user_list')
+    else:
+        form = WallBoxPreiseForm(instance=wallbox)
+    context = {
+        'form': form,
+        'wallbox': wallbox,
+    }
+    return render(request, 'vertrieb/update_wallbox_preise.html', context)
+
+def update_optional_accessories_preise_view(request, accessories_id):
+    accessories = get_object_or_404(OptionalAccessoriesPreise, id=accessories_id)
+    if request.method == "POST":
+        form = OptionalAccessoriesPreiseForm(request.POST, instance=accessories)
+        if form.is_valid():
+            form.save()
+            return redirect('adminfeautures:user_list')
+    else:
+        form = OptionalAccessoriesPreiseForm(instance=accessories)
+    context = {
+        'form': form,
+        'accessories': accessories,
+    }
+    return render(request, 'vertrieb/update_optional_accessories_preise.html', context)
+
+def update_andere_konfiguration_werte_view(request, andere_konfiguration_id):
+    andere_konfiguration = get_object_or_404(AndereKonfigurationWerte, id=andere_konfiguration_id)
+    if request.method == "POST":
+        form = AndereKonfigurationWerteForm(request.POST, instance=andere_konfiguration)
+        if form.is_valid():
+            form.save()
+            return redirect('adminfeautures:user_list')
+    else:
+        form = AndereKonfigurationWerteForm(instance=andere_konfiguration)
+    context = {
+        'form': form,
+        'andere_konfiguration': andere_konfiguration,
+    }
+    return render(request, 'vertrieb/update_andere_konfiguration_werte.html', context)
 
 
 

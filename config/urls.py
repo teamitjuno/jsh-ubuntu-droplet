@@ -11,7 +11,7 @@ from authentication.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("adminfeautures/", include("adminfeautures.urls", namespace="adminfeautures")),
+    path('adminfeautures/', include(('adminfeautures.urls', 'adminfeautures'), namespace='adminfeautures')),
     path(
         "update_vertrieblers/",
         update_vertrieblers,

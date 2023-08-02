@@ -1,0 +1,64 @@
+{% extends 'vertrieb/base.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                        </div>
+                        <h4 class="page-title">Admin Sei Liste</h4>
+                    </div>
+                </div>
+            </div>      
+            <!-- end page title -->
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="d-flex card-header justify-content-between align-items-center">
+                        <h4 class="header-title">Preis ändern</h4>
+                    </div>
+                        <div class="card-body pt-0">
+                            <div class="table-responsive">
+                                <table class="table table-centered table-nowrap table-hover mb-0">
+                                    <form method="POST" id="main-form" action="{% url 'adminfeautures:update_optional_accessories_preise' accessories_id=accessories.id %}">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <button type="submit" form="main-form" href="{% url 'adminfeautures:user_list' %}" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
+                                    </form>
+                                </table>
+                            </div> <!-- end table-responsive-->
+                        </div> <!-- end card-body-->
+
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+        </div>
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-end footer-links d-none d-md-block">
+                                    <a href="javascript: void(0);">Info</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+    </div>
+</div>
+
+{% endblock %}
