@@ -49,7 +49,7 @@
                                             <th>Ticket PDF</th>
                                             <th>Kalkulation PDF</th>
                                             <th>Bearbeitbar</th>
-                                            <th>ZOHO ID</th>
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -64,7 +64,27 @@
                                             <td> noch nicht zugeordnet </td>
                                             {% endif %}
                                             
-                                            <td>{{ vertrieb_angebot.status }}</td>
+                                            {% if vertrieb_angebot.status == "bekommen" %}
+                                                <td class="link-warning">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "angenommen" %}
+                                                <td class="link-success">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "abgelaufen" or vertrieb_angebot.status == "abgelehnt" %}
+                                                <td class="link-danger">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "in Kontakt" or vertrieb_angebot.status == "Kontaktversuch" %}
+                                                <td class="link-primary">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% endif %}
                                             
                                             <td>
                                                 {% if vertrieb_angebot.status == "bekommen" %} 
@@ -105,7 +125,7 @@
                                                 <span class="badge bg-success rounded-pill">Ja</span>
                                                 </td>
                                                 {% endif %}
-                                                <td> {{ vertrieb_angebot.zoho_id }}
+                                                
                                         </tr>
                                         {% empty %}
                                             <tr>
