@@ -42,11 +42,33 @@
                                                         {% endif %}
                                                     </td>
                                                 </td>
-                                                <td>{{ angebot.status }}</td>
+                                                {% if angebot.status == "bekommen" %}
+                                                <td class="link-warning">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "angenommen" %}
+                                                <td class="link-success">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "abgelaufen" or angebot.status == "abgelehnt" %}
+                                                <td class="link-danger">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "in Kontakt" or angebot.status == "Kontaktversuch" %}
+                                                <td class="link-primary">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% endif %}
+                                                
+
                                                 <td>{{ angebot.name }}</td>
                                                 <td>{{ angebot.current_date }}</td>
                                                 <td>
-                                                    <a href="{{ angebot_file }}" target="_blank" class="text-body fw-bold">
+                                                    <a href="{{ angebot_file }}" target="_blank" class="link-info">
                                                         {% if angebot.is_locked %}
                                                             Angebot_{{ angebot.angebot_id }}.pdf
                                                         {% endif %}

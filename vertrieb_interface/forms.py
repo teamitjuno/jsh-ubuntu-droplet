@@ -883,20 +883,7 @@ class VertriebAngebotForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        verbrauch = cleaned_data.get("verbrauch")
-        if not verbrauch:
-            self.add_error(
-                    "verbrauch",
-                    ValidationError(
-                        (
-                            "Dieses Feld kann nicht leer sein"
-                        ),
-                        params={
-                            "verbrauch": verbrauch,
-                            
-                        },
-                    ),
-                )
+        
 
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
