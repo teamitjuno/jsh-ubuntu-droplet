@@ -1,0 +1,294 @@
+{% extends 'projektant/base.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block head %}
+        <meta charset="utf-8" />
+        <title>Hilfe | Juno-Solar Administration Tool</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Coderthemes" name="Sam Ivanov" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+        <!-- Theme Config Js -->
+        <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+
+        <!-- App css -->
+        <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- Icons css -->
+        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
+
+{% endblock %}
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                                    <li class="breadcrumb-item active">FAQ</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">FAQ</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="header-title mb-3">Chat-Assistant</h4>
+                                <div class="chat-conversation">
+                                    <div data-simplebar style="max-height:800px">
+                                        <ul class="conversation-list">
+                                            <!-- The chat messages will be inserted here by JavaScript -->
+                                        </ul>
+                                    </div>
+                                    <form class="needs-validation" name="chat-form" id="chat-form" novalidate>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="text" class="form-control chat-input" placeholder="Geben Sie hier den Text ein" required>
+
+                                            </div>
+                                            <div class="col-auto d-grid">
+                                                <button type="submit" class="btn btn-soft-success chat-send waves-effect waves-light">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                <!-- end page title -->
+
+
+                <div class="col-xl-6">
+                    <div class="card">                
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="text-center">
+                                    <h3 class="">Oft gestellte Fragen</h3>
+                                </div>
+                            </div><!-- end col -->
+                        </div><!-- end row -->
+        
+                        <div class="row pt-5">
+                            <div class="col-lg-5 offset-lg-1">
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">Wie ist das Schnittstellenmenü aufgebaut?</h4>
+                                    <p class="faq-answer mb-4">Das Schnittstellenmenü ist in drei Bereiche unterteilt. Auf der linken Seite füllen Sie die erforderlichen Formulare aus, geben Daten ein und überprüfen die Ergebnisse der Preis- und Stromverbrauchsberechnung. In der Mitte befinden sich die vier Hauptregisterkarten: Info, Solarmodul, Ticket, Kalkulationen. Ein zusätzlicher Reiter "Wallbox" erscheint, wenn eine Wallbox im Angebot enthalten ist. Auf der rechten Seite finden Sie die Angebots-ID, die Kundennummer, Statusinformationen, Aktionsbuttons und eine Grafik zur Berechnung des Solarkraftwerksnutzens.</p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Welche Informationen werden auf der Registerkarte "Info" benötigt?</h4>
+                                    <p class="faq-answer mb-4">Auf der Registerkarte "Info" müssen Sie Kundeninformationen eingeben. Obligatorische Felder werden hervorgehoben. Außerdem geben Sie an, ob "Batteriespeicher" und "Wallbox" in der Bestellung enthalten sind. Wenn eine "Wallbox" enthalten ist, müssen auf der Registerkarte "Wallbox" zusätzliche Parameter eingegeben werden.</p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Welchen Zweck erfüllt die Registerkarte "Solarmodul"?</h4>
+                                    <p class="faq-answer mb-4">Auf der Registerkarte "Solarmodul" geben Sie die Solarmodule, deren Anzahl, die Anzahl der "Optimierer" und die Verfügbarkeit von "Eddie" und "Notstrom" an. Bitte beachten Sie, dass die Mindestanzahl der Solarmodule 6 beträgt und die Anzahl der "Optimierer" die Anzahl der Solarmodule nicht überschreiten sollte.</p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">Wie wird die Registerkarte "Ticket" verwendet?</h4>
+                                    <p class="faq-answer mb-4">Auf der Registerkarte "Ticket" füllen Sie die Felder aus, um ein Ticket zu erstellen. Es ist wichtig zu beachten, dass Sie nicht mehr als 4 Solarmodule hinzufügen können und dass die Werte in den Ticketfeldern negativ sein können, um Tickets mit negativen Preisen zu erstellen, wenn Sie Artikel oder deren Menge stornieren. Die Ticketpreisberechnung wird im unteren Teil angezeigt.</p>
+                                </div>
+        
+                            </div>
+                            <!--/col-md-5 -->
+        
+                            <div class="col-lg-5">
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Wozu dient die Registerkarte "Kalkulationen"?</h4>
+                                    <p class="faq-answer mb-4">Die Registerkarte "Kalkulationen" dient zum Ausfüllen von Feldern, die für die Berechnung des Stromverbrauchs und der Kosten des Kunden erforderlich sind.</p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Wie kann ich Änderungen im Angebot speichern?</h4>
+                                    <p class="faq-answer mb-4">Wählen Sie einen Status (z. B. "in Kontakt") und klicken Sie auf die Schaltfläche "Speichern", um alle Änderungen zu speichern. Nach dem Speichern wird die Angebots-ID zugewiesen, und es erscheinen Schaltflächen zum Erstellen von PDF-Dokumenten für Tickets und Berechnungen.</p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Was passiert, wenn ich den Status "bekommen" wähle?</h4>
+                                    <p class="faq-answer mb-4">Wenn Sie den Status "bekommen" auswählen, speichert das System das Datum der Statusänderung, startet einen Ablauf-Countdown-Timer, sperrt alle Felder für Änderungen und bietet die Möglichkeit, ein Master-PDF-Angebotsdokument zu erstellen.
+                                    </p>
+                                </div>
+        
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Was passiert, wenn der Status des Angebots auf "angenommen" oder "abgelehnt" geändert wird?</h4>
+                                    <p class="faq-answer mb-4">Vor Ablauf der 14-tägigen Frist können Sie das Angebot abschließen, indem Sie seinen Status auf "angenommen" ändern, oder es wird nach zwei Wochen automatisch auf "abgelehnt" geändert. In diesen Fällen wird die Schaltfläche "Speichern" deaktiviert und nur ein Administrator kann das Angebot für Korrekturen freischalten.</p>
+                                </div>
+        
+                            </div>
+                            <!--/col-md-5-->
+                        </div>
+                        <!-- end row -->
+            </div> <!-- container -->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end footer-links d-none d-md-block">
+                                <a href="javascript: void(0);">Info</a>
+                                <a href="javascript: void(0);">Support</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div> <!-- content -->
+{% endblock %}
+{% block javascript %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.querySelector(".chat-input");
+        const chatList = document.querySelector(".conversation-list");
+    
+        chatForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+    
+            // Get the message from the chat input
+            const question = chatInput.value;
+    
+            // Clear the chat input
+            chatInput.value = "";
+    
+            // Append the question to the chat
+            const questionElement = createChatElement("odd", "You", question, getCurrentTime());
+            chatList.appendChild(questionElement);
+    
+            // Send the question to the chatbot and append the response to the chat
+            fetch("/proj/chat_bot/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ question: question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseElement = createChatElement("", "Bot", '', getCurrentTime());
+                chatList.appendChild(responseElement);
+                const textNode = responseElement.querySelector('p');
+                typeWriter(data.response, 0, textNode);
+            });
+        });
+
+        function typeWriter(text, i, textNode) {
+            if (i < text.length) {
+                textNode.textContent += text.charAt(i);
+                setTimeout(() => typeWriter(text, i + 1, textNode), 15); // Modify the delay as needed
+            }
+        }
+    
+        function getCurrentTime() {
+            const now = new Date();
+            return now.getHours() + ":" + now.getMinutes();
+        }
+    
+        function createChatElement(className, name, text, time) {
+            const li = document.createElement("li");
+            li.className = "clearfix " + className;
+    
+            const chatAvatar = document.createElement("div");
+            chatAvatar.className = "chat-avatar";
+            const img = document.createElement("img");
+            if(name === "Bot"){
+                img.src = "{% static 'assets/images/users/bot_avatar.jpg' %}"; // Replace with the appropriate avatar path
+            } else {
+                img.src = "{{ user.avatar.url }}"; // Replace with the appropriate avatar
+            }
+             // Replace with the appropriate avatar
+            img.alt = name;
+            const iTime = document.createElement("i");
+            iTime.textContent = time;
+            chatAvatar.appendChild(img);
+            chatAvatar.appendChild(iTime);
+    
+            const conversationText = document.createElement("div");
+            conversationText.className = "conversation-text";
+            const ctextWrap = document.createElement("div");
+            ctextWrap.className = "ctext-wrap";
+            const iName = document.createElement("i");
+            iName.textContent = name;
+            const pText = document.createElement("p");
+            pText.textContent = text;
+            ctextWrap.appendChild(iName);
+            ctextWrap.appendChild(pText);
+            conversationText.appendChild(ctextWrap);
+    
+            li.appendChild(chatAvatar);
+            li.appendChild(conversationText);
+    
+            return li;
+        }
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+
+{% endblock %}
+  
+{% block extra_js %}
+        <!-- Vendor js -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+        <!-- Chart.js -->
+        <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
+
+        <!-- Profile Demo App js -->
+        <script src="{% static 'assets/js/pages/demo.profile.js' %}"></script>
+        <script src="{% static 'assets/js/ui/component.chat.js' %}"></script>
+
+        <!-- App js -->
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}

@@ -41,6 +41,7 @@ class RateLimitExceededException(APIException):
 
 def get_headers():
     access_token = ZOHO_ACCESS_TOKEN
+    print(access_token)
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
 

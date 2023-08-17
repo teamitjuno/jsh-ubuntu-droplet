@@ -58,6 +58,7 @@ class SolarModulePreise(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     actual_price = models.DecimalField(max_digits=10, decimal_places=2)
     old_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.IntegerField(blank=True, null=True)
     in_stock = models.BooleanField(default=True)
 
     def __str__(self) -> str:

@@ -31,6 +31,8 @@ PROJECT_APPS = [
     "elektriker_kalender",
     "vertrieb_interface",
     "adminfeautures",
+    "projektant_interface",
+    "calculator",
 ]
 
 
@@ -54,7 +56,7 @@ SERVICE_APPS = [
     "storages",
     'corsheaders',
     "templatetags.custom_filters",
-]
+    "vertrieb_interface.templatetags.custom_filter"]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + SERVICE_APPS
 
@@ -102,6 +104,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+
+OWNER_ID=os.getenv('OWNER_ID')
+STYLE_ID=os.getenv('STYLE_ID')
+MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
 DEFAULT_EMAIL_DOMAIN = os.getenv("DEFAULT_EMAIL_DOMAIN")
 DEFAULT_USER_CREATION_PASSWORD = os.getenv("DEFAULT_USER_CREATION_PASSWORD")
 DEFAULT_PHONE = os.getenv("DEFAULT_PHONE")
@@ -154,6 +160,7 @@ STATICFILES_FINDERS = [
 ]
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
+STATIC = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),

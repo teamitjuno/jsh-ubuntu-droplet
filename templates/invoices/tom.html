@@ -576,10 +576,123 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-5">
+                            <div class="col-xxl-4 col-xl-5">
+
                                 <div class="card">
                                     <div class="card-body">
-                                        
+                                        <h5 class="card-title mb-3">Attachments</h5>
+
+                                        <form action="/" method="post" enctype="multipart/form-data" class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone" data-previews-container="#file-previews" data-upload-preview-template="#uploadPreviewTemplate">
+                                            {% csrf_token %}
+                                            
+                                            <div class="fallback">
+                                                {{ form.as_p }}
+                                                <input name="file" type="file" multiple/>
+                                            </div>
+                                            <div class="dz-message needsclick">
+                                                <i class="h3 text-muted ri-upload-cloud-2-line"></i>
+                                                <h4>Drop files here or click to upload.</h4>
+                                            </div>
+                                            <input type="submit" value="Upload">
+                                        </form>
+
+
+                                        <!-- Preview -->
+                                        <div class="dropzone-previews mt-3" id="file-previews"></div>
+
+                                        <!-- file preview template -->
+                                        <div class="d-none" id="uploadPreviewTemplate">
+                                            <div class="card mt-1 mb-0 shadow-none border">
+                                                <div class="p-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                                                        </div>
+                                                        <div class="col ps-0">
+                                                            <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                                                            <p class="mb-0" data-dz-size></p>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <!-- Button -->
+                                                            <a href="" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                                                                <i class="ri-close-line"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end file preview template -->
+
+
+                                        <div class="card my-1 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded">
+                                                                .ZIP
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);" class="text-muted fw-bold">Hyper-admin-design.zip</a>
+                                                        <p class="mb-0">2.3 MB</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted">
+                                                            <i class="ri-download-2-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mb-1 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <img src="assets/images/projects/project-1.jpg" class="avatar-sm rounded" alt="file-image" />
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);" class="text-muted fw-bold">Dashboard-design.jpg</a>
+                                                        <p class="mb-0">3.25 MB</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted">
+                                                            <i class="ri-download-2-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mb-0 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title bg-secondary text-light rounded">
+                                                                .MP4
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);" class="text-muted fw-bold">Admin-bug-report.mp4</a>
+                                                        <p class="mb-0">7.05 MB</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted">
+                                                            <i class="ri-download-2-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

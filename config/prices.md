@@ -72,6 +72,17 @@ ElektrikPreis.objects.create(name='Hauptleitungsabzweigklemmen 35mm', price=7.00
 
 
 from prices.models import ModuleGarantiePreise
+ModuleGarantiePreise.objects.create(name='garantie3_10', price=0.00, actual_price=0.00,old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie4_10', price=0.00, actual_price=0.00,old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie5_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie6_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie8_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie10_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie15_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie16_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie20_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie25_10', price=0.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie30_10', price=0.00, actual_price=0.00, old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie3_15', price=350.00, actual_price=0.00,old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie4_15', price=370.00, actual_price=0.00,old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie5_15', price=410.00, actual_price=0.00, old_price=0.00)

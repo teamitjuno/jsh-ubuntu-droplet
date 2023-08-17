@@ -100,6 +100,7 @@ urlpatterns = [
         name="document_ticket_view",
     ),
     path("send_invoice/<str:angebot_id>/", views.send_invoice, name="send_invoice"),
+    path("vertrieb/send_support_message/", views.send_support_message, name="send_support_message"),
     path(
         "send_calc_invoice/<str:angebot_id>/",
         views.send_calc_invoice,

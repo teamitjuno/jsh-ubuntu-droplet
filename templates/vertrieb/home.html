@@ -1,9 +1,16 @@
 {% extends 'vertrieb/base.html'%}
+{% load custom_filter %}
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
 
 {% block content %}
+<!-- Pre-loader -->
+            <div id="preloader">
+                <div id="status">
+                    <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
+                </div>
+            </div>
 <div class="content-page">
     <div class="content">
         <div class="container-fluid">
@@ -18,6 +25,39 @@
                 </div>
             </div>
                 <!-- end page title -->
+            {% if user.top_verkaufer_container_view %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-info border">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="header-title">unsere Mitarbeiter</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% for user in users %}
+                                    <div class="col-12 col-md-2 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            {% if user.avatar %}
+                                                <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
+                                            {% endif %}
+                                            <div>
+                                                <h5 class="mt-0 mb-1 font-16">{{ user.first_name }} {{ user.last_name }}</h5>
+                                                <span class="font-13">{{ user.email }}</span>
+                                            </div>
+                                            <span class="badge badge-success-lighten ms-3 font-16">{{ user.num_vertriebangebots }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- end card-body -->
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+
             <div class="row">
                 <div class="col-xl-6">
                     <div class="card">
@@ -26,13 +66,15 @@
                             <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
                         
                         </div>
-                            <img class="img-fluid" style="margin: auto;" src="{% static 'img/junosolar_logo4.png' %}" alt="Card image cap">
+                        
+                            <img class="logo-light" style="margin: auto;" src="{% static 'img/junosolar_logo4-inverse.png' %}" height="200px" alt="logo">
+                        
                         <div class="card-body">
                             <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
-                            <p></p>
+                            
                             <div style="display: flex; gap: 15px;">
                                 <a href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
-                                    Aktuelle Aufträge aus ZOHO laden
+                                    Aus JPP Einträge erneuern
                                 </a>
                                 
                                 <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -110,29 +152,13 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h4 class="header-title">Angebote Statusübersicht</h4>
-                            <div class="dropdown">
-                                <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="mdi mdi-dots-vertical"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item">Today</a>
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item">Yesterday</a>
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item">Last Week</a>
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item">Last Month</a>
-                                </div>
-                            </div>
                         </div>
-
                         <div class="card-body pt-0">
                             <div class="row align-items-center">
                                 <div class="col-md-6 order-2 order-md-1">
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-primary-lighten text-primary"></i>
+                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-success-lighten text-success"></i>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <h5 class="fw-semibold mt-0 mb-1">Angenommen</h5>
@@ -158,7 +184,7 @@
 
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-success-lighten text-success"></i>
+                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-warning-lighten text-warning"></i>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <h5 class="fw-semibold mt-0 mb-1">Bekommen</h5>
@@ -172,7 +198,7 @@
 
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-warning-lighten text-warning"></i>
+                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-primary-lighten text-primary"></i>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <h5 class="fw-semibold mt-0 mb-1">in Kontakt und Kontaktversuch</h5>
@@ -186,7 +212,7 @@
                                 </div>
                                 <div class="col-md-6 order-1 order-md-2">
                                     <div class="mb-3 mb-md-0">
-                                        <div id="project-overview-chart" class="apex-charts" data-colors="#727cf5,#ff679b,#0acf97,#ffbc00"></div>
+                                        <div id="project-overview-chart" class="apex-charts" data-colors="#0acf97,#ff679b,#ffbc00,#727cf5"></div>
                                     </div>
                                 </div>
                                 
@@ -195,7 +221,107 @@
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-12">
+            <div class="col-xl-3">
+                <div class="card border-info border">
+                    <div class="d-flex card-header justify-content-between align-items-center">
+                        <h4 class="header-title">Anzahl der verkauften Solarmodule</h4>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Solarmodule Model</th>
+                                        <th>Bestandsrest</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in solar_module_stats %}
+                                        <tr>
+                                            <td>
+                                                <h5 class="font-16 my-1 fw-normal">{{ stat.solar_module }}</h5>
+                                                <span class="text-muted font-13">Solarmodule Model</span>
+                                            </td>
+                                            <td>
+                                                {% with stock=remaining_stock|get_item:stat.solar_module %}
+                                                    {% if stock > 250 %}
+                                                        <h5 class="font-18 my-1 fw-normal text-success">{{ stock }}</h5>
+                                                    {% elif stock > 70 %}
+                                                        <h5 class="font-18 my-1 fw-normal text-warning">{{ stock }}</h5>
+                                                    {% else %}
+                                                        <h5 class="font-18 my-1 fw-normal text-danger">{{ stock }}</h5>
+                                                    {% endif %}
+                                                    
+                                                {% endwith %}
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> <!-- end table-responsive-->
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+
+                        
+
+                <div class="card border-info border p-2">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="header-title">Schnell-PV-Rechner</h4>
+                        
+                    </div>
+                    <div class="card-body pt-3">
+                        <form method="post">
+                            {% csrf_token %}
+                            <table class="table table-sm table-centered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td>                                            
+                                            {{ calculator_form.solar_module }}
+                                        </td> 
+                                        <td>{{ calculator_form.modulanzahl }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ calculator_form.wallboxtyp }}</td>
+                                        <td>{{ calculator_form.wallbox_anzahl }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><p><strong>Optimierer</strong></p></td>
+                                        <td>{{ calculator_form.anzOptimizer }}</h5>
+                                    </tr>
+                                    <tr>
+                                        <td><p><strong>Speicher</strong></p></td>
+                                        <td>{{ calculator_form.anz_speicher }}</h5>
+                                    </tr>
+                                    <tr>
+                                        <td><p><strong>Notstrom</strong></p></td>
+                                        <td>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="notstrom" {% if calculator_form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.notstrom.html_name }}" />
+                                                <label class="custom-control-label" for="notstrom" data-on-label="Ja" data-off-label="Nein"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-hover table-centered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th><p class="h4">{{ calculator_form.angebotsumme.label }}</p></th>
+                                        <td></td>
+                                        <td><p class="h4" id="angebotsumme">{{ calculator_instance.angebotsumme }}  €</p></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                                <button type="submit" class="btn btn-outline-info m-3 rounded-pill position-absolute top-0 end-0">Zusammenfassen</button>
+                            
+                        </form>
+                    </div>
+                    <!-- end card-body -->
+                </div>  
+            </div>
+                <div class="col-xl-3">
                     <div class="card border-info border">
                         <div class="card-body">
                             <span class="float-start m-2 me-4">
@@ -212,33 +338,20 @@
                                         <h5 class="mb-1">{{ user.kuerzel }}</h5>
                                         <p class="mb-0 font-13">{{ user.beruf }}</p>
                                     </li>
-                                    <li class="list-inline-item">
-                                        <h5 class="mb-1"> {{ current_user_vertriebangebots}} </h5>
-                                        <p class="mb-0 font-13">Gesamtzahl aller Angebote</p>
-                                    </li>
+                                    
                                 </ul>
                             </div>
                             <!-- end div-->
                         </div>
                         <!-- end card-body-->
                     </div>
-                        <div class="card">
+                        <div class="card border-info border">
                             <div class="d-flex card-header justify-content-between align-items-center">
                                 <h4 class="header-title">Letzte Aktivitäten </h4>
                                 
-                                <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="mdi mdi-dots-vertical"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Verkaufsbericht</a>
-                                        <!-- item-->
-                                    </div>
-                                </div>
                             </div>
                         
-                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 410px;"> 
+                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 710px;"> 
                                 <div class="timeline-alt py-0">
                                     {% for activity in activities %}
                                         <div class="timeline-item">
@@ -256,99 +369,85 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                                <div class="d-flex card-header justify-content-between align-items-center">
-                                    <h4 class="header-title">Anzahl der verkauften Solarmodule </h4>
-                                </div>
-                                <div class="card-body pt-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-centered table-nowrap table-hover mb-0">
-                                            <tbody>
-                                                {% for stat in solar_module_stats %}
-                                                <tr>
-                                                    <td>
-                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.solar_module }}</h5>
-                                                        <span class="text-muted font-13">Solarmodule Model</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.total_modulanzahl }}</h5>
-                                                        <span class="text-muted font-13">Menge</span>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div> <!-- end table-responsive-->
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
+                    </div>  
                         <!-- end card-->
+                </div>
+            </div>
+        </div>
+            <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
                     </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a type="submit" href="javascript:void(0)" id="send_support_message">Support</a>
+                            <div class="d-print-none mt-4">
+                                <div class="text-end">
+                                    <div id="success-alert-modal_2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content modal-filled bg-success">
+                                                <div class="modal-body p-4">
+                                                    <div class="text-center">
+                                                        <i class="ri-check-line h1"></i>
+                                                        <h4 class="mt-2">Gut gemacht!</h4>
+                                                        <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
+                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                                    <script>
+                                        function getCookie(name) {
+                                            let cookieValue = null;
+                                            if (document.cookie && document.cookie !== '') {
+                                                const cookies = document.cookie.split(';');
+                                                for (let i = 0; i < cookies.length; i++) {
+                                                    const cookie = cookies[i].trim();
+                                                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            return cookieValue;
+                                        }
 
-                    <div class="col-xl-3 col-lg-6">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="header-title">Top Verkäufer des Monats</h4>
-                                <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="mdi mdi-dots-vertical"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                                    </div>
+                                        document.getElementById('send_support_message').addEventListener('click', function() {
+                                            var csrfToken = getCookie('csrftoken'); 
+                                            fetch('{% url 'vertrieb_interface:send_support_message' %}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRFToken': csrfToken
+                                                },
+                                                body: JSON.stringify({})
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                console.log(data);
+                                                if (data.status === 'success') {
+                                                    $('#success-alert-modal_2').modal('show');
+                                                }
+                                            });
+                                        });
+                                    </script>
                                 </div>
                             </div>
-                    
-                            <div class="card-body pt-2" >
-                                {% for user in users %}
-                                <div class="d-flex align-items-start mt-3">
-                                    {% if user.avatar %}
-                                    <img class="me-3 rounded-circle" src="{{ user.avatar.url }}" width="40" alt="Generic placeholder image">
-                                    {% endif %}
-                                    <div class="w-100 overflow-hidden">
-                                        <h5 class="mt-0 mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
-                                        <span class="font-13">{{ user.email }}</span>
-                                        <span class="badge badge-success-lighten float-end">{{ user.num_vertriebangebots }}</span>
-                                        <p>Anzahl der erledigten Aufträge : {{ user.num_vertriebangebots }}</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <!-- end card-body -->
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-md-end footer-links d-none d-md-block">
-                                <a href="javascript: void(0);">Info</a>
-                                <a href="javascript: void(0);">Support</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
+        </footer>
     </div>
+</div>
+
 {% endblock%}
 
 {% block javascript %}
-<script src="{% static 'assets/js/vendor.min.js' %}"></script>
-
-<script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
-<!-- Code Highlight js -->
 <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
-
-<script src="{% static 'assets/js/app.min.js' %}"></script>
 <script> 
     ! function(e) {
         "use strict";
@@ -449,33 +548,34 @@
          })
      }(window.jQuery);
      
-     var colors = ["#727cf5", "#0acf97", "#fa5c7c", "#ffbc00"],  // Add the color for the new circle (grey)
-         dataColors = $("#project-overview-chart").data("colors"),
-         total = {{ current_user_vertriebangebots }},
-         series = [
-             Math.round({{ angenommen }} * 1000 / total) / 10, 
-             Math.round({{ abgelehnt }} * 1000 / total) / 10, 
-             Math.round({{ bekommen }} * 1000 / total) / 10, 
-             Math.round(({{ in_Kontakt }} + {{ Kontaktversuch }}) * 1000 / total) / 10
-         ],
-         options = {
-             chart: {
-                 height: 328,
-                 type: "radialBar"
-             },
-             colors: colors = dataColors ? dataColors.split(",") : colors,
-             series: series,
-             labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch"],
-             plotOptions: {
-                 radialBar: {
-                     track: {
-                         margin: 7
-                     }
-                 }
-             }
-         },
-         chart = new ApexCharts(document.querySelector("#project-overview-chart"), options);
-     chart.render();
+     var colors = ["#727cf5", "#fa5c7c", "#ffbc00", "#0acf97"],
+
+        dataColors = $("#project-overview-chart").data("colors"),
+    total = {{ current_user_vertriebangebots }},
+    series = [
+        Math.round({{ angenommen }} * 1000 / total) / 10, 
+        Math.round({{ abgelehnt }} * 1000 / total) / 10, 
+        Math.round({{ bekommen }} * 1000 / total) / 10, 
+        Math.round(({{ in_Kontakt }} + {{ Kontaktversuch }}) * 1000 / total) / 10
+    ],
+    options = {
+        chart: {
+            height: 328,
+            type: "radialBar"
+        },
+        colors: dataColors ? dataColors.split(",") : colors,
+        series: series,
+        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch"],
+        plotOptions: {
+            radialBar: {
+                track: {
+                    margin: 7
+                }
+            }
+        }
+    },
+    chart = new ApexCharts(document.querySelector("#project-overview-chart"), options);
+chart.render();
  </script>
  
  <script>
@@ -525,6 +625,13 @@
 {% endblock %}
 
 {% block extra_js %}   
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+<script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+<!-- Code Highlight js -->
+
+
+<script src="{% static 'assets/js/app.min.js' %}"></script>
 <!-- Daterangepicker js -->
 <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
 <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>

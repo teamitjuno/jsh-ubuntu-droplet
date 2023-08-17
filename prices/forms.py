@@ -42,12 +42,15 @@ class SolarModulePreiseForm(forms.ModelForm):
     old_price = forms.IntegerField(
         required=False,
         initial=0, widget=forms.NumberInput(attrs={'class': 'form-control', 'id' : 'id_old_price'}))
+    quantity = forms.IntegerField(
+        required=False,
+        initial=0, widget=forms.NumberInput(attrs={'class': 'form-control', 'id' : 'id_old_price'}))
     in_stock = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "custom-control-input", "id" : 'id_in_stock'}))
     class Meta:
         model = SolarModulePreise
-        fields = ['name', 'price', 'actual_price', 'old_price', 'in_stock']
+        fields = ['name', 'price', 'actual_price', 'old_price', 'in_stock', 'quantity']
 
 
 class WallBoxPreiseForm(forms.ModelForm):

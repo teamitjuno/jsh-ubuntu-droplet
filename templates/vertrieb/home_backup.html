@@ -76,12 +76,12 @@
                         
                         <ul class="topbar-menu d-flex align-items-center gap-3">
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link" href="#" onclick="history.back();">
+                                <a class="nav-link" href="#" onclick="history.back();" data-bs-toggle="tooltip" title="Zurück">
                                     <i class="ri-arrow-go-back-line font-22"></i>
                                 </a>
                             </li>
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link" href="#" onclick="window.location.reload();">
+                                <a class="nav-link" data-bs-toggle="tooltip" href="#" onclick="window.location.reload();" title="Refresh Page">
                                     <i class="uil-sync"></i>
                                 </a>
                             </li>
@@ -466,15 +466,15 @@
                                 </span>
                                 <div class="">
                                     <h4 class="mt-1 mb-1">{{ user.first_name}} {{ user.last_name}}</h4>
-                                    <p class="font-13"> {{ user.beruf }} </p>
+                                    <p class="font-13"> {{ user.email }} </p>
                             
                                     <ul class="mb-0 list-inline">
                                         <li class="list-inline-item me-3">
-                                            <h5 class="mb-1">$ {{ current_user_vertriebangebots_month}}</h5>
-                                            <p class="mb-0 font-13">in diesem Monat</p>
+                                            <h5 class="mb-1">{{ user.kuerzel }}</h5>
+                                            <p class="mb-0 font-13">{{ user.beruf }}</p>
                                         </li>
                                         <li class="list-inline-item">
-                                            <h5 class="mb-1">{{ current_user_vertriebangebots}}</h5>
+                                            <h5 class="mb-1"> {{ current_user_vertriebangebots_month}} </h5>
                                             <p class="mb-0 font-13">Gesamtzahl aller Angebote</p>
                                         </li>
                                     </ul>
@@ -488,7 +488,7 @@
                         <div class="card">
                             <div class="d-flex card-header justify-content-between align-items-center">
                                 <h4 class="header-title">Letzte Aktivitäten </h4>
-                                <h6>(in der Entwicklung...)</h6>
+                                
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="mdi mdi-dots-vertical"></i>
@@ -497,108 +497,27 @@
                                         <!-- item-->
                                         <a href="javascript:void(0);" class="dropdown-item">Verkaufsbericht</a>
                                         <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Bericht exportieren</a>
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Gewinn</a>
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item">Aktion</a>
                                     </div>
                                 </div>
                             </div>
                         
-
-
-                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 290px;"> 
+                            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 410px;"> 
                                 <div class="timeline-alt py-0">
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Sie haben einen Artikel verkauft</a>
-                                            <small>Paul Burgess hat gerade ..... gekauft.</small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">vor 5 Minuten</small>
-                                            </p>
+                                    {% for activity in activities %}
+                                        <div class="timeline-item">
+                                            <i class="mdi {{ activity.icon }} timeline-icon"></i>
+                                            <div class="timeline-item-info">
+                                                <a href="javascript:void(0);" class="{{ activity.action.class }} fw-bold mb-1 d-block">{{ activity.action.message }}</a>
+                                                <p class="{{ activity.object.class }}">{{ activity.object.repr }}</p>
+                                                <small>Angebotstatus: {{ activity.status }}</small>
+                                                <p class="mb-0 pb-2">
+                                                    <small class="text-muted">{{ activity.action_time }}</small>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some action....</a>
-                                            <small>Some user added
-                                                <span class="fw-bold">Admin Dashboard</span>
-                                            </small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">30 minutes ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some user or admin</a>
-                                            <small>Send you message
-                                                <span class="fw-bold">"Are you there?"</span>
-                                            </small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">2 hours ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-upload bg-primary-lighten text-primary timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Some user</a>
-                                            <small>Uploaded a photo
-                                                <span class="fw-bold">"Error.jpg"</span>
-                                            </small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">14 hours ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Some Event happened</a>
-                                            <small>Some Kunde just purchased  or made some action!</small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">16 hours ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Product on the Bootstrap Market</a>
-                                            <small>Dave Gamache added
-                                                <span class="fw-bold">Admin Dashboard</span>
-                                            </small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">22 hours ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
-                                        <div class="timeline-item-info">
-                                            <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Robert Delaney</a>
-                                            <small>Send you message
-                                                <span class="fw-bold">"Are you there?"</span>
-                                            </small>
-                                            <p class="mb-0 pb-2">
-                                                <small class="text-muted">2 days ago</small>
-                                            </p>
-                                        </div>
-                                    </div>
+                                    {% endfor %}
                                 </div>
-                                <!-- end timeline -->
-                            </div> <!-- end slimscroll -->
+                            </div>
                         </div>
                         <!-- end card-->
                     </div>
@@ -621,7 +540,7 @@
                                 </div>
                             </div>
                     
-                            <div class="card-body pt-2">
+                            <div class="card-body pt-2" >
                                 {% for user in users %}
                                 <div class="d-flex align-items-start mt-3">
                                     {% if user.avatar %}
@@ -737,6 +656,38 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-xl-3 col-lg-6 order-lg-2 order-xl-1">
+                            <div class="card">
+                                <div class="d-flex card-header justify-content-between align-items-center">
+                                    <h4 class="header-title">Anzahl der verkauften Solarmodule </h4>
+                                    
+                                </div>
+
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-centered table-nowrap table-hover mb-0">
+                                            <tbody>
+                                                {% for stat in solar_module_stats %}
+                                                <tr>
+                                                    <td>
+                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.solar_module }}</h5>
+                                                        <span class="text-muted font-13">Solarmodule Model</span>
+                                                    </td>
+                                                    <td>
+                                                        <h5 class="font-14 my-1 fw-normal">{{ stat.total_modulanzahl }}</h5>
+                                                        <span class="text-muted font-13">Menge</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div> <!-- end table-responsive-->
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </div> <!-- end col-->
+
+
                     </div>
             
         

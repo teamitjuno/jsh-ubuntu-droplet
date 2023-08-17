@@ -116,6 +116,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "smtp_password",
                     "smtp_subject",
                     "smtp_body",
+                    "zoho_data_text",
                 ),
             },
         ),
@@ -153,6 +154,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "smtp_password",
                     "smtp_subject",
                     "smtp_body",
+                    
                 ),
             },
         ),

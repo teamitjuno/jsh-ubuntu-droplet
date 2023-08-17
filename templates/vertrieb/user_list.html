@@ -144,6 +144,7 @@
                                                 <th>Name</th>
                                                 <th>Price</th>
                                                 <th>In Stock</th>
+                                                <th>Menge</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -162,6 +163,7 @@
                                                         <span class="badge bg-success rounded-pill">Ja</span>
                                                     </td>
                                                 {% endif %}
+                                                <td>{{ model.quantity }}</td>
                                                 <td>
                                                     <a href="{% url 'adminfeautures:update_solar_module_preise' model.id %}" class="btn btn-primary">Update</a>
 

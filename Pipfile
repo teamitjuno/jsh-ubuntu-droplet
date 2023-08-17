@@ -94,7 +94,9 @@ yarl = "==1.9.2"
 pypdf2 = "==3.0.1"
 reportlab = "==4.0.4"
 dateparser = "*"
-django-cors-headers = "*"
+django-cors-headers = "==4.2.0"
+fitz = "*"
+pymupdf = "*"
 
 [dev-packages]
 

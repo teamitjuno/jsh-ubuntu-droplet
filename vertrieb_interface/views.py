@@ -25,12 +25,15 @@ from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q, Sum
 from django.views.defaults import page_not_found
 from django.core.files.base import ContentFile
-
+from prices.models import SolarModulePreise
+from calculator.models import Calculator
+from calculator.forms import CalculatorForm
 from config import settings
 from config.settings import ENV_FILE, EMAIL_BACKEND
 from django.utils.decorators import method_decorator
 from shared.chat_bot import handle_message
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from vertrieb_interface.get_user_angebots import (
     fetch_all_user_angebots,
     fetch_current_user_angebot,
@@ -64,10 +67,12 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
-from .models import User, VertriebAngebot
+from .models import VertriebAngebot
+from authentication.models import User
 from io import BytesIO
 from django.db.models import Count
 from django.utils import timezone
+from authentication.forms import TopVerkauferContainerViewForm 
 NAMES_CHOICES = ""
 from django.utils.formats import date_format
 
@@ -76,8 +81,6 @@ now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, 'DATETIME_FORMAT')
 
 load_dotenv(ENV_FILE)
-User = get_user_model()
-
 
 def handler404(request, exception):
     return render(request, "404.html", status=404)
@@ -91,42 +94,151 @@ class VertriebCheckMixin(UserPassesTestMixin):
     def test_func(self):
         return vertrieb_check(self.request.user)  # type: ignore
 
+def get_recent_activities(user):
+    recent_activities = CustomLogEntry.objects.filter(
+        user_id=user.id
+    ).select_related('content_type', 'user').order_by('-action_time')[:15]
+
+    activities = []
+    for entry in recent_activities:
+        vertrieb_angebot = entry.get_vertrieb_angebot()
+        if vertrieb_angebot:
+            status = vertrieb_angebot.status if vertrieb_angebot else "noch nicht zugeordnet"
+            activity = {
+                'action_time': entry.action_time,
+                'module': entry.content_type.model_class()._meta.verbose_name_plural,
+                'action': {
+                    'message': entry.get_change_message(),
+                    'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
+                    'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
+                    'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
+                    'text-primary' if entry.action_flag == ADDITION
+                            else 'text-info' if entry.action_flag == CHANGE
+                            else 'text-danger',  
+                },
+                'user': entry.user,
+                'object': {
+                    'repr': entry.object_repr,
+                    'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
+                    'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
+                    'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
+                    'text-primary' if entry.action_flag == ADDITION
+                            else 'text-info' if entry.action_flag == CHANGE
+                            else 'text-danger',  
+                },
+                'icon': 'mdi-delete bg-danger-lighten text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" 
+                        else 'mdi-minus bg-warning-lighten text-warning' if entry.get_vertrieb_angebot().status == "bekommen"
+                        else 'mdi-update bg-success-lighten text-success' if entry.get_vertrieb_angebot().status == "angenommen"   
+                        else 'mdi-plus bg-primary-lighten text-primary' if entry.action_flag == ADDITION
+                        else 'mdi-update bg-info-lighten text-info' if entry.action_flag == CHANGE
+                        else 'mdi-delete bg-danger-lighten text-danger',  
+                'status': status,
+            }
+            if not any(a['action_time'] == activity['action_time'] or a['object'] == activity['object'] for a in activities):
+                activities.append(activity)
+
+            return activities
+        
+        else:
+            pass        
+        return None
+    
+
+
+def get_class_based_on_status(entry, status):
+    class_map = {
+        "abgelaufen": 'text-danger',
+        "bekommen": 'text-warning',
+        "angenommen": 'text-success',
+        ADDITION: 'text-primary',
+        CHANGE: 'text-info'
+    }
+    return class_map.get(status, 'text-danger')
+
+
+def get_icon_based_on_status(entry, status):
+    icon_map = {
+        "abgelaufen": 'mdi-delete bg-danger-lighten text-danger',
+        "bekommen": 'mdi-minus bg-warning-lighten text-warning',
+        "angenommen": 'mdi-update bg-success-lighten text-success',
+        ADDITION: 'mdi-plus bg-primary-lighten text-primary',
+        CHANGE: 'mdi-update bg-info-lighten text-info'
+    }
+    return icon_map.get(status, 'mdi-delete bg-danger-lighten text-danger')
+
 
 def home(request):
-    # Get the current month and year.
-    now = timezone.now()
-    month = now.month
-    year = now.year
-    # Annotate each user with the count of their VertriebAngebot's for this month and
-    # limit the query to the top 5 users.
+    user = request.user
+    
+    calculator_instance = Calculator.objects.first()
+
+    # If it doesn't exist, create one
+    if not calculator_instance:
+        calculator_instance = Calculator.objects.create(user=user)
+
+    # Handle form submission
+    if request.method == "POST":
+        form = CalculatorForm(request.POST, instance=calculator_instance, user=user)
+        if form.is_valid():
+            form.save()
+            return redirect('vertrieb_interface:home')
+
+    else:
+        calculator_form = CalculatorForm(instance=calculator_instance, user=user)
+
+
+    year, month = now.year, now.month
+
+
     users = User.objects.filter(beruf="Vertrieb").annotate(
         num_vertriebangebots=Count(
             'vertriebangebot',
-            filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__current_date__month=month, vertriebangebot__angebot_id_assigned=True)
+            filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__angebot_id_assigned=True)
         )
-    ).order_by('-num_vertriebangebots')[:5]
+    ).order_by('-num_vertriebangebots')[:6]
 
-    current_user_vertriebangebots = VertriebAngebot.objects.filter(
-        user=request.user, angebot_id_assigned =True,
-    ).count()
-    # Get the count of the current user's VertriebAngebot's for this month.
+
+    vertriebangebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True)
+    current_user_vertriebangebots = vertriebangebots.count()
+
     current_user_vertriebangebots_month = VertriebAngebot.objects.filter(
         user=request.user,
         angebot_id_assigned = True,
         current_date__year=year,
         current_date__month=month
     ).count()
-    vertriebangebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned = True)
 
-    solar_module_stats = VertriebAngebot.objects.filter(
-        user=request.user,
-        angebot_id_assigned=True,
-        status="angenommen",
+    all_vertrieb_angebots = VertriebAngebot.objects.filter(
+            Q(status="angenommen") | Q(status="bekommen"),
+            angebot_id_assigned=True
+        ).values('solar_module').annotate(
+            total_modulanzahl=Sum('total_anzahl')
+        ).order_by('solar_module')
+
+    solar_module_stats = vertriebangebots.filter(
+            Q(status="angenommen") | Q(status="bekommen"),
+            angebot_id_assigned=True).values('solar_module').annotate(
+        total_modulanzahl=Sum('total_anzahl')
+    ).order_by('solar_module') 
+
+    solar_module_ticket_stats = vertriebangebots.filter(
+        status="angenommen"
     ).values('solar_module').annotate(
-        total_modulanzahl=Sum('modulanzahl')
+        total_modulanzahl=Sum('modul_anzahl_ticket')
     ).order_by('solar_module')
 
+    statuses = ["angenommen", "bekommen", "in Kontakt", "Kontaktversuch", "abgelehnt", "abgelaufen", "on Hold", "storniert"]
+    status_counts = {status: vertriebangebots.filter(status=status).count() for status in statuses}
+
+    remaining_stock = {}
+    for solar_module in SolarModulePreise.objects.all():
+        
+        total_sold = next((item['total_modulanzahl'] for item in all_vertrieb_angebots if item['solar_module'] == solar_module.name), 0)
+        
+        remaining_stock[solar_module.name] = solar_module.quantity - total_sold if solar_module.quantity and total_sold else 0
+        
     angenommen_count = vertriebangebots.filter(status="angenommen").count()
+    all_count = vertriebangebots.count()
     bekommen_count = vertriebangebots.filter(status="bekommen").count()
     in_kontakt_count = vertriebangebots.filter(status="in Kontakt").count()
     kontaktversuch_count = vertriebangebots.filter(status="Kontaktversuch").count()
@@ -135,73 +247,47 @@ def home(request):
     on_hold_count = vertriebangebots.filter(status="on Hold").count()
     storniert_count = vertriebangebots.filter(status="storniert").count()
 
-    recent_activities = CustomLogEntry.objects.filter(
-        user_id=request.user.id
-    ).select_related('content_type', 'user').order_by('-action_time')[:15] 
 
-    # Prepare the recent activities for the context 
-    activities = []
-    for entry in recent_activities:
-        vertrieb_angebot = entry.get_vertrieb_angebot()
-        status = vertrieb_angebot.status if vertrieb_angebot else "noch nicht zugeordnet"
-        activity = {
-            'action_time': entry.action_time,
-            'module': entry.content_type.model_class()._meta.verbose_name_plural,
-            'action': {
-                'message': entry.get_change_message(),
-                'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
-                'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
-                'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
-                'text-primary' if entry.action_flag == ADDITION
-                        else 'text-info' if entry.action_flag == CHANGE
-                        else 'text-danger',  
-            },
-            'user': entry.user,
-            'object': {
-                'repr': entry.object_repr,
-                'class': 'text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" else
-                'text-warning' if entry.get_vertrieb_angebot().status == "bekommen" else
-                'text-success' if entry.get_vertrieb_angebot().status == "angenommen" else 
-                'text-primary' if entry.action_flag == ADDITION
-                        else 'text-info' if entry.action_flag == CHANGE
-                        else 'text-danger',  
-            },
-            'icon': 'mdi-delete bg-danger-lighten text-danger' if entry.get_vertrieb_angebot().status == "abgelaufen" 
-                    else 'mdi-minus bg-warning-lighten text-warning' if entry.get_vertrieb_angebot().status == "bekommen"
-                    else 'mdi-update bg-success-lighten text-success' if entry.get_vertrieb_angebot().status == "angenommen"   
-                    else 'mdi-plus bg-primary-lighten text-primary' if entry.action_flag == ADDITION
-                    else 'mdi-update bg-info-lighten text-info' if entry.action_flag == CHANGE
-                    else 'mdi-delete bg-danger-lighten text-danger',  
-            'status': status,
-        }
-
-        if not any(a['action_time'] == activity['action_time'] or a['object'] == activity['object'] for a in activities):
-            activities.append(activity)
-    # Pass the users and the count to the template.
     context = {
         'users': users,
         'current_user_vertriebangebots_month': current_user_vertriebangebots_month,
         'current_user_vertriebangebots': current_user_vertriebangebots,
+        "solar_module_stats": solar_module_stats,
+        'activities': get_recent_activities(user),
+        "all_count" : all_count,
+        "calculator_form" : calculator_form,
+        "calculator_instance": calculator_instance,
         "angenommen": angenommen_count,
         "bekommen": bekommen_count,
         "in_Kontakt": in_kontakt_count,
         "Kontaktversuch": kontaktversuch_count,
         "abgelehnt": abgelehnt_count,
-        "abgelaufen": abgelaufen_count,     
+        "abgelaufen": abgelaufen_count,
         "on Hold": on_hold_count,
         "storniert": storniert_count,
-        "solar_module_stats": solar_module_stats,
-        'activities': activities,
+        "remaining_stock": remaining_stock,
+        "solar_module_ticket_stats": solar_module_ticket_stats,
+        "all_vertrieb_angebots": all_vertrieb_angebots,
+        **status_counts
     }
     return render(request, 'vertrieb/home.html', context)
+
 
 
 @user_passes_test(vertrieb_check)
 def profile(request, *args, **kwargs):
     user = request.user
-    context = {"user": user}
+    if request.method == 'POST':
+        form = TopVerkauferContainerViewForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Setting updated successfully!")
+            return redirect('vertrieb_interface:profile')
+    else:
+        form = TopVerkauferContainerViewForm(instance=request.user)
+    context = {"user": user, "form": form}
     return render(request, "vertrieb/profile.html", context)
-
+    
 
 @user_passes_test(vertrieb_check)
 def help(request):
@@ -264,7 +350,7 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
 
         if data is None:
             data = {}
-            print(data)
+        print(data)
 
         return JsonResponse(data)
 
@@ -320,17 +406,18 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
 
         data = fetch_current_user_angebot(request, zoho_id)
+        print(data)
         for item in data:
-                
+            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name    
             vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
 
             vertrieb_angebot.angebot_bekommen_am = (
                 item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
             )
-
+            print(type(vertrieb_angebot.verbrauch))
             print(vertrieb_angebot.verbrauch)
-            if vertrieb_angebot.verbrauch == 5000.0:
-                vertrieb_angebot.verbrauch = item["verbrauch"]
+            
+            vertrieb_angebot.verbrauch = item["verbrauch"]
 
             vertrieb_angebot.leadstatus = (
                 item["leadstatus"] if item["leadstatus"] else ""
@@ -364,6 +451,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context["form"] = form
         context["calc_image"] = relative_path
         context["calc_image_suffix"] = relative_path_suffix
+        context["mapbox_token"] = settings.MAPBOX_TOKEN
 
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
@@ -614,13 +702,51 @@ def serve_ticket_pdf(request, angebot_id):
 
 
 @login_required
+def send_support_message(request):
+    if request.method == "POST":
+        user = request.user  
+
+        subject = f"AngebotsTool Support Request from {user.first_name, user.last_name}"
+        body = "I need help, please contact me!"
+
+        connection = get_connection(
+            backend=EMAIL_BACKEND,
+            host=user.smtp_server,
+            port=user.smtp_port,
+            username=user.smtp_username,
+            password=user.smtp_password,
+            use_tsl=True,  
+            fail_silently=False,
+        )
+        email = EmailMultiAlternatives(
+            subject,
+            body,
+            user.smtp_username,
+            ["si@juno-solar.com"],
+            connection=connection,
+        )
+        try:
+            email.send()
+            messages.success(request, "Email sent successfully")
+
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    else:
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )
+
+@login_required
 def send_invoice(request, angebot_id):
     if request.method == "POST":
         user = request.user  
 
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
         pdf = vertrieb_angebot.angebot_pdf
-        subject = user.smtp_subject
+        subject = f"Angebot Photovoltaikanlage {angebot_id}"
         body = user.smtp_body
 
         connection = get_connection(

@@ -127,7 +127,6 @@ class ElectricCalendar(TimeStampMixin):
     current_date = models.DateField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_locked = models.BooleanField(default=False)
-
     anschluss_PVA = models.CharField(max_length=50, null=True, blank=True)
     elektriker_calfield = models.BigIntegerField(null=True, blank=True)
     kundenname = models.CharField(max_length=255, null=True, blank=True)

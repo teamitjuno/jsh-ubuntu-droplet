@@ -95,7 +95,7 @@ def fetch_all_user_angebots(request):
             "vertrieb_interface/json_tests/all_vertriebler_angebot.json", "w"
         ) as f:
             json.dump(json_data, f)
-        print(response)
+        print("FETCH_RESPONSE # ",json_data)
         data = handle_response(response, headers, params)
 
         if data:
@@ -163,7 +163,7 @@ def fetch_current_user_angebot(request, zoho_id):
                         {
                             "email": email if email else "",
                             "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                            "verbrauch": verbrauch if verbrauch else 0.0,
+                            "verbrauch": verbrauch if verbrauch else 15000.0,
                             "notizen": notizen if notizen else "",
                             
                             "anfrage_berr": anfrage_berr if anfrage_berr else "",
@@ -186,7 +186,7 @@ def fetch_current_user_angebot(request, zoho_id):
                             "email": email if email else "",
                             "angebot_bekommen_am": angebot_bekommen_am,
                             "anfrage_berr": anfrage_berr,
-                            "verbrauch": verbrauch if verbrauch else 0.0,
+                            "verbrauch": verbrauch if verbrauch else 15000.0,
                             "notizen": notizen,
                             "leadstatus": leadstatus if leadstatus else "",
                             "empfohlen_von": empfohlen_von,
@@ -273,7 +273,7 @@ def process_current_user_data(data, current_angebot_list):
             current_angebot_list.append(
                 {
                     "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                    "verbrauch": verbrauch if verbrauch else 0.0,
+                    "verbrauch": verbrauch if verbrauch else 15000.0,
                     "notizen": notizen,
                     "email": email,
                     "empfohlen_von": empfohlen_von,

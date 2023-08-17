@@ -201,6 +201,7 @@ class VertriebAngebotForm(ModelForm):
     )
     status = forms.ChoiceField(
         label="Angebotstatus",
+        initial="in Kontakt",
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
@@ -272,7 +273,7 @@ class VertriebAngebotForm(ModelForm):
     anrede = forms.ChoiceField(
         label="Anrede",
         choices=ANREDE_CHOICES,
-        required=True,
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -283,10 +284,17 @@ class VertriebAngebotForm(ModelForm):
     )
     name = forms.ChoiceField(
         choices=[],
-        label="Name",
+        label="Interessent",
         required=True,
         widget=forms.Select(
             attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
+        ),
+    )
+    vorname_nachname = forms.CharField(
+        label="Vor-, Nachname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "id": "id_vorname_nachname", "style": "max-width: 300px"}
         ),
     )
     telefon_mobil = forms.CharField(
@@ -318,7 +326,7 @@ class VertriebAngebotForm(ModelForm):
     email = forms.CharField(
         label="Email",
         max_length=100,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -344,8 +352,7 @@ class VertriebAngebotForm(ModelForm):
     strasse = forms.CharField(
         label="Straße & Hausnummer",
         max_length=100,
-        required=True,
-        validators=[validate_empty],
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -358,8 +365,8 @@ class VertriebAngebotForm(ModelForm):
     ort = forms.CharField(
         label="PLZ & Ort",
         max_length=100,
-        required=True,
-        validators=[validate_empty],
+        required=False,
+        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -384,8 +391,8 @@ class VertriebAngebotForm(ModelForm):
     )
     verbrauch = forms.FloatField(
         label="Strom Verbrauch [kWh]",
-        initial=0.0,
-        required=True,
+        initial=15000,
+        required=False,
         validators=[validate_floats],
         widget=forms.NumberInput(
             attrs={
@@ -398,7 +405,7 @@ class VertriebAngebotForm(ModelForm):
         label="Strom Grundpreis [€/Monat]",
         initial=11.4,
         required=True,
-        validators=[validate_floats],
+        
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -634,17 +641,27 @@ class VertriebAngebotForm(ModelForm):
     )
     garantieWR = forms.ChoiceField(
         choices=[
-            ("keine", "keine"),
+            ("10 Jahre", "10 Jahre"),
             ("15 Jahre", "15 Jahre"),
             ("20 Jahre", "20 Jahre"),
         ],
-        initial="keine",
+        initial="10 Jahre",
         widget=forms.Select(attrs={"class": "form-select", "id": "garantieWR"}),
     )
     eddi = forms.BooleanField(
         label="Eddi",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "eddi"}),
+    )
+    elwa = forms.BooleanField(
+        label="my-PV AC-ELWA 2 Heizstab",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa"}),
+    )
+    thor = forms.BooleanField(
+        label="my-PV AC-THOR intelligente Steuerung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
     notstrom = forms.BooleanField(
         label="Notstrom",
@@ -750,6 +767,7 @@ class VertriebAngebotForm(ModelForm):
             "status_change_field",
             "ablehnungs_grund",
             "name",
+            "vorname_nachname",
             "firma",
             "strasse",
             "ort",
@@ -774,6 +792,8 @@ class VertriebAngebotForm(ModelForm):
             "solar_module",
             "modulanzahl",
             "garantieWR",
+            "elwa",
+            "thor",
             "eddi",
             "notstrom",
             "anzOptimizer",
@@ -800,8 +820,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name"].choices = name_list
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
-        self.fields["wallboxtyp"].widget.attrs.update({"id": "wallbox-checkbox"})
-        self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox-checkbox"})
+        self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+        self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
+        self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update({"id": "wandhalterung_fuer_speicher"})
         self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "anz_wandhalterung_fuer_speicher"})

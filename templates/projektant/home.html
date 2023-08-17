@@ -1,0 +1,171 @@
+{% extends 'projektant/base.html'%}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+                <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- end page title -->
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Hallo, {{ user.first_name }} </h5>
+                            <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
+                        
+                        </div>
+                            <img class="img-fluid" style="margin: auto;" src="{% static 'img/junosolar_logo4.png' %}" alt="Card image cap">
+                        <div class="card-body">
+                            <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
+                            <p></p>
+                            <div style="display: flex; gap: 15px;">
+                                <a href="#" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                    Aktuelle Aufträge aus ZOHO laden
+                                </a>
+                                
+                                <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content modal-filled bg-success">
+                                            <div class="modal-body p-4">
+                                                <div class="text-center">
+                                                    <i class="ri-check-line h1"></i>
+                                                    <h4 class="mt-2">Erfolgreich!</h4>
+                                                    <p class="mt-3">Die Daten wurden erfolgreich hochgeladen!</p>
+                                                    <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+                                <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-body p-4">
+                                                <div class="text-center">
+                                                    <i class="ri-information-line h1 text-info"></i>
+                                                    <h4 class="mt-2">Achtung! </h4>
+                                                    <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
+                                                    <button type="button" id="continueButtonn" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                    <script>
+                                                        $(document).ready(function(){
+                                                            $("#continueButtonn").click(function(){
+                                                                // perform your action here
+                                                                loadUserAngebots();
+                                                            });
+                                                        });
+                                                        
+                                                        function loadUserAngebots() {
+                                                            var url = "#";
+                                                        
+                                                            // Simulating a long-lasting operation.
+                                                            setTimeout(function () {
+                                                                fetch(url, {
+                                                                    method: 'GET', // Or whatever HTTP method you need
+                                                                    headers: {
+                                                                        'Content-Type': 'application/json',
+                                                                    },
+                                                                })
+                                                                .then(response => response.json())
+                                                                .then(data => {
+                                                                    // When the data is received, show the success alert modal.
+                                                                    $('#success-alert-modal').modal('show');
+                                                                })
+                                                                .catch((error) => {
+                                                                    console.error('Error:', error);
+                                                                });
+                                                            }, 3000);
+                                                        }
+                                                        
+                                                        // Redirect to another page when the success modal is hidden
+                                                        $('#success-alert-modal').on('hidden.bs.modal', function (e) {
+                                                            window.location.href = "#";
+                                                        });
+                                                        </script>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+                                <form id="create-angebot-form" method="POST" action="#">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="create_blank_angebot" value="1">
+                                    <button type="submit" class="btn btn-outline-info rounded-pill">Neue Angebot erstellen</button>
+                                </form>
+                            </div>
+                            <p></p>                     
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div>
+                    
+
+                <div class="col-xl-3 col-lg-12">
+                    <div class="card border-info border">
+                        <div class="card-body">
+                            <span class="float-start m-2 me-4">
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" style="height: 100px;" alt="avatar-2" class="rounded-circle img-thumbnail">
+                                {% endif %}
+                            </span>
+                            <div class="">
+                                <h4 class="mt-1 mb-1">{{ user.first_name}} {{ user.last_name}}</h4>
+                                <p class="font-13"> {{ user.email }} </p>
+                                <ul class="mb-0 list-inline">
+                                    <li class="list-inline-item me-3">
+                                        <h5 class="mb-1">{{ user.kuerzel }}</h5>
+                                        <p class="mb-0 font-13">{{ user.beruf }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end footer-links d-none d-md-block">
+                                <a href="javascript: void(0);">Info</a>
+                                <a href="javascript: void(0);">Support</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+    </div>
+</div>
+{% endblock%}
+
+{% block javascript %}
+
+{% endblock %}
+
+{% block extra_js %}   
+<!-- Daterangepicker js -->
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+<script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+<!-- Code Highlight js -->
+<script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/js/app.min.js' %}"></script>
+<script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+<script src="{% static 'assets/js/pages/demo.dashboard.js' %}"></script>
+{% endblock %}  
+

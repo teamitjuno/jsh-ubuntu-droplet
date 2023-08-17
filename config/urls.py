@@ -23,6 +23,7 @@ urlpatterns = [
     path("", include("djoser.urls.jwt")),
     path("", include("authentication.urls", namespace="authentication")),
     path("", include("vertrieb_interface.urls", namespace="vertrieb_interface")),
+    path("proj/", include("projektant_interface.urls", namespace="projektant_interface")),
     path("elektriker_interface/", include("invoices.urls", namespace="invoices")),
     path(
         "elektriker_kalender",

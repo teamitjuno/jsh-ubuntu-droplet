@@ -6,7 +6,7 @@
 <html lang="de" data-theme="dark" data-menu-color="dark">
         <meta charset="utf-8" />
         <title>Home | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=0.5">
         <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
         <meta content="Coderthemes" name="author" />
 
@@ -24,6 +24,12 @@
         {% endblock %}
         
     <body>
+
+            <div id="preloader">
+                <div id="status">
+                    <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
+                </div>
+            </div>
         <!-- Begin page -->
         <div class="wrapper">
 
@@ -1003,7 +1009,7 @@
       </div>
 
   <!-- Bootstrap JavaScript Bundle -->
-
+{% block javascript %}{% endblock %}
 {% block extra_js %}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

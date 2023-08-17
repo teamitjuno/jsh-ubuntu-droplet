@@ -1,0 +1,202 @@
+from django import forms
+from .models import Calculator
+from prices.models import SolarModulePreise, WallBoxPreise
+from django.core.exceptions import ValidationError
+import decimal
+import ast
+def validate_two_decimal_places(value):
+    decimal_value = decimal.Decimal(value)
+    if decimal_value.as_tuple().exponent < -2:  # type: ignore
+        raise ValidationError(
+            "Achten Sie darauf, dass dieser Wert nicht mehr als zwei Dezimalstellen hat."
+        )
+
+
+def validate_floats(value):
+    if not isinstance(value, float) or value < 0:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Eine gültige Gleitkommazahl größer oder gleich Null ist erforderlich."
+            ),
+            params={"value": value},
+        )
+
+
+def validate_integers(value):
+    if not isinstance(value, int) or value < 0:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Eine gültige ganze Zahl größer oder gleich Null ist erforderlich."
+            ),
+            params={"value": value},
+        )
+
+def validate_integers_ticket(value):
+    if not isinstance(value, int):
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."
+            ),
+            params={"value": value},
+        )
+
+
+def validate_solar_module_anzahl(value):
+    if value < 6 and value != 0:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 6 oder mehr betragen."
+            ),
+            params={"value": value},
+        )
+
+
+def validate_solar_module_ticket_anzahl(value):
+    if value > 4:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
+            ),
+            params={"value": value},
+        )
+
+def validate_optimizer_ticket_anzahl(value):
+    if value > 4:
+        raise ValidationError(
+            (
+                "Ungültige Eingabe: %(value)s. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
+            ),
+            params={"value": value},
+        )
+
+
+def validate_range(value):
+    if not isinstance(value, int):
+        if value < 0 or value > 6:
+            raise ValidationError(
+                ("Ungültige Eingabe: %(value)s. Der gültige Bereich ist 0-6."),
+                params={"value": value},
+            )
+
+
+def validate_empty(value):
+    if value is None or value == "":
+        raise ValidationError(
+            ("Ungültige Eingabe: %(value)s. Etwas hinzufügen"),
+            params={"value": value},
+        )
+
+
+class CalculatorForm(forms.ModelForm):
+    solar_module = forms.ChoiceField(
+        label="Solar Module",
+        widget=forms.Select(attrs={"class": "form-select form-select mb-3", "id": "solar_module"}),
+        )
+    
+    modulanzahl = forms.IntegerField(
+        label="Module Anzahl",
+        initial=0,
+        validators=[validate_solar_module_anzahl],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control form-control mb-3",
+                "id": "modulanzahl",
+                
+                
+            }
+        ),
+    )
+    wallboxtyp = forms.ChoiceField(
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select form-select mb-3",
+                "id": "wallboxtyp",
+                
+            }
+        ),
+    )
+    wallbox_anzahl = forms.IntegerField(
+        initial=0,
+        label="Anzahl",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control form-control mb-3",
+                "id": "wallbox_anzahl",
+            }
+        ),
+    )
+    optimizer = forms.BooleanField(
+        label="Optimizer",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-check-input mb-3", "id": "optimizer"}),
+    )
+    notstrom = forms.BooleanField(
+        label="Notstrom",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input form-check-input mb-3", "id": "notstrom"}
+        ),
+    )
+    anzOptimizer = forms.IntegerField(
+        label="Optimizer",
+        required=True,
+        validators=[validate_integers],
+        widget=forms.NumberInput(attrs={"class": "form-control form-control mb-3", "id": "anzOptimizer"}),
+    )
+    anz_speicher = forms.IntegerField(
+        label="Anzahl Speichermodule (kann sein 0)",
+        required=False,
+        initial=0,
+        validators=[validate_range],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control form-control mb-3",   
+                "id": "anz_speicher",
+                
+            }
+        ),
+    )
+    speicher = forms.BooleanField(
+        label="Speichermodule",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input form-check-input mb-3",
+                "id": "speicher",
+                
+            }
+        ),
+    )
+    angebotsumme = forms.FloatField(
+        label="Angebotsumme: ",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "badge badge-info-lighten", "id": "angebotsumme"}),
+    )
+    def __init__(self, *args, user, **kwargs):
+        super(CalculatorForm, self).__init__(*args, **kwargs)
+
+        self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
+        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.filter(in_stock=True)]
+
+        for field in self.fields:
+            if self.initial.get(field):
+                self.fields[field].widget.attrs.update(
+                    {"placeholder": self.initial[field]}
+                )
+    def save(self, commit=True):
+        calculator_form = super(CalculatorForm, self).save(commit=False)
+
+        if commit:
+            calculator_form.save()
+
+        return calculator_form
+
+
+
+    class Meta:
+        model = Calculator
+        fields = ['solar_module', 'modulanzahl', 'notstrom', 'optimizer', 'anzOptimizer', 'wallboxtyp', 'wallbox_anzahl', 'speicher', 'anz_speicher', 'angebotsumme']
+    
+    

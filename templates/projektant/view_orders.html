@@ -1,0 +1,227 @@
+{% extends 'projektant/base.html' %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% block head %}
+        <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+    <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
+{% endblock %}
+{% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right"></div>
+                            <h4 class="page-title">Liste der Projekte</h4>
+                        </div>
+                    </div>
+                </div>           
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card d-block">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Action</th>
+                                            <th>ID</th>
+                                            <th>Status</th>
+                                            <th>Auftragsbestätigung</th>
+                                            <th>Auftrag Erteilt am</th>
+                                            <th>Kunden Name</th>
+                                            <th>Kunde Adresse PVA</th>
+                                            <th>Modul Summe kWp</th>
+                                            <th>Solar Module</th>
+                                            <th>Rechnung versandt</th>
+                                            <th>Berechnung erhalten am</th>
+                                            <th>EDDI</th>
+                                            <th>Netzbetreiber</th>
+                                            <th>Garantie WR beantragt am</th>
+                                            <th>Ticket ID</th>
+                                            <th>Status Inbetriebnahmeprotokoll</th>
+                                            <th>Zahlungsmodalitäten</th>
+                                            <th>Berechnung übergeben am</th>
+                                            <th>Vertriebler</th>
+                                            <th>Notstromversorgung Backup Box vorhanden</th>
+                                            <th>Status Marktstammdatenregistrierung</th>
+                                            <th>Garantieerweiterung</th>
+                                            <th>Bauabschluss am</th>
+                                            <th>Status Betreiberwechsel</th>
+                                            <th>Status Einspeiseanfrage</th>
+                                            <th>Wallbox</th>
+                                            <th>Hub</th>
+                                            <th>Kunde Kundennummer</th>
+                                            <th>UK auf Lager</th>
+                                            <th>Wechselrichter</th>
+                                            <th>UK bestellt am</th>
+                                            <th>Power Boost vorhanden</th>
+                                            <th>Unterkonstruktion</th>
+                                            <th>Harvi</th>
+                                            <th>Optimizer</th>
+                                            <th>Status Elektrik</th>
+                                            <th>Kunde Email</th>
+                                            <th>Nummer der PVA</th>
+                                            <th>Kunde Postanschrift</th>
+                                            <th>Kunde Telefon Festnetz</th>
+                                            <th>Speicher</th>
+                                            <th>Status Fertigmeldung</th>
+                                            <th>Kunde Telefon mobil</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for project in projects %}
+                                        <tr>
+                                            <td><a href="{% url 'projektant_interface:create_bauplan_pdf' project.ID %}" class="btn btn-outline-info btn-sm">Bauplan erstellen</a></td>
+                                            <td>{{ project.ID }}</td>
+                                            <td>{{ project.Status }}</td>
+                                            {% if project.Auftragsbest_tigung_versendet %}
+                                                <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                                <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            <td>{{ project.Auftrag_Erteilt_am }}</td>
+                                            <td>{{ project.kunden_name }}</td>
+                                            <td>{{ project.Kunde_Adresse_PVA }}</td>
+                                            
+                                            <td>{{ project.Modul_Summe_kWp }}</td>
+                                            <td>{{ project.solar_module }}</td>
+                                            {% if project.Rechnung_versandt %}
+                                                <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                                <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            
+                                            <td>{{ project.Berechnung_erhalten_am }}</td>
+
+                                            {% if project.EDDI %}
+                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+
+                                            <td>{{ project.Netzbetreiber }}</td>
+                                            <td>{{ project.Garantie_WR_beantragt_am }}</td>
+                                            <td>{{ project.ticket_id }}</td>
+                                            <td>{{ project.Status_Inbetriebnahmeprotokoll }}</td>
+                                            <td>{{ project.Zahlungsmodalit_ten }}</td>
+                                            <td>{{ project.Berechnung_bergeben_am }}</td>
+                                            <td>{{ project.vertriebler }}</td>
+                                            {% if project.Notstromversorgung_Backup_Box_vorhanden %}
+                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            <td>{{ project.Status_Marktstammdatenregistrierung }}</td>
+                                            <td>{{ project.Garantieerweiterung }}</td>
+                                            <td>{{ project.Bauabschluss_am }}</td>
+                                            <td>{{ project.Status_Betreiberwechsel }}</td>
+                                            <td>{{ project.Status_Einspeiseanfrage }}</td>
+                                            <td>{{ project.wallbox }}</td>
+                                            {% if project.Hub1 %}
+                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            <td>{{ project.Kunde_Kundennummer }}</td>
+                                            {% if project.UK_auf_Lager %}
+                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            <td>{{ project.wechselrichter }}</td>
+                                            <td>{{ project.UK_bestellt_am }}</td>
+                                            {% if project.Power_Boost_vorhanden %}
+                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
+                                            {% else %}
+                                                <td><span class="badge bg-danger rounded-pill">Nein</span></td>
+                                            {% endif %}
+                                            <td>{{ project.unterkonstrution }}</td>
+                                            <td>{{ project.Harvi1 }}</td>
+                                            <td>{{ project.Optimizer1 }}</td>
+                                            <td>{{ project.Status_Elektrik }}</td>
+                                            <td>{{ project.Kunde_Email }}</td>
+                                            <td>{{ project.Nummer_der_PVA }}</td>
+                                            <td>{{ project.Kunde_Postanschrift }}</td>
+                                            <td>{{ project.Kunde_Telefon_Festnetz }}</td>
+                                            <td>{{ project.speicher }}</td>
+                                            <td>{{ project.Status_Fertigmeldung }}</td>
+                                            <td>{{ project.Kunde_Telefon_mobil }}</td> 
+                                        </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="9">No orders found.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">Info</a>
+                            <a href="javascript: void(0);">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+{% endblock %}
+{% comment %} <script>
+$(document).ready(function() {
+    $('#invoiceTable').DataTable();
+} );
+</script> {% endcomment %}
+{% block extra_js %}
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+<script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+<script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+<script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.flash.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-select/js/dataTables.select.min.js' %}"></script>
+<script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+<script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+<script src="{% static 'assets/js/app.min.js' %}"></script>
+<script src="{% static 'assets/js/pages/demo.datatable-init.js' %}"></script>
+{% endblock %}

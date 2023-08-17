@@ -7,7 +7,7 @@
 <html lang="de" data-menu-color="dark">
         <meta charset="utf-8" />
         <title>Home | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=0.5">
         
         <meta content="Coderthemes" name="Sam Ivanov" />
         <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
@@ -16,6 +16,8 @@
         <link href="{% static 'assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}" rel="stylesheet" type="text/css" />
         <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
         <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+        <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
 
         <!-- App css -->
         <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
@@ -26,12 +28,7 @@
         
         <body>
 
-            <!-- Pre-loader -->
-            <div id="preloader">
-                <div id="status">
-                    <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
-                </div>
-            </div>
+            
             <!-- Begin page -->
         <div class="wrapper">
     
@@ -184,66 +181,40 @@
                         <!--- Sidemenu -->
                         <ul class="side-nav">
                             <li class="side-nav-title">Navigation</li>
-                            <li class="side-nav-item">
-                                <a data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="#sidebarDashboards" class="side-nav-link">
-                                    <i class="ri-home-8-line"></i>
-                                    <span>Home Seite</span>
+                                <li class="side-nav-item">
+                                    <ul class="side-nav-link">               
+                                        <a href="{% url 'vertrieb_interface:home' %}"><i class="uil-chart-pie-alt"></i></a>
+                                        <span href="{% url 'vertrieb_interface:home' %}">Home</span>
+                                    </ul>    
+                                </li>
+                                <li class="side-nav-item">
+                                <a data-bs-toggle="collapse" href="#sidebarCrm" aria-expanded="false" aria-controls="sidebarCrm" class="side-nav-link">
+                                    <i class="ri-article-fill"></i>
+                                    <span>AngebotsTool</span>
                                 </a>
-                                <div class="collapse" id="sidebarDashboards">
-                                    <ul class="side-nav-second-level">
-                                        <li>
-                                            <a href="{% url 'vertrieb_interface:home' %}">Home</a>
-                                        </li>                                
-                                        <li>
-                                            <a href="{% url 'authentication:logout' %}">Abmelden</a>
-                                        </li>                                         
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="side-nav-item">
-                                <a data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="#sidebarDashboards" class="side-nav-link">
-                                    <i class="uil-chart-pie-alt"></i>
-                                    <span>Leistungen</span>
-                                </a>
-                                <div class="collapse" id="sidebarDashboards">
+                                <div class="collapse" id="sidebarCrm">
                                     <ul class="side-nav-second-level">
                                         <li>
                                             <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="create_blank_angebot" value="1">
-                                                <button type="submit" class="btn btn-link">Neue Angebot erstellen</button>
+                                                <a href="#" onclick="document.getElementById('create-angebot-form').submit();">Neues Angebot erstellen</a>
                                             </form>
                                         </li>
-                                        <p></p>
-                                        <li>
-                                            <button href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
-                                                Aufträge aus ZOHO laden
-                                            </button>
-                                        </li>                              
-                                    </ul>
-                                </div>
-                            </li>
-                            
-                            <li class="side-nav-item">
-                                <a data-bs-toggle="collapse" href="#sidebarCrm" aria-expanded="false" aria-controls="sidebarCrm" class="side-nav-link">
-                                    <i class="ri-article-fill"></i>
-                                    {% comment %} <span class="badge bg-danger text-white float-end">New</span> {% endcomment %}
-                                    <span>Angebote</span>
-                                </a>
-                                <div class="collapse" id="sidebarCrm">
-                                    <ul class="side-nav-second-level">
                                         <li>
                                             <a href="{% url 'vertrieb_interface:view_orders' %}">Alle Angebote</a>
                                         </li>
                                         <li>
-                                            <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}">PDF Angebote Liste</a>
+                                            <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}">PDF Angebote</a>
                                         </li>
-                                        <li>
-                                            {% comment %} <a href="{% url 'vertrieb_interface:excel_invoices_list' invoice.invoice_id %}">EXCEL Angeboten Liste</a> {% endcomment %}
-                                        </li>
+                                        {% comment %} <li>
+                                            <a href="{% url 'vertrieb_interface:load_user_angebots' %}" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                                Aus JPP Einträge erneuern
+                                            </a>
+                                        </li>   {% endcomment %}
+                                        
                                     </ul>
                                 </div>
-                            </li>
     
                             <li class="side-nav-item">
                                 <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">

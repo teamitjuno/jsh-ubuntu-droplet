@@ -23,6 +23,8 @@ def handler404(request, exception):
 def elektriker_check(user):
     return User.objects.filter(id=user.id, beruf="Elektriker").exists()
 
+def projektant_check(user):
+    return User.objects.filter(id=user.id, beruf="Projektant").exists()
 
 def verkaufer_check(user):
     return User.objects.filter(id=user.id, beruf="Vertrieb").exists()
@@ -54,6 +56,9 @@ class LoginView(APIView):
         elif user is not None and user.beruf == "Vertrieb":  # type: ignore
             login(request, user)
             return redirect("vertrieb_interface:home")
+        elif user is not None and user.beruf == "Projektant":  # type: ignore
+            login(request, user)
+            return redirect("projektant_interface:home")
         elif user is not None and user.is_staff == True:  # type: ignore
             login(request, user)
             return redirect("/admin")

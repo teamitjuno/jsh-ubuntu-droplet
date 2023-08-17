@@ -72,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     is_staff = models.BooleanField(default=False)
     beruf = models.CharField(
         max_length=30,
-        choices=[("Elektriker", "Elektriker"), ("Vertrieb", "Vertrieb")],
+        choices=[("Elektriker", "Elektriker"), ("Vertrieb", "Vertrieb"), ("Projektant", "Projektant")],
         null=True,
         default=None,
     )
@@ -147,6 +147,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
                                                                     Mit freundlichen Grüßen, Juno-Solar""",
     )
 
+    top_verkaufer_container_view = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

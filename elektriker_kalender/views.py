@@ -32,18 +32,17 @@ def filter_data_by_elektriker_id(json_data, elektriker_id):
 class ElektrikerKalenderView(LoginRequiredMixin, View):
     def get_elektriker_kalender(self, request):
         print("Starting elektriker kalender update...")
-        elektriker = request.user
+        elektriker = get_object_or_404(User, zoho_id=request.user.zoho_id)
         data = fetch_all_elektrik_angebots()
         ids = extract_ids(data)
         fetched_records = fetch_all_detailed_elektrik_records(ids)
-        print(fetched_records)
         print(elektriker.zoho_id)
         elektriker_id = str(elektriker.zoho_id)
         filtered_data_by_id = filter_data_by_elektriker_id(
             fetched_records, elektriker_id
         )
-        print(filtered_data_by_id)
-        print(type(filtered_data_by_id))
+        elektriker.zoho_data_text = filtered_data_by_id
+        elektriker.save()
         return filtered_data_by_id
 
     def get(self, request, *args, **kwargs):

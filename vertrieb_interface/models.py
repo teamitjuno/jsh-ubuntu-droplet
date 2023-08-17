@@ -12,7 +12,7 @@ from prices.models import (
     WallBoxPreise,
 )
 from django.contrib.auth import get_user_model
-import datetime
+import datetime, os
 from datetime import timedelta
 from math import ceil
 
@@ -31,7 +31,9 @@ User = get_user_model()
 
 class LogEntryManager(models.Manager):
     def log_action(self, user_id, content_type_id, object_id, object_repr, action_flag, status=None):
-        if status is not None:
+        change_message = ""  # default value
+
+        if status:
             if status == "angenommen":
                 change_message = f"<<Angenommen>>"
             elif status == "bekommen":
@@ -42,8 +44,8 @@ class LogEntryManager(models.Manager):
                 change_message = f"Status geändert zu <<{status}>>"
             elif status == "Kontaktversuch":
                 change_message = f"Status geändert zu <<{status}>>"
-        else:
-            change_message = ""
+            else:
+                change_message = f"Status geändert zu <<{status}>>"
 
         return self.model.objects.create(
             action_time=timezone.now(),
@@ -64,7 +66,12 @@ class CustomLogEntry(LogEntry):
     def get_vertrieb_angebot(self):
         from vertrieb_interface.models import VertriebAngebot  
         if self.content_type.model_class() == VertriebAngebot:
-            return VertriebAngebot.objects.get(angebot_id=self.object_id)
+            try:
+                return VertriebAngebot.objects.get(angebot_id=self.object_id)
+            except VertriebAngebot.DoesNotExist:
+                # Handle the case where no matching record is found
+                # For instance, return None, or handle it in another appropriate way for your application
+                return VertriebAngebot.objects.filter(angebot_id=self.object_id).first() 
         return None
 
     def get_change_message(self):
@@ -217,6 +224,7 @@ class VertriebAngebot(TimeStampMixin):
 
     anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
     name = models.CharField(max_length=100, blank=True)
+    vorname_nachname = models.CharField(max_length=100, blank=True, null=True)
     firma = models.CharField(max_length=100, blank=True)
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
@@ -251,9 +259,9 @@ class VertriebAngebot(TimeStampMixin):
     komplex = models.CharField(
         max_length=30, choices=KOMPLEX_CHOICES, default="sehr komplex"
     )
-
     GARANTIE_WR_CHOICES = [
         ("keine", "keine"),
+        ("10 Jahre", "10 Jahre"),
         ("15 Jahre", "15 Jahre"),
         ("20 Jahre", "20 Jahre"),
     ]
@@ -266,9 +274,21 @@ class VertriebAngebot(TimeStampMixin):
         default=0, validators=[MinValueValidator(0)]
     )
     garantieWR = models.CharField(
-        max_length=10, choices=GARANTIE_WR_CHOICES, default="keine"
+        max_length=10, choices=GARANTIE_WR_CHOICES, default="10 Jahre"
     )
     eddi = models.BooleanField(default=False)
+    elwa = models.BooleanField(default=False)
+    elwa_typ = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    thor = models.BooleanField(default=False)
+    thor_typ = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
@@ -295,6 +315,8 @@ class VertriebAngebot(TimeStampMixin):
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     angebot_id_assigned = models.BooleanField(default=False)
+
+    total_anzahl = models.IntegerField(blank=True, null=True)
 
     solar_module_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
@@ -378,6 +400,7 @@ class VertriebAngebot(TimeStampMixin):
         self.Ersparnis = self.ersparnis
         self.kosten_fur_restenergie = self.kosten_rest_energie
         self.ag_data = self.data
+        self.total_anzahl = self.Total_anzahl
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
@@ -435,20 +458,37 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return None
 
-
-
-
-
     @property
-    def google_maps_url(self):
+    def mapbox_url(self):
+        OWNER_ID=os.getenv('OWNER_ID')
+        STYLE_ID=os.getenv('STYLE_ID')
+        MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
         if self.postanschrift_latitude and self.postanschrift_longitude:
             latitude = float(self.postanschrift_latitude)
             longitude = float(self.postanschrift_longitude)
 
-            maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
-            return maps_url
+            base_url = f"https://api.mapbox.com/styles/v1/{OWNER_ID}/{STYLE_ID}.html?"
+            params = {
+                "title": "false",
+                "access_token": os.getenv('MAPBOX_TOKEN'),
+                "zoomwheel": "false"
+            }
+            location_fragment = f"#12/{latitude}/{longitude}"
+
+            formatted_url = f"{base_url}{params['title']}&access_token={params['access_token']}&zoomwheel={params['zoomwheel']}{location_fragment}"
+            return formatted_url
         else:
             return ""
+    # @property
+    # def google_maps_url(self):
+    #     if self.postanschrift_latitude and self.postanschrift_longitude:
+    #         latitude = float(self.postanschrift_latitude)
+    #         longitude = float(self.postanschrift_longitude)
+
+    #         maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
+    #         return maps_url
+    #     else:
+    #         return ""
 
     @property
     def get_vertribler(self):
@@ -531,12 +571,21 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def get_leistungsgarantie(self):
-        if str(self.solar_module) == "Phono Solar PS420M7GFH-18/VNH":
+        if "Phono Solar" in str(self.solar_module):
             return "30 Jahre"
-        elif str(self.solar_module) == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B":
-            return "0,4 % Jährliche Degradation"
+        elif "Jinko Solar" in str(self.solar_module):
+            return f"0,4 % Jährliche Degradation\n                                     über 30 Jahre"
         else:
-            return "0,4 % Jährliche Degradation"
+            return "0,4 % Jährliche Degradation\n                                     über 30 Jahre"
+        
+    @property
+    def get_produktgarantie(self):
+        if "Phono Solar" in str(self.solar_module):
+            return "15 Jahre"
+        elif "Jinko Solar" in str(self.solar_module):
+            return f"25 Jahre"
+        else:
+            return "15 Jahre"
         
 
     @property
@@ -581,6 +630,15 @@ class VertriebAngebot(TimeStampMixin):
             multiplier = 0
         price = get_price(model, name)
         return price * multiplier
+    
+    @property
+    def Total_anzahl(self):
+        total = 0
+        if self.modulanzahl and self.modul_anzahl_ticket:
+            total += self.modulanzahl + self.modul_anzahl_ticket
+            return total
+        else:
+            return self.modulanzahl
 
     @property
     def modulleistung_price(self):
@@ -976,7 +1034,7 @@ class VertriebAngebot(TimeStampMixin):
             "module": self.solar_module,
             "wpModule": self.modulleistungWp,
             "anzModule": self.modulanzahl,
-            "produktGarantie": self.garantieWR,
+            "produktGarantie": self.get_produktgarantie,
             "leistungsGarantie": self.get_leistungsgarantie,
             "kWp": self.modulsumme_kWp,
             "kWpOhneRundung": self.modulsumme_kWp,
@@ -993,6 +1051,8 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "eddi": self.eddi,
+            "elwa": self.elwa,
+            "thor": self.thor,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,

@@ -12,3 +12,8 @@ class AvatarUploadForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["avatar"]
+
+class TopVerkauferContainerViewForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['top_verkaufer_container_view']
