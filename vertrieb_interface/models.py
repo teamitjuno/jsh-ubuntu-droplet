@@ -164,7 +164,7 @@ class VertriebAngebot(TimeStampMixin):
     #   ZOHO FIELDS
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(
-        choices=ANGEBOT_STATUS_CHOICES, max_length=255, blank=True, null=True
+        choices=ANGEBOT_STATUS_CHOICES, default="in Kontakt", max_length=255, blank=True, null=True
     )
     status_change_field = models.DateTimeField(null=True, blank=True)
     status_change_date = models.CharField(max_length=255, null=True, blank=True)
