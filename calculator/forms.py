@@ -90,7 +90,7 @@ def validate_empty(value):
 class CalculatorForm(forms.ModelForm):
     solar_module = forms.ChoiceField(
         label="Solar Module",
-        widget=forms.Select(attrs={"class": "form-select form-select mb-3", "id": "solar_module"}),
+        widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
         )
     
     modulanzahl = forms.IntegerField(
@@ -99,8 +99,8 @@ class CalculatorForm(forms.ModelForm):
         validators=[validate_solar_module_anzahl],
         widget=forms.NumberInput(
             attrs={
-                "class": "form-control form-control mb-3",
-                "id": "modulanzahl",
+                "class": "form-control",
+                "id": "id_modulanzahl",
                 
                 
             }
@@ -110,7 +110,7 @@ class CalculatorForm(forms.ModelForm):
         required=False,
         widget=forms.Select(
             attrs={
-                "class": "form-select form-select mb-3",
+                "class": "form-select",
                 "id": "wallboxtyp",
                 
             }
@@ -122,8 +122,8 @@ class CalculatorForm(forms.ModelForm):
         required=False,
         widget=forms.NumberInput(
             attrs={
-                "class": "form-control form-control mb-3",
-                "id": "wallbox_anzahl",
+                "class": "form-control",
+                "id": "id_wallbox_anzahl",
             }
         ),
     )
@@ -143,7 +143,7 @@ class CalculatorForm(forms.ModelForm):
         label="Optimizer",
         required=True,
         validators=[validate_integers],
-        widget=forms.NumberInput(attrs={"class": "form-control form-control mb-3", "id": "anzOptimizer"}),
+        widget=forms.NumberInput(attrs={"class": "form-control form-control mb-3", "id": "id_anzOptimizer"}),
     )
     anz_speicher = forms.IntegerField(
         label="Anzahl Speichermodule (kann sein 0)",
@@ -153,7 +153,7 @@ class CalculatorForm(forms.ModelForm):
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control form-control mb-3",   
-                "id": "anz_speicher",
+                "id": "id_anz_speicher",
                 
             }
         ),
@@ -172,13 +172,18 @@ class CalculatorForm(forms.ModelForm):
     angebotsumme = forms.FloatField(
         label="Angebotsumme: ",
         required=False,
-        widget=forms.NumberInput(attrs={"class": "badge badge-info-lighten", "id": "angebotsumme"}),
+        widget=forms.NumberInput(attrs={"class": "badge badge-info-lighten", "id": "id_angebotsumme"}),
     )
     def __init__(self, *args, user, **kwargs):
         super(CalculatorForm, self).__init__(*args, **kwargs)
 
         self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
         self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.filter(in_stock=True)]
+        self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
+        self.fields["modulanzahl"].widget.attrs.update({"id": "modulanzahl"})
+        self.fields["anzOptimizer"].widget.attrs.update({"id": "anzOptimizer"})
+        self.fields["anz_speicher"].widget.attrs.update({"id": "anz_speicher"})
+        self.fields["angebotsumme"].widget.attrs.update({"id": "angebotsumme"})
 
         for field in self.fields:
             if self.initial.get(field):

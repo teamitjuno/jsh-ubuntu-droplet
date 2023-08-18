@@ -99,6 +99,7 @@ def get_recent_activities(user):
         user_id=user.id
     ).select_related('content_type', 'user').order_by('-action_time')[:15]
 
+    print(recent_activities)
     activities = []
     for entry in recent_activities:
         vertrieb_angebot = entry.get_vertrieb_angebot()
@@ -137,11 +138,11 @@ def get_recent_activities(user):
             if not any(a['action_time'] == activity['action_time'] or a['object'] == activity['object'] for a in activities):
                 activities.append(activity)
 
-            return activities
+        return activities
         
-        else:
-            pass        
-        return None
+    else:
+        pass        
+    return None
     
 
 
@@ -169,26 +170,7 @@ def get_icon_based_on_status(entry, status):
 
 def home(request):
     user = request.user
-    
-    calculator_instance = Calculator.objects.first()
-
-    # If it doesn't exist, create one
-    if not calculator_instance:
-        calculator_instance = Calculator.objects.create(user=user)
-
-    # Handle form submission
-    if request.method == "POST":
-        form = CalculatorForm(request.POST, instance=calculator_instance, user=user)
-        if form.is_valid():
-            form.save()
-            return redirect('vertrieb_interface:home')
-
-    else:
-        calculator_form = CalculatorForm(instance=calculator_instance, user=user)
-
-
     year, month = now.year, now.month
-
 
     users = User.objects.filter(beruf="Vertrieb").annotate(
         num_vertriebangebots=Count(
@@ -247,7 +229,19 @@ def home(request):
     on_hold_count = vertriebangebots.filter(status="on Hold").count()
     storniert_count = vertriebangebots.filter(status="storniert").count()
 
-
+    calculator_instance = Calculator.objects.first()
+    if not calculator_instance:
+        calculator_instance = Calculator.objects.create(user=user)
+    calculator_form = CalculatorForm(instance=calculator_instance, user=user)
+    # If it doesn't exist, create one
+    if request.method == 'POST':
+        form = CalculatorForm(request.POST, user=user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user  # or any user instance you wish to associate
+            instance.save()
+            return redirect('vertrieb_interface:home')
+    
     context = {
         'users': users,
         'current_user_vertriebangebots_month': current_user_vertriebangebots_month,
@@ -270,9 +264,23 @@ def home(request):
         "all_vertrieb_angebots": all_vertrieb_angebots,
         **status_counts
     }
+    
     return render(request, 'vertrieb/home.html', context)
 
-
+def reset_calculator(request):
+    user = request.user
+    if request.method == 'POST':
+        form = CalculatorForm(request.POST, user=user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.modulanzahl = 0
+            instance.wallbox_anzahl = 0
+            instance.anzOptimizer = 0
+            instance.anz_speicher = 0
+            instance.angebotsumme = 0
+            instance.save()
+    return redirect('vertrieb_interface:home')
 
 @user_passes_test(vertrieb_check)
 def profile(request, *args, **kwargs):

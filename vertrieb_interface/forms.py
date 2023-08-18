@@ -391,7 +391,7 @@ class VertriebAngebotForm(ModelForm):
     )
     verbrauch = forms.FloatField(
         label="Strom Verbrauch [kWh]",
-        initial=15000,
+        initial=15000.0,
         required=False,
         validators=[validate_floats],
         widget=forms.NumberInput(

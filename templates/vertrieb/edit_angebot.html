@@ -18,7 +18,7 @@
                         <ul>
                             {% for field in form %}
                                 {% if field.errors %}
-                                    <li>{{ field.label }} - {{ field.errors.0 }}</li>
+                                    <li>{{ field.label }} - {{ field.errors.0 }} - {{ field.value }}</li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
@@ -2010,8 +2010,11 @@ $(document).ready(function() {
                 $("#id_telefon_festnetz").val(data.telefon_festnetz);
                 $("#id_ort").val(data.ort);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
-
-                // ... and so on for the rest of your fields
+                
+                // Only set value if data.verbrauch is not empty
+                if (data.verbrauch) {
+                    $("#id_verbrauch").val(data.verbrauch);
+                }
             }
         });
     });

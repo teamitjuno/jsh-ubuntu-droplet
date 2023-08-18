@@ -265,39 +265,36 @@
 
                         
 
-                <div class="card border-info border p-2">
+                <div class="card border-info border p-0">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="header-title">Schnell-PV-Rechner</h4>
-                        
                     </div>
-                    <div class="card-body pt-3">
-                        <form method="post">
+                    <div class="card-body pt-0">
+                        <form id="calculator_form" method="post">
                             {% csrf_token %}
                             <table class="table table-sm table-centered mb-0">
                                 <tbody>
                                     <tr>
-                                        <td>                                            
-                                            {{ calculator_form.solar_module }}
-                                        </td> 
-                                        <td>{{ calculator_form.modulanzahl }}</td>
+                                        <td>{{ calculator_form.solar_module }}</td>
+                                        <td><input type="number" class="form-control" id="id_modulanzahl" name="{{ calculator_form.modulanzahl.html_name }}" value="{{ calculator_form.modulanzahl.value }}" data-resettable="true" /></td>
                                     </tr>
                                     <tr>
                                         <td>{{ calculator_form.wallboxtyp }}</td>
-                                        <td>{{ calculator_form.wallbox_anzahl }}</td>
+                                        <td><input type="number" class="form-control" id="id_wallbox_anzahl" name="{{ calculator_form.wallbox_anzahl.html_name }}" value="{{ calculator_form.wallbox_anzahl.value }}" data-resettable="true" /></td>
                                     </tr>
                                     <tr>
-                                        <td><p><strong>Optimierer</strong></p></td>
-                                        <td>{{ calculator_form.anzOptimizer }}</h5>
+                                        <td><strong>Optimierer</strong></td>
+                                        <td><input type="number" class="form-control" id="id_anzOptimizer" name="{{ calculator_form.anzOptimizer.html_name }}" value="{{ calculator_form.anzOptimizer.value }}" data-resettable="true" /></td>
                                     </tr>
                                     <tr>
-                                        <td><p><strong>Speicher</strong></p></td>
-                                        <td>{{ calculator_form.anz_speicher }}</h5>
+                                        <td><strong>Speicher</strong></td>
+                                        <td><input type="number" class="form-control" id="id_anz_speicher" name="{{ calculator_form.anz_speicher.html_name }}" value="{{ calculator_form.anz_speicher.value }}" data-resettable="true" /></td>
                                     </tr>
                                     <tr>
-                                        <td><p><strong>Notstrom</strong></p></td>
+                                        <td><strong>Notstrom</strong></td>
                                         <td>
                                             <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input" id="notstrom" {% if calculator_form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.notstrom.html_name }}" />
+                                                <input type="checkbox" class="custom-control-input" id="notstrom" {% if calculator_form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.notstrom.html_name }}" data-resettable="true" />
                                                 <label class="custom-control-label" for="notstrom" data-on-label="Ja" data-off-label="Nein"></label>
                                             </div>
                                         </td>
@@ -308,18 +305,33 @@
                                 <tbody>
                                     <tr>
                                         <th><p class="h4">{{ calculator_form.angebotsumme.label }}</p></th>
-                                        <td></td>
-                                        <td><p class="h4" id="angebotsumme">{{ calculator_instance.angebotsumme }}  €</p></td>
+                                        <input hidden type="number" class="form-control" id="id_angebotsumme" name="{{ calculator_form.angebotsumme.html_name }}" value="{{ calculator_form.angebotsumme.value }}" data-resettable="true" />
+                                        <td><p class="h4" id="angebotsumme">{{ calculator_instance.angebotsumme }} €</p></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            
-                                <button type="submit" class="btn btn-outline-info m-3 rounded-pill position-absolute top-0 end-0">Zusammenfassen</button>
-                            
+                            <div class="card-footer d-flex">
+                                <button type="button" class="btn btn-outline-warning m-1 rounded-pill" onclick="resetForm()">zurücksetzen</button>
+                                <script>
+                                    function resetForm() {
+                                        let resettableFields = document.querySelectorAll("[data-resettable=true]");
+                                        resettableFields.forEach(field => {
+                                            if (field.type === "checkbox" || field.type === "radio") {
+                                                field.checked = false;
+                                            } else {
+                                                field.value = "0";
+                                            }
+                                        });
+                                        document.getElementById("calculator_form").submit();
+                                    }
+                                </script>
+                                <button type="submit" class="btn btn-outline-info m-1 rounded-pill">zusammenfassen</button>
+                            </div>
                         </form>
                     </div>
-                    <!-- end card-body -->
-                </div>  
+                </div>
+
+ 
             </div>
                 <div class="col-xl-3">
                     <div class="card border-info border">

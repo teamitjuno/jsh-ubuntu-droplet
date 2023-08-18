@@ -10,6 +10,8 @@ app_name = "vertrieb_interface"
 
 urlpatterns = [
     path("vertrieb/home/", views.home, name="home"),
+    path("vertrieb/home/reset_calculator/", views.reset_calculator, name="reset_calculator"),
+
     path(
         "vertrieb/vertrieb_autofield/",
         views.VertriebAutoFieldView.as_view(),
