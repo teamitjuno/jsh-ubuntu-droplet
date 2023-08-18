@@ -174,7 +174,8 @@
                                                                         <tr>
                                                                             <th>{{ form.notizen.label_tag }}</th>
                                                                             
-                                                                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly></td>
+                                                                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%px;"></td>
+
                                                                         </tr>
 
                                                                     </tbody>
@@ -543,7 +544,7 @@
                                             <div class="card-body">
                                                 <div class="row">
                                                     <!-- Column 1 -->
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
                                                             <div class="card-body">
@@ -571,7 +572,7 @@
                                                         </div>
                                                     </div>
                                                     <!-- Column 2 -->
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
                                                             <div class="card-body">
@@ -598,9 +599,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
                                                             <div class="card-body">
@@ -1019,7 +1018,7 @@
                                                                             {% if user.role.name == "admin" %}
                                                                                 <td>{{ form.notizen }}</td>
                                                                             {% else %}
-                                                                                <td><input type="text" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly></td>
+                                                                                <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%px;"></td>
                                                                             {% endif %}
                                                                         </tr>
 
@@ -1215,7 +1214,8 @@
 
                                                                         <tr>
                                                                             <th>{{ form.komplex.label_tag }}</th>
-                                                                            <td id="komplex" name="komplex">{{ form.komplex }}</td>
+                                                                            
+                                                                            <td><input type="text" id="komplex" class="form-control" name="{{ form.komplex.name }}" value="{{ form.komplex.value }}" readonly></td>
                                                                         </tr>
 
                                                                     </tbody>
@@ -1430,7 +1430,7 @@
                                         <div class="tab-pane" id="kalkulationen" role="tabpanel">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
                                                             <div class="card-body">
@@ -1457,7 +1457,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
                                                             <div class="card-body">
@@ -1484,9 +1484,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
                                                             <div class="card-body">
