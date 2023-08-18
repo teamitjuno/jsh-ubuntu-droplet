@@ -175,7 +175,7 @@ def home(request):
             'vertriebangebot',
             filter=Q(vertriebangebot__current_date__year=year, vertriebangebot__angebot_id_assigned=True)
         )
-    ).order_by('-num_vertriebangebots')[:6]
+    ).order_by('-num_vertriebangebots')[:5]
 
 
     vertriebangebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True)
