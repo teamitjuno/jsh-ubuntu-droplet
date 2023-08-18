@@ -1,0 +1,47 @@
+{% block content %}
+<tr>
+    <th>{{ form.speicher.label_tag }}</th>
+    <td>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" disabled id="switch01" {% if form.speicher.value %}checked{% endif %} data-switch="success" name="{{ form.speicher.html_name }}" />
+            <label class="custom-control-label" for="switch01" data-on-label="Ja" data-off-label="Nein"></label>
+        </div>
+    </td>
+</tr>
+<tr id="anzSpeicherRow" style="display:none;">
+    <th>{{ form.anz_speicher.label_tag }}</th>
+    <td>
+        <input type="text" id="anz_speicher" class="form-control" name="{{ form.anz_speicher.html_name }}" value="{{ form.anz_speicher.value }}" readonly />
+    </td>
+</tr>
+<script>
+    // Function to toggle the visibility of the anzSpeicherRow
+    function toggleAnzSpeicherRow() {
+        let speicherSwitch = document.getElementById("switch01");
+        let anzSpeicherRow = document.getElementById("anzSpeicherRow");
+
+        if (speicherSwitch.checked) {
+            anzSpeicherRow.style.display = "";
+        } else {
+            anzSpeicherRow.style.display = "none";
+        }
+    }
+
+    // Set the initial visibility state based on the switch position
+    toggleAnzSpeicherRow();
+
+    // Add event listener to the switch to handle visibility toggling
+    document.getElementById("switch01").addEventListener("change", toggleAnzSpeicherRow);
+
+    // Existing code for form validation
+    document.getElementById("main-form").addEventListener("submit", function(event){
+        let speicher = document.getElementById("switch01").checked;
+        let anz_speicher = document.getElementById("anz_speicher").value;
+
+        if (speicher && (anz_speicher === null || anz_speicher <= 0)) {
+            event.preventDefault(); // prevent form submission
+            alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
+        }
+    });
+</script>
+{% endblock %}

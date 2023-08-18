@@ -1,0 +1,42 @@
+{% block content %}
+<tr>
+    <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
+    <td>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" disabled id="switch31" {% if form.wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.wandhalterung_fuer_speicher.html_name }}" />
+            <label class="custom-control-label" for="switch31" data-on-label="Ja" data-off-label="Nein"></label>
+        </div>
+    </td>
+</tr>
+<tr id="row_anz_wandhalterung" style="{% if not form.wandhalterung_fuer_speicher.value %}display: none;{% endif %}">
+    <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
+    <td>
+        <input type="text" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" readonly />
+    </td>
+</tr>
+
+<script>
+    // Toggle visibility based on the checkbox state
+    document.getElementById("switch31").addEventListener("change", function() {
+        let row_anz_wandhalterung = document.getElementById("row_anz_wandhalterung");
+        if (this.checked) {
+            row_anz_wandhalterung.style.display = "table-row";
+        } else {
+            row_anz_wandhalterung.style.display = "none";
+        }
+    });
+
+    document.getElementById("main-form").addEventListener("submit", function(event){
+        // get values from the form
+        let wandhalterung_fuer_speicher = document.getElementById("switch31").checked;
+        let anz_wandhalterung_fuer_speicher = document.getElementById("anz_wandhalterung_fuer_speicher").value;
+
+        // perform the validation
+        if (wandhalterung_fuer_speicher && (anz_wandhalterung_fuer_speicher === null || anz_wandhalterung_fuer_speicher <= 0)) {
+            event.preventDefault(); // prevent form submission
+            alert("Die Anzahl der Wandhalterung für Speicher kann nicht 0 seinwenn Wandhalterung inkludet = True.");
+        }
+    });
+</script>
+
+{% endblock %}

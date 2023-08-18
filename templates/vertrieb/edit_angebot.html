@@ -1,12 +1,14 @@
 {% extends 'vertrieb/base.html' %}
+
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
-
-{% block content %}
-
-
-        
+{% block head_extra %}
+<head>
+<title>AngebotsTool 2.0 | Juno-Solar Administration Tool</title>
+</head>
+{% endblock %}
+{% block content %}        
 <div class="content-page">
     <div class="content">
             {% if not vertrieb_angebot.is_locked %}
@@ -46,12 +48,12 @@
                                                     <span class="d-none d-md-block">Info</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item" role="tabpanel">
+                                            {% comment %} <li class="nav-item" role="tabpanel">
                                                 <a href="#wallbox" id="wallbox-tab" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-account-circle d-md-none d-block"></i>
                                                     <span class="d-none d-md-block">Wallbox</span>
                                                 </a>
-                                            </li>
+                                            </li> {% endcomment %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-settings-outline d-md-none d-block"></i>
@@ -184,7 +186,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="tab-pane" id="wallbox" role="tabpanel">
+                                        {% comment %} <div class="tab-pane" id="wallbox" role="tabpanel">
                                             <div class="card-body">
                                                 <div class="row"> 
                                                     <div class="col-lg-6">
@@ -210,7 +212,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> {% endcomment %}
                             
                                             <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM -->
                                         <div class="tab-pane show active" id="module" role="presentation">
@@ -313,89 +315,20 @@
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Auftrag details</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
                                                                         
-                                                                        <tr>
-                                                                            <th>{{ form.speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="switch01" {% if form.speicher.value %}checked{% endif %} data-switch="success" name="{{ form.speicher.html_name }}" />
-                                                                                    <label class="custom-control-label" for="switch01" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.anz_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <input type="number" id="anz_speicher" class="form-control" name="{{ form.anz_speicher.html_name }}" value="{{ form.anz_speicher.value }}" />
-                                                                            </td>
-                                                                        </tr>
-                                                                            <script>
-                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
-                                                                                    // get values from the form
-                                                                                    let speicher = document.getElementById("switch01").checked;
-                                                                                    let anz_speicher = document.getElementById("anz_speicher").value;
-                                                                            
-                                                                                    // perform the validation
-                                                                                    if (speicher && (anz_speicher === null || anz_speicher <= 0)) {
-                                                                                        event.preventDefault(); // prevent form submission
-                                                                                        alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
-                                                                                    }
-                                                                                });
-                                                                            </script>
-                                                                        <tr>
-                                                                            <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="switch31" {% if form.wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.wandhalterung_fuer_speicher.html_name }}" />
-                                                                                    <label class="custom-control-label" for="switch31" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
-                                                                            </td>
-                                                                        </tr>
-                                                                            <script>
-                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
-                                                                                    // get values from the form
-                                                                                    let wandhalterung_fuer_speicher = document.getElementById("switch31").checked;
-                                                                                    let anz_wandhalterung_fuer_speicher = document.getElementById("anz_wandhalterung_fuer_speicher").value;
-                                                                            
-                                                                                    // perform the validation
-                                                                                    if (wandhalterung_fuer_speicher && (anz_wandhalterung_fuer_speicher === null || anz_wandhalterung_fuer_speicher <= 0)) {
-                                                                                        event.preventDefault(); // prevent form submission
-                                                                                        alert("Die Anzahl der Wandhalterung für Speicher kann nicht 0 seinwenn Wandhalterung inkludet = True.");
-                                                                                    }
-                                                                                });
-                                                                            </script>
-                                                                        <tr>
-                                                                            <th>{{ form.wallbox.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                                                    <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
+                                                                        {% include 'vertrieb/extra/speicher_content.html' %}
+                                                                        {% include 'vertrieb/extra/wand_content.html' %}
+                                                                        {% include 'vertrieb/extra/wallbox_content.html' %}
 
                                                                         <tr>
                                                                             <th>{{ form.komplex.label_tag }}</th>
                                                                             <td id="komplex" name="komplex">{{ form.komplex }}</td>
                                                                         </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.angebot_bekommen_am.label_tag }}</th>
-                                                                            <td>{{ vertrieb_angebot.angebot_bekommen_am }}</td>
-                                                                        </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.ablehnungs_grund.label_tag }}</th>
-                                                                            <td> {{ form.ablehnungs_grund }} </td>
-                                                                        </tr>
+                                                                        
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -524,7 +457,7 @@
                                         <div class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                             <div class="card-body">
@@ -543,7 +476,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
                                                             <div class="card-body">
@@ -561,7 +494,7 @@
                                                                             <th>{{ form.notstrom_ticket.label_tag }}</th>
                                                                             <td>{{ form.notstrom_ticket }}</td>
                                                                         </tr>
-                                                                        <tr>
+                                                                        <tr hidden>
                                                                             <th>{{ form.eddi_ticket.label_tag }}</th>
                                                                             <td>{{ form.eddi_ticket }}</td>
                                                                         </tr>
@@ -570,9 +503,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div> <!-- End of row -->
-                                                <div class="row">
-                                                    <div class="col-lg-6">
+                                                
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
                                                             <div class="card-body">
@@ -981,12 +913,12 @@
                                             <span class="d-none d-md-block">Info</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item" role="presentation">
+                                    {% comment %} <li class="nav-item" role="presentation">
                                         <a href="#wallbox" id="wallbox-tab" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                             <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                             <span class="d-none d-md-block">Wallbox</span>
                                         </a>
-                                    </li>
+                                    </li> {% endcomment %}
                                     <li class="nav-item" role="presentation">
                                         <a href="#module" data-bs-toggle="tab" aria-expanded="false" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
                                                 <i class="mdi mdi-home-variant d-md-none d-block"></i>
@@ -1100,7 +1032,7 @@
                                                 
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="wallbox" role="tabpanel">
+                                        {% comment %} <div class="tab-pane" hidden id="wallbox" role="tabpanel">
                                             <div class="card-body">
                                                 <div class="row"> 
                                                     <div class="col-lg-6">
@@ -1113,7 +1045,7 @@
                                                                         {% if not vertrieb_angebot.wallbox %}
                                                                             <td><span class="badge bg-danger rounded-pill">Nicht inklusive</span></td>
                                                                         {% else %}
-                                                                            <td><input type="text" id="wallboxtyp" class="form-control" name="{{ form.wallboxtyp.name }}" value="{{ form.wallboxtyp.value }}" readonly></td>
+                                                                            {% include "vertrieb/extra/wallbox_content_readonly.html" %}
                                                                         {% endif %}
                                                                     </tr>
                                                                     <tr>
@@ -1138,7 +1070,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> {% endcomment %}
                                                 <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOOOOOOOOOOOOODULE -->
                                         <div class="tab-pane" id="module" role="tabpanel">
                                             <div class="card-body">
@@ -1276,84 +1208,16 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
                                                                         
-                                                                        <tr>
-                                                                            <th>{{ form.speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="switch01" {% if form.speicher.value %}checked{% endif %} data-switch="success" name="{{ form.speicher.html_name }}" />
-                                                                                    <label class="custom-control-label" for="switch01" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.anz_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <input type="number" id="anz_speicher" class="form-control" name="{{ form.anz_speicher.html_name }}" value="{{ form.anz_speicher.value }}" />
-                                                                            </td>
-                                                                        </tr>
-                                                                            <script>
-                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
-                                                                                    // get values from the form
-                                                                                    let speicher = document.getElementById("switch01").checked;
-                                                                                    let anz_speicher = document.getElementById("anz_speicher").value;
-                                                                            
-                                                                                    // perform the validation
-                                                                                    if (speicher && (anz_speicher === null || anz_speicher <= 0)) {
-                                                                                        event.preventDefault(); // prevent form submission
-                                                                                        alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
-                                                                                    }
-                                                                                });
-                                                                            </script>
-                                                                        <tr>
-                                                                            <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="switch31" {% if form.wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.wandhalterung_fuer_speicher.html_name }}" />
-                                                                                    <label class="custom-control-label" for="switch31" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                            <td>
-                                                                                <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
-                                                                            </td>
-                                                                        </tr>
-                                                                            <script>
-                                                                                document.getElementById("main-form").addEventListener("submit", function(event){
-                                                                                    // get values from the form
-                                                                                    let wandhalterung_fuer_speicher = document.getElementById("switch31").checked;
-                                                                                    let anz_wandhalterung_fuer_speicher = document.getElementById("anz_wandhalterung_fuer_speicher").value;
-                                                                            
-                                                                                    // perform the validation
-                                                                                    if (wandhalterung_fuer_speicher && (anz_wandhalterung_fuer_speicher === null || anz_wandhalterung_fuer_speicher <= 0)) {
-                                                                                        event.preventDefault(); // prevent form submission
-                                                                                        alert("Die Anzahl der Wandhalterung für Speicher kann nicht 0 seinwenn Wandhalterung inkludet = True.");
-                                                                                    }
-                                                                                });
-                                                                            </script>
-                                                                        <tr>
-                                                                            <th>{{ form.wallbox.label_tag }}</th>
-                                                                            <td>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                                                    <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
+                                                                        
+                                                                        {% include 'vertrieb/extra/speicher_content_readonly.html' %}    
+                                                                        {% include 'vertrieb/extra/wand_content_readonly.html' %}    
+                                                                        {% include 'vertrieb/extra/wallbox_content_readonly.html' %}
 
                                                                         <tr>
                                                                             <th>{{ form.komplex.label_tag }}</th>
                                                                             <td id="komplex" name="komplex">{{ form.komplex }}</td>
                                                                         </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.angebot_bekommen_am.label_tag }}</th>
-                                                                            <td>{{ vertrieb_angebot.angebot_bekommen_am }}</td>
-                                                                        </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.ablehnungs_grund.label_tag }}</th>
-                                                                            <td> {{ form.ablehnungs_grund }} </td>
-                                                                        </tr>
+
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1482,7 +1346,7 @@
                                     <div class="tab-pane" id="ticket" role="presentation">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-4">
                                                     <div class="card mb-3">
                                                         <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                         <div class="card-body">
@@ -1501,7 +1365,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-4">
                                                     <div class="card mb-3">
                                                         <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
                                                         <div class="card-body">
@@ -1519,7 +1383,7 @@
                                                                         <th>{{ form.notstrom_ticket.label_tag }}</th>
                                                                         <td>{{ form.notstrom_ticket }}</td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr hidden>
                                                                         <th>{{ form.eddi_ticket.label_tag }}</th>
                                                                         <td>{{ form.eddi_ticket }}</td>
                                                                     </tr>
@@ -1528,9 +1392,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> <!-- End of row -->
-                                            <div class="row">
-                                                <div class="col-lg-6">
+                                            
+                                                <div class="col-lg-4">
                                                     <div class="card mb-3">
                                                         <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
                                                         <div class="card-body">
