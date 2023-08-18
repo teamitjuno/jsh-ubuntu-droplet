@@ -138,11 +138,9 @@ def get_recent_activities(user):
             if not any(a['action_time'] == activity['action_time'] or a['object'] == activity['object'] for a in activities):
                 activities.append(activity)
 
-        return activities
+    return activities
+
         
-    else:
-        pass        
-    return None
     
 
 
@@ -167,7 +165,7 @@ def get_icon_based_on_status(entry, status):
     }
     return icon_map.get(status, 'mdi-delete bg-danger-lighten text-danger')
 
-
+@user_passes_test(vertrieb_check)
 def home(request):
     user = request.user
     year, month = now.year, now.month

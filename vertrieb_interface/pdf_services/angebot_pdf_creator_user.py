@@ -42,16 +42,16 @@ class PDF(FPDF):
         self.set_text_color(128)
         # Position at 1.5 cm from bottom
         self.set_y(-30)
-        self.multi_cell(0, 5, "Geschäftsführer: Denny Schädlich\npersönlich haftender Gesellschaftler: Juno Solar Home Verwaltungs GmbH\nSitz Werdau ∙ Amtsgericht Chemnitz HRB 34192 ∙ Steuernummer 227/156/19508 ∙ Ust-IdNr DE 34514953", 0, 0, "L")  # type: ignore
+        self.set_x(25)
+        self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignore
+        self.set_y(-30)
+        self.set_x(85)
+        centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
+        self.multi_cell(0, 3, centered_text1, 0, '')
         self.set_y(-30)
         self.set_x(150)
-        self.multi_cell(
-            0,
-            5,
-            "Commerzbank Chemnitz\nIBAN DE94 8704 0000 0770 0909 00\nBIC/Swift-Code: COBADEFFXXX",
-            0,
-            "R",
-        )
+        centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
+        self.multi_cell(0, 3, centered_text1, 0, '')
 
     def page1(self, data, eintrag):
         self.add_page()
@@ -973,7 +973,7 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\n PV-Energie optimal zu nutzen", 0, "L")
+            self.multi_cell(0, 5, "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen", 0, "L")
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
@@ -992,14 +992,14 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Huawei Ersatzstromversorgung", 0, 0, "L")
+            self.cell(0, 6, "Huawei Backup-Box B1", 0, 0, "L")
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
             self.multi_cell(
                 0,
                 5,
-                "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung",
+                "Huawei Ersatzstromversorgung zur einphasigen Ersatzstromversorgung",
                 0,
                 "L",
             )
@@ -1048,11 +1048,11 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Modul-Leistungsoptimierer", 0, 0, "L")
+            self.cell(0, 6, "Huawei SUN2000-450W-P2 Moduloptimierer", 0, 0, "L")
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "indiviuelle Schattenerkennung pro Modul", 0, "L")
+            self.multi_cell(0, 5, "Modul-Leistungsoptimierer zur individuelle Schattenerkennung pro Modul", 0, "L")
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
