@@ -10,45 +10,51 @@ pages = "4"
 
 
 class PDF(FPDF):
-    def header(self):
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
-        self.add_font("JUNO Solar Lt", "", font_path, uni=True)
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
-        self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
+    def __init__(self, *args, **kwargs):
+        super(PDF, self).__init__(*args, **kwargs)
+        self.is_last_page = False
 
-        # Position at 1.5 cm from bottom
-        self.set_y(15)
-        self.set_font("JUNO Solar Lt", "", 12)
-        self.set_text_color(0)
-        # Page number
-        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
-        self.set_x(40)
-        if self.page_no() != 1:
-            self.cell(0, 10, title, 0, 0, "")
-        self.image(
-            os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg"),
-            x=170,
-            y=10,
-            w=30,
-            h=15,
-        )
-        # Line break
-        self.ln(15)
+    def header(self):
+         if not self.is_last_page:
+            font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
+            self.add_font("JUNO Solar Lt", "", font_path, uni=True)
+            font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
+            self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
+
+            # Position at 1.5 cm from bottom
+            self.set_y(15)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_text_color(0)
+            # Page number
+            self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
+            self.set_x(40)
+            if self.page_no() != 1:
+                self.cell(0, 10, title, 0, 0, "")
+            self.image(
+                os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg"),
+                x=170,
+                y=10,
+                w=30,
+                h=15,
+            )
+            # Line break
+            self.ln(15)
 
     def footer(self):
+         
         # Arial italic 8
         self.set_font("JUNO Solar Lt", "", 8)
         # Text color in gray
         self.set_text_color(128)
         # Position at 1.5 cm from bottom
-        self.set_y(-30)
+        self.set_y(-25)
         self.set_x(25)
         self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignore
-        self.set_y(-30)
+        self.set_y(-25)
         self.set_x(85)
         centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
         self.multi_cell(0, 3, centered_text1, 0, '')
-        self.set_y(-30)
+        self.set_y(-25)
         self.set_x(150)
         centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
         self.multi_cell(0, 3, centered_text1, 0, '')
@@ -1100,7 +1106,7 @@ class PDF(FPDF):
         # Seite voll
         y = y + 55
         self.set_y(y)
-
+        return(eintrag)
     def lastPage(self, data):
         self.add_page()
         # Angebotssumme
@@ -1192,7 +1198,573 @@ class PDF(FPDF):
             w=32,
             h=24,
         )
+        self.set_y(260)
 
+    
+        
+#     def page5(self, eintrag):
+#         self.is_last_page = True
+#         self.add_page()
+#         self.set_text_color(0)
+#         self.set_auto_page_break(auto=True, margin=5)
+
+#         bold_texts = [
+#             """Allgemeine Geschäftsbedingungen der JUNO SOLAR Home GmbH & Co. KG über
+#     die Lieferung, Installation und Inbetriebnahme von Solaranlagen
+#     § 1 Geltungsbereich, Begriffsbestimmungen""",
+#             "§ 2 Vertragsschluss",
+#             "§ 3 Leistungen des Anbieters",
+#             "§ 4 Leistungsänderungen",
+#             "§ 5 Pflichten des Kunden",
+#             "§ 6 Vergütung (Preis) und Zahlungsmodalitäten",
+#             "§ 7 Herstellergarantien",
+#             "§ 8 Nachunternehmer",
+#             "§ 9 Eigentumsvorbehalt",
+#             "§ 10 Leistungsstörungen",
+#             "§ 11 Abnahme",
+#             "§ 12 Haftung",
+#             "§ 13 Höhere Gewalt",
+#             "§ 14 Widerrufsbelehrung",
+#             "Widerrufsbelehrung Widerrufsrecht"
+#         ] # your list of bold texts
+        
+#         regular_texts = [
+#             """(1) Für die Geschäftsbeziehung zwischen der JUNO SOLAR Home GmbH & Co. KG,
+# Ziegelstraße 1a, 08412 Werdau (im Folgenden: Anbieter) und dem Kunden gelten
+# ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer
+# zum Zeitpunkt der Bestellung gültigen Fassung. Abweichende Allgemeine
+# Geschäftsbedingungen des Kunden werden nicht anerkannt, es sei denn, der
+# Anbieter stimmt ihrer Geltung ausdrücklich schriftlich zu. Dies gilt auch dann,
+# wenn der Anbieter die Leistung an den Kunden in Kenntnis dessen
+# Vertragsbedingungen ausführt.
+# (2) Der Kunde ist Verbraucher, soweit der Zweck der georderten Lieferungen und
+# Leistungen nicht überwiegend seiner gewerblichen oder selbständigen
+# beruflichen Tätigkeit zugerechnet werden kann. Dagegen ist Unternehmer jede
+# natürliche oder juristische Person oder rechtsfähige Personengesellschaft, die
+# beim Abschluss des Vertrags in Ausübung ihrer gewerblichen oder selbständigen
+# beruflichen Tätigkeit handelt""",
+#             """(1) Der Anbieter betreibt unter der Domain https://www.juno-solar.com eine
+# Internetpräsenz. Die von dem Kunden auf der Internetpräsenz anzugebenden
+# Daten dienen als Grundlage für die spätere Angebotserstellung durch den
+# Anbieter. Die auf der Internetpräsenz zum Zwecke einer Angebotserstellung
+# durch den Anbieter erhobenen Daten sind deshalb wahrheitsgemäß anzugeben.
+# Bei den auf der Internetpräsenz dargestellten Beispielen handelt es sich nicht um
+# verbindliche Angebote. Die auf der Internetpräsenz dargestellten Angaben wie
+# Erträge bzw. Gewinne, die mit dem Betrieb der Solaranlage erzielt werden können,
+# stellen lediglich Prognosen dar und bilden nicht die tatsächlichen Gegebenheiten
+# ab.
+# (2) Aufgrund der auf der Internetpräsenz vom Kunden angegebenen Daten oder,
+# falls diese nicht ausreichend sind, aufgrund der vom Anbieter vor Ort
+# aufgenommenen Daten, erhält der Kunde ein Angebot des Anbieters. Anlässlich
+# des Vor-Ort Termins wird ein technischer Aufnahmebogen erstellt. Das Angebot
+# wird entweder in Schriftform, per Fax oder elektronisch an den Kunden
+# übermittelt.
+# (3)Mit Übermittlung des vom Kunden unterzeichneten Angebots an den Anbieter
+# in Schriftform, per Fax oder in elektronischer Form schließt der Kunde den
+# kostenpflichtigen Vertrags über die Lieferung, Installation und Inbetriebnahme
+# einer Solaranlage ab. Die Bestätigung des Angebots durch den Anbieter erfolgt
+# durch Übermittlung einer Auftragsbestätigung in Schriftform, per Fax oder in
+# elektronischer Form.
+# (4) Der Vertrag wird erst mit Zugang dieser Auftragsbestätigung des Anbieters
+# beim Kunden wirksam. Die Auftragsbestätigung erfolgt entweder durch
+# Übermittlung in Schriftform, per Fax oder in elektronischer Form. Geht dem
+# Kunden die Auftragsbestätigung nicht innerhalb einer Frist von 4 Wochen nach
+# Zugang des Angebots des Kunden beim Anbieter zu, gilt der Vertrag als nicht
+# zustande gekommen.
+# (5) Vertragsbestandteile sind in nachstehender Reihen- und Rangfolge:
+# (a) die Angaben des Kunden
+# (b) das Angebot des Anbieters
+# (c) diese AGB.""", #regular_text2
+#             """(1) Der Anbieter verpflichtet sich gegenüber dem Kunden, die ihm angebotene
+# und bestätigte (siehe § 2 (2)-(5)) Solaranlage zu liefern, zu installieren und in
+# Betrieb zu nehmen. Hierunter fallen auch die Beratung, Planung, Anmeldung
+# sowie die Registrierung bei Behörden, soweit sich aus dem Angebot nichts
+# anderes ergibt.
+# (2) Der Anbieter behält sich vor, bei Nichtverfügbarkeit einzelner Komponenten
+# solche mit vergleichbarer Qualität und Ausstattung zu liefern. Teillieferungen sind
+# zulässig, soweit sie dem Kunden zumutbar sind.""", #regular_text3
+#             """Stellt sich nach Vertragsabschluss heraus, dass Abweichungen von den zuvor vom
+# Kunden gemachten Angaben oder vor Ort feststellbaren tatsächlichen
+# Gegebenheiten erkennbar werden, die eine Änderung der Solaranlage erfordern,
+# behält sich der Anbieter vor, die von ihm angebotene Solaranlage unter
+# Berücksichtigung der berechtigten Interessen des Kunden wie auch des Anbieters
+# im Rahmen der Zumutbarkeit beider Parteien zu ändern. Sofern und soweit eine
+# Anpassung der Gegenleistung notwendig wird (günstigerer oder höherer Preis),
+# wird der Anbieter den Mehr- oder Minderaufwand ermitteln und die Parteien
+# werden sich über eine entsprechende Vertragsanpassung einigen. Kommt eine
+# Einigung zwischen den Parteien nicht innerhalb von 14 Tagen ab Kenntnis des
+# Anbieters von der Abweichung und Mitteilung dieser Erkenntnis gegenüber dem
+# Kunden nicht zustande, ist der Anbieter berechtigt, von dem Vertrag
+# zurückzutreten. Gleiches gilt für den Fall, dass eine notwendige Anpassung nicht
+# möglich oder durchführbar ist.""", #regular_text4
+#             """(1) Der Kunde ist zur Mitwirkung verpflichtet, soweit sich das aus den in diesem
+# Vertrag und in dem Angebot geregelten Pflichten ergibt oder dies sonst zur
+# Erfüllung dieses Vertrags erforderlich ist oder wird.
+# (2) Der Kunde ist insbesondere verpflichtet, vor Errichtung der Solaranlage bei der
+# Einholung der für die Errichtung der Solaranlage erforderlichen Zustimmungen,
+# Genehmigungen und/oder Mitteilungen mitzuwirken. Gleiches gilt bei
+# notwendigen Änderungen, Ergänzungen oder bei
+# Auflagen/Nebenbestimmungen.
+# (3) Der Kunde wird dem Anbieter den Zählerwechsel durch den Energieversorger
+# unverzüglich mitteilen, um eine zügige Inbetriebnahme sicherstellen zu können.
+# (4) Der Kunde ist verpflichtet, die jeweils aktuellen und anwendbaren rechtlichen,
+# insbesondere baurechtlichen Anforderungen sowie Anforderungen nach dem
+# jeweils aktuellen Erneuerbare-Energien-Gesetz sowie Technische
+# Anschlussbedingungen (TAB) zu beachten, welche die Installation der Solaranlage
+# voraussetzt.
+# (5) Der Kunde stellt dem Anbieter unentgeltlich zur Verfügung:
+# (a) Lager- und Arbeitsplätze (für die vom Kunden bestellten Komponenten der
+# Solaranlage)
+# (b) Wasseranschluss für die Baustelle
+# (c) Stromanschluss für die Baustelle.
+# (6) Der Kunde versichert, dass er Eigentümer des Gebäudes ist, auf dem die
+# Solaranlage errichtet werden soll oder aber über eine anderweitige Berechtigung
+# zum Vertragsschluss hinsichtlich der Errichtung der Solaranlage für dieses
+# Gebäude verfügt und weist dem Anbieter dessen Berechtigung auf Verlangen für
+# den Anbieter kostenfrei nach.
+# (7) Soweit zur Errichtung der Solaranlage notwendig, wird der Kunde dem
+# Anbieter bzw. den vom Anbieter beauftragten Dritten nach Terminabstimmung
+# ungehinderten Zugang zu den Grundstücken, Gebäuden, Gebäudeteilen bzw.
+# Dachflächen, auf denen die Solaranlage installiert werden soll, gewähren. Soweit
+# der Kunde selbst Umbau- und/oder Vorarbeiten durchführt, um eine
+# vertragsgerechte Errichtung der Solaranlage gewährleisten zu können, müssen
+# diese Leistungen bis zum vereinbarten Termin zur Errichtung der Solaranlage
+# fachgerecht abgeschlossen worden sein. Der Lagerplatz für die Paletten muss
+# mittels Hubwagens ebenerdig zugänglich sein.
+# (8) Der Kunde ist verpflichtet, die Solaranlage nach deren Errichtung abzunehmen
+# (näheres hierzu regelt § 11).
+# (9) Sofern und soweit die angelieferte Ware Transportschäden aufweist, wird der
+# Kunde dem jeweiligen Mitarbeiter des Transportunternehmens gegenüber diese
+# sofort reklamieren und den Anbieter hierüber schnellstmöglich unterrichten.
+# Gewährleistungsrechte des Kunden werden hierdurch nicht berührt.""", #regular_text5
+#             """...""", #regular_text6
+#             """...""", #regular_text7
+#             """...""", #regular_text8
+#             """...""", #regular_text9
+#             """...""", #regular_text10
+#             """...""", #regular_text10
+#             """...""", #regular_text10
+#             """...""", #regular_text10
+#             """...""", #regular_text10
+#             """...""", #regular_text10
+#             # ... continue for all regular texts
+#         ]
+
+#         assert len(bold_texts) == len(regular_texts), "Mismatch between bold and regular texts length."
+
+#         column_width = self.get_string_width("W" * 65)  # Assuming 85 characters max per line
+
+#         for bold, regular in zip(bold_texts, regular_texts):
+#             # Print bold text
+#             self.set_font("JUNO Solar Lt", "B", 7)
+#             self.set_font_size_to_fit(bold, 800)
+#             self.multi_cell(800, 3, txt=bold)
+            
+#             # Print regular text
+#             self.set_font("JUNO Solar Lt", "", 7)
+#             self.set_font_size_to_fit(regular, 800)
+#             self.multi_cell(800, 3, txt=regular)
+
+#         self.set_y(250)
+#         self.set_x(120)
+#         for bold, regular in zip(bold_texts, regular_texts):
+#             # Print bold text
+#             self.set_font("JUNO Solar Lt", "B", 7)
+#             self.set_font_size_to_fit(bold, 800)
+#             self.multi_cell(800, 3, txt=bold)
+            
+#             # Print regular text
+#             self.set_font("JUNO Solar Lt", "", 7)
+#             self.set_font_size_to_fit(regular, 800)
+#             self.multi_cell(800, 3, txt=regular)
+    # def set_font_size_to_fit(self, text, width=800):
+    #     # Current size and width of the text
+    #     current_size = self.font_size_pt
+    #     current_width = 800
+
+    #     # Check if the text is already smaller than the width
+    #     if current_width <= width:
+    #         return
+
+    #     # Calculate required font size
+    #     font_size = current_size * width / current_width
+
+    #     # Set the font size
+    #     self.set_font_size(font_size)
+
+    def page5(self, eintrag):
+        self.is_last_page = True
+        self.add_page()
+        self.set_text_color(0)
+        self.set_auto_page_break(auto=True, margin=15)
+
+        bold_texts = [
+            """Allgemeine Geschäftsbedingungen der JUNO SOLAR Home GmbH & Co. KG über
+    die Lieferung, Installation und Inbetriebnahme von Solaranlagen
+    § 1 Geltungsbereich, Begriffsbestimmungen""",
+            "§ 2 Vertragsschluss",
+            "§ 3 Leistungen des Anbieters",
+            "§ 4 Leistungsänderungen",
+            "§ 5 Pflichten des Kunden",
+            "§ 6 Vergütung (Preis) und Zahlungsmodalitäten",
+            "§ 7 Herstellergarantien",
+            "§ 8 Nachunternehmer",
+            "§ 9 Eigentumsvorbehalt",
+            "§ 10 Leistungsstörungen",
+            "§ 11 Abnahme",
+            "§ 12 Haftung",
+            "§ 13 Höhere Gewalt",
+            "§ 14 Widerrufsbelehrung",
+            "Widerrufsbelehrung\nWiderrufsrecht",
+            "Folgen des Widerrufs",
+            "Muster-Widerrufsformular",
+            "§ 15 Online-Streitbeilegung",
+            "§ 16 Datenschutz",
+            "§ 17 Schlussbestimmungen"
+            ] 
+        
+        regular_texts = [
+            """(1) Für die Geschäftsbeziehung zwischen der JUNO SOLAR Home GmbH & Co. KG,
+Ziegelstraße 1a, 08412 Werdau (im Folgenden: Anbieter) und dem Kunden gelten
+ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer
+zum Zeitpunkt der Bestellung gültigen Fassung. Abweichende Allgemeine
+Geschäftsbedingungen des Kunden werden nicht anerkannt, es sei denn, der
+Anbieter stimmt ihrer Geltung ausdrücklich schriftlich zu. Dies gilt auch dann,
+wenn der Anbieter die Leistung an den Kunden in Kenntnis dessen
+Vertragsbedingungen ausführt.
+(2) Der Kunde ist Verbraucher, soweit der Zweck der georderten Lieferungen und
+Leistungen nicht überwiegend seiner gewerblichen oder selbständigen
+beruflichen Tätigkeit zugerechnet werden kann. Dagegen ist Unternehmer jede
+natürliche oder juristische Person oder rechtsfähige Personengesellschaft, die
+beim Abschluss des Vertrags in Ausübung ihrer gewerblichen oder selbständigen
+beruflichen Tätigkeit handelt""",
+            """(1) Der Anbieter betreibt unter der Domain https://www.juno-solar.com eine
+Internetpräsenz. Die von dem Kunden auf der Internetpräsenz anzugebenden
+Daten dienen als Grundlage für die spätere Angebotserstellung durch den
+Anbieter. Die auf der Internetpräsenz zum Zwecke einer Angebotserstellung
+durch den Anbieter erhobenen Daten sind deshalb wahrheitsgemäß anzugeben.
+Bei den auf der Internetpräsenz dargestellten Beispielen handelt es sich nicht um
+verbindliche Angebote. Die auf der Internetpräsenz dargestellten Angaben wie
+Erträge bzw. Gewinne, die mit dem Betrieb der Solaranlage erzielt werden können,
+stellen lediglich Prognosen dar und bilden nicht die tatsächlichen Gegebenheiten
+ab.
+(2) Aufgrund der auf der Internetpräsenz vom Kunden angegebenen Daten oder,
+falls diese nicht ausreichend sind, aufgrund der vom Anbieter vor Ort
+aufgenommenen Daten, erhält der Kunde ein Angebot des Anbieters. Anlässlich
+des Vor-Ort Termins wird ein technischer Aufnahmebogen erstellt. Das Angebot
+wird entweder in Schriftform, per Fax oder elektronisch an den Kunden
+übermittelt.
+(3)Mit Übermittlung des vom Kunden unterzeichneten Angebots an den Anbieter
+in Schriftform, per Fax oder in elektronischer Form schließt der Kunde den
+kostenpflichtigen Vertrags über die Lieferung, Installation und Inbetriebnahme
+einer Solaranlage ab. Die Bestätigung des Angebots durch den Anbieter erfolgt
+durch Übermittlung einer Auftragsbestätigung in Schriftform, per Fax oder in
+elektronischer Form.
+(4) Der Vertrag wird erst mit Zugang dieser Auftragsbestätigung des Anbieters
+beim Kunden wirksam. Die Auftragsbestätigung erfolgt entweder durch
+Übermittlung in Schriftform, per Fax oder in elektronischer Form. Geht dem
+Kunden die Auftragsbestätigung nicht innerhalb einer Frist von 4 Wochen nach
+Zugang des Angebots des Kunden beim Anbieter zu, gilt der Vertrag als nicht
+zustande gekommen.
+(5) Vertragsbestandteile sind in nachstehender Reihen- und Rangfolge:
+(a) die Angaben des Kunden
+(b) das Angebot des Anbieters
+(c) diese AGB.""", #regular_text2
+            """(1) Der Anbieter verpflichtet sich gegenüber dem Kunden, die ihm angebotene
+und bestätigte (siehe § 2 (2)-(5)) Solaranlage zu liefern, zu installieren und in
+Betrieb zu nehmen. Hierunter fallen auch die Beratung, Planung, Anmeldung
+sowie die Registrierung bei Behörden, soweit sich aus dem Angebot nichts
+anderes ergibt.
+(2) Der Anbieter behält sich vor, bei Nichtverfügbarkeit einzelner Komponenten
+solche mit vergleichbarer Qualität und Ausstattung zu liefern. Teillieferungen sind
+zulässig, soweit sie dem Kunden zumutbar sind.""", #regular_text3
+            """Stellt sich nach Vertragsabschluss heraus, dass Abweichungen von den zuvor vom
+Kunden gemachten Angaben oder vor Ort feststellbaren tatsächlichen
+Gegebenheiten erkennbar werden, die eine Änderung der Solaranlage erfordern,
+behält sich der Anbieter vor, die von ihm angebotene Solaranlage unter
+Berücksichtigung der berechtigten Interessen des Kunden wie auch des Anbieters
+im Rahmen der Zumutbarkeit beider Parteien zu ändern. Sofern und soweit eine
+Anpassung der Gegenleistung notwendig wird (günstigerer oder höherer Preis),
+wird der Anbieter den Mehr- oder Minderaufwand ermitteln und die Parteien
+werden sich über eine entsprechende Vertragsanpassung einigen. Kommt eine
+Einigung zwischen den Parteien nicht innerhalb von 14 Tagen ab Kenntnis des
+Anbieters von der Abweichung und Mitteilung dieser Erkenntnis gegenüber dem
+Kunden nicht zustande, ist der Anbieter berechtigt, von dem Vertrag
+zurückzutreten. Gleiches gilt für den Fall, dass eine notwendige Anpassung nicht
+möglich oder durchführbar ist.""", #regular_text4
+            """(1) Der Kunde ist zur Mitwirkung verpflichtet, soweit sich das aus den in diesem
+Vertrag und in dem Angebot geregelten Pflichten ergibt oder dies sonst zur
+Erfüllung dieses Vertrags erforderlich ist oder wird.
+(2) Der Kunde ist insbesondere verpflichtet, vor Errichtung der Solaranlage bei der
+Einholung der für die Errichtung der Solaranlage erforderlichen Zustimmungen,
+Genehmigungen und/oder Mitteilungen mitzuwirken. Gleiches gilt bei
+notwendigen Änderungen, Ergänzungen oder bei
+Auflagen/Nebenbestimmungen.
+(3) Der Kunde wird dem Anbieter den Zählerwechsel durch den Energieversorger
+unverzüglich mitteilen, um eine zügige Inbetriebnahme sicherstellen zu können.
+(4) Der Kunde ist verpflichtet, die jeweils aktuellen und anwendbaren rechtlichen,
+insbesondere baurechtlichen Anforderungen sowie Anforderungen nach dem
+jeweils aktuellen Erneuerbare-Energien-Gesetz sowie Technische
+Anschlussbedingungen (TAB) zu beachten, welche die Installation der Solaranlage
+voraussetzt.
+(5) Der Kunde stellt dem Anbieter unentgeltlich zur Verfügung:
+(a) Lager- und Arbeitsplätze (für die vom Kunden bestellten Komponenten der
+Solaranlage)
+(b) Wasseranschluss für die Baustelle
+(c) Stromanschluss für die Baustelle.
+(6) Der Kunde versichert, dass er Eigentümer des Gebäudes ist, auf dem die
+Solaranlage errichtet werden soll oder aber über eine anderweitige Berechtigung
+zum Vertragsschluss hinsichtlich der Errichtung der Solaranlage für dieses
+Gebäude verfügt und weist dem Anbieter dessen Berechtigung auf Verlangen für
+den Anbieter kostenfrei nach.
+(7) Soweit zur Errichtung der Solaranlage notwendig, wird der Kunde dem
+Anbieter bzw. den vom Anbieter beauftragten Dritten nach Terminabstimmung
+ungehinderten Zugang zu den Grundstücken, Gebäuden, Gebäudeteilen bzw.
+Dachflächen, auf denen die Solaranlage installiert werden soll, gewähren. Soweit
+der Kunde selbst Umbau- und/oder Vorarbeiten durchführt, um eine
+vertragsgerechte Errichtung der Solaranlage gewährleisten zu können, müssen
+diese Leistungen bis zum vereinbarten Termin zur Errichtung der Solaranlage
+fachgerecht abgeschlossen worden sein. Der Lagerplatz für die Paletten muss
+mittels Hubwagens ebenerdig zugänglich sein.
+(8) Der Kunde ist verpflichtet, die Solaranlage nach deren Errichtung abzunehmen
+(näheres hierzu regelt § 11).
+(9) Sofern und soweit die angelieferte Ware Transportschäden aufweist, wird der
+Kunde dem jeweiligen Mitarbeiter des Transportunternehmens gegenüber diese
+sofort reklamieren und den Anbieter hierüber schnellstmöglich unterrichten.
+Gewährleistungsrechte des Kunden werden hierdurch nicht berührt.""", #regular_text5
+            """(1) Alle Preisangaben des Anbieters verstehen sich einschließlich der jeweils
+gültigen gesetzlichen Umsatzsteuer. Die Umsatzsteuer wird gegebenenfalls
+gesondert ausgewiesen.
+(2) Die Vergütung ergibt sich aus dem jeweiligen Angebot.
+(3) Der verhandelte endgültige Angebotspreis ist ein Pauschalpreis für die
+vollständige Ausführung der vereinbarten Leistungen.
+(4) Der Kunde erklärt, kein Bauleistender im Sinne des § 13b UStG zu sein.
+(5) Die Vergütung wird in folgenden Abschlagszahlungen fällig:
+(a) 20 % des Gesamtpreises nach Erhalt der Auftragsbestätigung
+(b) 70 % des Gesamtpreises mit Baubeginn (bei Einrichtung der Baustelle
+hat der Kunde einen Zahlungsnachweis vorzulegen)
+(c) 10 % des Gesamtpreises mit erstmaliger technischer Inbetriebnahme
+nach EEG.
+(6) Der Anbieter ist berechtigt, sämtliche Ansprüche, Eigentumsrechte und
+Anwartschaftsrechte aus diesem Vertragsverhältnis gegenüber dem Kunden an
+Dritte abzutreten.""", #regular_text6
+            """Soweit ein Hersteller einzelner, vom Anbieter gelieferter, Komponenten eine
+Garantie für diese Produkte gibt, kann sich der Kunde zur Geltendmachung von
+Rechten aus diesem Vertragsverhältnis nicht an den Anbieter wenden. Das
+Garantieverhältnis besteht ausschließlich zwischen dem Hersteller als
+Garantiegeber und dem Kunden. Der Anbieter ist kein Erklärungsempfänger oder
+Erklärungsgegner des Garantiegebers. Dies gilt auch für den Fall, dass derartige
+Garantien auf der Internetpräsenz des Anbieters oder anderweitig beworben
+werden.""", #regular_text7
+            """Der Einsatz von Nachunternehmern ist dem Anbieter grundsätzlich gestattet. Die
+vom Anbieter auszuwählenden Nachunternehmer müssen sich gewerbsmäßig
+mit der Ausführung der zu vergebenden Leistung befassen. Sie müssen
+fachkundig, leistungsfähig und zuverlässig sein.""", #regular_text8
+            """(1) Handelt es sich bei dem Kunden um einen Verbraucher, verbleibt die gelieferte
+Ware bis zur vollständigen Bezahlung im Eigentum des Anbieters.
+(2) Handelt es sich bei dem Kunden um eine juristische Person des öffentlichen
+Rechts, ein öffentlich-rechtl. Sondervermögen oder einen Unternehmer in
+Ausübung seiner gewerblichen oder selbstständigen beruflichen Tätigkeit, gilt
+folgendes ((3) bis (5)):
+(3) Bis zur vollständigen Bezahlung aller gegenwärtigen und künftigen
+Forderungen des Anbieters aus dem Werkvertrag und einer laufenden
+Geschäftsbeziehung (gesicherte Forderungen) behält sich der Anbieter das
+Eigentum an den verkauften Waren vor.
+(4) Die unter Eigentumsvorbehalt stehenden Waren dürfen vor vollständiger
+Bezahlung der gesicherten Forderungen weder an Dritte verpfändet, noch zur
+Sicherheit übereignet werden. Der Kunde hat den Anbieter unverzüglich
+schriftlich zu benachrichtigen, wenn ein Antrag auf Eröffnung eines
+Insolvenzverfahrens gestellt oder soweit Zugriffe Dritter (z.B. Pfändungen) auf die
+dem Anbieter gehörenden Waren erfolgen.
+(5) Bei vertragswidrigem Verhalten des Kunden, insbesondere bei Nichtzahlung
+der fälligen Vergütung, ist der Anbieter berechtigt, nach den gesetzlichen
+Vorschriften vom Vertrag zurückzutreten oder/und die Ware auf Grund des
+Eigentumsvorbehalts heraus zu verlangen. Das Herausgabeverlangen beinhaltet
+nicht zugleich die Erklärung des Rücktritts; der Anbieter ist vielmehr berechtigt,
+lediglich die Ware heraus zu verlangen und sich den Rücktritt vorzubehalten.
+Zahlt der Kunde die fällige Vergütung nicht, darf der Anbieter diese Rechte nur
+geltend machen, wenn er dem Kunden zuvor erfolglos eine angemessene Frist
+zur Zahlung gesetzt hat oder eine derartige Fristsetzung nach den gesetzlichen
+Vorschriften entbehrlich ist.""", #regular_text9
+            """Der Anbieter haftet für Leistungsstörungen nach den hierfür geltenden
+gesetzlichen Vorschriften (§§ 633 ff. BGB). """, #regular_text10
+            """Der Kunde ist verpflichtet, das vertragsmäßig hergestellte Werk abzunehmen,
+sofern nicht nach der Beschaffenheit des Werkes die Abnahme ausgeschlossen
+ist. Wegen unwesentlicher Mängel kann die Abnahme nicht verweigert werden. Im
+Übrigen gelten § 640a BGB sowie § 650b BGB.""", #regular_text11
+            """(1) Soweit sich aus diesen AGB einschließlich der nachfolgenden Bestimmungen
+nichts anderes ergibt, haftet der Anbieter bei einer Verletzung von vertraglichen
+und außervertraglichen Pflichten nach den gesetzlichen Vorschriften.
+(2) Auf Schadensersatz haftet der Anbieter – gleich aus welchem Rechtsgrund –
+im Rahmen der Verschuldenshaftung bei Vorsatz und grober Fahrlässigkeit. Bei
+einfacher Fahrlässigkeit haftet der Anbieter vorbehaltlich eines milderen
+Haftungsmaßstabs nach gesetzlichen Vorschriften (zB für Sorgfalt in eigenen
+Angelegenheiten) nur
+a) für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit,
+b) für Schäden aus der nicht unerheblichen Verletzung einer wesentlichen
+Vertragspflicht (Verpflichtung, deren Erfüllung die ordnungsgemäße
+Durchführung des Vertrags überhaupt erst ermöglicht und auf deren Einhaltung
+der Vertragspartner regelmäßig vertraut und vertrauen darf); in diesem Fall ist die
+Haftung des Anbieters jedoch auf den Ersatz des vorhersehbaren, typischerweise
+eintretenden Schadens begrenzt.
+(3) Die sich aus (2) ergebenden Haftungsbeschränkungen gelten auch bei
+Pflichtverletzungen durch bzw. zugunsten von Personen, deren Verschulden der
+Anbieter nach gesetzlichen Vorschriften zu vertreten hat. Sie gelten nicht, soweit
+der Anbieter einen Mangel arglistig verschwiegen oder eine Garantie
+übernommen hat und für Ansprüche des Kunden nach dem
+Produkthaftungsgesetz.
+(4) Wegen einer Pflichtverletzung, die nicht in einem Mangel besteht, kann der
+Kunde nur zurücktreten oder kündigen, wenn der Anbieter die Pflichtverletzung
+zu vertreten hat. Ein freies Kündigungsrecht des Kunden wird ausgeschlossen. Im
+Übrigen gelten die gesetzlichen Voraussetzungen und Rechtsfolgen.""", #regular_text12
+            """Der Anbieter haftet nicht für Unmöglichkeit der Lieferung/Leistungserbringung
+oder für Lieferverzögerungen, soweit diese durch höhere Gewalt oder sonstige,
+zum Zeitpunkt des Vertragsabschlusses nicht vorhersehbare Ereignisse (zB.
+Betriebsstörungen aller Art, Schwierigkeiten in der Material- oder
+Energiebeschaffung, Transportverzögerungen, Streiks, rechtmäßige
+Aussperrungen, Mangel an Arbeitskräften, Energie oder Rohstoffen,
+Schwierigkeiten bei der Beschaffung von notwendigen behördlichen
+Genehmigungen, behördliche Maßnahmen oder die ausbleibende, nicht richtige
+oder nicht rechtzeitige Belieferung durch Lieferanten, Pandemien wie bspw.
+COVID) verursacht worden sind, die der Anbieter nicht zu vertreten hat. Sofern
+solche Ereignisse die Lieferung oder Leistung des Anbieters wesentlich
+erschweren oder unmöglich machen und die Behinderung nicht nur von
+vorübergehender Dauer sind, ist der Anbieter zum Rücktritt vom Vertrag
+berechtigt. Bei Hindernissen vorübergehender Dauer verlängern sich die Liefer-oder 
+Leistungsfristen oder verschieben sich die Liefer- oder Leistungstermine um
+den Zeitraum der Behinderung zuzüglich einer angemessenen Anlauffrist. Soweit
+dem Kunden infolge der Verzögerung die Abnahme der Lieferung oder Leistung
+nicht zuzumuten ist, kann er durch unverzügliche schriftliche Erklärung
+gegenüber dem Anbieter vom Vertrag zurücktreten.""", #regular_text13
+            """(1) Verbraucher haben grundsätzlich ein gesetzliches Widerrufsrecht, über das der
+Anbieter nach Maßgabe des gesetzlichen Musters nachfolgend informiert. In (2)
+findet sich ein Muster-Widerrufsformular. Sie haben das Recht, binnen vierzehn Tagen
+ohne Angaben von Gründen diesen Vertrag zu widerrufen.
+Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.
+Sie beginnt nicht zu laufen, bevor Sie diese Belehrung in Textform erhalten
+haben.
+Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (JUNO SOLAR Home GmbH
+& Co. KG, Ziegelstraße 1a, 08412 Werdau, Telefon: 03761/4170800, Telefax:
+03761/4170849, E-Mail: info@juno-solar.de) mittels einer eindeutigen
+Erklärung (z.B. ein mit der Post versandter Brief, Telefax oder E-Mail) über Ihren
+Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das
+beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht
+vorgeschrieben ist.
+Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die
+Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.""", #regular_text14
+            """Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir
+von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der
+zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der
+Lieferung als die von uns angebotene, günstige Standardlieferung gewählt
+haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag
+zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrages bei
+uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe
+Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben,
+es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem
+Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.
+Haben Sie verlangt, dass die Vertragsleistung während der Widerrufsfrist
+beginnen soll, so haben Sie uns einen angemessenen Betrag zu zahlen, der
+dem Anteil der bis zu dem Zeitpunkt, zu dem Sie uns von der Ausübung des
+Widerrufsrechts hinsichtlich dieses Vertrags unterrichten, bereits erbrachten
+Vertragsleistungen im Vergleich zum Gesamtumfang der im Vertrag
+vorgesehenen Leistungen entspricht.
+(2) Über das Muster-Widerrufsformular informiert der Anbieter nach der
+gesetzlichen Regelung wie folgt:""", #regular_text15
+            """(Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses Formular
+aus und senden Sie es zurück.)
+— An JUNO SOLAR Home GmbH & Co. KG, Ziegelstraße 1a, 08412 Werdau,
+Telefon: 03761/4170800, Telefax: 03761/4170849, E-Mail: info@juno-solar.de:
+            -   Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*)
+                abgeschlossenen Vertrag über den Kauf der folgenden
+                Waren (*)/ die Erbringung der folgenden Dienstleistung (*)
+            -   Bestellt am
+            -   Angebotsnummer
+            -   Name des/der Verbraucher(s)
+            -   Anschrift des/der Verbraucher(s)
+            -   Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf
+                Papier)
+            -   Datum""", #regular_text16
+            """(1) Die europäische Kommission stellt eine Plattform zur online-Streitbeilegung
+bereit, die im Internet unter https://ec.europa.eu/consumers/odr/ zu finden ist.
+(2) Der Anbieter ist nicht verpflichtet, an einem Streitbeilegungsverfahren vor
+einer Verbraucher-schlichtungsstelle teilzunehmen und nimmt auch nicht
+freiwillig daran teil.""", #regular_text17
+            """Die an den Anbieter übermittelten Daten werden in Übereinstimmung mit dem
+BDSG und der DSGVO gespeichert und verarbeitet. Die einzelnen Rechte und
+Pflichten ergeben sich aus der Datenschutzerklärung. Diese finden Sie unter
+https://www.juno-solar.com.""", #regular_text18
+            """(1) Auf Verträge zwischen dem Anbieter und dem Kunden findet das Recht der
+Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts Anwendung.
+Die gesetzlichen Vorschriften zur Beschränkung der Rechtswahl und zur
+Anwendbarkeit zwingender Vorschriften insbes. des Staates, in dem der Kunde als
+Verbraucher seinen gewöhnlichen Aufenthalt hat, bleiben unberührt.
+(2) Sofern es sich beim Kunden um einen Kaufmann, eine juristische Person des
+öffentlichen Rechts oder um ein öffentlich-rechtliches Sondervermögen handelt,
+ist Gerichtsstand für alle Streitigkeiten aus Vertragsverhältnissen zwischen dem
+Kunden und dem Anbieter der Sitz des Anbieters. Erfüllungsort ist der Sitz des
+Anbieters.
+(3) Der Vertrag bleibt auch bei rechtlicher Unwirksamkeit einzelner Punkte in
+seinen übrigen Teilen verbindlich. Anstelle der unwirksamen Punkte treten, soweit
+vorhanden, die gesetzlichen Vorschriften. Soweit dies für eine Vertragspartei eine
+unzumutbare Härte darstellen würde, wird der Vertrag jedoch im Ganzen
+unwirksam.""" #regular_text19
+
+            
+        ]  
+        
+        column_width = 1000
+        columns_start_x = [15, self.w / 2 + 5]  # assuming two columns with the page split in the middle
+        column = 0
+        self.set_y(10)
+
+        line_counter = 0
+
+        for bold, regular in zip(bold_texts, regular_texts):
+        # Check if adding more strings would exceed the 200-string limit
+            bold_lines = len(bold.split('\n'))
+            regular_lines = len(regular.split('\n'))
+
+            if line_counter + bold_lines + regular_lines > 96:
+                if column == 1:  # If it's the second column, we add a new page.
+                    self.add_page()
+                    column = 0  # Reset to first column
+                else:
+                    column += 1  # Move to the next column
+                self.set_y(10)  # Reset y to top
+                line_counter = 0  # Reset line counter for new column/columns
+            
+            # Set x position based on column
+            self.set_x(columns_start_x[column])
+
+            # Print bold text
+            self.set_font("JUNO Solar Lt", "B", 8)
+            self.set_font_size_to_fit(bold, column_width)
+            self.multi_cell(column_width, 3.2, txt=bold)
+            line_counter += bold_lines
+            
+            self.set_x(columns_start_x[column])
+            # Print regular text
+            self.set_font("JUNO Solar Lt", "", 8)
+            self.set_font_size_to_fit(regular, column_width)
+            self.multi_cell(column_width, 3.2, txt=regular)
+            line_counter += regular_lines
+
+
+    def set_font_size_to_fit(self, text, width=1000):
+        # Current size and width of the text
+        current_size = self.font_size_pt
+        current_width = 1000
+
+        # Check if the text is already smaller than the width
+        if current_width <= width:
+            return
+
+        # Calculate required font size
+        font_size = current_size * width / current_width
+
+        # Set the font size
+        self.set_font_size(font_size)
+    
 
 def createOfferPdf(data, vertrieb_angebot, user):
     global title, pages
@@ -1209,6 +1781,7 @@ def createOfferPdf(data, vertrieb_angebot, user):
     eintrag = pdf.page3(data, eintrag)
     pdf.page4_durchgestrichen(data, eintrag)
     pdf.lastPage(data)
+    pdf.page5(eintrag)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
