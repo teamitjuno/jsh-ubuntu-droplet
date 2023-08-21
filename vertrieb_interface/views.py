@@ -51,6 +51,7 @@ from vertrieb_interface.pdf_services import (
     ticket_pdf_creator,
 )
 from smtplib import SMTPServerDisconnected
+import asyncio
 
 # In your Django view
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -319,6 +320,7 @@ def create_angebot(request):
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
         vertrieb_angebot.user = request.user
+        
         vertrieb_angebot.save()
 
         return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
@@ -327,6 +329,7 @@ def create_angebot(request):
         blank_angebot = VertriebAngebot(user=request.user)
         blank_angebot.created_at = timezone.now()
         blank_angebot.current_date = datetime.datetime.now()
+        
         blank_angebot.save()
         # CustomLogEntry.objects.log_action(
         #         user_id=request.user.id,
@@ -360,6 +363,21 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
 
         return JsonResponse(data)
 
+def map_view(request, angebot_id, *args, **kwargs):
+    vertrieb_angebot = VertriebAngebot.objects.get(
+            angebot_id=angebot_id, user=request.user
+        )
+    # Any context data you want to pass to the template
+    MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
+    context = {
+            'MAPBOX_TOKEN': MAPBOX_TOKEN,
+            
+            'STYLE_ID': 'mapbox://styles/sam1206morfey/clldpoqf200zc01ph5h660576',
+            'LATITUDE': vertrieb_angebot.postanschrift_latitude,
+            'LONGITUDE': vertrieb_angebot.postanschrift_longitude,
+    }
+    return render(request, 'vertrieb/extra/map.html', context)
+
 
 class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     model = VertriebAngebot
@@ -380,6 +398,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
+        
         context["form"] = self.form_class(  # type: ignore
             instance=vertrieb_angebot, user=self.request.user  # type: ignore
         )
@@ -411,6 +430,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         zoho_id = vertrieb_angebot.zoho_id
 
+
         data = fetch_current_user_angebot(request, zoho_id)
         print(data)
         for item in data:
@@ -420,8 +440,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.angebot_bekommen_am = (
                 item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
             )
-            print(type(vertrieb_angebot.verbrauch))
-            print(vertrieb_angebot.verbrauch)
             
             vertrieb_angebot.verbrauch = item["verbrauch"]
 
@@ -430,6 +448,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item["notizen"]
             vertrieb_angebot.email = item["email"]
+            vertrieb_angebot.postanschrift_latitude = item["latitude"]
+            vertrieb_angebot.postanschrift_longitude = item["longitude"]
             
             vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
             vertrieb_angebot.termine_text = item["termine_text"]
@@ -448,18 +468,29 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         relative_path_suffix = os.path.relpath(
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
-
+        map_config = vertrieb_angebot.mapbox_data
         context = self.get_context_data()
         countdown = vertrieb_angebot.countdown()
-        context["countdown"] = vertrieb_angebot.countdown()
-        context["user"] = user
-        context["vertrieb_angebot"] = vertrieb_angebot
-        context["form"] = form
-        context["calc_image"] = relative_path
-        context["calc_image_suffix"] = relative_path_suffix
-        context["mapbox_token"] = settings.MAPBOX_TOKEN
+        context = {
+            
+            'countdown': vertrieb_angebot.countdown(),
+            'user': user,
+            'vertrieb_angebot': vertrieb_angebot,
+            'form': form,
+            'calc_image': relative_path,
+            'calc_image_suffix': relative_path_suffix,
+            
+            'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
+            'OWNER_ID': settings.OWNER_ID,
+            'STYLE_ID': settings.STYLE_ID,
+            'LATITUDE': vertrieb_angebot.postanschrift_latitude,
+            'LONGITUDE': vertrieb_angebot.postanschrift_longitude,
+        }
 
         return render(request, self.template_name, context)
+    
+
+    
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
             VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
@@ -567,7 +598,6 @@ def load_user_angebots(request):
         zoho_data = json.dumps(all_user_angebots_list)
         profile.zoho_data_text = zoho_data  # type: ignore
         profile.save()
-        print(all_user_angebots_list)
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         return JsonResponse({"status": "success"}, status=200)
     except Exception:

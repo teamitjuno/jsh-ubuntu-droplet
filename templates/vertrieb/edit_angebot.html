@@ -8,11 +8,14 @@
 <title>AngebotsTool 2.0 | Juno-Solar Administration Tool</title>
 </head>
 {% endblock %}
-{% block content %}        
+{% block content %}
+<style>
+
+</style>        
 <div class="content-page">
     <div class="content">
             {% if not vertrieb_angebot.is_locked %}
-        <form id="main-form" method="POST" onsubmit="updateDisplay();" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
+        <form id="main-form" method="POST" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
                 <div class="container-fluid">     
                     {% if form.errors %}
@@ -129,15 +132,13 @@
                                                                             <th>{{ form.ort.label_tag }}</th>
                                                                             <td>{{ form.ort }}</td>
                                                                         </tr>
-                                                                        <tr>
-                                                                            <th>Addresse mit Google Maps öffnen:</th>
-                                                                            <td>
-                                                                                <a href="{{ vertrieb_angebot.mapbox_url }}">die Adresse auf der Karte öffnen</a>
-                                                                            </td>
-                                                                        </tr>
+                                                                        
                                                                         <tr>
                                                                             <th>{{ form.anlagenstandort.label_tag }}</th>
-                                                                            <td>{{ form.anlagenstandort }}</td> 
+                                                                            <td>{{ form.anlagenstandort }}</td>
+                                                                            <td>{{ vertrieb_angebot.coordinates_extractor }}</td>
+                                                                            <td hidden>{{ form.postanschrift_latitude }}</td>
+                                                                            <td hidden>{{ form.postanschrift_longitude }}</td>
                                                                         </tr>
                                                                         
                                                                     </tbody>
@@ -155,15 +156,7 @@
                                                                             <div class="card">
                                                                                 <div class="card-body">
                                                                                     <h4 class="header-title mb-3">Map</h4>
-                                                                                    {% comment %} <iframe class="gmaps" width='100%' height='400px' src="{{ vertrieb_angebot.mapbox_url }}"></iframe> {% endcomment %}
-                                                                                    <iframe 
-                                                                                        width='100%' 
-                                                                                        height='300px' 
-                                                                                        src="{{ vertrieb_angebot.mapbox_url }}" 
-                                                                                        title="Streets" 
-                                                                                        style="border:none;">
-                                                                                    </iframe>
-
+                                                                                        <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe>  
                                                                                 </div> <!-- end card-body-->
                                                                             </div> <!-- end card-->
                                                                         </div> <!-- end col-->
@@ -171,11 +164,15 @@
                        
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
+                                                                    <tr>
+                                                                            <th>OpenstreetMap zeigen:</th>
+                                                                            
+                                                                                <td><a href="{{ vertrieb_angebot.google_maps_url }}" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
+                                                                            
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.notizen.label_tag }}</th>
-                                                                            
-                                                                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%px;"></td>
-
+                                                                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
                                                                         </tr>
 
                                                                     </tbody>
@@ -766,7 +763,7 @@
                                                                         <i class="ri-information-line h1 text-info"></i>
                                                                         <h4 class="mt-2">Achtung! </h4>
                                                                         <p class="mt-3">Diese Aktion ändert den Angebotsstatus automatisch auf "bekommen" und führt Sie zur Angebots-PDF-Seite. Möchten Sie fortfahren?  </p>
-                                                                        <input type="hidden" name="status" id="id_status" value="{{ form.status.value }}">
+                                                                        
                                                                             <script>
                                                                                 function getCookie(name) {
                                                                                     let cookieValue = null;
@@ -789,6 +786,7 @@
                                                                                 function saveFormAndGeneratePDF() {
                                                                                     // Set the status value to "bekommen" before the form submission
                                                                                     $('#id_status').val('bekommen');
+                                                                                    $('#is_locked').val('True');
                                                                                     
                                                                                     // Continue with the AJAX POST request to save the form
                                                                                     $.ajax({
@@ -807,7 +805,7 @@
                                                                                 }
                                                                             </script>
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                                                                            <button type="button" id="continueButtonn" onclick="saveFormAndGeneratePDF()" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                                            <button type="button" id="continueButtonn" onclick=saveFormAndGeneratePDF() class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
                                                                             
                                                                         </div>
                                                                     </div>
@@ -993,6 +991,8 @@
                                                                         <th>{{ form.ort.label_tag }}</th>
                                                                         <td><input type="text" class="form-control" name="{{ form.ort.name }}" value="{{ form.ort.value }}" readonly></td>
                                                                     </tr>
+                                                                    <td hidden>{{ form.postanschrift_latitude }}</td>
+                                                                    <td hidden>{{ form.postanschrift_longitude }}</td>
                                                                 </table>
                                                             </div>
                                                         </div>
@@ -1005,22 +1005,27 @@
                                                                             <div class="card">
                                                                                 <div class="card-body">
                                                                                     <h4 class="header-title mb-3">Map</h4>
-                                                                                    <iframe width='100%' height='400px' src="{{ vertrieb_angebot.mapbox_url }}"></iframe>
+                                                                                        
+                                                                                        <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe>  
                                                                                 </div> <!-- end card-body-->
                                                                             </div> <!-- end card-->
                                                                         </div> <!-- end col-->
                                                                         
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
-                                                                        
+                                                                        <tr>
+                                                                            <th>OpenstreetMap zeigen</th>
+                                                                            <td><a href="{{ vertrieb_angebot.google_maps_url }}" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.notizen.label_tag }}</th>
                                                                             {% if user.role.name == "admin" %}
                                                                                 <td>{{ form.notizen }}</td>
                                                                             {% else %}
-                                                                                <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%px;"></td>
+                                                                                <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
                                                                             {% endif %}
                                                                         </tr>
+                                                                        
 
                                                                     </tbody>
                                                                 </table>
@@ -1438,7 +1443,8 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <th>{{ form.verbrauch.label_tag }}</th>
-                                                                            <td><input type="text" id="id_verbrauch" class="form-control" name="{{ form.verbrauch.name }}" value="{{ form.verbrauch.value }}"></td>
+                                                                            <td>{{ form.verbrauch }}</td>
+                                                                           
                                                                         </tr>
                                                                         <tr>
                                                                             <th>{{ form.grundpreis.label_tag }}</th>
@@ -1633,7 +1639,8 @@
                                                         <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                                 {% else %}
-                                                        <input type="hidden" name="status" id="id_status" value="{{ form.status.value }}">
+                                                        
+                                                        
                                                         <script>
                                                             function getCookie(name) {
                                                                 let cookieValue = null;
@@ -1782,31 +1789,7 @@
 </div>
 
 {% endblock %}    
-{% comment %} <script src="{% static 'js/vertrieb_interface.js' %}"></script> {% endcomment %}
 {% block javascript %}
-{% comment %} <script src="{% static 'js/vertrieb_interface.min.js' %}"></script> {% endcomment %}
-<script>
-$(document).ready(function(){
-    function checkWallboxStatus() {
-        // Check the state of the checkbox and hide/show the tab and tab navigation item accordingly
-        if ($('#wallbox-checkbox').prop('checked')) {
-            $('#wallbox-tab').show();
-            
-        } else {
-            $('#wallbox-tab').hide();
-        
-        }
-    }
-
-    // Check the initial status of the wallbox
-    checkWallboxStatus();
-
-    // Listen for changes on the checkbox
-    $('#wallbox-checkbox').change(function(){
-        checkWallboxStatus();
-    });
-});
-</script>
 
 <script>
   function getCookie(name) {
@@ -1871,6 +1854,8 @@ $(document).ready(function() {
                 $("#id_telefon_festnetz").val(data.telefon_festnetz);
                 $("#id_ort").val(data.ort);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
+                
+                
                 
                 // Only set value if data.verbrauch is not empty
                 if (data.verbrauch) {

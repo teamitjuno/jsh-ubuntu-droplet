@@ -37,12 +37,12 @@ MAX_RETRIES = 5
 SLEEP_TIME = 1
 
 ANGEBOT_STATUS_CHOICES = [
-    # ("angenommen", "angenommen"),
+    ("angenommen", "angenommen"),
     ("bekommen", "bekommen"),
     ("in Kontakt", "in Kontakt"),
     ("Kontaktversuch", "Kontaktversuch"),
     ("abgelehnt", "abgelehnt"),
-    # ("abgelaufen", "abgelaufen"),
+    ("abgelaufen", "abgelaufen"),
     ("on Hold", "on Hold"),
     ("storniert", "storniert"),
 ]
@@ -201,13 +201,12 @@ class VertriebAngebotForm(ModelForm):
     )
     status = forms.ChoiceField(
         label="Angebotstatus",
-        initial="in Kontakt",
+        initial="Kontaktversuch",
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
-                "id": "id_angebot_status",
-                "style": "max-width: 400px",
+                "id": "id_status",
             }
         ),
         required=False,
@@ -376,6 +375,24 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    postanschrift_latitude = forms.CharField(
+        required=False, widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_postanschrift_latitude",
+                
+            }
+        ),
+    )
+    postanschrift_longitude = forms.CharField(
+                required=False, widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_postanschrift_longitude",
+                
+            }
+        ),
+    )
     anlagenstandort = forms.CharField(
         label="Anlagenstandort (falls abweichend)",
         max_length=100,
@@ -528,7 +545,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(
             attrs={
                 "class": "form-check-input",
-                "id": "wallbox",
+                "id": "wallbox-checkbox",
                 "style": "max-width: 300px",
             }
         ),
@@ -562,8 +579,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "rows": 6,
                 "class": "form-control",
-                
-                "style": "max-width: 800px",
                 "id": "notizen",
             }
         ),
@@ -612,11 +627,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "kabelanschluss",
-                "data-toggle": "touchspin",
-                "value": "10.0",
-                "data-step": "0.1",
-                "data-decimals": "2",
-                "data-bts-postfix": "m",
                 "style": "max-width: 300px",
             }
         ),
@@ -759,6 +769,8 @@ class VertriebAngebotForm(ModelForm):
             "name",
             "vertriebler_display_value",
             "adresse_pva_display_value",
+            "postanschrift_latitude",
+            "postanschrift_longitude",
             "vertriebler_id",
             "notizen",
             "zoho_kundennumer",
@@ -821,9 +833,15 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+        self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
+        self.fields["postanschrift_latitude"].widget.attrs.update({"id": "id_postanschrift_latitude"})
+        self.fields["postanschrift_longitude"].widget.attrs.update({"id": "id_postanschrift_longitude"})
+        
+        self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
+        self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update({"id": "wandhalterung_fuer_speicher"})
         self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "anz_wandhalterung_fuer_speicher"})
         self.fields["indiv_price_included"].widget.attrs.update(
@@ -837,6 +855,11 @@ class VertriebAngebotForm(ModelForm):
                 self.fields[field].widget.attrs.update(
                     {"placeholder": self.initial[field]}
                 )
+        if not user.role.name == "admin":
+        # Remove the 'angenommen' and 'abgelaufen' choices
+            self.fields['status'].choices = [
+                choice for choice in self.fields['status'].choices if choice[0] not in ["angenommen", "abgelaufen"]
+        ]
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)

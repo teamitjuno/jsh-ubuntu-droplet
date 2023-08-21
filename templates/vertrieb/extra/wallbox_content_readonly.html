@@ -5,22 +5,27 @@
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" disabled id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}"  />
             <label class="custom-control-input" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+
         </div>
     </td>
+    <td hidden>{{ form.wallbox }}</td>
 </tr>
 
 <table class="table table-sm table-hover" id="wallbox-details-table" style="{% if not form.wallbox.value %}display: none;{% endif %}">
     <tr>
         <th>{{ form.wallboxtyp.label_tag }}</th>
         <td><input type="text" id="wallboxtyp" class="form-control" name="{{ form.wallboxtyp.name }}" value="{{ form.wallboxtyp.value }}" readonly></td>
+        <td hidden> {{ form.wallboxtyp }}</td>
     </tr>
     <tr>
         <th>{{ form.wallbox_anzahl.label_tag }}</th>
         <td><input type="text" id="wallbox_anzahl" class="form-control" name="{{ form.wallbox_anzahl.name }}" value="{{ form.wallbox_anzahl.value }}" readonly></td>
+        <td hidden> {{ form.wallbox_anzahl }}</td>
     </tr>
     <tr>
         <th>{{ form.kabelanschluss.label_tag }}</th>
         <td><input type="text" id="kabelanschluss" class="form-control" name="{{ form.kabelanschluss.name }}" value="{{ form.kabelanschluss.value }}" readonly></td>
+        <td hidden> {{ form.kabelanschluss }}</td>
     </tr>
 </table>
 

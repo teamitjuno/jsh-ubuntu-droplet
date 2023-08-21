@@ -156,6 +156,9 @@ def fetch_current_user_angebot(request, zoho_id):
             anfrage_berr = data_dict.get("Anfrage_ber")
             notizen = data_dict.get("Notizen")
             empfohlen_von = data_dict.get("empfohlen_von")
+            latitude = data_dict.get("Adresse_PVA", {}).get("latitude", "")
+            longitude = data_dict.get("Adresse_PVA", {}).get("longitude", "")
+
             try:
                 if ausrichtung in ["S\u00fcd", "Ost/West"]:
                     termin = data_dict.get("Termine")
@@ -163,9 +166,8 @@ def fetch_current_user_angebot(request, zoho_id):
                         {
                             "email": email if email else "",
                             "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                            "verbrauch": verbrauch if verbrauch else 15000.0,
+                            "verbrauch": verbrauch if verbrauch else 15000,
                             "notizen": notizen if notizen else "",
-                            
                             "anfrage_berr": anfrage_berr if anfrage_berr else "",
                             "angebot_bekommen_am": angebot_bekommen_am
                             if angebot_bekommen_am
@@ -176,6 +178,8 @@ def fetch_current_user_angebot(request, zoho_id):
                             if termin[0]["display_value"]
                             else "",
                             "termine_id": termin[0]["ID"] if termin[0]["ID"] else "",
+                            "latitude": latitude,
+                            "longitude": longitude,
                         }
                     )
                 else:
@@ -194,6 +198,8 @@ def fetch_current_user_angebot(request, zoho_id):
                             if termin[0]["display_value"]
                             else "none",
                             "termine_id": termin[0]["ID"] if termin else "",
+                            "latitude": latitude,
+                            "longitude": longitude,
                         }
                     )
 
@@ -273,7 +279,7 @@ def process_current_user_data(data, current_angebot_list):
             current_angebot_list.append(
                 {
                     "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                    "verbrauch": verbrauch if verbrauch else 15000.0,
+                    "verbrauch": verbrauch if verbrauch else 15000,
                     "notizen": notizen,
                     "email": email,
                     "empfohlen_von": empfohlen_von,

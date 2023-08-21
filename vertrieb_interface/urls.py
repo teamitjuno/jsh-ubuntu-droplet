@@ -11,6 +11,7 @@ app_name = "vertrieb_interface"
 urlpatterns = [
     path("vertrieb/home/", views.home, name="home"),
     path("vertrieb/home/reset_calculator/", views.reset_calculator, name="reset_calculator"),
+    path('vertrieb/edit_angebot/map/<str:angebot_id>/', views.map_view, name='map_view'),
 
     path(
         "vertrieb/vertrieb_autofield/",

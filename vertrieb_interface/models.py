@@ -1,5 +1,6 @@
 from os import path
 from django.db import models
+import hashlib
 from authentication.models import User
 from shared.models import TimeStampMixin
 from django.core.validators import MinValueValidator
@@ -15,7 +16,7 @@ from django.contrib.auth import get_user_model
 import datetime, os
 from datetime import timedelta
 from math import ceil
-
+import re, json, requests
 from django.utils import timezone
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -28,6 +29,21 @@ now = timezone.now()
 now_german = date_format(now, 'DATETIME_FORMAT')
 User = get_user_model()
 
+def extract_modulleistungWp(model_name):
+    # Split the name by spaces and filter out parts that are purely digits
+    parts = model_name.split()
+    for part in parts:
+        if part.isdigit():
+            return int(part)
+    return None
+
+def get_modulleistungWp_from_map(module_name_map):
+    result = {}
+    for model_name, description in module_name_map.items():
+        power = extract_modulleistungWp(description)
+        if power:
+            result[model_name] = power
+    return result
 
 class LogEntryManager(models.Manager):
     def log_action(self, user_id, content_type_id, object_id, object_repr, action_flag, status=None):
@@ -87,16 +103,23 @@ class CustomLogEntry(LogEntry):
 
 
 
+def sanitize_cache_key(key):
+    sanitized_key = hashlib.md5(key.encode()).hexdigest()
+    return sanitized_key
 def get_price(model, name):
     model_name = model.__name__
     key = f"{model_name}_{name}"
-    price = cache.get(key)
+    
+    # Sanitize the key before using it with cache
+    sanitized_key = sanitize_cache_key(key)
+    
+    price = cache.get(sanitized_key)
     if price is None:
         try:
             price = model.objects.get(name=name).price
         except ObjectDoesNotExist:
             price = 0
-        cache.set(key, price)
+        cache.set(sanitized_key, price)
     return price
 
 
@@ -104,6 +127,7 @@ def get_price(model, name):
 MODULE_NAME_MAP = {
     "Phono Solar PS420M7GFH-18/VNH": "Phono Solar PS420M7GFH-18/VNH",
     "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
+    
 }
 ACCESSORY_NAME = "leistungsmodul"
 BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
@@ -299,7 +323,7 @@ class VertriebAngebot(TimeStampMixin):
         null=True,
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
-    kabelanschluss = models.FloatField(default=10.0, validators=[MinValueValidator(0)])
+    kabelanschluss = models.FloatField(default=10.0, validators=[MinValueValidator(0)], blank=True, null=True)
     hub_included = models.BooleanField(default=False)
 
     module_ticket = models.CharField(
@@ -383,7 +407,9 @@ class VertriebAngebot(TimeStampMixin):
             action_flag = ADDITION
         else:
             action_flag = CHANGE
-
+        
+        self.postanschrift_latitude, self.postanschrift_longitude = self.coordinates_extractor
+        self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
@@ -457,38 +483,93 @@ class VertriebAngebot(TimeStampMixin):
             return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
         else:
             return None
+    # @property    
+    # def mapbox_data(self):
+    #     MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
+    #     OWNER_ID = os.getenv('OWNER_ID')
+    #     STYLE_ID = os.getenv('STYLE_ID')
+
+    #     data = {
+    #         "token": MAPBOX_TOKEN,
+    #         
+    #         "latitude": None,
+    #         "longitude": None
+    #     }
+
+    #     if self.postanschrift_latitude and self.postanschrift_longitude:
+    #         data["latitude"] = float(self.postanschrift_latitude)
+    #         data["longitude"] = float(self.postanschrift_longitude)
+    # url = <iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/sam1206morfey/clldpoqf200zc01ph5h660576.html?title=false&access_token=pk.eyJ1Ijoic2FtMTIwNm1vcmZleSIsImEiOiJjbGtodXY3Z3cwZXk0M2VueW9jcWo0bmRlIn0.KDrGkX79RQxHcodui5opmA&zoomwheel=false#11/48.138/11.575" title="Navigation" style="border:none;"></iframe>
+    #     return url
 
     @property
-    def mapbox_url(self):
-        OWNER_ID=os.getenv('OWNER_ID')
-        STYLE_ID=os.getenv('STYLE_ID')
+    def coordinates_extractor(self):
+        # Return "0.0", "0.0" if strasse or ort is None
+        if self.strasse is None or self.ort is None:
+            return "0.0", "0.0"
+
+        # Load variables from .env
+        OWNER_ID = os.getenv('OWNER_ID')
+        STYLE_ID = os.getenv('STYLE_ID')
         MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
+        
+        # Prepare the query string
+        query = f"{self.strasse}, {self.ort}"
+
+        # You might need to adjust this URL to match the Mapbox API version/documentation you're using
+        url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
+
+        # Make the API call
+        response = requests.get(url)
+        data = response.json()
+
+        # Extracting latitude and longitude from the response
+        try:
+            longitude, latitude = data['features'][0]['geometry']['coordinates']
+            return latitude, longitude
+        except (IndexError, KeyError):
+            # Handle cases where the address isn't found or the API response structure has unexpected changes
+            return 0.0, 0.0
+        
+    @property    
+    def mapbox_data(self):
+        MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
+        OWNER_ID = os.getenv('OWNER_ID')
+        STYLE_ID = os.getenv('STYLE_ID')
+
+        data = {
+            "token": MAPBOX_TOKEN,
+            "latitude": None,
+            "longitude": None
+        }
+
+        if self.postanschrift_latitude and self.postanschrift_longitude:
+            data["latitude"] = float(self.postanschrift_latitude)
+            data["longitude"] = float(self.postanschrift_longitude)
+
+        url_template = ("https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}")
+        url = url_template.format(
+            owner=OWNER_ID, 
+            style=STYLE_ID, 
+            token=MAPBOX_TOKEN, 
+            lat=data["latitude"] if data["latitude"] is not None else '48.138',
+            lon=data["longitude"] if data["longitude"] is not None else '11.575'
+        )
+        
+        
+        return url
+
+
+    @property
+    def google_maps_url(self):
         if self.postanschrift_latitude and self.postanschrift_longitude:
             latitude = float(self.postanschrift_latitude)
             longitude = float(self.postanschrift_longitude)
 
-            base_url = f"https://api.mapbox.com/styles/v1/{OWNER_ID}/{STYLE_ID}.html?"
-            params = {
-                "title": "false",
-                "access_token": os.getenv('MAPBOX_TOKEN'),
-                "zoomwheel": "false"
-            }
-            location_fragment = f"#12/{latitude}/{longitude}"
-
-            formatted_url = f"{base_url}{params['title']}&access_token={params['access_token']}&zoomwheel={params['zoomwheel']}{location_fragment}"
-            return formatted_url
+            maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
+            return maps_url
         else:
             return ""
-    # @property
-    # def google_maps_url(self):
-    #     if self.postanschrift_latitude and self.postanschrift_longitude:
-    #         latitude = float(self.postanschrift_latitude)
-    #         longitude = float(self.postanschrift_longitude)
-
-    #         maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
-    #         return maps_url
-    #     else:
-    #         return ""
 
     @property
     def get_vertribler(self):
@@ -520,6 +601,13 @@ class VertriebAngebot(TimeStampMixin):
             return self.anlagenstandort
         else:
             return f"{self.strasse}, {self.ort}"
+    @property
+    def extract_modulleistungWp_from_name(self):
+        
+        match = re.search(r'(\d+)', str(self.solar_module))
+        if match:
+            return int(match.group(1))
+        return 420
 
     @property
     def leistungsmodul_preis(self):

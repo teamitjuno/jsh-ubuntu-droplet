@@ -5,17 +5,31 @@ from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
 import os
 
-title = ""
-pages = "4"
+
+pages = "6"
 
 
 class PDF(FPDF):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title, *args, **kwargs):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
+        self.title = title
+        
+        
 
     def header(self):
-         if not self.is_last_page:
+        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
+        self.add_font("JUNO Solar Lt", "", font_path, uni=True)
+        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
+        self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
+
+        # Position at 1.5 cm from bottom
+        self.set_y(0)
+        self.set_font("JUNO Solar Lt", "", 8)
+        self.set_text_color(0)
+        # Page number
+        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title}", 0, 0, "")
+        if not self.is_last_page:
             font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
             self.add_font("JUNO Solar Lt", "", font_path, uni=True)
             font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
@@ -26,7 +40,7 @@ class PDF(FPDF):
             self.set_font("JUNO Solar Lt", "", 12)
             self.set_text_color(0)
             # Page number
-            self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
+            # self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
             self.set_x(40)
             if self.page_no() != 1:
                 self.cell(0, 10, title, 0, 0, "")
@@ -41,23 +55,23 @@ class PDF(FPDF):
             self.ln(15)
 
     def footer(self):
-         
-        # Arial italic 8
-        self.set_font("JUNO Solar Lt", "", 8)
-        # Text color in gray
-        self.set_text_color(128)
-        # Position at 1.5 cm from bottom
-        self.set_y(-25)
-        self.set_x(25)
-        self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignore
-        self.set_y(-25)
-        self.set_x(85)
-        centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
-        self.multi_cell(0, 3, centered_text1, 0, '')
-        self.set_y(-25)
-        self.set_x(150)
-        centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
-        self.multi_cell(0, 3, centered_text1, 0, '')
+        if not self.is_last_page:
+            # Arial italic 8
+            self.set_font("JUNO Solar Lt", "", 8)
+            # Text color in gray
+            self.set_text_color(128)
+            # Position at 1.5 cm from bottom
+            self.set_y(-25)
+            self.set_x(25)
+            self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignore
+            self.set_y(-25)
+            self.set_x(85)
+            centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
+            self.multi_cell(0, 3, centered_text1, 0, '')
+            self.set_y(-25)
+            self.set_x(150)
+            centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
+            self.multi_cell(0, 3, centered_text1, 0, '')
 
     def page1(self, data, eintrag):
         self.add_page()
@@ -1107,8 +1121,9 @@ class PDF(FPDF):
         y = y + 55
         self.set_y(y)
         return(eintrag)
-    def lastPage(self, data):
+    def lastPage(self, data, eintrag):
         self.add_page()
+        self.is_last_page = False
         # Angebotssumme
         self.set_fill_color(240)
         self.set_y(35)
@@ -1198,200 +1213,9 @@ class PDF(FPDF):
             w=32,
             h=24,
         )
-        self.set_y(260)
+        
 
     
-        
-#     def page5(self, eintrag):
-#         self.is_last_page = True
-#         self.add_page()
-#         self.set_text_color(0)
-#         self.set_auto_page_break(auto=True, margin=5)
-
-#         bold_texts = [
-#             """Allgemeine Geschäftsbedingungen der JUNO SOLAR Home GmbH & Co. KG über
-#     die Lieferung, Installation und Inbetriebnahme von Solaranlagen
-#     § 1 Geltungsbereich, Begriffsbestimmungen""",
-#             "§ 2 Vertragsschluss",
-#             "§ 3 Leistungen des Anbieters",
-#             "§ 4 Leistungsänderungen",
-#             "§ 5 Pflichten des Kunden",
-#             "§ 6 Vergütung (Preis) und Zahlungsmodalitäten",
-#             "§ 7 Herstellergarantien",
-#             "§ 8 Nachunternehmer",
-#             "§ 9 Eigentumsvorbehalt",
-#             "§ 10 Leistungsstörungen",
-#             "§ 11 Abnahme",
-#             "§ 12 Haftung",
-#             "§ 13 Höhere Gewalt",
-#             "§ 14 Widerrufsbelehrung",
-#             "Widerrufsbelehrung Widerrufsrecht"
-#         ] # your list of bold texts
-        
-#         regular_texts = [
-#             """(1) Für die Geschäftsbeziehung zwischen der JUNO SOLAR Home GmbH & Co. KG,
-# Ziegelstraße 1a, 08412 Werdau (im Folgenden: Anbieter) und dem Kunden gelten
-# ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer
-# zum Zeitpunkt der Bestellung gültigen Fassung. Abweichende Allgemeine
-# Geschäftsbedingungen des Kunden werden nicht anerkannt, es sei denn, der
-# Anbieter stimmt ihrer Geltung ausdrücklich schriftlich zu. Dies gilt auch dann,
-# wenn der Anbieter die Leistung an den Kunden in Kenntnis dessen
-# Vertragsbedingungen ausführt.
-# (2) Der Kunde ist Verbraucher, soweit der Zweck der georderten Lieferungen und
-# Leistungen nicht überwiegend seiner gewerblichen oder selbständigen
-# beruflichen Tätigkeit zugerechnet werden kann. Dagegen ist Unternehmer jede
-# natürliche oder juristische Person oder rechtsfähige Personengesellschaft, die
-# beim Abschluss des Vertrags in Ausübung ihrer gewerblichen oder selbständigen
-# beruflichen Tätigkeit handelt""",
-#             """(1) Der Anbieter betreibt unter der Domain https://www.juno-solar.com eine
-# Internetpräsenz. Die von dem Kunden auf der Internetpräsenz anzugebenden
-# Daten dienen als Grundlage für die spätere Angebotserstellung durch den
-# Anbieter. Die auf der Internetpräsenz zum Zwecke einer Angebotserstellung
-# durch den Anbieter erhobenen Daten sind deshalb wahrheitsgemäß anzugeben.
-# Bei den auf der Internetpräsenz dargestellten Beispielen handelt es sich nicht um
-# verbindliche Angebote. Die auf der Internetpräsenz dargestellten Angaben wie
-# Erträge bzw. Gewinne, die mit dem Betrieb der Solaranlage erzielt werden können,
-# stellen lediglich Prognosen dar und bilden nicht die tatsächlichen Gegebenheiten
-# ab.
-# (2) Aufgrund der auf der Internetpräsenz vom Kunden angegebenen Daten oder,
-# falls diese nicht ausreichend sind, aufgrund der vom Anbieter vor Ort
-# aufgenommenen Daten, erhält der Kunde ein Angebot des Anbieters. Anlässlich
-# des Vor-Ort Termins wird ein technischer Aufnahmebogen erstellt. Das Angebot
-# wird entweder in Schriftform, per Fax oder elektronisch an den Kunden
-# übermittelt.
-# (3)Mit Übermittlung des vom Kunden unterzeichneten Angebots an den Anbieter
-# in Schriftform, per Fax oder in elektronischer Form schließt der Kunde den
-# kostenpflichtigen Vertrags über die Lieferung, Installation und Inbetriebnahme
-# einer Solaranlage ab. Die Bestätigung des Angebots durch den Anbieter erfolgt
-# durch Übermittlung einer Auftragsbestätigung in Schriftform, per Fax oder in
-# elektronischer Form.
-# (4) Der Vertrag wird erst mit Zugang dieser Auftragsbestätigung des Anbieters
-# beim Kunden wirksam. Die Auftragsbestätigung erfolgt entweder durch
-# Übermittlung in Schriftform, per Fax oder in elektronischer Form. Geht dem
-# Kunden die Auftragsbestätigung nicht innerhalb einer Frist von 4 Wochen nach
-# Zugang des Angebots des Kunden beim Anbieter zu, gilt der Vertrag als nicht
-# zustande gekommen.
-# (5) Vertragsbestandteile sind in nachstehender Reihen- und Rangfolge:
-# (a) die Angaben des Kunden
-# (b) das Angebot des Anbieters
-# (c) diese AGB.""", #regular_text2
-#             """(1) Der Anbieter verpflichtet sich gegenüber dem Kunden, die ihm angebotene
-# und bestätigte (siehe § 2 (2)-(5)) Solaranlage zu liefern, zu installieren und in
-# Betrieb zu nehmen. Hierunter fallen auch die Beratung, Planung, Anmeldung
-# sowie die Registrierung bei Behörden, soweit sich aus dem Angebot nichts
-# anderes ergibt.
-# (2) Der Anbieter behält sich vor, bei Nichtverfügbarkeit einzelner Komponenten
-# solche mit vergleichbarer Qualität und Ausstattung zu liefern. Teillieferungen sind
-# zulässig, soweit sie dem Kunden zumutbar sind.""", #regular_text3
-#             """Stellt sich nach Vertragsabschluss heraus, dass Abweichungen von den zuvor vom
-# Kunden gemachten Angaben oder vor Ort feststellbaren tatsächlichen
-# Gegebenheiten erkennbar werden, die eine Änderung der Solaranlage erfordern,
-# behält sich der Anbieter vor, die von ihm angebotene Solaranlage unter
-# Berücksichtigung der berechtigten Interessen des Kunden wie auch des Anbieters
-# im Rahmen der Zumutbarkeit beider Parteien zu ändern. Sofern und soweit eine
-# Anpassung der Gegenleistung notwendig wird (günstigerer oder höherer Preis),
-# wird der Anbieter den Mehr- oder Minderaufwand ermitteln und die Parteien
-# werden sich über eine entsprechende Vertragsanpassung einigen. Kommt eine
-# Einigung zwischen den Parteien nicht innerhalb von 14 Tagen ab Kenntnis des
-# Anbieters von der Abweichung und Mitteilung dieser Erkenntnis gegenüber dem
-# Kunden nicht zustande, ist der Anbieter berechtigt, von dem Vertrag
-# zurückzutreten. Gleiches gilt für den Fall, dass eine notwendige Anpassung nicht
-# möglich oder durchführbar ist.""", #regular_text4
-#             """(1) Der Kunde ist zur Mitwirkung verpflichtet, soweit sich das aus den in diesem
-# Vertrag und in dem Angebot geregelten Pflichten ergibt oder dies sonst zur
-# Erfüllung dieses Vertrags erforderlich ist oder wird.
-# (2) Der Kunde ist insbesondere verpflichtet, vor Errichtung der Solaranlage bei der
-# Einholung der für die Errichtung der Solaranlage erforderlichen Zustimmungen,
-# Genehmigungen und/oder Mitteilungen mitzuwirken. Gleiches gilt bei
-# notwendigen Änderungen, Ergänzungen oder bei
-# Auflagen/Nebenbestimmungen.
-# (3) Der Kunde wird dem Anbieter den Zählerwechsel durch den Energieversorger
-# unverzüglich mitteilen, um eine zügige Inbetriebnahme sicherstellen zu können.
-# (4) Der Kunde ist verpflichtet, die jeweils aktuellen und anwendbaren rechtlichen,
-# insbesondere baurechtlichen Anforderungen sowie Anforderungen nach dem
-# jeweils aktuellen Erneuerbare-Energien-Gesetz sowie Technische
-# Anschlussbedingungen (TAB) zu beachten, welche die Installation der Solaranlage
-# voraussetzt.
-# (5) Der Kunde stellt dem Anbieter unentgeltlich zur Verfügung:
-# (a) Lager- und Arbeitsplätze (für die vom Kunden bestellten Komponenten der
-# Solaranlage)
-# (b) Wasseranschluss für die Baustelle
-# (c) Stromanschluss für die Baustelle.
-# (6) Der Kunde versichert, dass er Eigentümer des Gebäudes ist, auf dem die
-# Solaranlage errichtet werden soll oder aber über eine anderweitige Berechtigung
-# zum Vertragsschluss hinsichtlich der Errichtung der Solaranlage für dieses
-# Gebäude verfügt und weist dem Anbieter dessen Berechtigung auf Verlangen für
-# den Anbieter kostenfrei nach.
-# (7) Soweit zur Errichtung der Solaranlage notwendig, wird der Kunde dem
-# Anbieter bzw. den vom Anbieter beauftragten Dritten nach Terminabstimmung
-# ungehinderten Zugang zu den Grundstücken, Gebäuden, Gebäudeteilen bzw.
-# Dachflächen, auf denen die Solaranlage installiert werden soll, gewähren. Soweit
-# der Kunde selbst Umbau- und/oder Vorarbeiten durchführt, um eine
-# vertragsgerechte Errichtung der Solaranlage gewährleisten zu können, müssen
-# diese Leistungen bis zum vereinbarten Termin zur Errichtung der Solaranlage
-# fachgerecht abgeschlossen worden sein. Der Lagerplatz für die Paletten muss
-# mittels Hubwagens ebenerdig zugänglich sein.
-# (8) Der Kunde ist verpflichtet, die Solaranlage nach deren Errichtung abzunehmen
-# (näheres hierzu regelt § 11).
-# (9) Sofern und soweit die angelieferte Ware Transportschäden aufweist, wird der
-# Kunde dem jeweiligen Mitarbeiter des Transportunternehmens gegenüber diese
-# sofort reklamieren und den Anbieter hierüber schnellstmöglich unterrichten.
-# Gewährleistungsrechte des Kunden werden hierdurch nicht berührt.""", #regular_text5
-#             """...""", #regular_text6
-#             """...""", #regular_text7
-#             """...""", #regular_text8
-#             """...""", #regular_text9
-#             """...""", #regular_text10
-#             """...""", #regular_text10
-#             """...""", #regular_text10
-#             """...""", #regular_text10
-#             """...""", #regular_text10
-#             """...""", #regular_text10
-#             # ... continue for all regular texts
-#         ]
-
-#         assert len(bold_texts) == len(regular_texts), "Mismatch between bold and regular texts length."
-
-#         column_width = self.get_string_width("W" * 65)  # Assuming 85 characters max per line
-
-#         for bold, regular in zip(bold_texts, regular_texts):
-#             # Print bold text
-#             self.set_font("JUNO Solar Lt", "B", 7)
-#             self.set_font_size_to_fit(bold, 800)
-#             self.multi_cell(800, 3, txt=bold)
-            
-#             # Print regular text
-#             self.set_font("JUNO Solar Lt", "", 7)
-#             self.set_font_size_to_fit(regular, 800)
-#             self.multi_cell(800, 3, txt=regular)
-
-#         self.set_y(250)
-#         self.set_x(120)
-#         for bold, regular in zip(bold_texts, regular_texts):
-#             # Print bold text
-#             self.set_font("JUNO Solar Lt", "B", 7)
-#             self.set_font_size_to_fit(bold, 800)
-#             self.multi_cell(800, 3, txt=bold)
-            
-#             # Print regular text
-#             self.set_font("JUNO Solar Lt", "", 7)
-#             self.set_font_size_to_fit(regular, 800)
-#             self.multi_cell(800, 3, txt=regular)
-    # def set_font_size_to_fit(self, text, width=800):
-    #     # Current size and width of the text
-    #     current_size = self.font_size_pt
-    #     current_width = 800
-
-    #     # Check if the text is already smaller than the width
-    #     if current_width <= width:
-    #         return
-
-    #     # Calculate required font size
-    #     font_size = current_size * width / current_width
-
-    #     # Set the font size
-    #     self.set_font_size(font_size)
-
     def page5(self, eintrag):
         self.is_last_page = True
         self.add_page()
@@ -1769,9 +1593,9 @@ unwirksam.""" #regular_text19
 def createOfferPdf(data, vertrieb_angebot, user):
     global title, pages
     title = f"{vertrieb_angebot.angebot_id}"
-    pages = "5"
-    pdf = PDF()
-    pdf.set_title(title)
+    pages = "7"
+    pdf = PDF(title)
+    
     pdf.set_author("JUNO Solar Home GmbH")
 
     # create the offer-PDF
@@ -1780,7 +1604,7 @@ def createOfferPdf(data, vertrieb_angebot, user):
     eintrag = pdf.page2(data, eintrag)
     eintrag = pdf.page3(data, eintrag)
     pdf.page4_durchgestrichen(data, eintrag)
-    pdf.lastPage(data)
+    pdf.lastPage(data, eintrag)
     pdf.page5(eintrag)
 
     # Generate the PDF and return it

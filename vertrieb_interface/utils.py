@@ -3,7 +3,6 @@ from django.db import transaction
 from datetime import datetime
 from vertrieb_interface.models import VertriebAngebot
 
-
 def load_vertrieb_angebot(data, user, kurz):
     try:
         with transaction.atomic():
