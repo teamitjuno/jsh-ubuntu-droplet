@@ -5,15 +5,15 @@ from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
 import os
 
-
+title = ""
 pages = "6"
 
 
 class PDF(FPDF):
-    def __init__(self, title, *args, **kwargs):
+    def __init__(self, title1, *args, **kwargs):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
-        self.title = title
+        self.title1 = title1
         
         
 
@@ -28,7 +28,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(0)
         # Page number
-        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title}", 0, 0, "")
+        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title1}", 0, 0, "")
         if not self.is_last_page:
             font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
             self.add_font("JUNO Solar Lt", "", font_path, uni=True)
@@ -1592,10 +1592,11 @@ unwirksam.""" #regular_text19
 
 def createOfferPdf(data, vertrieb_angebot, user):
     global title, pages
-    title = f"{vertrieb_angebot.angebot_id}"
+    title1 = f"{vertrieb_angebot.angebot_id}"
+
     pages = "7"
-    pdf = PDF(title)
-    
+    pdf = PDF(title1)
+    pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
 
     # create the offer-PDF
