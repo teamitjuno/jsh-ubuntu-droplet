@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.urls import path
 from django.conf.urls.static import static
 from django.urls import path, re_path
 from django.views import defaults as default_views
@@ -9,6 +8,9 @@ from authentication.views import (
     update_vertrieblers,
     update_elektrikers,
     protected_schema_view,
+    change_password,
+    delete_user_view,
+    UserUpdateView
 )
 
 app_name = "authentication"
@@ -16,6 +18,9 @@ app_name = "authentication"
 urlpatterns = [
     path("update_vertrieblers/", update_vertrieblers, name="update_vertrieblers"),
     path("admin/update_elektrikers/", update_elektrikers, name="update_elektrikers"),
+    path('user/<int:pk>/edit/', UserUpdateView.as_view(), name='user-edit'),
+    path('change_password/<int:user_id>/', change_password, name='change_password'),
+    path('delete/', delete_user_view, name='delete_user_view'),
     path("admin/schema/", protected_schema_view, name="schema_view"),
     path("", home, name="home"),
     path("login/", LoginView.as_view(), name="login"),

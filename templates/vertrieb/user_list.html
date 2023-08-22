@@ -89,7 +89,8 @@
                                         <th> Kuerzel</th></th>
                                         <th>Email</th>
                                         <th>Aufschlag</th>
-                                        <th>Action</th>
+                                        <th>Angebote Zeigen</th>
+                                        <th>Benutzerbearbeitung</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -107,8 +108,12 @@
                                             <td>{{ user.email }}</td>
                                             <td>{{ user.users_aufschlag }}</td>
                                             <td>
-                                                <a href="{% url 'adminfeautures:user-orders' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
+                                                <a href="{% url 'adminfeautures:user-orders' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Zeigen"><i class="uil uil-pen"></i></a>
                                             </td>
+                                            <td>
+                                                <a href="{% url 'authentication:user-edit' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
+                                            </td>
+
                                     </tr>
                                     {% empty %}
                                         <tr>
@@ -125,6 +130,74 @@
             
              
             <div class="col-lg-4">
+                <div class="card border-success border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="header-title">Benutzeraktualisierungsfunktionen</h5>
+                    </div>
+                    <div class="card mb-md-0 mb-3">
+                        <div class="card-body pt-0">
+                            <div class="card-widgets">
+                                <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                <a data-bs-toggle="collapse" href="#cardCollpase3" role="button" aria-expanded="false" aria-controls="cardCollpase3"><i class="mdi mdi-minus"></i></a>
+                                <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div id="cardCollpase3" class="collapse pt-3 show">
+                                
+                                <button id="update-users-button" class="btn btn-outline-info rounded-pill">
+                                    Erneuen Vertriebler Liste
+                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
+                                    <span class="loading-text" style="display: none;">Herunterladen von Daten aus dem ZOHO-Portal...</span>
+                                </button>
+                                
+                                    <button id="update-elektrikers-button" style="margin-left: 25px;" class="btn btn-outline-info rounded-pill">
+                                        Erneuen Elektriker Liste
+                                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
+                                        <span class="loading-text" style="display: none;">Herunterladen von Daten aus dem ZOHO-Portal...</span>
+                                    </button>
+
+                                <script>
+                                    $(document).ready(function() {
+                                        // Function to handle the AJAX call
+                                        function ajaxUpdate(url, $button, successMessage) {
+                                            $button.find('.spinner-border').show();
+                                            $button.find('.loading-text').show();
+                                            
+                                            $.ajax({
+                                                method: 'POST',
+                                                url: url,
+                                                data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                                                success: function() {
+                                                    $button.find('.spinner-border').hide();
+                                                    $button.find('.loading-text').hide();
+                                                    $button.prop('disabled', false);
+                                                    alert(successMessage);
+                                                },
+                                                error: function() {
+                                                    $button.find('.spinner-border').hide();
+                                                    $button.find('.loading-text').hide();
+                                                    $button.prop('disabled', false);
+                                                    alert('An error occurred while updating.');
+                                                }
+                                            });
+                                        }
+
+                                        $('#update-users-button').click(function() {
+                                            $(this).prop('disabled', true);
+                                            ajaxUpdate("{% url 'update_vertrieblers' %}", $(this), 'Users updated successfully.');
+                                        });
+
+                                        $('#update-elektrikers-button').click(function() {
+                                            $(this).prop('disabled', true);
+                                            ajaxUpdate("{% url 'update_elektrikers' %}", $(this), 'Elektrikers updated successfully.');
+                                        });
+
+                                    });
+                                </script>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card border-success border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="header-title">SolarModule Preise Liste</h5>

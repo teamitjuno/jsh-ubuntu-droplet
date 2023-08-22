@@ -73,12 +73,43 @@
                             <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
                             
                             <div style="display: flex; gap: 15px;">
-                                <a href="{% url 'vertrieb_interface:load_user_angebots' %}" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
+                                <a href="javascript:void(0);" id="load-user-angebots-button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
                                     Aus JPP Einträge erneuern
+                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
+                                    <span class="loading-text" style="display: none;">Bitte warten...</span>
                                 </a>
-                                
+                                {% comment %} <script>
+                                    $(document).ready(function() {
+                                        // Function to handle the AJAX call
+                                        function ajaxUpdateForAngebots($button, url, successMessage) {
+                                            $button.find('.spinner-border').show();
+                                            $button.find('.loading-text').show();
+                                            
+                                            $.ajax({
+                                                method: 'POST',
+                                                url: url,
+                                                data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                                                success: function() {
+                                                    $button.find('.spinner-border').hide();
+                                                    $button.find('.loading-text').hide();
+                                                    $('#success-alert-modal').modal('show');
+                                                    
+                                                },
+                                                error: function() {
+                                                    $button.find('.spinner-border').hide();
+                                                    $button.find('.loading-text').hide();
+                                                    alert('An error occurred while updating.');
+                                                }
+                                            });
+                                        }
+
+                                        $('#load-user-angebots-button').click(function() {
+                                            ajaxUpdateForAngebots($(this), "{% url 'vertrieb_interface:load_user_angebots' %}", 'JPP Einträge updated successfully.');
+                                        });
+                                    });
+                                </script> {% endcomment %}
                                 <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm">
+                                    <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content modal-filled bg-success">
                                             <div class="modal-body p-4">
                                                 <div class="text-center">
@@ -92,7 +123,7 @@
                                     </div><!-- /.modal-dialog -->
                                 </div>
                                 <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm">
+                                    <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-body p-4">
                                                 <div class="text-center">
@@ -100,7 +131,7 @@
                                                     <h4 class="mt-2">Achtung! </h4>
                                                     <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
                                                     <button type="button" id="continueButtonn" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-                                                    <script>
+                                                    {% comment %} <script>
                                                         $(document).ready(function(){
                                                             $("#continueButtonn").click(function(){
                                                                 // perform your action here
@@ -133,6 +164,46 @@
                                                         // Redirect to another page when the success modal is hidden
                                                         $('#success-alert-modal').on('hidden.bs.modal', function (e) {
                                                             window.location.href = "{% url 'vertrieb_interface:load_user_angebots' %}";
+                                                        });
+                                                        </script> {% endcomment %}
+                                                        <script>
+                                                        $(document).ready(function() {
+                                                            function ajaxUpdateForAngebots($button, url, successMessage) {
+                                                                $button.find('.spinner-border').show();
+                                                                $button.find('.loading-text').show();
+                                                                
+                                                                $.ajax({
+                                                                    method: 'POST',
+                                                                    url: url,
+                                                                    data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                                                                    success: function() {
+                                                                        $button.find('.spinner-border').hide();
+                                                                        $button.find('.loading-text').hide();
+                                                                        $('#success-alert-modal').modal('show');
+                                                                        
+                                                                    },
+                                                                    error: function() {
+                                                                        $button.find('.spinner-border').hide();
+                                                                        $button.find('.loading-text').hide();
+                                                                        alert('An error occurred while updating.');
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            
+
+                                                            // For direct loading of User Angebots
+                                                            $('#load-user-angebots-button').click(function() {
+                                                                ajaxUpdateForAngebots($(this), "{% url 'vertrieb_interface:load_user_angebots' %}", 'JPP Einträge updated successfully.');
+                                                            });
+
+                                                            // For loading of User Angebots with a delay
+
+
+                                                            // Redirect to another page when the success modal is hidden
+                                                            $('#success-alert-modal').on('hidden.bs.modal', function (e) {
+                                                                window.location.href = "{% url 'vertrieb_interface:home' %}";
+                                                            });
                                                         });
                                                         </script>
                                                 </div>
@@ -310,7 +381,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="card-footer d-flex">
+                            <div class="card-footer">
                                 <button type="button" class="btn btn-outline-warning m-1 rounded-pill" onclick="resetForm()">zurücksetzen</button>
                                 <script>
                                     function resetForm() {

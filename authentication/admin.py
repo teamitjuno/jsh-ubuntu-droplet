@@ -11,6 +11,11 @@ from django.core.exceptions import ValidationError
 import base64, binascii
 
 
+
+
+
+
+
 class Base64Field(forms.Field):
     def clean(self, value):
         value = super().clean(value)
@@ -48,6 +53,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
         "first_name",
         "last_name",
         "beruf",
+        "is_staff",
         "users_aufschlag",
         "typ",
         "kuerzel",
@@ -83,6 +89,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                 "fields": (
                     "avatar",
                     "beruf",
+                    "is_staff",
                     "users_aufschlag",
                     "typ",
                     "kuerzel",

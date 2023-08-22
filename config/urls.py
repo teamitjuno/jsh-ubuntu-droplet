@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
+from django.views import defaults as default_views
 from django.urls import include, path, re_path
 from django.conf.urls.static import static
 from invoices.views import handler403, handler404, handler500
@@ -29,6 +30,23 @@ urlpatterns = [
         "elektriker_kalender",
         include("elektriker_kalender.urls", namespace="elektriker_kalender"),
     ),
+]+ [
+    re_path(
+        r"^400/$",
+        default_views.bad_request,
+        kwargs={"exception": Exception("Bad Request!")},
+    ),
+    re_path(
+        r"^403/$",
+        default_views.permission_denied,
+        kwargs={"exception": Exception("Permission Denied")},
+    ),
+    re_path(
+        r"^404/$",
+        default_views.page_not_found,
+        kwargs={"exception": Exception("Page not Found")},
+    ),
+    re_path(r"^500/$", default_views.server_error),
 ]
 
 # Error handlers

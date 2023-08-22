@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 class UserAdminCreationForm(forms.ModelForm):
     gerat = forms.CharField(required=False)
-    is_active = forms.BooleanField(required=False)
+    is_staff = forms.BooleanField(required=False)
     imei = forms.IntegerField(required=False)
     anbieter = forms.CharField(required=False)
     google_account = forms.EmailField(required=False)

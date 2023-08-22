@@ -350,18 +350,32 @@ def create_angebot(request):
 
 
 class VertriebAutoFieldView(View, VertriebCheckMixin):
+    
     data = []
 
     def get(self, request, *args, **kwargs):
-        name = request.GET.get("name", None)
-        self.data = fetch_all_user_angebots(request)
-        data = next((item for item in self.data if item["name"] == name), None)
+        profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+        self.data = json.loads(profile.zoho_data_text)
+        try:
+            self.data != []
+            name = request.GET.get("name", None)
+            data = next((item for item in self.data if item["name"] == name), None)
+            return JsonResponse(data)
+        except:
+            self.data = fetch_all_user_angebots(request)
+            zoho_data = json.dumps(self.data)
+            print(zoho_data)
+            profile.zoho_data_text = zoho_data  # type: ignore
+            profile.save()
+            name = request.GET.get("name", None)
+            data = next((item for item in self.data if item["name"] == name), None)
+            if data is None:
+                data = {}
+            return JsonResponse(data)
+        
 
-        if data is None:
-            data = {}
-        print(data)
 
-        return JsonResponse(data)
+        
 
 def map_view(request, angebot_id, *args, **kwargs):
     vertrieb_angebot = VertriebAngebot.objects.get(
@@ -432,7 +446,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
 
         data = fetch_current_user_angebot(request, zoho_id)
-        print(data)
+        
         for item in data:
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name    
             vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
@@ -454,7 +468,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
             vertrieb_angebot.termine_text = item["termine_text"]
             vertrieb_angebot.termine_id = item["termine_id"]
-            print("SUCCESS!!!")
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
         user_folder = os.path.join(

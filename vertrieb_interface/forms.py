@@ -195,7 +195,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-check-input",
                 "id": "is_locked",
-                "style": "max-width: 300px",
             }
         ),
     )

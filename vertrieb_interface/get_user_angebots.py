@@ -14,7 +14,7 @@ HTTP_OK = 200
 HTTP_UNAUTHORIZED = 401
 HTTP_NOT_FOUND = 404
 LIMIT_ALL = 200
-LIMIT_CURRENT = 10
+LIMIT_CURRENT = 200
 MAX_RETRIES = 5
 SLEEP_TIME = 1
 
@@ -49,7 +49,6 @@ def refresh_access_token():
         raise APIException(f"Error refreshing token: {response.status_code}")
 
     data = response.json()
-    print(data)
     new_access_token = data.get("access_token")
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
@@ -95,7 +94,6 @@ def fetch_all_user_angebots(request):
             "vertrieb_interface/json_tests/all_vertriebler_angebot.json", "w"
         ) as f:
             json.dump(json_data, f)
-        print("FETCH_RESPONSE # ",json_data)
         data = handle_response(response, headers, params)
 
         if data:
@@ -112,6 +110,8 @@ def fetch_all_user_angebots(request):
 
         print(f"access_token is alive, status code: {response.status_code}")
         start_index += LIMIT_ALL
+    
+    
 
     return all_user_angebots_list
 
