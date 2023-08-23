@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, re_path
 from vertrieb_interface import views
-from vertrieb_interface.views import PDFAngebotsListView
+from vertrieb_interface.views import PDFAngebotsListView, DeleteAngebot
 from django.views import defaults as default_views
 from adminfeautures.views import UpdateAdminAngebot
 
@@ -10,9 +10,14 @@ app_name = "vertrieb_interface"
 
 urlpatterns = [
     path("vertrieb/home/", views.home, name="home"),
-    path("vertrieb/home/reset_calculator/", views.reset_calculator, name="reset_calculator"),
-    path('vertrieb/edit_angebot/map/<str:angebot_id>/', views.map_view, name='map_view'),
-
+    path(
+        "vertrieb/home/reset_calculator/",
+        views.reset_calculator,
+        name="reset_calculator",
+    ),
+    path(
+        "vertrieb/edit_angebot/map/<str:angebot_id>/", views.map_view, name="map_view"
+    ),
     path(
         "vertrieb/vertrieb_autofield/",
         views.VertriebAutoFieldView.as_view(),
@@ -89,7 +94,9 @@ urlpatterns = [
         "serve_calc_pdf/<str:angebot_id>/", views.serve_calc_pdf, name="serve_calc_pdf"
     ),
     path(
-        "serve_ticket_pdf/<str:angebot_id>/", views.serve_ticket_pdf, name="serve_ticket_pdf"
+        "serve_ticket_pdf/<str:angebot_id>/",
+        views.serve_ticket_pdf,
+        name="serve_ticket_pdf",
     ),
     path("document/<str:angebot_id>/", views.document_view, name="document_view"),
     path(
@@ -103,7 +110,11 @@ urlpatterns = [
         name="document_ticket_view",
     ),
     path("send_invoice/<str:angebot_id>/", views.send_invoice, name="send_invoice"),
-    path("vertrieb/send_support_message/", views.send_support_message, name="send_support_message"),
+    path(
+        "vertrieb/send_support_message/",
+        views.send_support_message,
+        name="send_support_message",
+    ),
     path(
         "send_calc_invoice/<str:angebot_id>/",
         views.send_calc_invoice,

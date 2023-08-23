@@ -14,7 +14,13 @@ load_dotenv(ENV_FILE)
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-ALLOWED_HOSTS = ["*", "jsh-home.app", "www.jsh-home.app", "https://jsh-home.app", "http://46.101.104.229:8000"]
+ALLOWED_HOSTS = [
+    "*",
+    "jsh-home.app",
+    "www.jsh-home.app",
+    "https://jsh-home.app",
+    "http://46.101.104.229:8000",
+]
 LOGIN_URL = "/login"
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
@@ -43,7 +49,6 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
 ]
 
 SERVICE_APPS = [
@@ -54,9 +59,10 @@ SERVICE_APPS = [
     "crispy_forms",
     "shared",
     "storages",
-    'corsheaders',
+    "corsheaders",
     "templatetags.custom_filters",
-    "vertrieb_interface.templatetags.custom_filter"]
+    "vertrieb_interface.templatetags.custom_filter",
+]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + SERVICE_APPS
 
@@ -67,9 +73,15 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = "authentication.User"
 CORS_ALLOWED_ORIGINS = [
-    "https://jsh-home.app", "https://www.jsh-home.app", "http://46.101.104.229:8000",
+    "https://jsh-home.app",
+    "https://www.jsh-home.app",
+    "http://46.101.104.229:8000",
 ]
-CSRF_TRUSTED_ORIGINS = ["https://jsh-home.app", "https://www.jsh-home.app", "http://46.101.104.229:8000"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://jsh-home.app",
+    "https://www.jsh-home.app",
+    "http://46.101.104.229:8000",
+]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -105,9 +117,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-OWNER_ID=os.getenv('OWNER_ID')
-STYLE_ID=os.getenv('STYLE_ID')
-MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
+OWNER_ID = os.getenv("OWNER_ID")
+STYLE_ID = os.getenv("STYLE_ID")
+MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 DEFAULT_EMAIL_DOMAIN = os.getenv("DEFAULT_EMAIL_DOMAIN")
 DEFAULT_USER_CREATION_PASSWORD = os.getenv("DEFAULT_USER_CREATION_PASSWORD")
 DEFAULT_PHONE = os.getenv("DEFAULT_PHONE")
@@ -149,8 +161,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # Internationalization
-LANGUAGE_CODE = 'de-de'
-TIME_ZONE = 'Europe/Berlin'
+LANGUAGE_CODE = "de-de"
+TIME_ZONE = "Europe/Berlin"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -167,8 +179,8 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "media/"
 MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

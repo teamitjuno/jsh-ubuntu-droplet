@@ -8,13 +8,25 @@ import calendar
 from dotenv import load_dotenv
 from django.db.models.functions import Cast
 from django import forms
-from prices.models import ElektrikPreis, ModuleGarantiePreise, ModulePreise, WallBoxPreise, OptionalAccessoriesPreise, AndereKonfigurationWerte
-from prices.forms import SolarModulePreiseForm, WallBoxPreiseForm, OptionalAccessoriesPreiseForm, AndereKonfigurationWerteForm
+from prices.models import (
+    ElektrikPreis,
+    ModuleGarantiePreise,
+    ModulePreise,
+    WallBoxPreise,
+    OptionalAccessoriesPreise,
+    AndereKonfigurationWerte,
+)
+from prices.forms import (
+    SolarModulePreiseForm,
+    WallBoxPreiseForm,
+    OptionalAccessoriesPreiseForm,
+    AndereKonfigurationWerteForm,
+)
 from django.db.models import IntegerField, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.utils.decorators import method_decorator
@@ -25,6 +37,8 @@ from config.settings import ENV_FILE
 from authentication.models import User
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse
 
 load_dotenv(ENV_FILE)
 
@@ -85,27 +99,32 @@ class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, "Data saved successfully!")
         return response
-    
+
+
 def user_list_view(request):
     users = User.objects.all()
     solar_module_names = [module.name for module in SolarModulePreise.objects.all()]
-    
+
     monthly_sold_solar_modules = (
-        VertriebAngebot.objects.filter(status="angenommen", solar_module__in=solar_module_names)
-        .annotate(month=ExtractMonth('current_date'), year=ExtractYear('current_date'))
-        .values('month', 'year', 'solar_module')
-        .annotate(total_sold=Coalesce(Sum('modulanzahl') + Sum('modul_anzahl_ticket'), 0))
-        .order_by('year', 'month', 'solar_module')
+        VertriebAngebot.objects.filter(
+            status="angenommen", solar_module__in=solar_module_names
+        )
+        .annotate(month=ExtractMonth("current_date"), year=ExtractYear("current_date"))
+        .values("month", "year", "solar_module")
+        .annotate(
+            total_sold=Coalesce(Sum("modulanzahl") + Sum("modul_anzahl_ticket"), 0)
+        )
+        .order_by("year", "month", "solar_module")
     )
 
     # Initialize the dictionaries for each solar_module.
     modules_data = {name: {i: 0 for i in range(1, 13)} for name in solar_module_names}
-    
+
     # Iterate over the query result to populate the dictionaries.
     for entry in monthly_sold_solar_modules:
-        month = entry['month']
-        solar_module = entry['solar_module']
-        total_sold = entry['total_sold']
+        month = entry["month"]
+        solar_module = entry["solar_module"]
+        total_sold = entry["total_sold"]
         modules_data[solar_module][month] += total_sold
 
     # Getting all the instances of your models
@@ -119,19 +138,20 @@ def user_list_view(request):
 
     # Include the dictionaries and models instances in the context.
     context = {
-        'users': users,
-        'modules_data': modules_data,
-        'solar_module_names': solar_module_names,
-        'elektrik_preis': elektrik_preis,
-        'module_garantie_preise': module_garantie_preise,   
-        'module_preise': module_preise,
-        'solar_module_preise': solar_module_preise,
-        'wall_box_preise': wall_box_preise,
-        'optional_accessories_preise': optional_accessories_preise,
-        'andere_konfiguration_werte': andere_konfiguration_werte,
+        "users": users,
+        "modules_data": modules_data,
+        "solar_module_names": solar_module_names,
+        "elektrik_preis": elektrik_preis,
+        "module_garantie_preise": module_garantie_preise,
+        "module_preise": module_preise,
+        "solar_module_preise": solar_module_preise,
+        "wall_box_preise": wall_box_preise,
+        "optional_accessories_preise": optional_accessories_preise,
+        "andere_konfiguration_werte": andere_konfiguration_werte,
     }
 
     return render(request, "vertrieb/user_list.html", context)
+
 
 def update_solar_module_preise_view(request, module_id):
     module = get_object_or_404(SolarModulePreise, id=module_id)
@@ -139,14 +159,15 @@ def update_solar_module_preise_view(request, module_id):
         form = SolarModulePreiseForm(request.POST, instance=module)
         if form.is_valid():
             form.save()
-            return redirect('adminfeautures:user_list')
+            return redirect("adminfeautures:user_list")
     else:
         form = SolarModulePreiseForm(instance=module)
     context = {
-        'form': form,
-        'module': module,
+        "form": form,
+        "module": module,
     }
-    return render(request, 'vertrieb/update_solar_module_preise.html', context)
+    return render(request, "vertrieb/update_solar_module_preise.html", context)
+
 
 def update_wallbox_preise_view(request, wallbox_id):
     wallbox = get_object_or_404(WallBoxPreise, id=wallbox_id)
@@ -154,14 +175,15 @@ def update_wallbox_preise_view(request, wallbox_id):
         form = WallBoxPreiseForm(request.POST, instance=wallbox)
         if form.is_valid():
             form.save()
-            return redirect('adminfeautures:user_list')
+            return redirect("adminfeautures:user_list")
     else:
         form = WallBoxPreiseForm(instance=wallbox)
     context = {
-        'form': form,
-        'wallbox': wallbox,
+        "form": form,
+        "wallbox": wallbox,
     }
-    return render(request, 'vertrieb/update_wallbox_preise.html', context)
+    return render(request, "vertrieb/update_wallbox_preise.html", context)
+
 
 def update_optional_accessories_preise_view(request, accessories_id):
     accessories = get_object_or_404(OptionalAccessoriesPreise, id=accessories_id)
@@ -169,30 +191,32 @@ def update_optional_accessories_preise_view(request, accessories_id):
         form = OptionalAccessoriesPreiseForm(request.POST, instance=accessories)
         if form.is_valid():
             form.save()
-            return redirect('adminfeautures:user_list')
+            return redirect("adminfeautures:user_list")
     else:
         form = OptionalAccessoriesPreiseForm(instance=accessories)
     context = {
-        'form': form,
-        'accessories': accessories,
+        "form": form,
+        "accessories": accessories,
     }
-    return render(request, 'vertrieb/update_optional_accessories_preise.html', context)
+    return render(request, "vertrieb/update_optional_accessories_preise.html", context)
+
 
 def update_andere_konfiguration_werte_view(request, andere_konfiguration_id):
-    andere_konfiguration = get_object_or_404(AndereKonfigurationWerte, id=andere_konfiguration_id)
+    andere_konfiguration = get_object_or_404(
+        AndereKonfigurationWerte, id=andere_konfiguration_id
+    )
     if request.method == "POST":
         form = AndereKonfigurationWerteForm(request.POST, instance=andere_konfiguration)
         if form.is_valid():
             form.save()
-            return redirect('adminfeautures:user_list')
+            return redirect("adminfeautures:user_list")
     else:
         form = AndereKonfigurationWerteForm(instance=andere_konfiguration)
     context = {
-        'form': form,
-        'andere_konfiguration': andere_konfiguration,
+        "form": form,
+        "andere_konfiguration": andere_konfiguration,
     }
-    return render(request, 'vertrieb/update_andere_konfiguration_werte.html', context)
-
+    return render(request, "vertrieb/update_andere_konfiguration_werte.html", context)
 
 
 class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
@@ -203,28 +227,26 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.user = get_object_or_404(User, pk=kwargs["user_id"])
+        self.user = get_object_or_404(User, pk=kwargs["user_id"])   
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = self.model.objects.filter( #type: ignore
-            user=self.user, zoho_kundennumer__regex=r"^\d+$"
-        )
-
-        query = self.request.GET.get("q")
-        if query:
-            queryset = queryset.filter(
-                Q(zoho_kundennumer__icontains=query)
-                | Q(angebot_id__icontains=query)
-                | Q(status__icontains=query)
-                | Q(name__icontains=query)
-                | Q(anfrage_vom__icontains=query)
-            )
-
-        queryset = queryset.annotate(
-            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
-        )
-        queryset = queryset.order_by("-zoho_kundennumer_int")
-
+        queryset = self.model.objects.filter(  # type: ignore
+            user=self.user
+        )    
         return queryset
 
+
+class DeleteAngebot(DeleteView):
+    model = VertriebAngebot
+    template_name = "view_admin_orders.html"
+
+    def get_success_url(self):
+        return reverse("adminfeautures:view_admin_orders", kwargs={'user_id': self.kwargs['user_id']})
+
+    def get_object(self, queryset=None):
+        return VertriebAngebot.objects.get(angebot_id=self.kwargs["angebot_id"])
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        return response

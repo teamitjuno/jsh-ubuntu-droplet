@@ -2,35 +2,42 @@ from django.db import models
 import datetime
 import re
 
+
 class Elektriktermin(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
+
 
 class Bautermine(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
 
+
 class Module1(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
+
 
 class Wallbox1(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
 
+
 class Wechselrichter1(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
+
 
 class Speicher(models.Model):
     display_value = models.CharField(max_length=255)
     ID = models.CharField(max_length=50, unique=True)
 
+
 class Project(models.Model):
     ID = models.CharField(max_length=50, primary_key=True)
     Status = models.CharField(max_length=255)
 
-    Auftragsbest_tigung_versendet = models.CharField(max_length=5)  
+    Auftragsbest_tigung_versendet = models.CharField(max_length=5)
     Auftrag_Erteilt_am = models.DateField(null=True, blank=True)
     Kunde_display_value = models.CharField(max_length=255)
     Kunde_ID = models.CharField(max_length=50, unique=False)
@@ -49,12 +56,16 @@ class Project(models.Model):
     Netzbetreiber = models.CharField(max_length=255, blank=True, null=True)
     Garantie_WR_beantragt_am = models.CharField(max_length=255, blank=True, null=True)
     Ticket_form = models.CharField(max_length=255, blank=True, null=True)
-    Status_Inbetriebnahmeprotokoll = models.CharField(max_length=255, blank=True, null=True)
-    Zahlungsmodalit_ten = models.CharField(max_length=255, blank=True,null=True)
+    Status_Inbetriebnahmeprotokoll = models.CharField(
+        max_length=255, blank=True, null=True
+    )
+    Zahlungsmodalit_ten = models.CharField(max_length=255, blank=True, null=True)
     Berechnung_bergeben_am = models.CharField(max_length=255, blank=True, null=True)
     Vertriebler = models.CharField(max_length=255, blank=True, null=True)
     Notstromversorgung_Backup_Box_vorhanden = models.BooleanField(default=False)
-    Status_Marktstammdatenregistrierung = models.CharField(max_length=255, blank=True, null=True)
+    Status_Marktstammdatenregistrierung = models.CharField(
+        max_length=255, blank=True, null=True
+    )
     Garantieerweiterung = models.CharField(max_length=255, blank=True, null=True)
     Bauabschluss_am = models.CharField(max_length=255, blank=True, null=True)
     Status_Betreiberwechsel = models.CharField(max_length=255, blank=True, null=True)
@@ -86,7 +97,6 @@ class Project(models.Model):
     bauplan_pdf = models.BinaryField(blank=True, null=True)
     bauplan_img = models.ImageField(null=True, blank=True)
 
-    
     roof_typ = models.CharField(max_length=255, blank=True, null=True)
     height = models.CharField(max_length=255, blank=True, null=True)
     current_date = models.DateField(auto_now_add=True, null=True, blank=True)
@@ -119,7 +129,7 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-    
+
     @property
     def solar_module_display_value(self):
         if self.Module1 is not None:
@@ -129,7 +139,6 @@ class Project(models.Model):
         else:
             return "keine"
 
-
     @property
     def ticket_id_display_value(self):
         if self.Ticket_form is not None and self.Ticket_form != "":
@@ -138,7 +147,7 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-        
+
     @property
     def vertribler_display_value(self):
         if self.Vertriebler is not None and self.Vertriebler != "":
@@ -147,7 +156,7 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-        
+
     @property
     def wallbox_display_value(self):
         if self.Wallbox1 is not None and self.Wallbox1 != []:
@@ -156,7 +165,7 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-        
+
     @property
     def wechselrichter_display_value(self):
         if self.Wechselrichter1 is not None and self.Wechselrichter1 != []:
@@ -165,7 +174,7 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-        
+
     @property
     def unterkonstruktion_display_value(self):
         if self.Unterkonstruktion1 is not None and self.Unterkonstruktion1 != []:
@@ -174,7 +183,6 @@ class Project(models.Model):
             return match.group(1).strip() if match else None
         else:
             return "keine"
-        
 
     @property
     def speicher_display_value(self):

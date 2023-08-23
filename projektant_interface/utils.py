@@ -14,6 +14,7 @@ from config.settings import (
     DEFAULT_USER_CREATION_PASSWORD,
     DEFAULT_PHONE,
 )
+
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/PVA_klein1"
 
 User = get_user_model()
@@ -26,11 +27,13 @@ SLEEP_TIME = 1
 
 from datetime import datetime
 
+
 def convert_date_format(date_string):
     try:
-        return datetime.strptime(date_string, '%d-%b-%Y').date().strftime('%Y-%m-%d')
+        return datetime.strptime(date_string, "%d-%b-%Y").date().strftime("%Y-%m-%d")
     except ValueError:
         return None
+
 
 class APIException(Exception):
     pass
@@ -46,7 +49,7 @@ class RateLimitExceededException(APIException):
 
 def get_headers():
     access_token = ZOHO_ACCESS_TOKEN
-    
+
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
 
@@ -89,39 +92,54 @@ def fetch_records(
     raise APIException("Max retries exceeded.")
 
 
-from projektant_interface.models import Project, Elektriktermin, Bautermine, Module1, Wallbox1, Wechselrichter1, Speicher
+from projektant_interface.models import (
+    Project,
+    Elektriktermin,
+    Bautermine,
+    Module1,
+    Wallbox1,
+    Wechselrichter1,
+    Speicher,
+)
+
 
 def create_project_instances_from_zoho():
-    endpoint = BASE_URL # replace with your specific endpoint
+    endpoint = BASE_URL  # replace with your specific endpoint
     headers = get_headers()
     params = {"limit": LIMIT}
 
     data = fetch_records(endpoint, headers, params)
     new_projects_count = 0
-    for record in data.get('data', []):  
+    for record in data.get("data", []):
         exists = Project.objects.filter(ID=record["ID"]).exists()
         if not exists:
             new_projects_count += 1
-            
+
             project, created = Project.objects.get_or_create(ID=record["ID"])
 
             project.Status = record.get("Status")
-            project.Auftragsbest_tigung_versendet = record.get("Auftragsbest_tigung_versendet")
+            project.Auftragsbest_tigung_versendet = record.get(
+                "Auftragsbest_tigung_versendet"
+            )
             date_string = record.get("Auftrag_Erteilt_am") or "08-Aug-2000"
             if date_string:
                 project.Auftrag_Erteilt_am = convert_date_format(date_string)
 
             project.Bautermine = str(record.get("Bautermine"))
             project.Modul_Summe_kWp = record.get("Modul_Summe_kWp")
-            project.Module1 = str(record.get("Module1"))  
+            project.Module1 = str(record.get("Module1"))
             project.Besonderheiten = record.get("Besonderheiten")
             try:
                 record.get("Besonderheiten") != ""
                 project.Processed_Besonderheiten == "keine Beschreibung"
-                project.Processed_Besonderheiten = handle_message(str(record.get("Besonderheiten")))
+                project.Processed_Besonderheiten = handle_message(
+                    str(record.get("Besonderheiten"))
+                )
             except:
                 pass
-            project.Elektriktermin = str(record.get("Elektriktermin"))  # Assuming it's a list of dictionaries
+            project.Elektriktermin = str(
+                record.get("Elektriktermin")
+            )  # Assuming it's a list of dictionaries
             project.Kunde_display_value = str(record.get("Kunde"))
             project.Rechnung_versandt = record.get("Rechnung_versandt")
             project.Lieferung = record.get("UK_vsl_Lieferung")
@@ -130,12 +148,18 @@ def create_project_instances_from_zoho():
             project.Netzbetreiber = record.get("Netzbetreiber")
             project.Garantie_WR_beantragt_am = record.get("Garantie_WR_beantragt_am")
             project.Ticket_form = str(record.get("Ticket_form"))
-            project.Status_Inbetriebnahmeprotokoll = record.get("Status_Inbetriebnahmeprotokoll")
+            project.Status_Inbetriebnahmeprotokoll = record.get(
+                "Status_Inbetriebnahmeprotokoll"
+            )
             project.Zahlungsmodalit_ten = record.get("Zahlungsmodalit_ten")
             project.Berechnung_bergeben_am = record.get("Berechnung_bergeben_am")
             project.Vertriebler = record.get("Vertriebler")
-            project.Notstromversorgung_Backup_Box_vorhanden = record.get("Notstromversorgung_Backup_Box_vorhanden") == "❌"
-            project.Status_Marktstammdatenregistrierung = record.get("Status_Marktstammdatenregistrierung")
+            project.Notstromversorgung_Backup_Box_vorhanden = (
+                record.get("Notstromversorgung_Backup_Box_vorhanden") == "❌"
+            )
+            project.Status_Marktstammdatenregistrierung = record.get(
+                "Status_Marktstammdatenregistrierung"
+            )
             project.Garantieerweiterung = record.get("Garantieerweiterung")
             project.Bauabschluss_am = record.get("Bauabschluss_am")
             project.Status_Betreiberwechsel = record.get("Status_Betreiberwechsel")
@@ -157,7 +181,9 @@ def create_project_instances_from_zoho():
             project.Nummer_der_PVA = record.get("Nummer_der_PVA")
             project.Kunde_Postanschrift = record.get("Kunde.Postanschrift")
             project.Kunde_Telefon_Festnetz = record.get("Kunde.Telefon_Festnetz")
-            project.Speicher = str(record.get("Speicher"))  # Assuming it's a list of dictionaries
+            project.Speicher = str(
+                record.get("Speicher")
+            )  # Assuming it's a list of dictionaries
             project.Status_Fertigmeldung = record.get("Status_Fertigmeldung")
             project.Bauleiter = record.get("Bauleiter")
             project.Hauselektrik = record.get("Hauselektrik")
@@ -177,10 +203,10 @@ def populate_project_instance_from_zoho(project_id):
 
     response_data = fetch_records(endpoint, headers, params)
 
-    if not response_data.get('data'):
-        return None 
+    if not response_data.get("data"):
+        return None
 
-    record = response_data['data']
+    record = response_data["data"]
 
     defaults = {
         "UK_vsl_Lieferung": record.get("UK_vsl_Lieferung", ""),
@@ -192,14 +218,25 @@ def populate_project_instance_from_zoho(project_id):
         "Netzbetreiber": record.get("Netzbetreiber", ""),
         "Garantie_WR_beantragt_am": record.get("Garantie_WR_beantragt_am", ""),
         "Ticket_form": record.get("Ticket_form", ""),
-        "Status_Inbetriebnahmeprotokoll": record.get("Status_Inbetriebnahmeprotokoll", ""),
-        "Auftragsbest_tigung_versendet": record.get("Auftragsbest_tigung_versendet", ""),
-        "Auftrag_Erteilt_am": convert_date_format(record.get("Auftrag_Erteilt_am", "08-Aug-2000")),
+        "Status_Inbetriebnahmeprotokoll": record.get(
+            "Status_Inbetriebnahmeprotokoll", ""
+        ),
+        "Auftragsbest_tigung_versendet": record.get(
+            "Auftragsbest_tigung_versendet", ""
+        ),
+        "Auftrag_Erteilt_am": convert_date_format(
+            record.get("Auftrag_Erteilt_am", "08-Aug-2000")
+        ),
         "Zahlungsmodalit_ten": record.get("Zahlungsmodalit_ten", ""),
         "Berechnung_bergeben_am": record.get("Berechnung_bergeben_am", ""),
         "Vertriebler": record.get("Vertriebler", ""),
-        "Notstromversorgung_Backup_Box_vorhanden": record.get("Notstromversorgung_Backup_Box_vorhanden", "") == "❌",
-        "Status_Marktstammdatenregistrierung": record.get("Status_Marktstammdatenregistrierung", ""),
+        "Notstromversorgung_Backup_Box_vorhanden": record.get(
+            "Notstromversorgung_Backup_Box_vorhanden", ""
+        )
+        == "❌",
+        "Status_Marktstammdatenregistrierung": record.get(
+            "Status_Marktstammdatenregistrierung", ""
+        ),
         "Garantieerweiterung": record.get("Garantieerweiterung", ""),
         "Bauabschluss_am": record.get("Bauabschluss_am", ""),
         "Rechnung_versandt": record.get("Rechnung_versandt", ""),
@@ -217,7 +254,7 @@ def populate_project_instance_from_zoho(project_id):
         "Optimizer1": record.get("Optimizer1", ""),
         "Kunde_Adresse_PVA": record.get("Kunde.Adresse_PVA", ""),
         "Status_Elektrik": record.get("Status_Elektrik", ""),
-        "Kunde_Kundennummer" : record.get("Kunde.Kundennummer"),
+        "Kunde_Kundennummer": record.get("Kunde.Kundennummer"),
         "Kunde_display_value": record.get("Kunde", {}),
         "Kunde_Email": record.get("Kunde.Email", ""),
         "Termin_Z_hlerwechsel": record.get("Termin_Z_hlerwechsel", ""),
@@ -228,7 +265,7 @@ def populate_project_instance_from_zoho(project_id):
         "Status_Fertigmeldung": record.get("Status_Fertigmeldung", ""),
         "Bauleiter": record.get("Bauleiter", ""),
         "Hauselektrik": record.get("Hauselektrik", ""),
-        "Kunde_Telefon_mobil": record.get("Kunde.Telefon_mobil", "")
+        "Kunde_Telefon_mobil": record.get("Kunde.Telefon_mobil", ""),
     }
     try:
         existing_project = Project.objects.get(ID=project_id)
@@ -248,11 +285,9 @@ def populate_project_instance_from_zoho(project_id):
         project = Project.objects.create(ID=project_id, **defaults)
         project.save()
 
-    return project  
+    return project
 
 
-
-    
 def update_all_project_instances():
     # Fetch all the Project instances
     all_projects = Project.objects.all()

@@ -17,20 +17,32 @@ from django.contrib.auth.forms import SetPasswordForm
 from django import forms
 from .models import Role
 
+
 class RoleForm(forms.ModelForm):
     class Meta:
         model = Role
-        fields = ['name',]
+        fields = [
+            "name",
+        ]
+
 
 class AvatarUploadForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["avatar"]
 
+
 class TopVerkauferContainerViewForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['top_verkaufer_container_view']
+        fields = [
+            "top_verkaufer_container_view",
+            "profile_container_view",
+            "activity_container_view",
+            "angebot_statusubersicht_view",
+            "pv_rechner_view",
+            "anzahl_sol_module_view",
+        ]
 
 
 class AdminPasswordChangeForm(SetPasswordForm):
@@ -50,7 +62,7 @@ class AdminPasswordChangeForm(SetPasswordForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = '__all__'  # Including all fields for the example
+        fields = "__all__"  # Including all fields for the example
 
     email = forms.EmailField(
         label="E-Mail",
@@ -130,7 +142,6 @@ class UserForm(forms.ModelForm):
             attrs={
                 "class": "form-check-input",
                 "id": "id_is_staff",
-                
             }
         ),
     )
@@ -170,9 +181,11 @@ class UserForm(forms.ModelForm):
         ),
     )
     role = forms.ModelChoiceField(
-        queryset=Role.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-select'}),  # Add a CSS class to the select widget
-        label="User's Role"  # Custom label for the role field
+        queryset=Role.objects.all(),
+        widget=forms.Select(
+            attrs={"class": "form-select"}
+        ),  # Add a CSS class to the select widget
+        label="User's Role",  # Custom label for the role field
     )
 
     age = forms.IntegerField(
@@ -378,4 +391,3 @@ class UserForm(forms.ModelForm):
                 self.fields[field].widget.attrs.update(
                     {"placeholder": self.initial[field]}
                 )
-

@@ -506,6 +506,6 @@ from django import forms
 
 
 class UploadXlsxForm(forms.Form):
-    file1 = forms.FileField(widget=forms.FileInput(
-            attrs={"class": "fallback",  "id" : "myAwesomeDropzone"}
-        ),)
+    file1 = forms.FileField(
+        widget=forms.FileInput(attrs={"class": "fallback", "id": "myAwesomeDropzone"}),
+    )

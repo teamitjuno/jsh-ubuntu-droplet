@@ -11,11 +11,6 @@ from django.core.exceptions import ValidationError
 import base64, binascii
 
 
-
-
-
-
-
 class Base64Field(forms.Field):
     def clean(self, value):
         value = super().clean(value)
@@ -161,7 +156,6 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "smtp_password",
                     "smtp_subject",
                     "smtp_body",
-                    
                 ),
             },
         ),

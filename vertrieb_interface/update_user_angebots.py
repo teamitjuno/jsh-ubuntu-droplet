@@ -104,7 +104,6 @@ def process_all_user_data(data, all_user_angebots_list):
             all_user_angebots_list.append(
                 {
                     "zoho_id": item.get("ID", ""),
-                    
                     "anrede": item.get("Name", {}).get("prefix", ""),
                     "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
                     "ort": item.get("Adresse_PVA", {}).get("postal_code", "")

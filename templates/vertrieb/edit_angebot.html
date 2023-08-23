@@ -44,11 +44,11 @@
                         <div class="col-xxl-12">
                             <div class="card">
                                 <div class="card-body">
-                                        <ul class="nav nav-tabs md-4" role="tablist">
+                                        <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
                                             <li class="nav-item" role="presentation">
                                                 <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="fakse" role="tab">
                                                     <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block">Info</span>
+                                                    <span class="d-none d-md-block h4">Info</span>
                                                 </a>
                                             </li>
                                             {% comment %} <li class="nav-item" role="tabpanel">
@@ -59,20 +59,20 @@
                                             </li> {% endcomment %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="true" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-settings-outline d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block">Module & Zubehör</span>
+                                                    <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
+                                                    <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item" role="presentation">
                                                 <a href="#ticket" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-settings-outline d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block">Ticket</span>
+                                                    <i class="mdi mdi-altimeter d-md-none d-block"></i>
+                                                    <span class="d-none d-md-block h4">Ticket</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item" role="presentation">
                                                 <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-account-circle d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block">Kalkulationen</span>
+                                                    <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
+                                                    <span class="d-none d-md-block h4">Kalkulationen</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -147,39 +147,7 @@
                                                         </div>
                                                     </div>
                                                         <!-- Column 2 -->
-                                                 
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizen</div>
-                                                            <div class="card-body">
-                                                                        <div class="col-xl-12">
-                                                                            <div class="card">
-                                                                                <div class="card-body">
-                                                                                    <h4 class="header-title mb-3">Map</h4>
-                                                                                        <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe>  
-                                                                                </div> <!-- end card-body-->
-                                                                            </div> <!-- end card-->
-                                                                        </div> <!-- end col-->
-                                                                        
-                       
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                            <th>OpenstreetMap zeigen:</th>
-                                                                            
-                                                                                <td><a href="{{ vertrieb_angebot.google_maps_url }}" style="width: 100%" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
-                                                                            
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.notizen.label_tag }}</th>
-                                                                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
-                                                                        </tr>
-
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                                {% include 'vertrieb/extra/map_openstreet.html' %}
                                                 </div><!-- End of row -->
                                             </div>
 
@@ -216,7 +184,7 @@
                                         <div class="tab-pane show active" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row"> 
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-5">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module Details</div>
                                                             <div class="card-body">
@@ -311,7 +279,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
@@ -439,7 +407,7 @@
                                                         </div>
                                                     </div>
                                                     {% endif %}
-                                                    <div class="col-lg-2">
+                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                             <div class="card-body">
@@ -455,7 +423,7 @@
                                         <div class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-5">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                             <div class="card-body">
@@ -502,7 +470,7 @@
                                                         </div>
                                                     </div>
                                                 
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
                                                             <div class="card-body">
@@ -761,8 +729,8 @@
                                                                 <div class="modal-body p-4">
                                                                     <div class="text-center">
                                                                         <i class="ri-information-line h1 text-info"></i>
-                                                                        <h4 class="mt-2">Achtung! </h4>
-                                                                        <p class="mt-3">Diese Aktion ändert den Angebotsstatus automatisch auf "bekommen" und führt Sie zur Angebots-PDF-Seite. Möchten Sie fortfahren?  </p>
+                                                                        <h4 class="mt-2">Achtung!</h4>
+                                                                        <p class="mt-3">Diese Aktion setzt den Status des Angebots automatisch auf "bekommen" und leitet Sie zur PDF-Seite des Angebots weiter. Wollen Sie das fortsetzen?"</p>
                                                                         
                                                                             <script>
                                                                                 function getCookie(name) {
@@ -903,11 +871,11 @@
                     <div class="col-xxl-12">
                         <div class="card">
                             <div class="card-body">
-                                <ul class="nav nav-tabs mb-3" role="tablist">
+                                <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <a href="#info" data-bs-toggle="tab" aria-expanded="false" class="nav-link active" aria-selected="true" tabindex="-1" role="tab">
                                             <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                            <span class="d-none d-md-block">Info</span>
+                                            <span class="d-none d-md-block h4">Info</span>
                                         </a>
                                     </li>
                                     {% comment %} <li class="nav-item" role="presentation">
@@ -918,20 +886,20 @@
                                     </li> {% endcomment %}
                                     <li class="nav-item" role="presentation">
                                         <a href="#module" data-bs-toggle="tab" aria-expanded="false" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
-                                                <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                            <span class="d-none d-md-block">Module & Zubehör</span>
+                                                <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
+                                            <span class="d-none d-md-block h4">Module & Zubehör</span>
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <a href="#ticket" data-bs-toggle="tab" aria-expanded="false" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
-                                        <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                            <span class="d-none d-md-block">Ticket</span>
+                                        <i class="mdi mdi-altimeter d-md-none d-block"></i>
+                                            <span class="d-none d-md-block h4">Ticket</span>
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
-                                            <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                            <span class="d-none d-md-block">Kalkulationen</span>
+                                            <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
+                                            <span class="d-none d-md-block h4">Kalkulationen</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -997,41 +965,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizen</div>
-                                                            <div class="card-body">
-                                                                        <div class="col-xl-12">
-                                                                            <div class="card">
-                                                                                <div class="card-body">
-                                                                                    <h4 class="header-title mb-3">Map</h4>
-                                                                                        
-                                                                                        <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe>  
-                                                                                </div> <!-- end card-body-->
-                                                                            </div> <!-- end card-->
-                                                                        </div> <!-- end col-->
-                                                                        
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>OpenstreetMap zeigen</th>
-                                                                            <td><a href="{{ vertrieb_angebot.google_maps_url }}" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.notizen.label_tag }}</th>
-                                                                            {% if user.role.name == "admin" %}
-                                                                                <td>{{ form.notizen }}</td>
-                                                                            {% else %}
-                                                                                <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
-                                                                            {% endif %}
-                                                                        </tr>
-                                                                        
-
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                 {% include 'vertrieb/extra/map_openstreet.html' %}
                                                 </div>
                                                 
                                             </div>
@@ -1735,8 +1669,8 @@
                                                 <div class="modal-body p-4">
                                                     <div class="text-center">
                                                         <i class="ri-check-line h1"></i>
-                                                        <h4 class="mt-2">Gut gemacht!</h4>
-                                                        <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
+                                                        <h4 class="mt-2">Erfolgreich!</h4>
+                                                        <p class="mt-3">Die Unterstützungsnachricht per E-Mail wurde erfolgreich gesendet</p>
                                                         <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
                                                     </div>
                                                 </div>

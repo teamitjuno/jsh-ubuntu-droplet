@@ -1,6 +1,11 @@
 from django.core.management import call_command
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseNotAllowed, JsonResponse, StreamingHttpResponse, HttpResponse
+from django.http import (
+    HttpResponseNotAllowed,
+    JsonResponse,
+    StreamingHttpResponse,
+    HttpResponse,
+)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import update_session_auth_hash
 from schema_graph.views import Schema
@@ -13,7 +18,11 @@ from .forms import UserForm
 from .models import User
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+    user_passes_test,
+)
 from django.contrib.auth.forms import AdminPasswordChangeForm
 
 
@@ -27,11 +36,12 @@ def update_vertrieblers(request):
         call_command("update_vertrieblers")
         yield "User update completed\n"
 
-    response = StreamingHttpResponse(stream_response())  
+    response = StreamingHttpResponse(stream_response())
     response["X-Accel-Buffering"] = "no"
     response["Cache-Control"] = "no-cache"
 
     return response
+
 
 @staff_member_required
 def protected_schema_view(request):
@@ -48,11 +58,12 @@ def update_elektrikers(request):
 
         yield "User update completed\n"
 
-    response = StreamingHttpResponse(stream_response())  
+    response = StreamingHttpResponse(stream_response())
     response["X-Accel-Buffering"] = "no"
     response["Cache-Control"] = "no-cache"
 
     return response
+
 
 @staff_member_required
 def some_admin_view(request):
@@ -71,15 +82,19 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
     template_name = "vertrieb/user_update_form.html"
-    permission_required = 'authentication.change_user'  # Assumes you've set permissions on the User model
+    permission_required = (
+        "authentication.change_user"  # Assumes you've set permissions on the User model
+    )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy('user-detail', kwargs={'pk': self.object.pk})  # Assuming you have a user detail view named 'user-detail'
+        return reverse_lazy(
+            "user-detail", kwargs={"pk": self.object.pk}
+        )  # Assuming you have a user detail view named 'user-detail'
 
     def form_valid(self, form):
         form.save()
@@ -88,48 +103,56 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 @require_POST
 def delete_user_view(request):
-    user_id = request.POST.get('user_id')
-    
+    user_id = request.POST.get("user_id")
+
     try:
         user = User.objects.get(pk=user_id)
         user.delete()
         messages.success(request, "User deleted successfully.")
     except User.DoesNotExist:
         messages.error(request, "User not found.")
-    
-    return redirect('adminfeautures:user_list')
+
+    return redirect("adminfeautures:user_list")
+
 
 @login_required
-@permission_required('authentication.delete_user', raise_exception=True)
+@permission_required("authentication.delete_user", raise_exception=True)
 def delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    if request.method == 'POST':
-       
+    if request.method == "POST":
         if user != request.user:
             user.delete()
             messages.success(request, "User deleted successfully.")
-            return redirect('adminfeautures:user_list')  
+            return redirect("adminfeautures:user_list")
         else:
             messages.error(request, "You cannot delete your own account!")
-    
-    return redirect('adminfeautures:user_list')  
+
+    return redirect("adminfeautures:user_list")
+
 
 @staff_member_required
 def change_password(request, user_id):
     target_user = get_object_or_404(User, pk=user_id)
-    
+
     if not request.user.role.name == "admin":
         messages.error(request, "Only superusers can change other users' passwords.")
-        return redirect('vertrieb_interface:home')
-    
-    if request.method == 'POST':
+        return redirect("vertrieb_interface:home")
+
+    if request.method == "POST":
         form = AdminPasswordChangeForm(target_user, request.POST)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, f"Password for user {target_user.username} changed successfully.")
-            return redirect('adminfeautures:user_list')
+            messages.success(
+                request,
+                f"Password for user {target_user.username} changed successfully.",
+            )
+            return redirect("adminfeautures:user_list")
     else:
         form = AdminPasswordChangeForm(target_user)
-    
-    return render(request, 'vertrieb/password_change.html', {'form': form, 'target_user': target_user})
+
+    return render(
+        request,
+        "vertrieb/password_change.html",
+        {"form": form, "target_user": target_user},
+    )

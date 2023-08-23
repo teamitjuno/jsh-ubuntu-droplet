@@ -4,6 +4,8 @@ from prices.models import SolarModulePreise, WallBoxPreise
 from django.core.exceptions import ValidationError
 import decimal
 import ast
+
+
 def validate_two_decimal_places(value):
     decimal_value = decimal.Decimal(value)
     if decimal_value.as_tuple().exponent < -2:  # type: ignore
@@ -31,12 +33,11 @@ def validate_integers(value):
             params={"value": value},
         )
 
+
 def validate_integers_ticket(value):
     if not isinstance(value, int):
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."
-            ),
+            ("Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."),
             params={"value": value},
         )
 
@@ -59,6 +60,7 @@ def validate_solar_module_ticket_anzahl(value):
             ),
             params={"value": value},
         )
+
 
 def validate_optimizer_ticket_anzahl(value):
     if value > 4:
@@ -91,8 +93,8 @@ class CalculatorForm(forms.ModelForm):
     solar_module = forms.ChoiceField(
         label="Solar Module",
         widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
-        )
-    
+    )
+
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
         initial=0,
@@ -101,8 +103,6 @@ class CalculatorForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "id_modulanzahl",
-                
-                
             }
         ),
     )
@@ -112,7 +112,6 @@ class CalculatorForm(forms.ModelForm):
             attrs={
                 "class": "form-select",
                 "id": "wallboxtyp",
-                
             }
         ),
     )
@@ -130,7 +129,9 @@ class CalculatorForm(forms.ModelForm):
     optimizer = forms.BooleanField(
         label="Optimizer",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-check-input mb-3", "id": "optimizer"}),
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input form-check-input mb-3", "id": "optimizer"}
+        ),
     )
     notstrom = forms.BooleanField(
         label="Notstrom",
@@ -143,7 +144,9 @@ class CalculatorForm(forms.ModelForm):
         label="Optimizer",
         required=True,
         validators=[validate_integers],
-        widget=forms.NumberInput(attrs={"class": "form-control form-control mb-3", "id": "id_anzOptimizer"}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control form-control mb-3", "id": "id_anzOptimizer"}
+        ),
     )
     anz_speicher = forms.IntegerField(
         label="Anzahl Speichermodule (kann sein 0)",
@@ -152,9 +155,8 @@ class CalculatorForm(forms.ModelForm):
         validators=[validate_range],
         widget=forms.NumberInput(
             attrs={
-                "class": "form-control form-control mb-3",   
+                "class": "form-control form-control mb-3",
                 "id": "id_anz_speicher",
-                
             }
         ),
     )
@@ -165,20 +167,28 @@ class CalculatorForm(forms.ModelForm):
             attrs={
                 "class": "form-check-input form-check-input mb-3",
                 "id": "speicher",
-                
             }
         ),
     )
     angebotsumme = forms.FloatField(
         label="Angebotsumme: ",
         required=False,
-        widget=forms.NumberInput(attrs={"class": "badge badge-info-lighten", "id": "id_angebotsumme"}),
+        widget=forms.NumberInput(
+            attrs={"class": "badge badge-info-lighten", "id": "id_angebotsumme"}
+        ),
     )
+
     def __init__(self, *args, user, **kwargs):
         super(CalculatorForm, self).__init__(*args, **kwargs)
 
-        self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
-        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.filter(in_stock=True)]
+        self.fields["solar_module"].choices = [
+            (module.name, module.name)
+            for module in SolarModulePreise.objects.filter(in_stock=True)
+        ]
+        self.fields["wallboxtyp"].choices = [
+            (module.name, module.name)
+            for module in WallBoxPreise.objects.filter(in_stock=True)
+        ]
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["modulanzahl"].widget.attrs.update({"id": "modulanzahl"})
         self.fields["anzOptimizer"].widget.attrs.update({"id": "anzOptimizer"})
@@ -190,6 +200,7 @@ class CalculatorForm(forms.ModelForm):
                 self.fields[field].widget.attrs.update(
                     {"placeholder": self.initial[field]}
                 )
+
     def save(self, commit=True):
         calculator_form = super(CalculatorForm, self).save(commit=False)
 
@@ -198,10 +209,17 @@ class CalculatorForm(forms.ModelForm):
 
         return calculator_form
 
-
-
     class Meta:
         model = Calculator
-        fields = ['solar_module', 'modulanzahl', 'notstrom', 'optimizer', 'anzOptimizer', 'wallboxtyp', 'wallbox_anzahl', 'speicher', 'anz_speicher', 'angebotsumme']
-    
-    
+        fields = [
+            "solar_module",
+            "modulanzahl",
+            "notstrom",
+            "optimizer",
+            "anzOptimizer",
+            "wallboxtyp",
+            "wallbox_anzahl",
+            "speicher",
+            "anz_speicher",
+            "angebotsumme",
+        ]

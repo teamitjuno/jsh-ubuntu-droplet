@@ -14,8 +14,6 @@ class PDF(FPDF):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
         self.title1 = title1
-        
-        
 
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
@@ -28,7 +26,9 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(0)
         # Page number
-        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title1}", 0, 0, "")
+        self.cell(
+            0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title1}", 0, 0, ""
+        )
         if not self.is_last_page:
             font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
             self.add_font("JUNO Solar Lt", "", font_path, uni=True)
@@ -67,11 +67,11 @@ class PDF(FPDF):
             self.set_y(-25)
             self.set_x(85)
             centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
-            self.multi_cell(0, 3, centered_text1, 0, '')
+            self.multi_cell(0, 3, centered_text1, 0, "")
             self.set_y(-25)
             self.set_x(150)
             centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
-            self.multi_cell(0, 3, centered_text1, 0, '')
+            self.multi_cell(0, 3, centered_text1, 0, "")
 
     def page1(self, data, eintrag):
         self.add_page()
@@ -766,7 +766,13 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 5, "Intelligenter Heizstab um überschüssige PV-Energie als Warmwasser optimal zu nutzen", 0, "L")
+                self.multi_cell(
+                    0,
+                    5,
+                    "Intelligenter Heizstab um überschüssige PV-Energie als Warmwasser optimal zu nutzen",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -786,7 +792,13 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 5, "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige PV-Energie optimal zu nutzen", 0, "L")
+                self.multi_cell(
+                    0,
+                    5,
+                    "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige PV-Energie optimal zu nutzen",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -923,8 +935,7 @@ class PDF(FPDF):
         # Seite voll
         y = y + 60
         self.set_y(y)
-        
-        
+
         # Optionales Zubehör zur Anlagenoptimierung
         self.add_page()
         y = 30
@@ -971,11 +982,17 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "Intelligenter Heizstab um überschüssige PV-Energie als Warmwasser optimal zu nutzen", 0, "L")
+            self.multi_cell(
+                0,
+                5,
+                "Intelligenter Heizstab um überschüssige PV-Energie als Warmwasser optimal zu nutzen",
+                0,
+                "L",
+            )
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'1', 0, 0, "L")  # type: ignore
+            self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
             self.set_y(y)
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
@@ -993,18 +1010,24 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen", 0, "L")
+            self.multi_cell(
+                0,
+                5,
+                "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
+                0,
+                "L",
+            )
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'1', 0, 0, "L")  # type: ignore
+            self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
             self.set_y(y)
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
             y += 15
         else:
             y_tmp += 15
-        y +=5
+        y += 5
         if data["notstrom"] == True:
             # Tabelle Eintrag Ersatzstrom
             self.set_font("JUNO Solar Lt", "", 11)
@@ -1072,7 +1095,13 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "Modul-Leistungsoptimierer zur individuelle Schattenerkennung pro Modul", 0, "L")
+            self.multi_cell(
+                0,
+                5,
+                "Modul-Leistungsoptimierer zur individuelle Schattenerkennung pro Modul",
+                0,
+                "L",
+            )
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
@@ -1109,18 +1138,19 @@ class PDF(FPDF):
             self.cell(0, 6, "Ladestation für E-Fahrzeug (Wallbox)", 0, 0, "L")
             self.set_y(y + 30)
             self.set_x(25)
-            self.multi_cell(0, 5, str(data["wallboxTyp"]), 0, "L")
-            self.set_y(y + 30)
+            self.multi_cell(0, 6, str(data["wallboxTyp"]), 0, "L")
+            self.set_y(y + 25)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 5, str(data["wallboxAnz"]), 0, "L")
+            self.multi_cell(0, 6, str(data["wallboxAnz"]), 0, "L")
             self.set_y(y + 25)
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
         # Seite voll
         y = y + 55
         self.set_y(y)
-        return(eintrag)
+        return eintrag
+
     def lastPage(self, data, eintrag):
         self.add_page()
         self.is_last_page = False
@@ -1213,9 +1243,7 @@ class PDF(FPDF):
             w=32,
             h=24,
         )
-        
 
-    
     def page5(self, eintrag):
         self.is_last_page = True
         self.add_page()
@@ -1244,9 +1272,9 @@ class PDF(FPDF):
             "Muster-Widerrufsformular",
             "§ 15 Online-Streitbeilegung",
             "§ 16 Datenschutz",
-            "§ 17 Schlussbestimmungen"
-            ] 
-        
+            "§ 17 Schlussbestimmungen",
+        ]
+
         regular_texts = [
             """(1) Für die Geschäftsbeziehung zwischen der JUNO SOLAR Home GmbH & Co. KG,
 Ziegelstraße 1a, 08412 Werdau (im Folgenden: Anbieter) und dem Kunden gelten
@@ -1293,7 +1321,7 @@ zustande gekommen.
 (5) Vertragsbestandteile sind in nachstehender Reihen- und Rangfolge:
 (a) die Angaben des Kunden
 (b) das Angebot des Anbieters
-(c) diese AGB.""", #regular_text2
+(c) diese AGB.""",  # regular_text2
             """(1) Der Anbieter verpflichtet sich gegenüber dem Kunden, die ihm angebotene
 und bestätigte (siehe § 2 (2)-(5)) Solaranlage zu liefern, zu installieren und in
 Betrieb zu nehmen. Hierunter fallen auch die Beratung, Planung, Anmeldung
@@ -1301,7 +1329,7 @@ sowie die Registrierung bei Behörden, soweit sich aus dem Angebot nichts
 anderes ergibt.
 (2) Der Anbieter behält sich vor, bei Nichtverfügbarkeit einzelner Komponenten
 solche mit vergleichbarer Qualität und Ausstattung zu liefern. Teillieferungen sind
-zulässig, soweit sie dem Kunden zumutbar sind.""", #regular_text3
+zulässig, soweit sie dem Kunden zumutbar sind.""",  # regular_text3
             """Stellt sich nach Vertragsabschluss heraus, dass Abweichungen von den zuvor vom
 Kunden gemachten Angaben oder vor Ort feststellbaren tatsächlichen
 Gegebenheiten erkennbar werden, die eine Änderung der Solaranlage erfordern,
@@ -1315,7 +1343,7 @@ Einigung zwischen den Parteien nicht innerhalb von 14 Tagen ab Kenntnis des
 Anbieters von der Abweichung und Mitteilung dieser Erkenntnis gegenüber dem
 Kunden nicht zustande, ist der Anbieter berechtigt, von dem Vertrag
 zurückzutreten. Gleiches gilt für den Fall, dass eine notwendige Anpassung nicht
-möglich oder durchführbar ist.""", #regular_text4
+möglich oder durchführbar ist.""",  # regular_text4
             """(1) Der Kunde ist zur Mitwirkung verpflichtet, soweit sich das aus den in diesem
 Vertrag und in dem Angebot geregelten Pflichten ergibt oder dies sonst zur
 Erfüllung dieses Vertrags erforderlich ist oder wird.
@@ -1355,7 +1383,7 @@ mittels Hubwagens ebenerdig zugänglich sein.
 (9) Sofern und soweit die angelieferte Ware Transportschäden aufweist, wird der
 Kunde dem jeweiligen Mitarbeiter des Transportunternehmens gegenüber diese
 sofort reklamieren und den Anbieter hierüber schnellstmöglich unterrichten.
-Gewährleistungsrechte des Kunden werden hierdurch nicht berührt.""", #regular_text5
+Gewährleistungsrechte des Kunden werden hierdurch nicht berührt.""",  # regular_text5
             """(1) Alle Preisangaben des Anbieters verstehen sich einschließlich der jeweils
 gültigen gesetzlichen Umsatzsteuer. Die Umsatzsteuer wird gegebenenfalls
 gesondert ausgewiesen.
@@ -1371,7 +1399,7 @@ hat der Kunde einen Zahlungsnachweis vorzulegen)
 nach EEG.
 (6) Der Anbieter ist berechtigt, sämtliche Ansprüche, Eigentumsrechte und
 Anwartschaftsrechte aus diesem Vertragsverhältnis gegenüber dem Kunden an
-Dritte abzutreten.""", #regular_text6
+Dritte abzutreten.""",  # regular_text6
             """Soweit ein Hersteller einzelner, vom Anbieter gelieferter, Komponenten eine
 Garantie für diese Produkte gibt, kann sich der Kunde zur Geltendmachung von
 Rechten aus diesem Vertragsverhältnis nicht an den Anbieter wenden. Das
@@ -1379,11 +1407,11 @@ Garantieverhältnis besteht ausschließlich zwischen dem Hersteller als
 Garantiegeber und dem Kunden. Der Anbieter ist kein Erklärungsempfänger oder
 Erklärungsgegner des Garantiegebers. Dies gilt auch für den Fall, dass derartige
 Garantien auf der Internetpräsenz des Anbieters oder anderweitig beworben
-werden.""", #regular_text7
+werden.""",  # regular_text7
             """Der Einsatz von Nachunternehmern ist dem Anbieter grundsätzlich gestattet. Die
 vom Anbieter auszuwählenden Nachunternehmer müssen sich gewerbsmäßig
 mit der Ausführung der zu vergebenden Leistung befassen. Sie müssen
-fachkundig, leistungsfähig und zuverlässig sein.""", #regular_text8
+fachkundig, leistungsfähig und zuverlässig sein.""",  # regular_text8
             """(1) Handelt es sich bei dem Kunden um einen Verbraucher, verbleibt die gelieferte
 Ware bis zur vollständigen Bezahlung im Eigentum des Anbieters.
 (2) Handelt es sich bei dem Kunden um eine juristische Person des öffentlichen
@@ -1409,13 +1437,13 @@ lediglich die Ware heraus zu verlangen und sich den Rücktritt vorzubehalten.
 Zahlt der Kunde die fällige Vergütung nicht, darf der Anbieter diese Rechte nur
 geltend machen, wenn er dem Kunden zuvor erfolglos eine angemessene Frist
 zur Zahlung gesetzt hat oder eine derartige Fristsetzung nach den gesetzlichen
-Vorschriften entbehrlich ist.""", #regular_text9
+Vorschriften entbehrlich ist.""",  # regular_text9
             """Der Anbieter haftet für Leistungsstörungen nach den hierfür geltenden
-gesetzlichen Vorschriften (§§ 633 ff. BGB). """, #regular_text10
+gesetzlichen Vorschriften (§§ 633 ff. BGB). """,  # regular_text10
             """Der Kunde ist verpflichtet, das vertragsmäßig hergestellte Werk abzunehmen,
 sofern nicht nach der Beschaffenheit des Werkes die Abnahme ausgeschlossen
 ist. Wegen unwesentlicher Mängel kann die Abnahme nicht verweigert werden. Im
-Übrigen gelten § 640a BGB sowie § 650b BGB.""", #regular_text11
+Übrigen gelten § 640a BGB sowie § 650b BGB.""",  # regular_text11
             """(1) Soweit sich aus diesen AGB einschließlich der nachfolgenden Bestimmungen
 nichts anderes ergibt, haftet der Anbieter bei einer Verletzung von vertraglichen
 und außervertraglichen Pflichten nach den gesetzlichen Vorschriften.
@@ -1440,7 +1468,7 @@ Produkthaftungsgesetz.
 (4) Wegen einer Pflichtverletzung, die nicht in einem Mangel besteht, kann der
 Kunde nur zurücktreten oder kündigen, wenn der Anbieter die Pflichtverletzung
 zu vertreten hat. Ein freies Kündigungsrecht des Kunden wird ausgeschlossen. Im
-Übrigen gelten die gesetzlichen Voraussetzungen und Rechtsfolgen.""", #regular_text12
+Übrigen gelten die gesetzlichen Voraussetzungen und Rechtsfolgen.""",  # regular_text12
             """Der Anbieter haftet nicht für Unmöglichkeit der Lieferung/Leistungserbringung
 oder für Lieferverzögerungen, soweit diese durch höhere Gewalt oder sonstige,
 zum Zeitpunkt des Vertragsabschlusses nicht vorhersehbare Ereignisse (zB.
@@ -1459,7 +1487,7 @@ Leistungsfristen oder verschieben sich die Liefer- oder Leistungstermine um
 den Zeitraum der Behinderung zuzüglich einer angemessenen Anlauffrist. Soweit
 dem Kunden infolge der Verzögerung die Abnahme der Lieferung oder Leistung
 nicht zuzumuten ist, kann er durch unverzügliche schriftliche Erklärung
-gegenüber dem Anbieter vom Vertrag zurücktreten.""", #regular_text13
+gegenüber dem Anbieter vom Vertrag zurücktreten.""",  # regular_text13
             """(1) Verbraucher haben grundsätzlich ein gesetzliches Widerrufsrecht, über das der
 Anbieter nach Maßgabe des gesetzlichen Musters nachfolgend informiert. In (2)
 findet sich ein Muster-Widerrufsformular. Sie haben das Recht, binnen vierzehn Tagen
@@ -1475,7 +1503,7 @@ Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das
 beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht
 vorgeschrieben ist.
 Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die
-Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.""", #regular_text14
+Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.""",  # regular_text14
             """Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir
 von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der
 zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der
@@ -1493,7 +1521,7 @@ Widerrufsrechts hinsichtlich dieses Vertrags unterrichten, bereits erbrachten
 Vertragsleistungen im Vergleich zum Gesamtumfang der im Vertrag
 vorgesehenen Leistungen entspricht.
 (2) Über das Muster-Widerrufsformular informiert der Anbieter nach der
-gesetzlichen Regelung wie folgt:""", #regular_text15
+gesetzlichen Regelung wie folgt:""",  # regular_text15
             """(Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses Formular
 aus und senden Sie es zurück.)
 — An JUNO SOLAR Home GmbH & Co. KG, Ziegelstraße 1a, 08412 Werdau,
@@ -1507,16 +1535,16 @@ Telefon: 03761/4170800, Telefax: 03761/4170849, E-Mail: info@juno-solar.de:
             -   Anschrift des/der Verbraucher(s)
             -   Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf
                 Papier)
-            -   Datum""", #regular_text16
+            -   Datum""",  # regular_text16
             """(1) Die europäische Kommission stellt eine Plattform zur online-Streitbeilegung
 bereit, die im Internet unter https://ec.europa.eu/consumers/odr/ zu finden ist.
 (2) Der Anbieter ist nicht verpflichtet, an einem Streitbeilegungsverfahren vor
 einer Verbraucher-schlichtungsstelle teilzunehmen und nimmt auch nicht
-freiwillig daran teil.""", #regular_text17
+freiwillig daran teil.""",  # regular_text17
             """Die an den Anbieter übermittelten Daten werden in Übereinstimmung mit dem
 BDSG und der DSGVO gespeichert und verarbeitet. Die einzelnen Rechte und
 Pflichten ergeben sich aus der Datenschutzerklärung. Diese finden Sie unter
-https://www.juno-solar.com.""", #regular_text18
+https://www.juno-solar.com.""",  # regular_text18
             """(1) Auf Verträge zwischen dem Anbieter und dem Kunden findet das Recht der
 Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts Anwendung.
 Die gesetzlichen Vorschriften zur Beschränkung der Rechtswahl und zur
@@ -1531,22 +1559,23 @@ Anbieters.
 seinen übrigen Teilen verbindlich. Anstelle der unwirksamen Punkte treten, soweit
 vorhanden, die gesetzlichen Vorschriften. Soweit dies für eine Vertragspartei eine
 unzumutbare Härte darstellen würde, wird der Vertrag jedoch im Ganzen
-unwirksam.""" #regular_text19
+unwirksam.""",  # regular_text19
+        ]
 
-            
-        ]  
-        
         column_width = 1000
-        columns_start_x = [15, self.w / 2 + 5]  # assuming two columns with the page split in the middle
+        columns_start_x = [
+            15,
+            self.w / 2 + 5,
+        ]  # assuming two columns with the page split in the middle
         column = 0
         self.set_y(10)
 
         line_counter = 0
 
         for bold, regular in zip(bold_texts, regular_texts):
-        # Check if adding more strings would exceed the 200-string limit
-            bold_lines = len(bold.split('\n'))
-            regular_lines = len(regular.split('\n'))
+            # Check if adding more strings would exceed the 200-string limit
+            bold_lines = len(bold.split("\n"))
+            regular_lines = len(regular.split("\n"))
 
             if line_counter + bold_lines + regular_lines > 96:
                 if column == 1:  # If it's the second column, we add a new page.
@@ -1556,7 +1585,7 @@ unwirksam.""" #regular_text19
                     column += 1  # Move to the next column
                 self.set_y(10)  # Reset y to top
                 line_counter = 0  # Reset line counter for new column/columns
-            
+
             # Set x position based on column
             self.set_x(columns_start_x[column])
 
@@ -1565,14 +1594,13 @@ unwirksam.""" #regular_text19
             self.set_font_size_to_fit(bold, column_width)
             self.multi_cell(column_width, 3.2, txt=bold)
             line_counter += bold_lines
-            
+
             self.set_x(columns_start_x[column])
             # Print regular text
             self.set_font("JUNO Solar Lt", "", 8)
             self.set_font_size_to_fit(regular, column_width)
             self.multi_cell(column_width, 3.2, txt=regular)
             line_counter += regular_lines
-
 
     def set_font_size_to_fit(self, text, width=1000):
         # Current size and width of the text
@@ -1588,7 +1616,7 @@ unwirksam.""" #regular_text19
 
         # Set the font size
         self.set_font_size(font_size)
-    
+
 
 def createOfferPdf(data, vertrieb_angebot, user):
     global title, pages

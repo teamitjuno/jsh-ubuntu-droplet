@@ -19,7 +19,8 @@
         <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css' rel='stylesheet' />
-
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <!-- App css -->
         <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -37,10 +38,10 @@
     <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
-{% endblock %}
-{% block head_extra %}
-{% endblock %}        
-        <body>
+    {% endblock %}
+    {% block head_extra %}
+    {% endblock %}        
+    <body>
 
             
             <!-- Begin page -->
@@ -57,7 +58,7 @@
                                 <!-- Logo light -->
                                 <a href="{% url 'vertrieb_interface:home' %}" class="logo-light">
                                     <span class="logo-lg">
-                                        <img src="{% static 'img/apple-icon.png' %}" height="80" alt="logo">
+                                        <img src="{% static 'img/apple-icon2.png' %}" width="100%" alt="logo">
                                     </span>
                                     <span class="logo-sm">
                                         <img src="{% static 'assets/images/logo-sm.png' %}" alt="small logo">
@@ -67,7 +68,7 @@
                                 <!-- Logo Dark -->
                                 <a href="{% url 'vertrieb_interface:home' %}" class="logo-dark">
                                     <span class="logo-lg">
-                                        <img src="{% static 'img/apple-icon.png' %}" height="80" alt="dark logo">
+                                        <img src="{% static 'img/apple-icon2.png' %}" alt="dark logo">
                                     </span>
                                     <span class="logo-sm">
                                         <img src="{% static 'assets/images/logo-dark-sm.png' %}" alt="small logo">
@@ -158,7 +159,7 @@
                     <a href="{% url 'vertrieb_interface:home' %}" class="logo logo-light">
                         
                         <span class="logo-lg">
-                            <img src="{% static 'assets/images/apple-icon.png' %}" alt="logo">
+                            <img src="{% static 'img/apple-icon3.png' %}" width="25%" height="120px" alt="logo">
                         </span>
                         <span class="logo-sm">
                             <img src="{% static 'assets/images/logo-sm.png' %}" alt="small logo">
@@ -168,7 +169,7 @@
                     <!-- Brand Logo Dark -->
                     <a href="{% url 'vertrieb_interface:home' %}" class="logo logo-dark">
                         <span class="logo-lg">
-                            <img src="{% static 'assets/images/apple-icon.png' %}" alt="dark logo">
+                            <img src="{% static 'img/apple-icon3.png' %}" width="25%"  alt="dark logo">
                         </span>
                         <span class="logo-sm">
                             <img src="{% static 'assets/images/logo-dark-sm.png' %}" alt="small logo">
@@ -270,7 +271,7 @@
                 </div>
             <!-- ========== Left Sidebar End ========== -->
 
-                {% block content %}
+            {% block content %}
                 <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content modal-filled bg-success">
@@ -334,8 +335,8 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div>
-                {% endblock %}
-                
+            {% endblock %}
+        </div>        
             <!-- Theme Settings -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
             <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
@@ -998,62 +999,52 @@
                         <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
                     </div>
                     <div class="col-6">
-                        
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-{% block javascript %}{% endblock %}
+    
+        {% block javascript %}
+        {% endblock %}
+            <script>
+                function disableFor30Seconds(event) {
+                    var loadButton = document.getElementById('loadButton');
+                    var loadingMessage = document.getElementById('loadingMessage');
 
+                    loadButton.disabled = true;
+                    loadingMessage.style.display = 'inline'; // make the loading message visible
+
+                    setTimeout(function(){
+                        loadButton.disabled = false;
+                        loadingMessage.style.display = 'none'; // hide the loading message
+                    }, 30000);
+                }
+            </script>
+            <script>
+                function showProgressBar(event) {
+                    event.preventDefault(); // prevent the page from navigating
+
+                    // get the progress bar element
+                    var progressBar = document.getElementById('progressBar');
+
+                    // show the progress bar
+                    progressBar.style.display = "block";
+
+                    // disable the link for 30 seconds
+                    setTimeout(function() {
+                        progressBar.style.display = "none";
+                    }, 30000); // hide it again after 30 seconds
+                }
+            </script>   
+        {% block extra_js %}  
+            <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+            <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+            <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+            <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+            <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+            <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+            <script src="{% static 'assets/js/app.min.js' %}"></script>
+        {% endblock %}
       
-  <!-- Bootstrap JavaScript Bundle -->
-  <script>
-    function disableFor30Seconds(event) {
-        var loadButton = document.getElementById('loadButton');
-        var loadingMessage = document.getElementById('loadingMessage');
-
-        loadButton.disabled = true;
-        loadingMessage.style.display = 'inline'; // make the loading message visible
-
-        setTimeout(function(){
-            loadButton.disabled = false;
-            loadingMessage.style.display = 'none'; // hide the loading message
-        }, 30000);
-    }
-</script>
-<script>
-    function showProgressBar(event) {
-        event.preventDefault(); // prevent the page from navigating
-
-        // get the progress bar element
-        var progressBar = document.getElementById('progressBar');
-
-        // show the progress bar
-        progressBar.style.display = "block";
-
-        // disable the link for 30 seconds
-        setTimeout(function() {
-            progressBar.style.display = "none";
-        }, 30000); // hide it again after 30 seconds
-    }
-</script>   
-{% block extra_js %}  
-      <script src="{% static 'assets/js/vendor.min.js' %}"></script>
-    
-      <!-- Code Highlight js -->
-      <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
-      <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
-      <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
-    
-      <!-- Vector Map js -->
-      <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-      <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
-
-      <!-- App js -->
-      <script src="{% static 'assets/js/app.min.js' %}"></script>
-    
-{% endblock %}
-      
-  </body>
+    </body>
 </html> 

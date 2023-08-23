@@ -60,7 +60,7 @@
 
             <div class="row">
                 <div class="col-xl-6">
-                    <div class="card">
+                    <div class="card border-primary border">
                         <div class="card-body">
                             <h5 class="card-title">Hallo, {{ user.first_name }} </h5>
                             <h6 class="card-subtitle text-muted">in diesem Portal kannst Du ein Angebote für Photovoltaikanlagen erstellen.</h6>
@@ -76,7 +76,7 @@
                                 <a href="javascript:void(0);" id="load-user-angebots-button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
                                     Aus JPP Einträge erneuern
                                     <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
-                                    <span class="loading-text" style="display: none;">Bitte warten...</span>
+                                    <span class="loading-text" style="display: none;">Der Download ist in Arbeit...</span>
                                 </a>
                                 {% comment %} <script>
                                     $(document).ready(function() {
@@ -114,8 +114,8 @@
                                             <div class="modal-body p-4">
                                                 <div class="text-center">
                                                     <i class="ri-check-line h1"></i>
-                                                    <h4 class="mt-2">Erfolgreich!</h4>
-                                                    <p class="mt-3">Die Daten wurden erfolgreich hochgeladen!</p>
+                                                    <h3 class="mt-1">Erfolgreich!</h3>
+                                                    <p class="mt-2 h4">Die Daten wurden erfolgreich hochgeladen!</p>
                                                     <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter...</button>
                                                 </div>
                                             </div>
@@ -128,44 +128,9 @@
                                             <div class="modal-body p-4">
                                                 <div class="text-center">
                                                     <i class="ri-information-line h1 text-info"></i>
-                                                    <h4 class="mt-2">Achtung! </h4>
-                                                    <p class="mt-3">Das Herunterladen der Daten von ZOHO kann einige Zeit dauern. Klicken Sie auf die Schaltfläche "Weiter..." und warten Sie, bis die Seite fertig geladen ist.</p>
+                                                    <h3 class="mt-2">Hinweis!</h3>
+                                                    <p class="mt-3 p3">Der Download von Daten aus JPP könnte etwas Zeit inHinweis! Anspruch nehmen. Bitte drücken Sie auf "Weiter..." und haben Sie etwas Geduld, bis die Seite komplett geladen ist.</p>
                                                     <button type="button" id="continueButtonn" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-                                                    {% comment %} <script>
-                                                        $(document).ready(function(){
-                                                            $("#continueButtonn").click(function(){
-                                                                // perform your action here
-                                                                loadUserAngebots();
-                                                            });
-                                                        });
-                                                        
-                                                        function loadUserAngebots() {
-                                                            var url = "{% url 'vertrieb_interface:load_user_angebots' %}";
-                                                        
-                                                            // Simulating a long-lasting operation.
-                                                            setTimeout(function () {
-                                                                fetch(url, {
-                                                                    method: 'GET', // Or whatever HTTP method you need
-                                                                    headers: {
-                                                                        'Content-Type': 'application/json',
-                                                                    },
-                                                                })
-                                                                .then(response => response.json())
-                                                                .then(data => {
-                                                                    // When the data is received, show the success alert modal.
-                                                                    $('#success-alert-modal').modal('show');
-                                                                })
-                                                                .catch((error) => {
-                                                                    console.error('Error:', error);
-                                                                });
-                                                            }, 3000);
-                                                        }
-                                                        
-                                                        // Redirect to another page when the success modal is hidden
-                                                        $('#success-alert-modal').on('hidden.bs.modal', function (e) {
-                                                            window.location.href = "{% url 'vertrieb_interface:load_user_angebots' %}";
-                                                        });
-                                                        </script> {% endcomment %}
                                                         <script>
                                                         $(document).ready(function() {
                                                             function ajaxUpdateForAngebots($button, url, successMessage) {
@@ -220,7 +185,8 @@
                             <p></p>                     
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
-                    <div class="card">
+                    {% if user.angebot_statusubersicht_view == True %}
+                    <div class="card border-info border">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h4 class="header-title">Angebote Statusübersicht</h4>
                         </div>
@@ -290,9 +256,11 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
-
+            
             <div class="col-xl-3">
+            {% if user.anzahl_sol_module_view == True %}
                 <div class="card border-info border">
                     <div class="d-flex card-header justify-content-between align-items-center">
                         <h4 class="header-title">Anzahl der verkauften Solarmodule</h4>
@@ -333,9 +301,10 @@
                         </div> <!-- end table-responsive-->
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
+                {% endif %}
 
                         
-
+                {% if user.pv_rechner_view == True %}
                 <div class="card border-info border p-0">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="header-title">Schnell-PV-Rechner</h4>
@@ -401,10 +370,12 @@
                         </form>
                     </div>
                 </div>
+                {% endif %}
 
  
             </div>
                 <div class="col-xl-3">
+                    {% if user.profile_container_view == True %}
                     <div class="card border-info border">
                         <div class="card-body">
                             <span class="float-start m-2 me-4">
@@ -428,6 +399,8 @@
                         </div>
                         <!-- end card-body-->
                     </div>
+                    {% endif %}
+                        {% if user.activity_container_view == True %}
                         <div class="card border-info border">
                             <div class="d-flex card-header justify-content-between align-items-center">
                                 <h4 class="header-title">Letzte Aktivitäten </h4>
@@ -452,6 +425,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     </div>  
                         <!-- end card-->
                 </div>
@@ -474,8 +448,8 @@
                                                 <div class="modal-body p-4">
                                                     <div class="text-center">
                                                         <i class="ri-check-line h1"></i>
-                                                        <h4 class="mt-2">Gut gemacht!</h4>
-                                                        <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
+                                                        <h4 class="mt-2">Erfolgreich!</h4>
+                                                        <p class="mt-3">Die Unterstützungsnachricht per E-Mail wurde erfolgreich gesendet</p>
                                                         <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
                                                     </div>
                                                 </div>

@@ -2,7 +2,13 @@ import os
 import json
 import requests
 from dotenv import load_dotenv, find_dotenv, set_key
-from config.settings import ENV_FILE, ZOHO_ACCESS_TOKEN, ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN
+from config.settings import (
+    ENV_FILE,
+    ZOHO_ACCESS_TOKEN,
+    ZOHO_CLIENT_ID,
+    ZOHO_CLIENT_SECRET,
+    ZOHO_REFRESH_TOKEN,
+)
 from vertrieb_interface.models import VertriebAngebot
 
 # Global constants
@@ -110,8 +116,6 @@ def fetch_all_user_angebots(request):
 
         print(f"access_token is alive, status code: {response.status_code}")
         start_index += LIMIT_ALL
-    
-    
 
     return all_user_angebots_list
 

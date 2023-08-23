@@ -17,14 +17,17 @@ from django.utils.formats import date_format
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
-now_german = date_format(now_localized, 'DATETIME_FORMAT')
+now_german = date_format(now_localized, "DATETIME_FORMAT")
 load_dotenv(ENV_FILE)
 
 User = get_user_model()
+
+
 class ModulePreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.name}" #type: ignore
-    
+        return f"{obj.name}"  # type: ignore
+
+
 VERTRIEB_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Elektrikkalender"
 ACCESS_TOKEN_URL = "https://accounts.zoho.eu/oauth/v2/token"
@@ -130,12 +133,11 @@ def validate_integers(value):
             params={"value": value},
         )
 
+
 def validate_integers_ticket(value):
     if not isinstance(value, int):
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."
-            ),
+            ("Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."),
             params={"value": value},
         )
 
@@ -158,6 +160,7 @@ def validate_solar_module_ticket_anzahl(value):
             ),
             params={"value": value},
         )
+
 
 def validate_optimizer_ticket_anzahl(value):
     if value > 4:
@@ -186,10 +189,8 @@ def validate_empty(value):
         )
 
 
-    
 class VertriebAngebotForm(ModelForm):
     is_locked = forms.BooleanField(
-        
         required=False,
         widget=forms.CheckboxInput(
             attrs={
@@ -292,7 +293,11 @@ class VertriebAngebotForm(ModelForm):
         label="Vor-, Nachname",
         required=False,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "id": "id_vorname_nachname", "style": "max-width: 300px"}
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname_nachname",
+                "style": "max-width: 300px",
+            }
         ),
     )
     telefon_mobil = forms.CharField(
@@ -364,7 +369,6 @@ class VertriebAngebotForm(ModelForm):
         label="PLZ & Ort",
         max_length=100,
         required=False,
-        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -375,20 +379,20 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     postanschrift_latitude = forms.CharField(
-        required=False, widget=forms.TextInput(
+        required=False,
+        widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "id": "id_postanschrift_latitude",
-                
             }
         ),
     )
     postanschrift_longitude = forms.CharField(
-                required=False, widget=forms.TextInput(
+        required=False,
+        widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "id": "id_postanschrift_longitude",
-                
             }
         ),
     )
@@ -421,7 +425,6 @@ class VertriebAngebotForm(ModelForm):
         label="Strom Grundpreis [€/Monat]",
         initial=11.4,
         required=True,
-        
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -510,7 +513,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-check-input",
                 "id": "speicher",
-                
             }
         ),
     )
@@ -521,7 +523,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-check-input",
                 "id": "wandhalterung_fuer_speicher",
-                
             }
         ),
     )
@@ -634,7 +635,7 @@ class VertriebAngebotForm(ModelForm):
     solar_module = forms.ChoiceField(
         label="Solar Module",
         widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
-        )
+    )
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
         initial=0,
@@ -822,9 +823,18 @@ class VertriebAngebotForm(ModelForm):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
         # Save the initial status so we can check if it's changed in the save method
         profile = User.objects.get(zoho_id=user.zoho_id)
-        self.fields['solar_module'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
-        self.fields['module_ticket'].choices = [(module.name, module.name) for module in SolarModulePreise.objects.filter(in_stock=True)]
-        self.fields['wallboxtyp'].choices = [(module.name, module.name) for module in WallBoxPreise.objects.filter(in_stock=True)]
+        self.fields["solar_module"].choices = [
+            (module.name, module.name)
+            for module in SolarModulePreise.objects.filter(in_stock=True)
+        ]
+        self.fields["module_ticket"].choices = [
+            (module.name, module.name)
+            for module in SolarModulePreise.objects.filter(in_stock=True)
+        ]
+        self.fields["wallboxtyp"].choices = [
+            (module.name, module.name)
+            for module in WallBoxPreise.objects.filter(in_stock=True)
+        ]
         data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])
@@ -836,18 +846,25 @@ class VertriebAngebotForm(ModelForm):
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
-        self.fields["postanschrift_latitude"].widget.attrs.update({"id": "id_postanschrift_latitude"})
-        self.fields["postanschrift_longitude"].widget.attrs.update({"id": "id_postanschrift_longitude"})
-        
+        self.fields["postanschrift_latitude"].widget.attrs.update(
+            {"id": "id_postanschrift_latitude"}
+        )
+        self.fields["postanschrift_longitude"].widget.attrs.update(
+            {"id": "id_postanschrift_longitude"}
+        )
+
         self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
-        self.fields["wandhalterung_fuer_speicher"].widget.attrs.update({"id": "wandhalterung_fuer_speicher"})
-        self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "anz_wandhalterung_fuer_speicher"})
+        self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
+            {"id": "wandhalterung_fuer_speicher"}
+        )
+        self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update(
+            {"id": "anz_wandhalterung_fuer_speicher"}
+        )
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
-        
 
         for field in self.fields:
             if self.initial.get(field):
@@ -855,16 +872,18 @@ class VertriebAngebotForm(ModelForm):
                     {"placeholder": self.initial[field]}
                 )
         if not user.role.name == "admin":
-        # Remove the 'angenommen' and 'abgelaufen' choices
-            self.fields['status'].choices = [
-                choice for choice in self.fields['status'].choices if choice[0] not in ["angenommen", "abgelaufen"]
-        ]
+            # Remove the 'angenommen' and 'abgelaufen' choices
+            self.fields["status"].choices = [
+                choice
+                for choice in self.fields["status"].choices
+                if choice[0] not in ["angenommen", "abgelaufen"]
+            ]
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
 
         # Check if status is 'bekommen'
-        
+
         if form.status == "bekommen":
             try:
                 # Try to get the object from the database
@@ -881,20 +900,18 @@ class VertriebAngebotForm(ModelForm):
 
                     db_object.save()
                     form.save()
-                
+
                 if db_countdown_on == True:
                     form.status_change_date = db_object.status_change_date
                     form.status_change_field = db_object.status_change_field
                     form.save()
-                    
-                        
 
             except VertriebAngebot.DoesNotExist:
                 pass
 
             form.save()
         else:
-            form.status_change_date = None 
+            form.status_change_date = None
             form.status_change_field = None
             form.save()
 
@@ -905,11 +922,10 @@ class VertriebAngebotForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        
 
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
-        
+
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
                 self.add_error(
@@ -933,7 +949,7 @@ class VertriebAngebotForm(ModelForm):
         speicher = cleaned_data.get("speicher")
         anz_speicher = cleaned_data.get("anz_speicher")
         if speicher == True and anz_speicher is not None:
-            if anz_speicher <= 0: 
+            if anz_speicher <= 0:
                 self.add_error(
                     "anz_speicher",
                     ValidationError(
@@ -947,21 +963,19 @@ class VertriebAngebotForm(ModelForm):
                     ),
                 )
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
-        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4 :
+        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(
-                    "modul_anzahl_ticket",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Ticket kann nicht mehr als 4 sein"
-                        ),
-                        params={
-                            "modul_anzahl_ticket": modul_anzahl_ticket,
-                        },
-                    ),
-                )
+                "modul_anzahl_ticket",
+                ValidationError(
+                    ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
+                    params={
+                        "modul_anzahl_ticket": modul_anzahl_ticket,
+                    },
+                ),
+            )
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
-        
+
         if wallbox is not None and wallbox_anzahl is not None:
             if wallbox == True and wallbox_anzahl == 0:
                 self.add_error(
@@ -1068,6 +1082,7 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         validators=[validate_integers_ticket],
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
     )
+
     class Meta:
         model = VertriebAngebot
         fields = [
@@ -1079,7 +1094,7 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
             "notstrom_ticket",
             "eddi_ticket",
         ]
-    
+
     def __init__(self, *args, user, **kwargs):
         super(UpdateVertriebAngebotTicketForm, self).__init__(*args, **kwargs)
 
@@ -1088,20 +1103,17 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         if commit:
             form.save()
         return form
-    
 
     def clean(self):
         cleaned_data = super().clean()
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
-        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4 :
+        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(
-                    "modul_anzahl_ticket",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Ticket kann nicht mehr als 4 sein"
-                        ),
-                        params={
-                            "modul_anzahl_ticket": modul_anzahl_ticket,
-                        },
-                    ),
-                )
+                "modul_anzahl_ticket",
+                ValidationError(
+                    ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
+                    params={
+                        "modul_anzahl_ticket": modul_anzahl_ticket,
+                    },
+                ),
+            )

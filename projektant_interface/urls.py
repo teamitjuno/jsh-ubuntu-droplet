@@ -13,9 +13,13 @@ urlpatterns = [
     path("help/", views.help, name="help"),
     path("chat_bot/", views.chat_bot, name="chat_bot"),
     path("view_orders/", views.ViewOrders.as_view(), name="view_orders"),
-    path('create_bauplan_pdf/<int:project_id>/', views.create_project_bauplan_pdf, name='create_bauplan_pdf'),
-    path('document_view/<int:project_id>/', views.document_view, name='document_view'),
-    path('serve_pdf/<int:project_id>/', views.serve_pdf, name='serve_pdf'),
+    path(
+        "create_bauplan_pdf/<int:project_id>/",
+        views.create_project_bauplan_pdf,
+        name="create_bauplan_pdf",
+    ),
+    path("document_view/<int:project_id>/", views.document_view, name="document_view"),
+    path("serve_pdf/<int:project_id>/", views.serve_pdf, name="serve_pdf"),
     # path('test_pdf/', views.test_pdf_generation, name='test_pdf_generation'),
 ]
 

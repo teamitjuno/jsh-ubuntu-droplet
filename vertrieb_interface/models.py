@@ -25,9 +25,11 @@ from django.utils.formats import date_format
 import dateparser
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
+
 now = timezone.now()
-now_german = date_format(now, 'DATETIME_FORMAT')
+now_german = date_format(now, "DATETIME_FORMAT")
 User = get_user_model()
+
 
 def extract_modulleistungWp(model_name):
     # Split the name by spaces and filter out parts that are purely digits
@@ -37,6 +39,7 @@ def extract_modulleistungWp(model_name):
             return int(part)
     return None
 
+
 def get_modulleistungWp_from_map(module_name_map):
     result = {}
     for model_name, description in module_name_map.items():
@@ -45,15 +48,18 @@ def get_modulleistungWp_from_map(module_name_map):
             result[model_name] = power
     return result
 
+
 class LogEntryManager(models.Manager):
-    def log_action(self, user_id, content_type_id, object_id, object_repr, action_flag, status=None):
+    def log_action(
+        self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
+    ):
         change_message = ""  # default value
 
         if status:
             if status == "angenommen":
                 change_message = f"<<Angenommen>>"
             elif status == "bekommen":
-                change_message = f'Status geändert zu <<{status}>> '
+                change_message = f"Status geändert zu <<{status}>> "
             elif status == "abgelaufen":
                 change_message = f"<<Abgelaufen>>"
             elif status == "in Kontakt":
@@ -72,7 +78,8 @@ class LogEntryManager(models.Manager):
             action_flag=action_flag,
             change_message=change_message,
         )
-    
+
+
 class CustomLogEntry(LogEntry):
     class Meta:
         proxy = True
@@ -80,14 +87,15 @@ class CustomLogEntry(LogEntry):
     objects = LogEntryManager()  # don't forget to set the manager
 
     def get_vertrieb_angebot(self):
-        from vertrieb_interface.models import VertriebAngebot  
+        from vertrieb_interface.models import VertriebAngebot
+
         if self.content_type.model_class() == VertriebAngebot:
             try:
                 return VertriebAngebot.objects.get(angebot_id=self.object_id)
             except VertriebAngebot.DoesNotExist:
                 # Handle the case where no matching record is found
                 # For instance, return None, or handle it in another appropriate way for your application
-                return VertriebAngebot.objects.filter(angebot_id=self.object_id).first() 
+                return VertriebAngebot.objects.filter(angebot_id=self.object_id).first()
         return None
 
     def get_change_message(self):
@@ -98,21 +106,24 @@ class CustomLogEntry(LogEntry):
                 return f"Der Angebot aktualisiert -  {self.change_message}"
             else:
                 return f"Der Angebot aktualisiert"
+        elif self.is_deletion():
+            return f"Der Angebot aktualisiert"
         else:
             return "LogEntry Object"
-
 
 
 def sanitize_cache_key(key):
     sanitized_key = hashlib.md5(key.encode()).hexdigest()
     return sanitized_key
+
+
 def get_price(model, name):
     model_name = model.__name__
     key = f"{model_name}_{name}"
-    
+
     # Sanitize the key before using it with cache
     sanitized_key = sanitize_cache_key(key)
-    
+
     price = cache.get(sanitized_key)
     if price is None:
         try:
@@ -127,7 +138,6 @@ def get_price(model, name):
 MODULE_NAME_MAP = {
     "Phono Solar PS420M7GFH-18/VNH": "Phono Solar PS420M7GFH-18/VNH",
     "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-    
 }
 ACCESSORY_NAME = "leistungsmodul"
 BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
@@ -188,7 +198,11 @@ class VertriebAngebot(TimeStampMixin):
     #   ZOHO FIELDS
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(
-        choices=ANGEBOT_STATUS_CHOICES, default="in Kontakt", max_length=255, blank=True, null=True
+        choices=ANGEBOT_STATUS_CHOICES,
+        default="in Kontakt",
+        max_length=255,
+        blank=True,
+        null=True,
     )
     status_change_field = models.DateTimeField(null=True, blank=True)
     status_change_date = models.CharField(max_length=255, null=True, blank=True)
@@ -323,7 +337,9 @@ class VertriebAngebot(TimeStampMixin):
         null=True,
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
-    kabelanschluss = models.FloatField(default=10.0, validators=[MinValueValidator(0)], blank=True, null=True)
+    kabelanschluss = models.FloatField(
+        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )
     hub_included = models.BooleanField(default=False)
 
     module_ticket = models.CharField(
@@ -407,8 +423,11 @@ class VertriebAngebot(TimeStampMixin):
             action_flag = ADDITION
         else:
             action_flag = CHANGE
-        
-        self.postanschrift_latitude, self.postanschrift_longitude = self.coordinates_extractor
+
+        (
+            self.postanschrift_latitude,
+            self.postanschrift_longitude,
+        ) = self.coordinates_extractor
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -430,15 +449,15 @@ class VertriebAngebot(TimeStampMixin):
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
-        
+
         super().save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(
-            user_id=self.user_id, 
+            user_id=self.user_id,
             content_type_id=ContentType.objects.get_for_model(self).pk,
             object_id=self.pk,
             object_repr=str(self),
-            action_flag=action_flag
+            action_flag=action_flag,
         )
 
     def __str__(self) -> str:
@@ -453,6 +472,17 @@ class VertriebAngebot(TimeStampMixin):
     def get_absolute_url(self):
         return reverse("edit_angebot", args=[str(self.angebot_id)])
 
+    def delete(self, *args, **kwargs):
+        # Log deletion before actually deleting
+        CustomLogEntry.objects.log_action(
+            user_id=self.user_id,
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.pk,
+            object_repr=str(self),
+            action_flag=DELETION,  # Assuming DELETION is a flag you have defined somewhere
+        )
+        super().delete(*args, **kwargs)
+
     @property
     def assign_status_change_field(self):
         status_change_field = timezone.localtime(timezone.now())
@@ -462,19 +492,20 @@ class VertriebAngebot(TimeStampMixin):
         if self.status_change_field:
             status_change_datetime = self.status_change_field
 
-
             delta = timezone.now() - status_change_datetime
-             # get the difference in time
+            # get the difference in time
 
-        # Check that status_change_field is within the past 14 days
+            # Check that status_change_field is within the past 14 days
             if delta.days < 0 or delta.days > 14:
                 return None
 
-            total_seconds = 14*24*60*60 - delta.total_seconds()  # convert the difference to seconds
+            total_seconds = (
+                14 * 24 * 60 * 60 - delta.total_seconds()
+            )  # convert the difference to seconds
 
             # calculate days, hours, minutes
-            days, remaining_seconds = divmod(total_seconds, 60*60*24)
-            hours, remaining_seconds = divmod(remaining_seconds, 60*60)
+            days, remaining_seconds = divmod(total_seconds, 60 * 60 * 24)
+            hours, remaining_seconds = divmod(remaining_seconds, 60 * 60)
             minutes = remaining_seconds // 60
 
             if total_seconds <= 0:
@@ -483,7 +514,8 @@ class VertriebAngebot(TimeStampMixin):
             return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
         else:
             return None
-    # @property    
+
+    # @property
     # def mapbox_data(self):
     #     MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
     #     OWNER_ID = os.getenv('OWNER_ID')
@@ -491,7 +523,7 @@ class VertriebAngebot(TimeStampMixin):
 
     #     data = {
     #         "token": MAPBOX_TOKEN,
-    #         
+    #
     #         "latitude": None,
     #         "longitude": None
     #     }
@@ -509,10 +541,10 @@ class VertriebAngebot(TimeStampMixin):
             return "0.0", "0.0"
 
         # Load variables from .env
-        OWNER_ID = os.getenv('OWNER_ID')
-        STYLE_ID = os.getenv('STYLE_ID')
-        MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
-        
+        OWNER_ID = os.getenv("OWNER_ID")
+        STYLE_ID = os.getenv("STYLE_ID")
+        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+
         # Prepare the query string
         query = f"{self.strasse}, {self.ort}"
 
@@ -525,40 +557,34 @@ class VertriebAngebot(TimeStampMixin):
 
         # Extracting latitude and longitude from the response
         try:
-            longitude, latitude = data['features'][0]['geometry']['coordinates']
+            longitude, latitude = data["features"][0]["geometry"]["coordinates"]
             return latitude, longitude
         except (IndexError, KeyError):
             # Handle cases where the address isn't found or the API response structure has unexpected changes
             return 0.0, 0.0
-        
-    @property    
-    def mapbox_data(self):
-        MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
-        OWNER_ID = os.getenv('OWNER_ID')
-        STYLE_ID = os.getenv('STYLE_ID')
 
-        data = {
-            "token": MAPBOX_TOKEN,
-            "latitude": None,
-            "longitude": None
-        }
+    @property
+    def mapbox_data(self):
+        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+        OWNER_ID = os.getenv("OWNER_ID")
+        STYLE_ID = os.getenv("STYLE_ID")
+
+        data = {"token": MAPBOX_TOKEN, "latitude": None, "longitude": None}
 
         if self.postanschrift_latitude and self.postanschrift_longitude:
             data["latitude"] = float(self.postanschrift_latitude)
             data["longitude"] = float(self.postanschrift_longitude)
 
-        url_template = ("https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}")
+        url_template = "https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}"
         url = url_template.format(
-            owner=OWNER_ID, 
-            style=STYLE_ID, 
-            token=MAPBOX_TOKEN, 
-            lat=data["latitude"] if data["latitude"] is not None else '48.138',
-            lon=data["longitude"] if data["longitude"] is not None else '11.575'
+            owner=OWNER_ID,
+            style=STYLE_ID,
+            token=MAPBOX_TOKEN,
+            lat=data["latitude"] if data["latitude"] is not None else "48.138",
+            lon=data["longitude"] if data["longitude"] is not None else "11.575",
         )
-        
-        
-        return url
 
+        return url
 
     @property
     def google_maps_url(self):
@@ -601,10 +627,10 @@ class VertriebAngebot(TimeStampMixin):
             return self.anlagenstandort
         else:
             return f"{self.strasse}, {self.ort}"
+
     @property
     def extract_modulleistungWp_from_name(self):
-        
-        match = re.search(r'(\d+)', str(self.solar_module))
+        match = re.search(r"(\d+)", str(self.solar_module))
         if match:
             return int(match.group(1))
         return 420
@@ -665,7 +691,7 @@ class VertriebAngebot(TimeStampMixin):
             return f"0,4 % Jährliche Degradation\n                                     über 30 Jahre"
         else:
             return "0,4 % Jährliche Degradation\n                                     über 30 Jahre"
-        
+
     @property
     def get_produktgarantie(self):
         if "Phono Solar" in str(self.solar_module):
@@ -674,7 +700,6 @@ class VertriebAngebot(TimeStampMixin):
             return f"25 Jahre"
         else:
             return "15 Jahre"
-        
 
     @property
     def get_komplexity(self):
@@ -718,7 +743,7 @@ class VertriebAngebot(TimeStampMixin):
             multiplier = 0
         price = get_price(model, name)
         return price * multiplier
-    
+
     @property
     def Total_anzahl(self):
         total = 0
@@ -736,7 +761,9 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def solar_module_gesamt_preis(self):
         module_prices = self.get_module_prices()
-        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        module_name = (
+            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        )
         try:
             return float(module_prices[module_name]) * int(self.modulanzahl)
         except KeyError:
@@ -746,10 +773,15 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
-        if self.wandhalterung_fuer_speicher == True and self.anz_wandhalterung_fuer_speicher != 0:
+        if (
+            self.wandhalterung_fuer_speicher == True
+            and self.anz_wandhalterung_fuer_speicher != 0
+        ):
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
-                OptionalAccessoriesPreise, "wandhalterung_fuer_speicher", anz_wandhalterung_fuer_speicher
+                OptionalAccessoriesPreise,
+                "wandhalterung_fuer_speicher",
+                anz_wandhalterung_fuer_speicher,
             )
 
             return wandhalterung_preis
@@ -775,7 +807,9 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def modulsumme(self):
         values = self.get_values()
-        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        module_name = (
+            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        )
         if module_name and (value := values.get(module_name + "_leistung")):
             return int(value * int(self.modulanzahl)) / 1000
         else:
@@ -784,8 +818,12 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def get_zuschlag(self):
         values = self.get_values()
-        module_name = self.solar_module.lower() if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH").lower()
-        
+        module_name = (
+            self.solar_module.lower()
+            if self.solar_module
+            else ("Phono Solar PS420M7GFH-18/VNH").lower()
+        )
+
         return values.get(
             module_name, "Phono Solar PS420M7GFH-18/VNH"
         )  # Add default value
@@ -1015,7 +1053,6 @@ class VertriebAngebot(TimeStampMixin):
     def angebots_summe(self):
         def get_price(prefix, kw):
             name = prefix + str(kw)
-            
 
             return float(ModulePreise.objects.get(name=name).price)
 
@@ -1029,7 +1066,6 @@ class VertriebAngebot(TimeStampMixin):
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
-        
 
         angebotsSumme = sum(
             (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
@@ -1076,7 +1112,12 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def abzug(self):
         res = 0.0
-        if self.kosten_pva and self.rest_strom_preis and self.stromgrundpreis_gesamt and self.einsp_verg:
+        if (
+            self.kosten_pva
+            and self.rest_strom_preis
+            and self.stromgrundpreis_gesamt
+            and self.einsp_verg
+        ):
             res += (
                 self.kosten_pva
                 + self.rest_strom_preis
@@ -1134,7 +1175,7 @@ class VertriebAngebot(TimeStampMixin):
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
             "batterieAnz": self.anz_speicher,
             "wallboxVorh": self.full_wallbox_preis,
-            "wallboxTyp" : self.wallboxtyp,
+            "wallboxTyp": self.wallboxtyp,
             "wallboxText": self.wallbox_text,
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,

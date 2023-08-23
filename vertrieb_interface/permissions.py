@@ -64,8 +64,10 @@ class RoleRequired(UserPassesTestMixin):
     allowed_roles = []
 
     def test_func(self):
-        if self.request.user.is_authenticated and self.request.user.role is not None: #type:ignore
-            return self.request.user.role.name in self.allowed_roles #type:ignore
+        if (
+            self.request.user.is_authenticated and self.request.user.role is not None
+        ):  # type:ignore
+            return self.request.user.role.name in self.allowed_roles  # type:ignore
         return False
 
 

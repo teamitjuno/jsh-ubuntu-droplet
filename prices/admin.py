@@ -51,6 +51,7 @@ class ModulePreisAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     inlines = [PricesInline]
 
+
 @admin.register(SolarModulePreise)
 class SolarModulePreisAdmin(admin.ModelAdmin):
     list_display = (
@@ -73,7 +74,6 @@ class WallBoxPreisAdmin(admin.ModelAdmin):
         "in_stock",
     )
     search_fields = ("name",)
-
 
 
 @admin.register(OptionalAccessoriesPreise)

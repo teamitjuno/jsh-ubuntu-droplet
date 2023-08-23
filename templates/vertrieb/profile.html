@@ -18,8 +18,8 @@
                 </div>
             </div>
             <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
-                <div class="col-sm-6">
-                    <div class="card bg-gradient">
+                <div class="col-sm-4">
+                    <div class="card bg-gradient border-success border">
                         <div class="card-body profile-user-box">
                             <div class="row">
                                 <div class="col-sm-8">
@@ -56,11 +56,7 @@
                             </div> <!-- end row -->
                         </div> <!-- end card-body/ profile-user-box-->
                     </div><!--end profile/ card -->
-                </div> <!-- end col-->
-            </div>
-            <div class="row">                 
-                <div class="col-xl-4">
-                    <div class="card">
+                    <div class="card border-info border">
                         <div class="card-body">
                             <h4 class="header-title mt-0 mb-3">{{ user.beruf }} Informationen</h4>
                             
@@ -86,27 +82,63 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-            <div class="col-md-3">
+                </div> <!-- end col-->
+                <div class="col-md-5">
                     <div class="card border-primary border">
                         <div class="card-body">
-                            <h5 class="card-title text-primary">Top Verkaufer Container Anzeigen</h5>
+                            <h5 class="card-title text-primary">Anzeige von Containern auf der HOME-Seite</h5>
                             <form method="post">
                                 {% csrf_token %}
-                                <!-- Info Switch -->
-                                <input type="checkbox" id="top_verkaufer_container_view" name="{{ form.top_verkaufer_container_view.name }}" {% if form.top_verkaufer_container_view.value %}checked{% endif %} data-switch="info"/>
-                                <label for="top_verkaufer_container_view" data-on-label="Ja" data-off-label="Nein"></label>
-                                <p></p>
-                                <div class="text-right">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>Unsere Mitarbeiter</td>
+                                            <td><input type="checkbox" id="top_verkaufer_container_view" name="{{ form.top_verkaufer_container_view.name }}" {% if form.top_verkaufer_container_view.value %}checked{% endif %} data-switch="info"/><label for="top_verkaufer_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Unsere Mitarbeiter"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Profil</td>
+                                            <td><input type="checkbox" id="profile_container_view" name="{{ form.profile_container_view.name }}" {% if form.profile_container_view.value %}checked{% endif %} data-switch="info"/><label for="profile_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Profil"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Letzte Aktivitäten</td>
+                                            <td><input type="checkbox" id="activity_container_view" name="{{ form.activity_container_view.name }}" {% if form.activity_container_view.value %}checked{% endif %} data-switch="info"/><label for="activity_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Letzte Aktivitäten"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Angebotstatus Übersicht</td>
+                                            <td><input type="checkbox" id="angebot_statusubersicht_view" name="{{ form.angebot_statusubersicht_view.name }}" {% if form.angebot_statusubersicht_view.value %}checked{% endif %} data-switch="info"/><label for="angebot_statusubersicht_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Angebotstatus Übersicht"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Schnell-PV-Rechner</td>
+                                            <td><input type="checkbox" id="pv_rechner_view" name="{{ form.pv_rechner_view.name }}" {% if form.pv_rechner_view.value %}checked{% endif %} data-switch="info"/><label for="pv_rechner_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Schnell-PV-Rechner"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Anzahl der verkauften Solarmodule</td>
+                                            <td><input type="checkbox" id="anzahl_sol_module_view" name="{{ form.anzahl_sol_module_view.name }}" {% if form.anzahl_sol_module_view.value %}checked{% endif %} data-switch="info"/><label for="anzahl_sol_module_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                            <td>Anzeige des Containers "Anzahl der verkauften Solarmodule"</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!-- Submit Button -->
+                                <div class="text-right mt-3">
                                     <button type="submit" class="btn btn-outline-info rounded-pill">Speichern</button>
                                 </div>
                             </form>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
+            
+                
+                    
+                
+            
+                
             </div>
+
         </div>
         <footer class="footer">
             <div class="container-fluid">

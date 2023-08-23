@@ -27,7 +27,7 @@ def create_instances(data_list, kurz):
         except ObjectDoesNotExist:
             # If ElectricCalendar does not exist, create a new one
             elektriktermin_am = datetime.strptime(
-                data["Elektriktermin_am"], '%d-%b-%Y %H:%M'
+                data["Elektriktermin_am"], "%d-%b-%Y %H:%M"
             )
             elektriker_calfield = int(data["Elektriker_calfield"])
 
@@ -38,7 +38,6 @@ def create_instances(data_list, kurz):
                 anschluss_PVA=data["Anschluss_PVA"],
                 elektriker_calfield=elektriker_calfield,
                 kundenname=data["Kundenname"],
-
                 privatkunde_adresse_pva=data["Privatkunde.Adresse_PVA"],
                 besonderheiten=data["Besonderheiten"],
                 elektriktermin_am=elektriktermin_am,

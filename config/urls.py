@@ -12,7 +12,10 @@ from authentication.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('adminfeautures/', include(('adminfeautures.urls', 'adminfeautures'), namespace='adminfeautures')),
+    path(
+        "adminfeautures/",
+        include(("adminfeautures.urls", "adminfeautures"), namespace="adminfeautures"),
+    ),
     path(
         "update_vertrieblers/",
         update_vertrieblers,
@@ -24,13 +27,15 @@ urlpatterns = [
     path("", include("djoser.urls.jwt")),
     path("", include("authentication.urls", namespace="authentication")),
     path("", include("vertrieb_interface.urls", namespace="vertrieb_interface")),
-    path("proj/", include("projektant_interface.urls", namespace="projektant_interface")),
+    path(
+        "proj/", include("projektant_interface.urls", namespace="projektant_interface")
+    ),
     path("elektriker_interface/", include("invoices.urls", namespace="invoices")),
     path(
         "elektriker_kalender",
         include("elektriker_kalender.urls", namespace="elektriker_kalender"),
     ),
-]+ [
+] + [
     re_path(
         r"^400/$",
         default_views.bad_request,

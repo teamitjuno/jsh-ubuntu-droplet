@@ -371,7 +371,6 @@ class PDF(FPDF):
 
 
 def createTicketPdf(data):
-    
     global title, pages
     title = f"Kalkulation-{data['kunde']}"
 

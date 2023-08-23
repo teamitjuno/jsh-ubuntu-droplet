@@ -72,7 +72,11 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     is_staff = models.BooleanField(default=False)
     beruf = models.CharField(
         max_length=30,
-        choices=[("Elektriker", "Elektriker"), ("Vertrieb", "Vertrieb"), ("Projektant", "Projektant")],
+        choices=[
+            ("Elektriker", "Elektriker"),
+            ("Vertrieb", "Vertrieb"),
+            ("Projektant", "Projektant"),
+        ],
         null=True,
         default=None,
     )
@@ -148,6 +152,12 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     )
 
     top_verkaufer_container_view = models.BooleanField(default=True)
+    profile_container_view = models.BooleanField(default=True)
+    activity_container_view = models.BooleanField(default=True)
+    angebot_statusubersicht_view = models.BooleanField(default=True)
+    pv_rechner_view = models.BooleanField(default=True)
+    anzahl_sol_module_view = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,5 +1,15 @@
 from django.urls import path
-from adminfeautures.views import user_list_view, update_solar_module_preise_view, update_wallbox_preise_view, update_optional_accessories_preise_view, update_andere_konfiguration_werte_view, ViewAdminOrders, UpdateAdminAngebot
+from adminfeautures.views import (
+    user_list_view,
+    update_solar_module_preise_view,
+    update_wallbox_preise_view,
+    update_optional_accessories_preise_view,
+    update_andere_konfiguration_werte_view,
+    ViewAdminOrders,
+    UpdateAdminAngebot,
+    DeleteAngebot,
+)
+
 
 app_name = "adminfeautures"
 
@@ -16,9 +26,26 @@ urlpatterns = [
         UpdateAdminAngebot.as_view(),
         name="update_admin_angebot",
     ),
-    path('prices/update_solar_module_preise/<int:module_id>/', update_solar_module_preise_view, name='update_solar_module_preise'),
-    path('prices/update_wallbox_preise/<int:wallbox_id>/', update_wallbox_preise_view, name='update_wallbox_preise'),
-    path('prices/update_optional_accessories_preise/<int:accessories_id>/', update_optional_accessories_preise_view, name='update_optional_accessories_preise'),
-    path('prices/update_andere_konfiguration_werte/<int:andere_konfiguration_id>/', update_andere_konfiguration_werte_view, name='update_andere_konfiguration_werte'),
+    path('adminfeautures/user/<int:user_id>/orders/delete/<str:angebot_id>/', DeleteAngebot.as_view(), name='delete_angebot'),
 
+    path(
+        "prices/update_solar_module_preise/<int:module_id>/",
+        update_solar_module_preise_view,
+        name="update_solar_module_preise",
+    ),
+    path(
+        "prices/update_wallbox_preise/<int:wallbox_id>/",
+        update_wallbox_preise_view,
+        name="update_wallbox_preise",
+    ),
+    path(
+        "prices/update_optional_accessories_preise/<int:accessories_id>/",
+        update_optional_accessories_preise_view,
+        name="update_optional_accessories_preise",
+    ),
+    path(
+        "prices/update_andere_konfiguration_werte/<int:andere_konfiguration_id>/",
+        update_andere_konfiguration_werte_view,
+        name="update_andere_konfiguration_werte",
+    ),
 ]

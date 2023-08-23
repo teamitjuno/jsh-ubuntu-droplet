@@ -18,5 +18,5 @@ def handle_avatar_upload(user, avatar_file):
     profile = User.objects.filter(id=user.id)
 
     # Save the binary image data to the avatar field
-    profile.avatar.save("avatar.jpg", ContentFile(bio.getvalue())) #type:ignore
-    profile.save() #type:ignore
+    profile.avatar.save("avatar.jpg", ContentFile(bio.getvalue()))  # type:ignore
+    profile.save()  # type:ignore

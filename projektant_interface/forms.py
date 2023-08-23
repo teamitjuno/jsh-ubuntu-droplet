@@ -1,8 +1,8 @@
 from django import forms
 from .models import Project
 
-class ProjectForm(forms.ModelForm):
 
+class ProjectForm(forms.ModelForm):
     Status = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -15,7 +15,7 @@ class ProjectForm(forms.ModelForm):
     )
 
     Auftragsbest_tigung_versendet = forms.ChoiceField(
-        choices=[('Ja', 'Ja'), ('Nein', 'Nein')],
+        choices=[("Ja", "Ja"), ("Nein", "Nein")],
         widget=forms.Select(
             attrs={
                 "class": "form-select",

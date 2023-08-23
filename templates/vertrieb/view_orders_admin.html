@@ -37,18 +37,15 @@
                                                     <th>Kundennumer</th>
                                                     <th>Angebot ID</th>
                                                     <th>Zugang</th>
-                                                    <th>Status</th>
+                                                    <th>Bearbeitbar</th>
                                                     <th>Angebot Status</th>
                                                     <th>Kunde</th>
                                                     <th>Datum</th>
-                                                    <th>Link</th>
+                                                    <th>Entfernen</th>
                                                     <th>Benutzer Ang PDF</th>
                                                     <th>Admin Ang PDF</th>
                                                     <th>Ticket PDF</th>
                                                     <th>Kalkulation PDF</th>
-
-                                                    
-                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -56,11 +53,16 @@
                                                 
                                                     <tr>
                                                         <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
-                                                        <td>{{ vertrieb_angebot.angebot_id }}</td>
+                                                        
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <td>{{ vertrieb_angebot.angebot_id }}</td>
+                                                            {% else %}
+                                                            <td> noch nicht zugeordnet </td>
+                                                            {% endif %}
                                                         <td>
                                                         <form method="POST" action="{% url 'adminfeautures:update_admin_angebot' user_id=user.pk angebot_id=vertrieb_angebot.angebot_id %}">
                                                                 {% csrf_token %} 
-                                                            <button class="btn btn-secondary toggle-lock" type="button" data-id="{{ vertrieb_angebot.angebot_id }}" data-is-locked="{{ vertrieb_angebot.is_locked }}">
+                                                            <button class="btn btn-outline-primary rounded-pill toggle-lock" type="button" data-id="{{ vertrieb_angebot.angebot_id }}" data-is-locked="{{ vertrieb_angebot.is_locked }}">
                                                                 {{ vertrieb_angebot.is_locked|yesno:"Unlock,Lock" }}
                                                             </button>
                                                         </form> 
@@ -118,32 +120,75 @@
                                                         </td>
                                                         {% endif %}
                                                     
-                                                        <td>{{ vertrieb_angebot.status }}</td>
+                                                        
+                                            {% if vertrieb_angebot.status == "bekommen" %}
+                                                <td class="link-warning">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "angenommen" %}
+                                                <td class="link-success">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "abgelaufen" or vertrieb_angebot.status == "abgelehnt" %}
+                                                <td class="link-danger">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% elif vertrieb_angebot.status == "in Kontakt" or vertrieb_angebot.status == "Kontaktversuch" %}
+                                                <td class="link-primary">
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    {{ vertrieb_angebot.status }}
+                                                </td>
+                                                {% endif %}
+                                            
                                                         <td>{{ vertrieb_angebot.name }}</td>
                                                         <td>{{ vertrieb_angebot.anfrage_vom }}</td>
+                                                        
                                                         <td>
-                                                            {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-primary">Zeigen</a>
-                                                            {% endif %}
+                                                            <button type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal-{{ vertrieb_angebot.angebot_id }}">Entfernen</button>
+
+                                                            <div id="info-alert-modal-{{ vertrieb_angebot.angebot_id }}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-body p-4 m-1">
+                                                                            <div class="text-center">
+                                                                                <i class="ri-information-line h1 text-info"></i>
+                                                                                <h3 class="mt-2">Hinweis!</h3>
+                                                                                <p class="mt-3 p3">Wollen Sie das Angebot mit der ID {{ vertrieb_angebot.angebot_id }}</p> 
+                                                                                <p class="mt-3 p3">wirklich entfernen? Nach diesem Schritt kann es </p>
+                                                                                <p class="mt-3 p3">nicht wiederhergestellt werden.</p>
+                                                                                <form method="post" action="{% url 'adminfeautures:delete_angebot' user_id=vertrieb_angebot.user.id angebot_id=vertrieb_angebot.angebot_id %}">
+                                                                                    {% csrf_token %}
+                                                                                    <button type="submit" class="btn btn-info my-2">Weiter...</button>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div><!-- /.modal-content -->
+                                                                </div><!-- /.modal-dialog -->
+                                                            </div>
+                                                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                                                         </td>
+
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-primary">PDF erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF erstellen</a>
                                                             {% endif %}                 
                                                         </td>
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-primary">PDF erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF erstellen</a>
                                                             {% endif %}
                                                         </td>
                                                         <td> 
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info btn-sm">erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
                                                             {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info btn-sm">erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
                                                             {% endif %}
                                                         </td>
                                                     </tr>

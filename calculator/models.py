@@ -24,16 +24,20 @@ from django.utils.formats import date_format
 import dateparser
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
+
 now = timezone.now()
-now_german = date_format(now, 'DATETIME_FORMAT')
+now_german = date_format(now, "DATETIME_FORMAT")
+
 
 class LogEntryManager(models.Manager):
-    def log_action(self, user_id, content_type_id, object_id, object_repr, action_flag, status=None):
+    def log_action(
+        self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
+    ):
         if status is not None:
             if status == "angenommen":
                 change_message = f"<<Angenommen>>"
             elif status == "bekommen":
-                change_message = f'Status geändert zu <<{status}>> '
+                change_message = f"Status geändert zu <<{status}>> "
             elif status == "abgelaufen":
                 change_message = f"<<Abgelaufen>>"
             elif status == "in Kontakt":
@@ -77,11 +81,10 @@ BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
 DEFAULT_BATT_USAGE = 0.3
 
 
-
 class Calculator(models.Model):
     calculator_id = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+
     AUSRICHTUNG_CHOICES = (
         ("Sud", "Sud"),
         ("Ost/West", "Ost/West"),
@@ -172,7 +175,7 @@ class Calculator(models.Model):
         default=0.00, validators=[MinValueValidator(0)]
     )
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    
+
     benotigte_restenergie = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
@@ -190,11 +193,10 @@ class Calculator(models.Model):
     kosten_fur_restenergie = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
-    
+
     Rest_liste = models.TextField(blank=True, null=True)
     Arbeits_liste = models.TextField(blank=True, null=True)
     Full_ticket_preis = models.FloatField(default=0.00)
-    
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -206,7 +208,6 @@ class Calculator(models.Model):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
 
     def save(self, *args, **kwargs):
-
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
@@ -223,10 +224,8 @@ class Calculator(models.Model):
         self.kosten_fur_restenergie = self.kosten_rest_energie
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
-        
-        
-        super().save(*args, **kwargs)
 
+        super().save(*args, **kwargs)
 
     @property
     def leistungsmodul_preis(self):
@@ -284,7 +283,6 @@ class Calculator(models.Model):
             return "0,4 % Jährliche Degradation"
         else:
             return "0,4 % Jährliche Degradation"
-        
 
     @property
     def get_komplexity(self):
@@ -328,7 +326,6 @@ class Calculator(models.Model):
             multiplier = 0
         price = get_price(model, name)
         return price * multiplier
-    
 
     @property
     def modulleistung_price(self):
@@ -338,7 +335,9 @@ class Calculator(models.Model):
     @property
     def solar_module_gesamt_preis(self):
         module_prices = self.get_module_prices()
-        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        module_name = (
+            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        )
         try:
             return float(module_prices[module_name]) * int(self.modulanzahl)
         except KeyError:
@@ -348,7 +347,7 @@ class Calculator(models.Model):
     @property
     def batteriespeicher_preis(self):
         batteriePreis = 0
-        if self.anz_speicher >0:
+        if self.anz_speicher > 0:
             leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
             batteriePreis = self.calculate_price(
@@ -368,7 +367,9 @@ class Calculator(models.Model):
     @property
     def modulsumme(self):
         values = self.get_values()
-        module_name = self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        module_name = (
+            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        )
         if module_name and (value := values.get(module_name + "_leistung")):
             return int(value * int(self.modulanzahl)) / 1000
         else:
@@ -377,8 +378,12 @@ class Calculator(models.Model):
     @property
     def get_zuschlag(self):
         values = self.get_values()
-        module_name = self.solar_module.lower() if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH").lower()
-        
+        module_name = (
+            self.solar_module.lower()
+            if self.solar_module
+            else ("Phono Solar PS420M7GFH-18/VNH").lower()
+        )
+
         return values.get(
             module_name, "Phono Solar PS420M7GFH-18/VNH"
         )  # Add default value
@@ -441,8 +446,6 @@ class Calculator(models.Model):
     def einsp_verg(self):
         return round(self.einsp_pro_jahr * self.zeitraum, 2)
 
-    
-
     @property
     def wallbox_kabel_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="kabelpreis").price)
@@ -458,8 +461,6 @@ class Calculator(models.Model):
     @property
     def optimizer_full_preis(self):
         return self.anzOptimizer * self.optimizer_preis
-
-
 
     """
 
@@ -503,7 +504,6 @@ class Calculator(models.Model):
     def angebots_summe(self):
         def get_price(prefix, kw):
             name = prefix + str(kw)
-            
 
             return float(ModulePreise.objects.get(name=name).price)
 
@@ -517,7 +517,6 @@ class Calculator(models.Model):
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
-        
 
         angebotsSumme = sum(
             (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
@@ -540,8 +539,6 @@ class Calculator(models.Model):
             )
             angebotsSumme += get_garantie_price(garantie_kw, garantie_years)
 
-        
-
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
 
@@ -556,7 +553,12 @@ class Calculator(models.Model):
     @property
     def abzug(self):
         res = 0.0
-        if self.kosten_pva and self.rest_strom_preis and self.stromgrundpreis_gesamt and self.einsp_verg:
+        if (
+            self.kosten_pva
+            and self.rest_strom_preis
+            and self.stromgrundpreis_gesamt
+            and self.einsp_verg
+        ):
             res += (
                 self.kosten_pva
                 + self.rest_strom_preis

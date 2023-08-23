@@ -8,10 +8,21 @@ from fpdf import FPDF
 import fitz
 import os
 
-class CustomPDF(FPDF):
 
-    def __init__(self, *args, roof_typ=None, height=None, kunden_tel_nummer=None, datetime=None, 
-            user_surname=None, kunden_name=None, kunden_strasse=None, kunden_plz_ort=None, **kwargs):
+class CustomPDF(FPDF):
+    def __init__(
+        self,
+        *args,
+        roof_typ=None,
+        height=None,
+        kunden_tel_nummer=None,
+        datetime=None,
+        user_surname=None,
+        kunden_name=None,
+        kunden_strasse=None,
+        kunden_plz_ort=None,
+        **kwargs,
+    ):
         self.roof_typ = roof_typ
         self.height = height
         self.kunden_tel_nummer = kunden_tel_nummer
@@ -50,7 +61,7 @@ class CustomPDF(FPDF):
         self.multi_cell(col_width, row_height, item, border=0)
 
         self.set_xy(190, 258)
-        item = str(self.user_surname)    
+        item = str(self.user_surname)
         self.multi_cell(col_width, row_height, item, border=0)
 
         row_height = 5
@@ -80,41 +91,42 @@ class CustomPDF(FPDF):
 
 
 def generate_overlay_pdf(data):
-    pdf = CustomPDF(roof_typ=data['roof_typ'], height=data['height'], 
-                kunden_tel_nummer=data['kunden_tel_nummer'], 
-                datetime=data['datetime'], user_surname=data['user_surname'], 
-                kunden_name=data['kunden_name'], kunden_strasse=data['kunden_strasse'], 
-                kunden_plz_ort=data['kunden_plz_ort'])
+    pdf = CustomPDF(
+        roof_typ=data["roof_typ"],
+        height=data["height"],
+        kunden_tel_nummer=data["kunden_tel_nummer"],
+        datetime=data["datetime"],
+        user_surname=data["user_surname"],
+        kunden_name=data["kunden_name"],
+        kunden_strasse=data["kunden_strasse"],
+        kunden_plz_ort=data["kunden_plz_ort"],
+    )
     pdf.add_page()
     pdf.footer()  # Note: No arguments here now
-    pdf.add_right_top_table(data['processed_besodersheiten'])
+    pdf.add_right_top_table(data["processed_besodersheiten"])
     return pdf.output(dest="S").encode("latin1")
 
 
 def generate_pdf_bauplan(data):
-    
-    
     # Load the original template and the overlay content
     original = fitz.open("template2.pdf")
     overlay_pdf_content = generate_overlay_pdf(data)
     overlay = fitz.open("pdf", overlay_pdf_content)
-    
+
     # Overlay the pages
     page = original[0]
     page.show_pdf_page(page.rect, overlay, 0)
-    
+
     # Save the combined content to a temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=True)
     original.save(temp_file.name)
-    
+
     # Read the contents of the temporary file
-    with open(temp_file.name, 'rb') as f:
+    with open(temp_file.name, "rb") as f:
         pdf_content = f.read()
-    
+
     # Return the combined content
     return pdf_content
-
-
 
 
 # def generate_pdf_bauplan(project_id, temp, processed_besodersheiten, roof_typ, height, kunden_tel_nummer, datetime, user_surname, kunden_name, kunden_strasse, kunden_plz_ort):
@@ -136,7 +148,7 @@ def generate_pdf_bauplan(data):
 #     font_path_bold = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
 #     overlay.set_title(title)
 #     overlay.set_author("JUNO Solar Home GmbH")
-    
+
 #     overlay.add_page()
 
 #     overlay.add_font("JUNO Solar Lt", "B", font_path_bold, uni=True)
@@ -144,7 +156,7 @@ def generate_pdf_bauplan(data):
 #     overlay.set_text_color(0)
 
 #     overlay.header()
-    
+
 #     overlay.add_right_top_table(processed_besodersheiten)
 
 #     overlay.footer()
@@ -164,6 +176,6 @@ def generate_pdf_bauplan(data):
 #     page = original.pages[0]
 #     page.merge_page(overlay_pdf.pages[0])
 
-    
+
 #     pdf_content = overlay.output(dest="S").encode("latin1")
 #     return pdf_content

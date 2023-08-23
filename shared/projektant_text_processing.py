@@ -1,19 +1,19 @@
 import openai
+
 # from config.settings import OPENAI_API_KEY
 
-OPENAI_API_KEY="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"
+OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
 start_chat_log = [
     {
         "role": "system",
-        "content": 
-                    """  
+        "content": """  
                     Schlüpfen Sie in die Rolle eines Elektroingenieurs in der Solarenergiebranche. 
                     Ihre Aufgabe ist es, die grundlegendsten und wichtigsten Thesen(2-3 max) aus dem [Text] auszuwählen, die nur Informationen über die Anlage betreffen, und sie so kurz und klar wie möglich zu schreiben. Versuchen Sie, die Anzahl der Thesen so gering wie möglich zu halten, ohne jedoch die Hauptaussagen des Textes zu verlieren. 
                     Schreiben Sie nur die These, ohne zusätzlichen Text oder Erklärungen. 
                     Diese Thesen werden dem Plan für die Solaranlage beigefügt.
-                    """
+                    """,
     }
 ]
 
@@ -35,6 +35,7 @@ def ask(question, chat_log=None):
     answer = [response.choices[0].message]  # type: ignore
     return answer
 
+
 def handle_message(text):
     try:
         global chat_log
@@ -42,7 +43,6 @@ def handle_message(text):
         response = ask(question, chat_log)
         print(response[0].content)
         return response[0].content
-    
 
     except Exception as e:
         chat_log = start_chat_log
@@ -62,4 +62,3 @@ def get_chat_bot_response(question, chat_log=None):
     )
     answer = [response.choices[0].message]  # type: ignore
     return answer
-

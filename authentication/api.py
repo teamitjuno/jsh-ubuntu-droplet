@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 
+
 def handler500(request):
     return render(request, "500.html", status=500)
 
@@ -23,8 +24,10 @@ def handler404(request, exception):
 def elektriker_check(user):
     return User.objects.filter(id=user.id, beruf="Elektriker").exists()
 
+
 def projektant_check(user):
     return User.objects.filter(id=user.id, beruf="Projektant").exists()
+
 
 def verkaufer_check(user):
     return User.objects.filter(id=user.id, beruf="Vertrieb").exists()
@@ -35,8 +38,7 @@ class ElektrikerCheckMixin(UserPassesTestMixin):
         return elektriker_check(self.request.user)  # type: ignore
 
 
-
-@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(csrf_protect, name="dispatch")
 class LoginView(APIView):
     def get(self, request):
         return render(request, "pages-login.html")
