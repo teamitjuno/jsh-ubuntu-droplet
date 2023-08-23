@@ -2,28 +2,32 @@ import os
 import io
 import json
 import datetime
-from django.urls import reverse_lazy
+import asyncio
+from urllib.parse import unquote
+from smtplib import SMTPServerDisconnected
+from dotenv import load_dotenv
+from django.urls import reverse_lazy, reverse
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
-from urllib.parse import unquote
-from dotenv import load_dotenv
-from django.contrib.admin.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, Http404, JsonResponse, FileResponse
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
+from django.core.mail import (
+    send_mail,
+    EmailMultiAlternatives,
+    get_connection,
+    EmailMessage,
+)
 from django.db.models.functions import Cast
-from django.db.models import IntegerField, Q, Sum
+from django.db.models import IntegerField, Q, Sum, Count
 from django.views.defaults import page_not_found
 from django.core.files.base import ContentFile
 from prices.models import SolarModulePreise
@@ -33,56 +37,37 @@ from config import settings
 from config.settings import ENV_FILE, EMAIL_BACKEND
 from django.utils.decorators import method_decorator
 from shared.chat_bot import handle_message
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from vertrieb_interface.get_user_angebots import (
     fetch_all_user_angebots,
     fetch_current_user_angebot,
 )
-from django.contrib import messages
-
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
-from .forms import (
-    UpdateVertriebAngebotTicketForm,
-    VertriebAngebotUpdateKalkulationForm,
-    UpdateAdminAngebotForm,
-)
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
     angebot_pdf_creator_user,
     calc_pdf_creator,
     ticket_pdf_creator,
 )
-from smtplib import SMTPServerDisconnected
-import asyncio
-
-# In your Django view
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.conf import settings
-from django.utils.module_loading import import_string
-from django.shortcuts import get_object_or_404
-from django.core.mail import get_connection, EmailMessage
 from vertrieb_interface.permissions import (
     user_required,
     admin_required,
     AdminRequiredMixin,
 )
-from django.http import JsonResponse
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
 from django.conf import settings
+from django.utils.module_loading import import_string
+from django.template.loader import render_to_string
 from .models import VertriebAngebot
 from authentication.models import User
 from io import BytesIO
-from django.db.models import Count
-from django.utils import timezone
 from authentication.forms import TopVerkauferContainerViewForm
+from django.utils.formats import date_format
+
 
 NAMES_CHOICES = ""
-from django.utils.formats import date_format
-from django.views.generic.edit import DeleteView
+
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -230,18 +215,14 @@ def home(request):
     ).count()
 
     all_vertrieb_angebots = (
-        VertriebAngebot.objects.filter(
-            Q(status="angenommen") | Q(status="bekommen"), angebot_id_assigned=True
-        )
+        VertriebAngebot.objects.filter(Q(status="angenommen"), angebot_id_assigned=True)
         .values("solar_module")
         .annotate(total_modulanzahl=Sum("total_anzahl"))
         .order_by("solar_module")
     )
 
     solar_module_stats = (
-        vertriebangebots.filter(
-            Q(status="angenommen") | Q(status="bekommen"), angebot_id_assigned=True
-        )
+        vertriebangebots.filter(Q(status="angenommen"), angebot_id_assigned=True)
         .values("solar_module")
         .annotate(total_modulanzahl=Sum("total_anzahl"))
         .order_by("solar_module")
@@ -648,13 +629,13 @@ class DeleteAngebot(DeleteView):
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         CustomLogEntry.objects.log_action(
-                user_id=self.object.user_id,
-                content_type_id=ContentType.objects.get_for_model(self.object).pk,
-                object_id=self.object.pk,
-                object_repr=str(self.object),
-                action_flag=CHANGE,
-                status=self.object.status,
-            )
+            user_id=self.object.user_id,
+            content_type_id=ContentType.objects.get_for_model(self.object).pk,
+            object_id=self.object.pk,
+            object_repr=str(self.object),
+            action_flag=CHANGE,
+            status=self.object.status,
+        )
         self.object.delete()
         return redirect(self.get_success_url())
 

@@ -1570,7 +1570,7 @@
                                         <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
                                         <div class="row">
                                                     {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
-                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
+                                                        {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                                 {% else %}
                                                         
@@ -1614,11 +1614,10 @@
                                                                 });
                                                             }
                                                         </script>
+                                                        {% endif %}
                                                     <div class="col-sm-6 m-1">
                                                         <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
-                                                    </div>
-                                                            <!-- form save--> 
-                                                        {% endif %}    
+                                                    </div>    
                                                     <div class="col-sm-4 m-1">
                                                         <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info rounded-pill">PDF Files Liste</a>
                                                     </div>

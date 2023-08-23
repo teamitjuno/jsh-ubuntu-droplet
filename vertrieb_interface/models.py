@@ -1,9 +1,22 @@
-from os import path
-from django.db import models
 import hashlib
+import re, os
+import requests
+from math import ceil
+from datetime import timedelta
+import datetime
+from django.db import models
+from django.utils import timezone
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator
+from django.urls import reverse
+from django.utils.formats import date_format
+from django.contrib.auth import get_user_model
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from django.contrib.contenttypes.models import ContentType
+
 from authentication.models import User
 from shared.models import TimeStampMixin
-from django.core.validators import MinValueValidator
 from prices.models import (
     ModuleGarantiePreise,
     ModulePreise,
@@ -12,19 +25,7 @@ from prices.models import (
     SolarModulePreise,
     WallBoxPreise,
 )
-from django.contrib.auth import get_user_model
-import datetime, os
-from datetime import timedelta
-from math import ceil
-import re, json, requests
-from django.utils import timezone
-from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.urls import reverse
-from django.utils.formats import date_format
-import dateparser
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
-from django.contrib.contenttypes.models import ContentType
+
 
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
@@ -32,7 +33,6 @@ User = get_user_model()
 
 
 def extract_modulleistungWp(model_name):
-    # Split the name by spaces and filter out parts that are purely digits
     parts = model_name.split()
     for part in parts:
         if part.isdigit():
@@ -53,7 +53,7 @@ class LogEntryManager(models.Manager):
     def log_action(
         self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
     ):
-        change_message = ""  # default value
+        change_message = ""
 
         if status:
             if status == "angenommen":
@@ -84,7 +84,7 @@ class CustomLogEntry(LogEntry):
     class Meta:
         proxy = True
 
-    objects = LogEntryManager()  # don't forget to set the manager
+    objects = LogEntryManager()
 
     def get_vertrieb_angebot(self):
         from vertrieb_interface.models import VertriebAngebot
@@ -93,8 +93,6 @@ class CustomLogEntry(LogEntry):
             try:
                 return VertriebAngebot.objects.get(angebot_id=self.object_id)
             except VertriebAngebot.DoesNotExist:
-                # Handle the case where no matching record is found
-                # For instance, return None, or handle it in another appropriate way for your application
                 return VertriebAngebot.objects.filter(angebot_id=self.object_id).first()
         return None
 
@@ -121,7 +119,6 @@ def get_price(model, name):
     model_name = model.__name__
     key = f"{model_name}_{name}"
 
-    # Sanitize the key before using it with cache
     sanitized_key = sanitize_cache_key(key)
 
     price = cache.get(sanitized_key)
@@ -437,6 +434,7 @@ class VertriebAngebot(TimeStampMixin):
             self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         self.fullticketpreis = self.full_ticket_preis
+        self.anfrage_vom = self.get_current_date_formatted
         self.benotigte_restenergie = self.restenergie
         self.nutzbare_nutzenergie = self.nutz_energie
         self.erzeugte_energie_pro_jahr = self.erzeugte_energie
@@ -479,9 +477,17 @@ class VertriebAngebot(TimeStampMixin):
             content_type_id=ContentType.objects.get_for_model(self).pk,
             object_id=self.pk,
             object_repr=str(self),
-            action_flag=DELETION,  # Assuming DELETION is a flag you have defined somewhere
+            action_flag=DELETION,
         )
         super().delete(*args, **kwargs)
+
+    @property
+    def get_current_date_formatted(self):
+        if self.anfrage_vom == None or self.anfrage_vom == "":
+            current_datetime = datetime.datetime.now()
+            self.anfrage_vom = current_datetime.strftime("%d-%b-%Y")
+            return current_datetime.strftime("%d-%b-%Y")
+        return self.anfrage_vom
 
     @property
     def assign_status_change_field(self):
@@ -514,25 +520,6 @@ class VertriebAngebot(TimeStampMixin):
             return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
         else:
             return None
-
-    # @property
-    # def mapbox_data(self):
-    #     MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
-    #     OWNER_ID = os.getenv('OWNER_ID')
-    #     STYLE_ID = os.getenv('STYLE_ID')
-
-    #     data = {
-    #         "token": MAPBOX_TOKEN,
-    #
-    #         "latitude": None,
-    #         "longitude": None
-    #     }
-
-    #     if self.postanschrift_latitude and self.postanschrift_longitude:
-    #         data["latitude"] = float(self.postanschrift_latitude)
-    #         data["longitude"] = float(self.postanschrift_longitude)
-    # url = <iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/sam1206morfey/clldpoqf200zc01ph5h660576.html?title=false&access_token=pk.eyJ1Ijoic2FtMTIwNm1vcmZleSIsImEiOiJjbGtodXY3Z3cwZXk0M2VueW9jcWo0bmRlIn0.KDrGkX79RQxHcodui5opmA&zoomwheel=false#11/48.138/11.575" title="Navigation" style="border:none;"></iframe>
-    #     return url
 
     @property
     def coordinates_extractor(self):

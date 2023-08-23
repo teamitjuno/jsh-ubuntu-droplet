@@ -26,8 +26,11 @@ urlpatterns = [
         UpdateAdminAngebot.as_view(),
         name="update_admin_angebot",
     ),
-    path('adminfeautures/user/<int:user_id>/orders/delete/<str:angebot_id>/', DeleteAngebot.as_view(), name='delete_angebot'),
-
+    path(
+        "adminfeautures/user/<int:user_id>/orders/delete/<str:angebot_id>/",
+        DeleteAngebot.as_view(),
+        name="delete_angebot",
+    ),
     path(
         "prices/update_solar_module_preise/<int:module_id>/",
         update_solar_module_preise_view,

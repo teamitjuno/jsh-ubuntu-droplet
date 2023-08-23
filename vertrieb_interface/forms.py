@@ -1,19 +1,16 @@
+import json
+import decimal
+from dotenv import load_dotenv
 from django import forms
-from django.forms import ModelChoiceField, ModelForm
-from matplotlib import widgets
-from config.settings import ENV_FILE
-import ast
+from django.forms import ModelForm
+from django.utils import timezone
+from django.utils.formats import date_format
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
+from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot
-from django.core.exceptions import ValidationError
-import decimal
-import ast
-from dotenv import load_dotenv, get_key
-from django.utils import timezone
-import json
-from django.contrib.auth import get_user_model
-from django.utils.formats import date_format
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -97,15 +94,6 @@ STORNIERUNGSGRUND_CHOICES = (
 )
 
 
-# def get_names_from_string(names_string):
-#     names_tuple = ast.literal_eval(names_string)
-#     return names_tuple
-
-
-# names_string = get_key(ENV_FILE, "NAMES_CHOICES")
-# NAME_CHOICES = get_names_from_string(names_string)
-
-
 def validate_two_decimal_places(value):
     decimal_value = decimal.Decimal(value)
     if decimal_value.as_tuple().exponent < -2:  # type: ignore
@@ -143,10 +131,10 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if value < 6 and value != 0:
+    if value < 6 and value != 0 or value > 50:
         raise ValidationError(
             (
-                "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 6 oder mehr betragen."
+                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 50 liegen."
             ),
             params={"value": value},
         )

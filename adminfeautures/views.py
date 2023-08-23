@@ -227,13 +227,11 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.user = get_object_or_404(User, pk=kwargs["user_id"])   
+        self.user = get_object_or_404(User, pk=kwargs["user_id"])
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(  # type: ignore
-            user=self.user
-        )    
+        queryset = self.model.objects.filter(user=self.user)  # type: ignore
         return queryset
 
 
@@ -242,7 +240,10 @@ class DeleteAngebot(DeleteView):
     template_name = "view_admin_orders.html"
 
     def get_success_url(self):
-        return reverse("adminfeautures:view_admin_orders", kwargs={'user_id': self.kwargs['user_id']})
+        return reverse(
+            "adminfeautures:view_admin_orders",
+            kwargs={"user_id": self.kwargs["user_id"]},
+        )
 
     def get_object(self, queryset=None):
         return VertriebAngebot.objects.get(angebot_id=self.kwargs["angebot_id"])
