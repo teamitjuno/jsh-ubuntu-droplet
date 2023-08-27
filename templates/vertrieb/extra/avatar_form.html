@@ -1,0 +1,75 @@
+{% load static %}
+{% block content %}
+<!-- Form for uploading avatar -->
+<form action="{% url 'adminfeautures:upload_avatar' user.id %}" method="post" enctype="multipart/form-data" id="myAwesomeDropzone">
+    {% csrf_token %}
+    <div class="fallback">
+        <input type="file" name="avatar" accept="image/*" id="id_avatar">
+    </div>
+    <div class="dz-message needsclick">
+        <i class="h1 text-muted ri-upload-cloud-2-line"></i>
+        <h3>Drop files here or click to upload.</h3>
+        <span class="text-muted font-13">
+            (This is just a dropzone. Selected files are <strong>not</strong> actually uploaded.)
+        </span>
+    </div>
+    <button id="submit-all">Upload All Files</button>
+</form>
+
+<!-- Preview of uploaded file -->
+<div class="dropzone-previews mt-3" id="file-previews"></div>
+
+<!-- Template for file preview -->
+<div class="d-none" id="uploadPreviewTemplate">
+    <div class="card mt-1 mb-0 shadow-none border">
+        <div class="p-2">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                </div>
+                <div class="col ps-0">
+                    <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                    <p class="mb-0" data-dz-size></p>
+                </div>
+                <div class="col-auto">
+                    <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                        <i class="ri-close-line"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Configurations for Dropzone
+Dropzone.options.myAwesomeDropzone = {
+    autoProcessQueue: false,
+    init: function() {
+        var submitButton = document.querySelector("#submit-all");
+        var myDropzone = this;
+
+        // Process all queued files on button click
+        submitButton.addEventListener("click", function() {
+            myDropzone.processQueue();
+        });
+
+        // Event listener for when a file is added
+        this.on("addedfile", function() {
+            // Add custom logic if needed when a file is added
+        });
+
+        // Event listener for when all files have been uploaded
+        this.on("complete", function(files) {
+            if (this.getQueuedFiles().length == 0 && this.getUploadingFiles().length == 0) {
+                this.removeAllFiles();
+            }
+        });
+    }
+};
+</script>
+
+<!-- plugin js -->
+<script src="{% static 'assets/vendor/dropzone/min/dropzone.min.js' %}"></script>
+<!-- init js -->
+<script src="{% static 'assets/js/ui/component.fileupload.js' %}"></script>
+{% endblock %}

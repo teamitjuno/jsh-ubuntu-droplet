@@ -5,8 +5,6 @@ from django.db import models
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.utils import timezone
-
-
 from .constants import DEFAULT_ROLES
 
 

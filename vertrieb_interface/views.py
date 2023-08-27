@@ -2,15 +2,12 @@ import os
 import io
 import json
 import datetime
-import asyncio
 from urllib.parse import unquote
-from smtplib import SMTPServerDisconnected
 from dotenv import load_dotenv
 from django.urls import reverse_lazy, reverse
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
@@ -26,6 +23,7 @@ from django.core.mail import (
     get_connection,
     EmailMessage,
 )
+from pprint import pprint, pformat, pp
 from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q, Sum, Count
 from django.views.defaults import page_not_found
@@ -34,12 +32,12 @@ from prices.models import SolarModulePreise
 from calculator.models import Calculator
 from calculator.forms import CalculatorForm
 from config import settings
-from config.settings import ENV_FILE, EMAIL_BACKEND
+from config.settings import ENV_FILE, EMAIL_BACKEND, MAPBOX_TOKEN, STYLE_ID
 from django.utils.decorators import method_decorator
 from shared.chat_bot import handle_message
 from django.contrib import messages
 from vertrieb_interface.get_user_angebots import (
-    fetch_all_user_angebots,
+    fetch_user_angebote_all,
     fetch_current_user_angebot,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
@@ -96,7 +94,8 @@ def get_recent_activities(user):
         .order_by("-action_time")[:15]
     )
 
-    print(recent_activities)
+    activ = pformat(recent_activities)
+    pp(activ)
     activities = []
     for entry in recent_activities:
         vertrieb_angebot = entry.get_vertrieb_angebot()
@@ -366,7 +365,8 @@ def chat_bot(request):
 @user_passes_test(vertrieb_check)
 def create_angebot(request):
     form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
-    print(form_angebot.errors)
+    erors = pformat(form_angebot.errors)
+    pp(erors)
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
         vertrieb_angebot.user = request.user
@@ -411,9 +411,10 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             data = next((item for item in self.data if item["name"] == name), None)
             return JsonResponse(data)
         except:
-            self.data = fetch_all_user_angebots(request)
+            self.data = fetch_user_angebote_all(request)
             zoho_data = json.dumps(self.data)
-            print(zoho_data)
+            zoho_data_p = pformat(zoho_data)
+            # pp(zoho_data_p)
             profile.zoho_data_text = zoho_data  # type: ignore
             profile.save()
             name = request.GET.get("name", None)
@@ -428,7 +429,7 @@ def map_view(request, angebot_id, *args, **kwargs):
         angebot_id=angebot_id, user=request.user
     )
     # Any context data you want to pass to the template
-    MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+
     context = {
         "MAPBOX_TOKEN": MAPBOX_TOKEN,
         "STYLE_ID": "mapbox://styles/sam1206morfey/clldpoqf200zc01ph5h660576",
@@ -529,7 +530,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         relative_path_suffix = os.path.relpath(
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
-        map_config = vertrieb_angebot.mapbox_data
+
         context = self.get_context_data()
         countdown = vertrieb_angebot.countdown()
         context = {
@@ -607,7 +608,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
-        print(form.errors)
+        erors = pformat(form.errors)
+        pp(erors)
         return render(self.request, self.template_name, context)
 
     def load_data_from_zoho_to_angebot_id(self, request):
@@ -678,7 +680,7 @@ def load_user_angebots(request):
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
 
-        all_user_angebots_list = fetch_all_user_angebots(request)
+        all_user_angebots_list = fetch_user_angebote_all(request)
 
         zoho_data = json.dumps(all_user_angebots_list)
         profile.zoho_data_text = zoho_data  # type: ignore
@@ -842,8 +844,8 @@ def send_support_message(request):
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
-            subject,
-            body,
+            user.smtp_subject,
+            user.smtp_body,
             user.smtp_username,
             ["si@juno-solar.com"],
             connection=connection,
@@ -883,10 +885,10 @@ def send_invoice(request, angebot_id):
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
-            subject,
-            body,
+            user.smtp_subject,
+            user.smtp_body,
             user.smtp_username,
-            [f"{vertrieb_angebot.email}"],
+            ["si@juno-solar.com"],
             connection=connection,
         )
         file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore

@@ -14,8 +14,7 @@ from authentication.forms import AvatarUploadForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.edit import UpdateView
-from .forms import UserForm
-from .models import User
+from authentication.models import User
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import (
@@ -23,7 +22,7 @@ from django.contrib.auth.decorators import (
     permission_required,
     user_passes_test,
 )
-from django.contrib.auth.forms import AdminPasswordChangeForm
+
 
 
 @staff_member_required
@@ -78,27 +77,24 @@ def some_admin_view(request):
         return JsonResponse({"message": "Not a POST request"}, status=400)
 
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = UserForm
-    template_name = "vertrieb/user_update_form.html"
-    permission_required = (
-        "authentication.change_user"  # Assumes you've set permissions on the User model
-    )
+# class UserUpdateView(LoginRequiredMixin, UpdateView):
+#     model = User
+#     form_class = UserForm
+#     template_name = "vertrieb/user_update_form.html"
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+#     def get_form_kwargs(self):
+#         kwargs = super().get_form_kwargs()
+#         kwargs["user"] = self.request.user
+#         return kwargs
 
-    def get_success_url(self):
-        return reverse_lazy(
-            "user-detail", kwargs={"pk": self.object.pk}
-        )  # Assuming you have a user detail view named 'user-detail'
+#     def get_success_url(self):
+#         return reverse_lazy(
+#             "user-detail", kwargs={"pk": self.object.pk}
+#         )  # Assuming you have a user detail view named 'user-detail'
 
-    def form_valid(self, form):
-        form.save()
-        return super(UserUpdateView, self).form_valid(form)
+#     def form_valid(self, form):
+#         form.save()
+#         return super(UserUpdateView, self).form_valid(form)
 
 
 @require_POST
@@ -130,29 +126,29 @@ def delete_user(request, user_id):
     return redirect("adminfeautures:user_list")
 
 
-@staff_member_required
-def change_password(request, user_id):
-    target_user = get_object_or_404(User, pk=user_id)
+# @staff_member_required
+# def change_password(request, user_id):
+#     target_user = get_object_or_404(User, pk=user_id)
 
-    if not request.user.role.name == "admin":
-        messages.error(request, "Only superusers can change other users' passwords.")
-        return redirect("vertrieb_interface:home")
+#     if not request.user.role.name == "admin":
+#         messages.error(request, "Only superusers can change other users' passwords.")
+#         return redirect("vertrieb_interface:home")
 
-    if request.method == "POST":
-        form = AdminPasswordChangeForm(target_user, request.POST)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-            messages.success(
-                request,
-                f"Password for user {target_user.username} changed successfully.",
-            )
-            return redirect("adminfeautures:user_list")
-    else:
-        form = AdminPasswordChangeForm(target_user)
+#     if request.method == "POST":
+#         form = AdminPasswordChangeForm(target_user, request.POST)
+#         if form.is_valid():
+#             form.save()
+#             update_session_auth_hash(request, form.user)
+#             messages.success(
+#                 request,
+#                 f"Password for user {target_user.username} changed successfully.",
+#             )
+#             return redirect("adminfeautures:user_list")
+#     else:
+#         form = AdminPasswordChangeForm(target_user)
 
-    return render(
-        request,
-        "vertrieb/password_change.html",
-        {"form": form, "target_user": target_user},
-    )
+#     return render(
+#         request,
+#         "vertrieb/password_change.html",
+#         {"form": form, "target_user": target_user},
+#     )

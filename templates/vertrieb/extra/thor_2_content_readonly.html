@@ -1,0 +1,33 @@
+{% block content %}
+<tr>
+    <th>{{ form.thor.label_tag }}</th>
+    <td>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" disabled id="thor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
+            <label class="custom-control-label" for="thor" data-on-label="Ja" data-off-label="Nein"></label>
+        </div>
+    </td>
+</tr>
+<tr id="thor-details-table" style="{% if not form.thor.value %}display: none;{% endif %}">
+    <th>{{ form.heizstab.label_tag }}</th>
+    <td>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" disabled id="heizstab-checkbox" {% if form.heizstab.value %}checked{% endif %} data-switch="success" name="{{ form.heizstab.html_name }}" readonly/>
+            <label class="custom-control-label" for="heizstab-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+        </div>
+    </td>
+</tr>
+<script>
+    // Toggle visibility of the inner table based on the checkbox state
+    document.getElementById("thor").addEventListener("change", function() {
+        let thorDetailsTable = document.getElementById("thor-details-table");
+        if (this.checked) {
+            thorDetailsTable.style.display = "table";
+        } else {
+            thorDetailsTable.style.display = "none";
+        }
+    });
+</script>
+
+
+{% endblock %}

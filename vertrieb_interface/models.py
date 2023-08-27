@@ -324,6 +324,7 @@ class VertriebAngebot(TimeStampMixin):
         blank=True,
         null=True,
     )
+    heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
@@ -744,7 +745,22 @@ class VertriebAngebot(TimeStampMixin):
     def modulleistung_price(self):
         prices = self.get_prices()
         return float(prices[ACCESSORY_NAME])
+    
+    @property
+    def elwa_price(self):
+        prices = self.get_prices()
+        return float(prices["elwa_2"])
 
+    @property
+    def thor_price(self):
+        prices = self.get_prices()
+        return float(prices["ac_thor_3_kw"])
+    
+    @property
+    def heizstab_price(self):
+        prices = self.get_prices()
+        return float(prices["heizstab"])
+    
     @property
     def solar_module_gesamt_preis(self):
         module_prices = self.get_module_prices()
@@ -1034,6 +1050,12 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += self.get_optional_accessory_price("hub")
         if self.wandhalterung_fuer_speicher_preis:
             accessories_price += float(self.wandhalterung_fuer_speicher_preis)
+        if self.elwa:
+            accessories_price += float(self.elwa_price)
+        if self.thor:
+            accessories_price += float(self.thor_price)
+        if self.heizstab:
+            accessories_price += float(self.heizstab_price)
         return accessories_price
 
     @property
@@ -1169,6 +1191,7 @@ class VertriebAngebot(TimeStampMixin):
             "eddi": self.eddi,
             "elwa": self.elwa,
             "thor": self.thor,
+            "heizstab": self.heizstab,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,

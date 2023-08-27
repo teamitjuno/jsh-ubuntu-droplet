@@ -16,12 +16,19 @@ from prices.models import (
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
 )
+from django.contrib.admin.views.decorators import staff_member_required
+from authentication.forms import AvatarUploadForm
 from prices.forms import (
     SolarModulePreiseForm,
     WallBoxPreiseForm,
     OptionalAccessoriesPreiseForm,
     AndereKonfigurationWerteForm,
 )
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import Http404
+import logging
+from django.contrib.auth.decorators import user_passes_test, login_required
+from authentication.utils import handle_avatar_upload
 from django.db.models import IntegerField, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -39,7 +46,15 @@ from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+from adminfeautures.forms import UserForm
+from authentication.forms import TopVerkauferContainerViewForm
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic.edit import UpdateView
+from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 load_dotenv(ENV_FILE)
 
 
@@ -65,6 +80,21 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         model = VertriebAngebot
         fields = ["is_locked"]  # Only include the 'is_locked' field
 
+class UserUpdateSuccessUrlMixin:
+    def get_success_url(self):
+        return reverse_lazy("adminfeautures:user-edit", kwargs={"pk": self.object.pk})
+
+class TopVerkauferContainerUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
+    model = User
+    form_class = TopVerkauferContainerViewForm
+    template_name = "vertrieb/user_update_form.html"
+
+    def form_valid(self, form):
+        """
+        If the form is valid, save the associated model.
+        """
+        form.save()
+        return super().form_valid(form)
 
 class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
     model = VertriebAngebot
@@ -100,7 +130,30 @@ class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
         messages.success(self.request, "Data saved successfully!")
         return response
 
+@login_required    
+def avatar_upload_form(request, user_id):
+    # Removed unused user query.
+    profile = User.objects.get(id=user_id)
+    
+    form = AvatarUploadForm(request.POST, request.FILES)
+    
+    if not form.is_valid():
+        return JsonResponse({"message": "Invalid form"}, status=HttpResponseBadRequest.status_code)
+    
+    avatar_file = form.cleaned_data.get("avatar")
+    
+    if not avatar_file:
+        return JsonResponse({"message": "No file uploaded"}, status=HttpResponseBadRequest.status_code)
+    
+    try:
+        handle_avatar_upload(profile, avatar_file)
+    except Exception as e:
+        logging.error(f"Error uploading avatar: {e}")
+        return JsonResponse({"message": "Error processing the uploaded file."}, status=HttpResponseServerError.status_code)
+    
+    return JsonResponse({"message": "Avatar uploaded successfully."})
 
+    
 def user_list_view(request):
     users = User.objects.all()
     solar_module_names = [module.name for module in SolarModulePreise.objects.all()]
@@ -234,6 +287,109 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
         queryset = self.model.objects.filter(user=self.user)  # type: ignore
         return queryset
 
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserForm
+    template_name = "vertrieb/user_update_form.html"
+
+    def get_object(self, queryset=None):
+        user_id = self.kwargs.get('pk')
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise Http404("User not found")
+
+    def form_valid(self, form):
+        
+        response = super().form_valid(form)
+        form.save()
+        
+        
+        print(self.object)
+        return super(UserUpdateView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.get_object()
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "adminfeautures:user-edit", kwargs={"pk": self.object.pk}
+        )
+
+
+
+class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
+    model = User
+    form_class = AdminPasswordChangeForm
+    template_name = "vertrieb/password_change.html"
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        
+        # Get the default form kwargs
+        kwargs = self.get_form_kwargs()
+        
+        # Explicitly set the 'user' key in the kwargs dictionary
+        kwargs["user"] = self.get_object()
+        
+        return form_class(**kwargs)
+
+    def get_form_kwargs(self):
+        """
+        Returns the keyword arguments for instantiating the form.
+        """
+        kwargs = super(PasswordUpdateView, self).get_form_kwargs()
+        # Explicitly set the 'user' key in the kwargs dictionary
+        kwargs["user"] = self.get_object()
+        # Remove the 'instance' key which is not expected by PasswordChangeForm
+        kwargs.pop('instance', None)
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        If the form is valid, change the user's password.
+        """
+        form.save()  # This calls AdminPasswordChangeForm's save method, which changes the password correctly.
+        
+        response = super().form_valid(form)
+        messages.success(self.request, "Data saved successfully!")
+        return response
+    
+    def form_invalid(self, form):
+        
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
+# @staff_member_required
+# def change_password(request, user_id):
+#     target_user = get_object_or_404(User, pk=user_id)
+
+#     if request.method == "POST":
+#         form = AdminPasswordChangeForm(target_user, request.POST)
+#         if form.is_valid():
+#             form.save()
+#             update_session_auth_hash(request, form.user)  # Assuming the form has an attribute 'user'
+#             messages.success(
+#                 request,
+#                 f"Password for user {target_user.username} changed successfully.",
+#             )
+#             return redirect("adminfeautures:user_list")
+#     else:
+#         form = AdminPasswordChangeForm(target_user)
+
+#     return render(
+#         request,
+#         "vertrieb/password_change.html",
+#         {"form": form, "target_user": target_user},
+#     )
+
 
 class DeleteAngebot(DeleteView):
     model = VertriebAngebot
@@ -241,8 +397,7 @@ class DeleteAngebot(DeleteView):
 
     def get_success_url(self):
         return reverse(
-            "adminfeautures:view_admin_orders",
-            kwargs={"user_id": self.kwargs["user_id"]},
+            "adminfeautures:user_list",
         )
 
     def get_object(self, queryset=None):

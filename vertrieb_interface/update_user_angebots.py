@@ -4,6 +4,19 @@ from config.settings import ENV_FILE
 
 # Global constants
 
+VERTRIEB_URL = os.getenv("BASE_URL_PRIV_KUNDEN")
+REFRESH_URL = os.getenv("REFRESH_URL")
+ACCESS_TOKEN_URL = os.getenv("ACCESS_TOKEN_URL")
+ZOHO_ACCESS_TOKEN = os.getenv("ZOHO_ACCESS_TOKEN")
+ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
+ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
+ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_REFRESH_TOKEN")
+HTTP_OK = 200
+HTTP_UNAUTHORIZED = 401
+LIMIT_ALL = 100
+LIMIT_CURRENT = 200
+MAX_RETRIES = 5
+SLEEP_TIME = 1
 
 URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 
@@ -30,69 +43,33 @@ class RateLimitExceededException(APIException):
     pass
 
 
-def create_angebot_pdf_user(vertriebler_id):
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-    if not access_token:
-        access_token = refresh_access_token()
+def get_headers():
+    access_token = ZOHO_ACCESS_TOKEN or refresh_access_token()
+    return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-    url = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 
-    headers = {
-        "Authorization": f"Zoho-oauthtoken {access_token}",
+def id_and_name_extractor(data):
+    for entry in data:
+        zoho_id = entry.get("zoho_id", None)
+        name = entry.get("name", None)
+        print(f"ZohoAngebotID:  {zoho_id},  Name: {name}")
+
+
+def refresh_access_token():
+    params = {
+        "refresh_token": ZOHO_REFRESH_TOKEN,
+        "client_id": ZOHO_CLIENT_ID,
+        "client_secret": ZOHO_CLIENT_SECRET,
+        "grant_type": "refresh_token",
     }
+    response = requests.post(ACCESS_TOKEN_URL, params=params)
 
-    # Define an empty set to store unique Vertriebler data
-    vertriebler_set = set()
+    if response.status_code != HTTP_OK:
+        raise APIException(f"Error refreshing token: {response.status_code}")
 
-    # Specify the number of records to fetch per request
-    limit = 200
-    start_index = 0
-
-    while True:
-        params = {
-            "from": start_index,
-            "limit": limit,
-            "criteria": f"Vertriebler.ID == {vertriebler_id}",
-        }
-
-        response = requests.get(url, headers=headers, params=params)
-        if response.status_code == 401:
-            access_token = refresh_access_token()
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            continue
-
-        # Check the response status code
-        elif response.status_code != 200:
-            print(f"Failed to fetch data, status code: {response.status_code}")
-            break
-        print(f"access_token is alive, status code: {response.status_code}")
-        data = json.loads(response.text)
-
-        if not data["data"]:
-            break
-
-        for record in data["data"]:
-            if (
-                "Vertriebler" in record
-                and "display_value" in record["Vertriebler"]
-                and "ID" in record["Vertriebler"]
-            ):
-                vertriebler_set.add(
-                    (
-                        record["Vertriebler"]["display_value"],
-                        record["Vertriebler"]["ID"],
-                    )
-                )
-
-        # Update the start index for the next batch of records
-        start_index += limit
-
-    # Convert the set to a list and print
-    vertriebler_list = list(vertriebler_set)
-    vertriebler_list = json.dumps(vertriebler_list, indent=4)
-    with open("vertrieb_angebots_list.json", "w") as f:
-        json.dump(vertriebler_list, f)
-    return vertriebler_list
+    new_access_token = response.json().get("access_token")
+    set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
+    return new_access_token
 
 
 def process_all_user_data(data, all_user_angebots_list):
@@ -137,22 +114,4 @@ def process_all_user_data(data, all_user_angebots_list):
     return all_user_angebots_list
 
 
-def refresh_access_token():
-    client_id = os.getenv("ZOHO_CLIENT_ID")
-    client_secret = os.getenv("ZOHO_CLIENT_SECRET")
-    refresh_token = os.getenv("ZOHO_REFRESH_TOKEN")
 
-    url = f"https://accounts.zoho.eu/oauth/v2/token?refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token"
-
-    response = requests.post(url)
-
-    if response.status_code == 200:
-        data = response.json()
-        new_access_token = data.get("access_token")
-        print("Access token refreshed.", new_access_token)
-        set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
-        load_dotenv(ENV_FILE)
-
-        return new_access_token
-    else:
-        print(f"Error refreshing token: {response.status_code}")

@@ -26,8 +26,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <!-- Icons css -->
         <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
-
-        
     <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
@@ -37,12 +35,13 @@
     <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
+    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>  
     {% endblock %}
     {% block head_extra %}
     {% endblock %}        
     <body>
-
             
             <!-- Begin page -->
         <div class="wrapper">
@@ -245,7 +244,7 @@
                                 </div>
                             </li>
     
-                            {% if user.role.name == "admin" %}
+                            {% if request.user.role.name == "admin" %}
     
                             <li class="side-nav-item">
                                 
@@ -1003,7 +1002,6 @@
                 </div>
             </div>
         </div>
-    
         {% block javascript %}
         {% endblock %}
             <script>
@@ -1035,16 +1033,20 @@
                         progressBar.style.display = "none";
                     }, 30000); // hide it again after 30 seconds
                 }
-            </script>   
-        {% block extra_js %}  
-            <script src="{% static 'assets/js/vendor.min.js' %}"></script>
-            <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
-            <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
-            <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
-            <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-            <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
-            <script src="{% static 'assets/js/app.min.js' %}"></script>
-        {% endblock %}
-      
+    </script>   
+{% block extra_js %}
+<!-- plugin js -->
+<script src="{% static 'assets/vendor/dropzone/min/dropzone.min.js' %}"></script>
+<!-- init js -->
+<script src="{% static 'assets/js/ui/component.fileupload.js' %}"></script>  
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+    <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}
+
     </body>
 </html> 

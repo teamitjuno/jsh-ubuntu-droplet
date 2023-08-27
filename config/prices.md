@@ -120,6 +120,9 @@ ModulePreise.objects.create(name='Preis25', price=880.00, actual_price=0.00, old
 ModulePreise.objects.create(name='Preis30', price=660.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import OptionalAccessoriesPreise
+OptionalAccessoriesPreise.objects.create(name='elwa_2', price=1250.00, actual_price=0.00,old_price=0.00)
+OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', price=1250.00, actual_price=0.00,old_price=0.00)
+OptionalAccessoriesPreise.objects.create(name='heizstab', price=250.00, actual_price=0.00,old_price=0.00)
 OptionalAccessoriesPreise.objects.create(name='optimizer', price=90.00, actual_price=0.00,old_price=0.00)
 OptionalAccessoriesPreise.objects.create(name='abzug_pro_modul', price=410.00, actual_price=0.00, old_price=0.00)
 OptionalAccessoriesPreise.objects.create(name='eddi', price=1000.00, actual_price=0.00, old_price=0.00)

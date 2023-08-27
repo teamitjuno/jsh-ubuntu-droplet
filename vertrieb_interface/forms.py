@@ -538,6 +538,17 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    heizstab = forms.BooleanField(
+        label="Heizstab inklusive",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "heizstab-checkbox",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     ausrichtung = forms.ChoiceField(
         label="Ausrichtung PV-Anlage",
         choices=AUSRICHTUNG_CHOICES,
@@ -652,12 +663,12 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "eddi"}),
     )
     elwa = forms.BooleanField(
-        label="my-PV AC-ELWA 2 Heizstab",
+        label="AC-ELWA 2",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa", "style": "max-width: 70px",}),
     )
     thor = forms.BooleanField(
-        label="my-PV AC-THOR intelligente Steuerung",
+        label="AC-THOR",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
@@ -794,6 +805,7 @@ class VertriebAngebotForm(ModelForm):
             "garantieWR",
             "elwa",
             "thor",
+            "heizstab",
             "eddi",
             "notstrom",
             "anzOptimizer",

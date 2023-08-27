@@ -7,648 +7,531 @@
             
             <div class="content-page">
                 <div class="content">
-                    
-                    <!-- Start Content-->
-                    <div class="container-fluid">
+                    <form id="saveUserForm" method="post" action="{% url 'adminfeautures:user-update' user.id %}">
+                                            {% csrf_token %}
+                        <!-- Start Content-->
+                        <div class="container-fluid">
 
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                        <ol class="breadcrumb m-0">
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                                            <li class="breadcrumb-item active">Profile 2</li>
-                                        </ol>
+                            <!-- start page title -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="page-title-box">
+                                        <div class="page-title-right">
+                                            <ol class="breadcrumb m-0">
+                                                <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                                                <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                                                <li class="breadcrumb-item active">Profile 2</li>
+                                            </ol>
+                                        </div>
+                                        <h4 class="page-title">Benutzer Einstellungen Menu</h4>
                                     </div>
-                                    <h4 class="page-title">Profile 2</h4>
                                 </div>
                             </div>
-                        </div>
-                        <!-- end page title -->
+                            <!-- end page title -->
 
-                        <div class="row">
-                            <div class="col-xl-4 col-lg-5">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        
-                                                {% if user.avatar %}
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-5">
+                                    <div class="card border-info border text-center">
+                                        <div class="card-body">
+                                            {% if user.avatar %}
                                                 <img src="{{ user.avatar.url }}" alt="" class="rounded-circle img-thumbnail">
                                                 {% else %}
-                                                <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
-                                                {% endif %}
-                                                
-                                           
+                                                {% include './extra/avatar_form.html' %}
+                                                            {% comment %} <form action="{% url 'adminfeautures:upload_avatar' user.id %}" method="post" enctype="multipart/form-data" id="myAwesomeDropzone" data-plugin="dropzone" data-previews-container="#file-previews" data-upload-preview-template="#uploadPreviewTemplate">
+                                                                {% csrf_token %}
+                                                                <div class="fallback">
+                                                                    <input type="file" name="avatar" accept="image/*" id="id_avatar">
+                                                                </div>
 
-                                        <h4 class="mb-0 mt-2">{{ user.first_name }} {{ user.last_name }}</h4>
-                                        <p class="text-muted font-14">{{ user.beruf }}</p>
+                                                                <div class="dz-message needsclick">
+                                                                    <i class="h1 text-muted ri-upload-cloud-2-line"></i>
+                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                    <span class="text-muted font-13">(This is just a dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
+                                                                </div>
+                                                                <button id="submit-all">Upload All Files</button>
+                                                            </form>
+                                                            <!-- Preview -->
+                                                            <div class="dropzone-previews mt-3" id="file-previews"></div>
 
-                                        <form id="deleteUserForm" method="post" action="{% url 'authentication:delete_user_view' %}">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="user_id" value="{{ user.id }}" />
-                                            <button type="button" class="btn btn-danger btn-sm mb-2" id="deleteUserBtn">Delete User</button>
-                                        </form>
-
-                                        
-                                            <script>
-                                                document.getElementById('deleteUserBtn').addEventListener('click', function() {
-                                                    if (confirm('Are you sure you want to delete this user?')) {
-                                                        document.getElementById('deleteUserForm').submit();
-                                                    } else {
-                                                        console.log('User deletion canceled');
-                                                    }
-                                                });
-                                            </script>
-
-
-                                        <div class="text-start mt-3">
-                                            
-                                            
-                                            <p class="text-muted mb-2 font-13"><strong>Vor-, Nachname :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}
-                                                    </span></p>
-
-                                            <p class="text-muted mb-2 font-13"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
-
-                                            <p class="text-muted mb-2 font-13"><strong>Email :</strong> <span class="ms-2 ">{{ user.email }}</span></p>
-
-                                            <p class="text-muted mb-1 font-13"><strong>Location :</strong> <span class="ms-2">Deutschland Sachsen</span></p>
-                                        </div>
-
-                                        <ul class="social-list list-inline mt-3 mb-0">
-                                            <li class="list-inline-item">
-                                                <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i
-                                                        class="mdi mdi-facebook"></i></a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i
-                                                        class="mdi mdi-google"></i></a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="javascript: void(0);" class="social-list-item border-info text-info"><i
-                                                        class="mdi mdi-twitter"></i></a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i
-                                                        class="mdi mdi-github"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div> <!-- end card-body -->
-                                </div> <!-- end card -->
-
-                                <!-- Messages-->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h4 class="header-title">Home Menu Einstellungen</h4>
-                                            <div class="dropdown">
-                                                <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-vertical"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="inbox-widget">
-                                            <h5 class="card-title text-primary"></h5>
-                            
-                                            <!-- Info Switch -->
-                                            
-                            
-                                            <div class="inbox-item">
-                                                <div class="inbox-item-img"><img src="assets/images/users/avatar-3.jpg" class="rounded-circle" alt=""></div>
-                                                
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                <input type="checkbox" id="top_verkaufer_container_view" name="{{ form.top_verkaufer_container_view.name }}" {% if form.top_verkaufer_container_view.value %}checked{% endif %} data-switch="info"/>
-                                                    <label for="top_verkaufer_container_view" data-on-label="Ja" data-off-label="Nein"></label>
-                                                <p class="inbox-item-date">
-                                                    <button type="submit" class="btn btn-outline-info rounded-pill btn-sm">Speichern</button>
-                                                </p>
-                                                </form>
-                                                <p class="inbox-item-author">Top Verkaufer Container Anzeigen</p>
-                                            </div>
-                                            {% comment %} <div class="inbox-item">
-                                                <div class="inbox-item-img"><img src="assets/images/users/avatar-4.jpg" class="rounded-circle" alt=""></div>
-                                                <p class="inbox-item-author">Kurafire</p>
-                                                <p class="inbox-item-text">Nice to meet you</p>
-                                                <p class="inbox-item-date">
-                                                    <a href="#" class="btn btn-sm btn-link text-info font-13"> Reply </a>
-                                                </p>
-                                            </div>
-
-                                            <div class="inbox-item">
-                                                <div class="inbox-item-img"><img src="assets/images/users/avatar-5.jpg" class="rounded-circle" alt=""></div>
-                                                <p class="inbox-item-author">Shahedk</p>
-                                                <p class="inbox-item-text">Hey! there I'm available...</p>
-                                                <p class="inbox-item-date">
-                                                    <a href="#" class="btn btn-sm btn-link text-info font-13"> Reply </a>
-                                                </p>
-                                            </div>
-                                            <div class="inbox-item">
-                                                <div class="inbox-item-img"><img src="assets/images/users/avatar-6.jpg" class="rounded-circle" alt=""></div>
-                                                <p class="inbox-item-author">Adhamdannaway</p>
-                                                <p class="inbox-item-text">This theme is awesome!</p>
-                                                <p class="inbox-item-date">
-                                                    <a href="#" class="btn btn-sm btn-link text-info font-13"> Reply </a>
-                                                </p>
-                                            </div> {% endcomment %}
-                                        </div> <!-- end inbox-widget -->
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-
-                            </div> <!-- end col-->
-
-                            <div class="col-xl-8 col-lg-7">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
-                                            <li class="nav-item">
-                                                <a href="#aboutme" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
-                                                    About
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#timeline" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
-                                                    Timeline
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#settings" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0 active">
-                                                    Settings
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content">
-                                            <div class="tab-pane" id="aboutme">
-    
-                                                <h5 class="text-uppercase"><i class="mdi mdi-briefcase me-1"></i>
-                                                    Experience</h5>
-
-                                                <div class="timeline-alt pb-0">
-                                                    <div class="timeline-item">
-                                                        <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
-                                                        <div class="timeline-item-info">
-                                                            <h5 class="mt-0 mb-1">Lead designer / Developer</h5>
-                                                            <p class="font-14">websitename.com <span class="ms-2 font-12">Year: 2015 - 18</span></p>
-                                                            <p class="text-muted mt-2 mb-0 pb-3">Everyone realizes why a new common language
-                                                                would be desirable: one could refuse to pay expensive translators.
-                                                                To achieve this, it would be necessary to have uniform grammar,
-                                                                pronunciation and more common words.</p>
-                                                        </div>
-                                                    </div>
-    
-                                                    <div class="timeline-item">
-                                                        <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
-                                                        <div class="timeline-item-info">
-                                                            <h5 class="mt-0 mb-1">Senior Graphic Designer</h5>
-                                                            <p class="font-14">Software Inc. <span class="ms-2 font-12">Year: 2012 - 15</span></p>
-                                                            <p class="text-muted mt-2 mb-0 pb-3">If several languages coalesce, the grammar
-                                                                of the resulting language is more simple and regular than that of
-                                                                the individual languages. The new common language will be more
-                                                                simple and regular than the existing European languages.</p>
-
-                                                        </div>
-                                                    </div>
-    
-                                                    <div class="timeline-item">
-                                                        <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
-                                                        <div class="timeline-item-info">
-                                                            <h5 class="mt-0 mb-1">Graphic Designer</h5>
-                                                            <p class="font-14">Coderthemes Design LLP <span class="ms-2 font-12">Year: 2010 - 12</span></p>
-                                                            <p class="text-muted mt-2 mb-0 pb-2">The European languages are members of
-                                                                the same family. Their separate existence is a myth. For science
-                                                                music sport etc, Europe uses the same vocabulary. The languages
-                                                                only differ in their grammar their pronunciation.</p>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <!-- end timeline -->        
-
-                                                <h5 class="mb-3 mt-4 text-uppercase"><i class="mdi mdi-cards-variant me-1"></i>
-                                                    Projects</h5>
-                                                <div class="table-responsive">
-                                                    <table class="table table-borderless table-nowrap mb-0">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th>#</th>
-                                                                <th>Clients</th>
-                                                                <th>Project Name</th>
-                                                                <th>Start Date</th>
-                                                                <th>Due Date</th>
-                                                                <th>Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td><img src="assets/images/users/avatar-2.jpg" alt="table-user" class="me-2 rounded-circle" height="24"> Halette Boivin</td>
-                                                                <td>App design and development</td>
-                                                                <td>01/01/2015</td>
-                                                                <td>10/15/2018</td>
-                                                                <td><span class="badge badge-info-lighten">Work in Progress</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>2</td>
-                                                                <td><img src="assets/images/users/avatar-3.jpg" alt="table-user" class="me-2 rounded-circle" height="24"> Durandana Jolicoeur</td>
-                                                                <td>Coffee detail page - Main Page</td>
-                                                                <td>21/07/2016</td>
-                                                                <td>12/05/2018</td>
-                                                                <td><span class="badge badge-danger-lighten">Pending</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>3</td>
-                                                                <td><img src="assets/images/users/avatar-4.jpg" alt="table-user" class="me-2 rounded-circle" height="24"> Lucas Sabourin</td>
-                                                                <td>Poster illustation design</td>
-                                                                <td>18/03/2018</td>
-                                                                <td>28/09/2018</td>
-                                                                <td><span class="badge badge-success-lighten">Done</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>4</td>
-                                                                <td><img src="assets/images/users/avatar-6.jpg" alt="table-user" class="me-2 rounded-circle" height="24"> Donatien Brunelle</td>
-                                                                <td>Drinking bottle graphics</td>
-                                                                <td>02/10/2017</td>
-                                                                <td>07/05/2018</td>
-                                                                <td><span class="badge badge-info-lighten">Work in Progress</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>5</td>
-                                                                <td><img src="assets/images/users/avatar-5.jpg" alt="table-user" class="me-2 rounded-circle" height="24"> Karel Auberjo</td>
-                                                                <td>Landing page design - Home</td>
-                                                                <td>17/01/2017</td>
-                                                                <td>25/05/2021</td>
-                                                                <td><span class="badge badge-warning-lighten">Coming soon</span></td>
-                                                            </tr>
-    
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-    
-                                            </div> <!-- end tab-pane -->
-                                            <!-- end about me section content -->
-    
-                                            <div class="tab-pane" id="timeline">
-    
-                                                <!-- comment box -->
-                                                <div class="border rounded mt-2 mb-3">
-                                                    <form action="#" class="comment-area-box">
-                                                        <textarea rows="3" class="form-control border-0 resize-none" placeholder="Write something...."></textarea>
-                                                        <div class="p-2 bg-light d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-account-circle"></i></a>
-                                                                <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-map-marker"></i></a>
-                                                                <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-camera"></i></a>
-                                                                <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-emoticon-outline"></i></a>
+                                                            <!-- file preview template -->
+                                                            <div class="d-none" id="uploadPreviewTemplate">
+                                                                <div class="card mt-1 mb-0 shadow-none border">
+                                                                    <div class="p-2">
+                                                                        <div class="row align-items-center">
+                                                                            <div class="col-auto">
+                                                                                <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                                                                            </div>
+                                                                            <div class="col ps-0">
+                                                                                <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                                                                                <p class="mb-0" data-dz-size></p>
+                                                                            </div>
+                                                                            <div class="col-auto">
+                                                                                <!-- Button -->
+                                                                                <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                                                                                    <i class="ri-close-line"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <button type="submit" class="btn btn-sm btn-dark waves-effect">Post</button>
-                                                        </div>
-                                                    </form>
-                                                </div> <!-- end .border-->
-                                                <!-- end comment box -->
-    
-                                                <!-- Story Box-->
-                                                <div class="border border-light rounded p-2 mb-3">
-                                                    <div class="d-flex">
-                                                        <img class="me-2 rounded-circle" src="assets/images/users/avatar-3.jpg"
-                                                            alt="Generic placeholder image" height="32">
-                                                        <div>
-                                                            <h5 class="m-0">Jeremy Tomlinson</h5>
-                                                            <p class="text-muted"><small>about 2 minuts ago</small></p>
-                                                        </div>
-                                                    </div>
-                                                    <p>Story based around the idea of time lapse, animation to post soon!</p>
-    
-                                                    <img src="assets/images/small/small-1.jpg" alt="post-img" class="rounded me-1"
-                                                        height="60" />
-                                                    <img src="assets/images/small/small-2.jpg" alt="post-img" class="rounded me-1"
-                                                        height="60" />
-                                                    <img src="assets/images/small/small-3.jpg" alt="post-img" class="rounded"
-                                                        height="60" />
-    
-                                                    <div class="mt-2">
-                                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                                class="mdi mdi-reply"></i> Reply</a>
-                                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                                class="mdi mdi-heart-outline"></i> Like</a>
-                                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                                class="mdi mdi-share-variant"></i> Share</a>
-                                                    </div>
-                                                </div>
-    
-                                                <!-- Story Box-->
-                                                <div class="border border-light rounded p-2 mb-3">
-                                                    <div class="d-flex">
-                                                        <img class="me-2 rounded-circle" src="assets/images/users/avatar-4.jpg"
-                                                            alt="Generic placeholder image" height="32">
-                                                        <div>
-                                                            <h5 class="m-0">Thelma Fridley</h5>
-                                                            <p class="text-muted"><small>about 1 hour ago</small></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="font-16 text-center fst-italic text-dark">
-                                                        <i class="mdi mdi-format-quote-open font-20"></i> Cras sit amet nibh libero, in
-                                                        gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras
-                                                        purus odio, vestibulum in vulputate at, tempus viverra turpis. Duis
-                                                        sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper
-                                                        porta. Mauris massa.
-                                                    </div>
-    
-                                                    <div class="mx-n2 p-2 mt-3 bg-light">
-                                                        <div class="d-flex">
-                                                            <img class="me-2 rounded-circle" src="assets/images/users/avatar-3.jpg"
-                                                                alt="Generic placeholder image" height="32">
-                                                            <div>
-                                                                <h5 class="mt-0">Jeremy Tomlinson <small class="text-muted">3 hours ago</small></h5>
-                                                                Nice work, makes me think of The Money Pit.
-    
-                                                                <br/>
-                                                                <a href="javascript: void(0);" class="text-muted font-13 d-inline-block mt-2"><i
-                                                                    class="mdi mdi-reply"></i> Reply</a>
-    
-                                                                <div class="d-flex mt-3">
-                                                                    <a class="pe-2" href="#">
-                                                                        <img src="assets/images/users/avatar-4.jpg" class="rounded-circle"
-                                                                            alt="Generic placeholder image" height="32">
-                                                                    </a>
-                                                                    <div>
-                                                                        <h5 class="mt-0">Thelma Fridley <small class="text-muted">5 hours ago</small></h5>
-                                                                        i'm in the middle of a timelapse animation myself! (Very different though.) Awesome stuff.
+                                                            <script>
+                                                                // Ensure Dropzone is attached to the form with id "myAwesomeDropzone"
+                                                                Dropzone.options.myAwesomeDropzone = {
+                                                                    autoProcessQueue: false,
+                                                                    init: function() {
+                                                                        var submitButton = document.querySelector("#submit-all");
+                                                                        myDropzone = this; // reference to this Dropzone instance
+                                                                        
+                                                                        submitButton.addEventListener("click", function() {
+                                                                            myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+                                                                        });
+
+                                                                        // You can also listen to other events:
+                                                                        this.on("addedfile", function() {
+                                                                            // Alert or some logic when a file is added
+                                                                        });
+
+                                                                        this.on("complete", function(files) {
+                                                                            if (this.getQueuedFiles().length == 0 && this.getUploadingFiles().length == 0) {
+                                                                                var _this = this;
+                                                                                _this.removeAllFiles();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                };
+                                                            </script> {% endcomment %}
+                                            {% endif %}
+                                            <h4 class="mb-0 mt-2">{{ user.first_name }} {{ user.last_name }}</h4>
+                                            <p class="text-muted font-14">{{ user.beruf }}</p>
+                                            
+                                                
+                                                    
+                                                        <form id="deleteUserForm" method="post" action="{% url 'authentication:delete_user_view' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="user_id" value="{{ user.id }}" />
+                                                        <button type="button" class="btn btn-danger btn-sm mb-4" id="deleteUserBtn">Delete Benutzer</button>
+                                                        </form>
+                                                        <script>
+                                                            document.getElementById('deleteUserBtn').addEventListener('click', function() {
+                                                                if (confirm('Are you sure you want to delete this user?')) {
+                                                                    document.getElementById('deleteUserForm').submit();
+                                                                } else {
+                                                                    console.log('User deletion canceled');
+                                                                }
+                                                            });
+                                                        </script>
+                                                    
+                                                    
+                                                        <button type="button" class="btn btn-success btn-sm mb-4" id="saveUserBtn">Speichern</button>
+                                                        <script>
+                                                        document.getElementById('saveUserBtn').addEventListener('click', function() {
+                                                            if (confirm('Are you sure you want to save changes for this user?')) {
+                                                                document.getElementById('saveUserForm').submit();
+                                                            } else {
+                                                                console.log('User save operation canceled');
+                                                            }
+                                                        });
+                                                        </script>
+                                                    
+                                                
+                                            
+                                            
+
+
+                                            <div class="text-start mt-3">
+                                                
+                                                
+                                                <p class="text-muted mb-2 font-13"><strong>Vor-, Nachname :</strong> <span class="ms-2">{{ user.first_name }} {{ user.last_name }}
+                                                        </span></p>
+
+                                                <p class="text-muted mb-2 font-13"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
+
+                                                <p class="text-muted mb-2 font-13"><strong>Email :</strong> <span class="ms-2 ">{{ user.email }}</span></p>
+
+                                                <p class="text-muted mb-1 font-13"><strong>Location :</strong> <span class="ms-2">Deutschland Sachsen</span></p>
+                                            </div>
+
+                                            <ul class="social-list list-inline mt-3 mb-0">
+                                                <li class="list-inline-item">
+                                                    <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i
+                                                            class="mdi mdi-facebook"></i></a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i
+                                                            class="mdi mdi-google"></i></a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="javascript: void(0);" class="social-list-item border-info text-info"><i
+                                                            class="mdi mdi-twitter"></i></a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i
+                                                            class="mdi mdi-github"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div> <!-- end card-body -->
+                                    </div> <!-- end card -->
+
+                                </div> <!-- end col-->
+                                
+                                <div class="col-xl-8 col-lg-7">
+                                    <div class="card border-primary border">
+                                        
+                                            <div class="card-body">
+                                                <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+                                                    <li class="nav-item">
+                                                        <a href="#daten" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0 active">
+                                                            Daten
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="#timeline" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                                            Andere
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="#aboutme" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                                            HomeSeite Einstellungen
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane show active" id="daten">
+                                                        <div class="border border-light rounded p-2 mb-3">
+                                                            <h5 class="mb-3 text-uppercase bg-light p-2 text-info"><i class="mdi mdi-account-circle me-1"></i>Persönliche Info</h5>
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                                                                        {{ form.username }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">Vorname</label>
+                                                                        {{ form.first_name }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Nachname</label>
+                                                                        {{ form.last_name }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.email.id_for_label }}" class="form-label">Email Addresse</label>
+                                                                        {{ form.email }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.kuerzel.id_for_label }}" class="form-label">Kuerzel</label>
+                                                                        {{ form.kuerzel }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.phone.id_for_label }}" class="form-label">Mobile Tel Nummer</label>
+                                                                        {{ form.phone }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.password.id_for_label }}" class="form-label">Passworte</label>
+                                                                        <div class="text-info">{{ form.password }}
+                                                                        <span class="form-text text-muted">
+                                                                            <small>Wenn Sie Ihr Passwort ändern möchten, wenden Sie sich bitte an <a href="{% url 'adminfeautures:change_password' user.pk %}">klicken Sie bitte hier</a>.</small>
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-    
-                                                        <div class="d-flex mt-2">
-                                                            <a class="pe-2" href="#">
-                                                                <img src="assets/images/users/avatar-1.jpg" class="rounded-circle"
-                                                                    alt="Generic placeholder image" height="32">
-                                                            </a>
-                                                            <div class="w-100">
-                                                                <input type="text" id="simpleinput" class="form-control border-0 form-control-sm" placeholder="Add comment">
+                                                    </div>
+                                                        <div class="border border-light rounded p-2 mb-3">
+                                                            <h5 class="mb-3 text-uppercase bg-light p-2 text-info"><i class="mdi mdi-office-building me-1"></i>Benutzerdetails</h5>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.role.id_for_label }}" class="form-label">Benutzerrolle</label>
+                                                                        {{ form.role }}
+                                                                        <span class="form-text text-muted">
+                                                                            <small class="text-warning">Achten Sie darauf, die Benutzerrolle zu wählen! Dies ist für den korrekten Betrieb des AngebotsTools erforderlich.</small>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.beruf.id_for_label }}" class="form-label">Beruf</label>
+                                                                        {{ form.beruf }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.users_aufschlag.id_for_label }}" class="form-label">Aufschlag</label>
+                                                                        {{ form.users_aufschlag }}
+                                                                    </div>
+                                                                </div>
+                                                                    <div class="col-md-4">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.typ.id_for_label }}" class="form-label">Typ</label>
+                                                                        {{ form.typ }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-    
-                                                    <div class="mt-2">
-                                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-danger"><i
-                                                                class="mdi mdi-heart"></i> Like (28)</a>
-                                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                                class="mdi mdi-share-variant"></i> Share</a>
-                                                    </div>
-                                                </div>
-    
-                                                <!-- Story Box-->
-                                                <div class="border border-light p-2 mb-3">
-                                                    <div class="d-flex">
-                                                        <img class="me-2 rounded-circle" src="assets/images/users/avatar-6.jpg"
-                                                            alt="Generic placeholder image" height="32">
-                                                        <div>
-                                                            <h5 class="m-0">Martin Williamson</h5>
-                                                            <p class="text-muted"><small>15 hours ago</small></p>
-                                                        </div>
-                                                    </div>
-                                                    <p>The parallax is a little odd but O.o that house build is awesome!!</p>
-    
-                                                    <iframe src='https://player.vimeo.com/video/87993762' height='300' class="img-fluid border-0"></iframe>
-                                                </div>
-    
-                                                <div class="text-center">
-                                                    <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-spin mdi-loading me-1"></i> Load more </a>
-                                                </div>
-    
-                                            </div>
-                                            <!-- end timeline content-->
-    
-                                            <div class="tab-pane show active" id="settings">
-                                                <form method="post">
-                                                    {% csrf_token %}
+                                                        <div class="border border-light rounded p-2 mb-3">
+                                                            <h5 class="mb-3 text-uppercase bg-light p-2 text-info"><i class="mdi mdi-earth me-1"></i> Andere Daten</h5>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.age.id_for_label }}" class="form-label">Age</label>
+                                                                        {{ form.age }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.gerat.id_for_label }}" class="form-label">Mobile Gerät</label>
+                                                                        {{ form.gerat }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    
+                                                            <div hidden class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.anbieter.id_for_label }}" class="form-label">Anbieter</label>
+                                                                        {{ form.anbieter }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Personal Info</h5>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
-                                                                {{ form.first_name }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
-                                                                {{ form.last_name }}
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.google_passwort.id_for_label }}" class="form-label">Google Passwort</label>
+                                                                        {{ form.google_passwort }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.google_account.id_for_label }}" class="form-label">Google Account</label>
+                                                                        {{ form.google_account }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
-                                                                {{ form.email }}
+
+                                                    <div class="tab-pane" id="timeline">
+                                                        <div class="border border-light rounded p-2 mb-3">
+                                                            <h5 class="mb-3 text-uppercase bg-light p-2 text-info"><i class="mdi mdi-earth me-1"></i> SMTP Einstellungen</h5>
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_server.id_for_label }}" class="form-label">SMTP Server</label>
+                                                                        {{ form.smtp_server }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_port.id_for_label }}" class="form-label">SMTP Port</label>
+                                                                        {{ form.smtp_port }}
+                                                                    </div>
+                                                                </div>
+                                                            
+                                                                <div class="col-md-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_username.id_for_label }}" class="form-label">SMTP username (email)</label>
+                                                                        {{ form.smtp_username }}
+                                                                    </div>
+                                                                </div>
                                                                 
+                                                                <div class="col-md-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_password.id_for_label }}" class="form-label">SMTP Passwort</label>
+                                                                        {{ form.smtp_password }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                                                                <input type="password" class="form-control" placeholder="●●●●●●●●" readonly>
-                                                                <span class="form-text text-muted">
-                                                                    <small>Wenn Sie Ihr Passwort ändern möchten, wenden Sie sich bitte an <a href="{% url 'authentication:change_password' user.pk %}">klicken Sie bitte hier</a>.</small>
-                                                                </span>
-                                                            </div>
-                                                        </div>
 
-                                                    </div>
-                                                    
-                                                    <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-office-building me-1"></i> User details</h5>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
-                                                                {{ form.role }}
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_subject.id_for_label }}" class="form-label">SMTP Thema</label>
+                                                                        {{ form.smtp_subject }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.smtp_body.id_for_label }}" class="form-label">SMTP Body</label>
+                                                                        {{ form.smtp_body }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                         <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.typ.id_for_label }}" class="form-label">Typ</label>
-                                                                {{ form.typ }}
+                                                        <div class="border border-light rounded p-2 mb-3">
+                                                            <h5 class="mb-3 text-uppercase bg-light p-2 text-info"><i class="mdi mdi-earth me-1"></i> DEBUG Fields und Einstellungen</h5>
+                                                            <div class="row">
+                                                                {% comment %} <div class="col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="{{ form.zoho_data_text.id_for_label }}" class="form-label">zoho_data_text</label>
+                                                                        {{ form.zoho_data_text }}
+                                                                    </div>
+                                                                </div> {% endcomment %}
                                                             </div>
-                                                        </div>
-                                                        
-                                                        <div class="col-12">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.is_staff.id_for_label }}" class="form-label">Is Superuser</label>
-                                                                {{ form.is_staff }}
-                                                            </div>
-                                                        </div>
-                                                   
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.beruf.id_for_label }}" class="form-label">Beruf</label>
-                                                                {{ form.beruf }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-earth me-1"></i> Social</h5>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.age.id_for_label }}" class="form-label">Age</label>
-                                                                {{ form.age }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.gerat.id_for_label }}" class="form-label">Mobile Gerät</label>
-                                                                {{ form.gerat }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.instagram.id_for_label }}" class="form-label">Instagram</label>
-                                                                {{ form.instagram }}
-                                                            </div>
-                                                        </div>
-                                                       
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.linkedin.id_for_label }}" class="form-label">Linkedin</label>
-                                                                {{ form.linkedin }}
-                                                            </div>
+                                                            
                                                         </div>
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.skype.id_for_label }}" class="form-label">Skype</label>
-                                                                {{ form.skype }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="{{ form.github.id_for_label }}" class="form-label">Github</label>
-                                                                {{ form.github }}
-                                                            </div>
+                                                    <div class="tab-pane" id="aboutme">
+                                                        <div class="border border-light rounded p-2 mb-3 text-center">
+                                                            <h5 class="card-title text-primary">Anzeige von Containern auf der HOME-Seite</h5>
+                                                            <table class="table table-striped">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>Unsere Mitarbeiter</td>
+                                                                        <td><input type="checkbox" id="top_verkaufer_container_view" name="{{ form.top_verkaufer_container_view.name }}" {% if form.top_verkaufer_container_view.value %}checked{% endif %} data-switch="info"/><label for="top_verkaufer_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Unsere Mitarbeiter"</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Profil</td>
+                                                                        <td><input type="checkbox" id="profile_container_view" name="{{ form.profile_container_view.name }}" {% if form.profile_container_view.value %}checked{% endif %} data-switch="info"/><label for="profile_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Profil"</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Letzte Aktivitäten</td>
+                                                                        <td><input type="checkbox" id="activity_container_view" name="{{ form.activity_container_view.name }}" {% if form.activity_container_view.value %}checked{% endif %} data-switch="info"/><label for="activity_container_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Letzte Aktivitäten"</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Angebotstatus Übersicht</td>
+                                                                        <td><input type="checkbox" id="angebot_statusubersicht_view" name="{{ form.angebot_statusubersicht_view.name }}" {% if form.angebot_statusubersicht_view.value %}checked{% endif %} data-switch="info"/><label for="angebot_statusubersicht_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Angebotstatus Übersicht"</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Schnell-PV-Rechner</td>
+                                                                        <td><input type="checkbox" id="pv_rechner_view" name="{{ form.pv_rechner_view.name }}" {% if form.pv_rechner_view.value %}checked{% endif %} data-switch="info"/><label for="pv_rechner_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Schnell-PV-Rechner"</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Anzahl der verkauften Solarmodule</td>
+                                                                        <td><input type="checkbox" id="anzahl_sol_module_view" name="{{ form.anzahl_sol_module_view.name }}" {% if form.anzahl_sol_module_view.value %}checked{% endif %} data-switch="info"/><label for="anzahl_sol_module_view" data-on-label="Ja" data-off-label="Nein"></label></td>
+                                                                        <td>Anzeige des Containers "Anzahl der verkauften Solarmodule"</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div class="text-end">
-                                                        <button type="submit" class="btn btn-success mt-2"><i class="mdi mdi-content-save"></i> Save</button>
-                                                    </div>
-                                                </form>
+                                                </div>
                                             </div>
-
-                                            <!-- end settings content-->
-    
-                                        </div> <!-- end tab-content -->
-                                    </div> <!-- end card body -->
-                                </div> <!-- end card -->
-                            </div> <!-- end col -->
+                                        
+                                    </div> <!-- end tab-content -->
+                                </div> <!-- end card body -->
+                            </div> <!-- end card -->
                         </div>
+                    </form> <!-- end col -->
+                </div>
                         <!-- end row-->
 
-                    </div>
+            </div>
                     <!-- container -->
 
-                </div>
+        </div>
                 <!-- content -->
 
                 <!-- Footer Start -->
                 <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6">
-                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
-                    </div>
-                    <div class="col-md-6">
-                        <div class="text-md-end footer-links d-none d-md-block">
-                            <a type="submit" href="javascript:void(0)" id="send_support_message">Support</a>
-                            <div class="d-print-none mt-4">
-                                <div class="text-end">
-                                    <div id="success-alert-modal_2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content modal-filled bg-success">
-                                                <div class="modal-body p-4">
-                                                    <div class="text-center">
-                                                        <i class="ri-check-line h1"></i>
-                                                        <h4 class="mt-2">Gut gemacht!</h4>
-                                                        <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
-                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
-                                                    </div>
-                                                </div>
-                                            </div><!-- /.modal-content -->
-                                        </div><!-- /.modal-dialog -->
-                                    </div>
-                                    <script>
-                                        function getCookie(name) {
-                                            let cookieValue = null;
-                                            if (document.cookie && document.cookie !== '') {
-                                                const cookies = document.cookie.split(';');
-                                                for (let i = 0; i < cookies.length; i++) {
-                                                    const cookie = cookies[i].trim();
-                                                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                                        break;
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-end footer-links d-none d-md-block">
+                                    <a type="submit" href="javascript:void(0)" id="send_support_message">Support</a>
+                                    <div class="d-print-none mt-4">
+                                        <div class="text-end">
+                                            <div id="success-alert-modal_2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content modal-filled bg-success">
+                                                        <div class="modal-body p-4">
+                                                            <div class="text-center">
+                                                                <i class="ri-check-line h1"></i>
+                                                                <h4 class="mt-2">Gut gemacht!</h4>
+                                                                <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
+                                                                <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /.modal-content -->
+                                                </div><!-- /.modal-dialog -->
+                                            </div>
+                                            <script>
+                                                function getCookie(name) {
+                                                    let cookieValue = null;
+                                                    if (document.cookie && document.cookie !== '') {
+                                                        const cookies = document.cookie.split(';');
+                                                        for (let i = 0; i < cookies.length; i++) {
+                                                            const cookie = cookies[i].trim();
+                                                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                                                break;
+                                                            }
+                                                        }
                                                     }
+                                                    return cookieValue;
                                                 }
-                                            }
-                                            return cookieValue;
-                                        }
 
-                                        document.getElementById('send_support_message').addEventListener('click', function() {
-                                            var csrfToken = getCookie('csrftoken'); 
-                                            fetch('{% url 'vertrieb_interface:send_support_message' %}', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRFToken': csrfToken
-                                                },
-                                                body: JSON.stringify({})
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                console.log(data);
-                                                if (data.status === 'success') {
-                                                    $('#success-alert-modal_2').modal('show');
-                                                }
-                                            });
-                                        });
-                                    </script>
+                                                document.getElementById('send_support_message').addEventListener('click', function() {
+                                                    var csrfToken = getCookie('csrftoken'); 
+                                                    fetch('{% url 'vertrieb_interface:send_support_message' %}', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRFToken': csrfToken
+                                                        },
+                                                        body: JSON.stringify({})
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        console.log(data);
+                                                        if (data.status === 'success') {
+                                                            $('#success-alert-modal_2').modal('show');
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </footer>
+                </footer>
                 <!-- end Footer -->
     </div>
-</div>
+
 {% endblock %}
+
 {% block extra_js %}
-        <!-- Vendor js -->
-        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <!-- Vendor js -->
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
 
-        <!-- Chart.js -->
-        <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
+    <!-- Chart.js -->
+    <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
 
-        <!-- Profile Demo App js -->
-        <script src="{% static 'assets/js/pages/demo.profile.js' %}"></script>
+    <!-- Profile Demo App js -->
+    <script src="{% static 'assets/js/pages/demo.profile.js' %}"></script>
 
-        <!-- App js -->
-        <script src="{% static 'assets/js/app.min.js' %}"></script>
+    <!-- App js -->
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
 {% endblock %}

@@ -11,78 +11,59 @@ from config.settings import (
 )
 from vertrieb_interface.models import VertriebAngebot
 
-# Global constants
-
 VERTRIEB_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Elektrikkalender"
 ACCESS_TOKEN_URL = "https://accounts.zoho.eu/oauth/v2/token"
 HTTP_OK = 200
 HTTP_UNAUTHORIZED = 401
-HTTP_NOT_FOUND = 404
 LIMIT_ALL = 200
 LIMIT_CURRENT = 200
 MAX_RETRIES = 5
 SLEEP_TIME = 1
 
-
 class APIException(Exception):
     pass
-
 
 class UnauthorizedException(APIException):
     pass
 
-
 class RateLimitExceededException(APIException):
     pass
 
-
 def get_headers():
-    access_token = ZOHO_ACCESS_TOKEN
-    if not access_token:
-        access_token = refresh_access_token()
+    access_token = ZOHO_ACCESS_TOKEN or refresh_access_token()
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-
 def refresh_access_token():
-    client_id = ZOHO_CLIENT_ID
-    client_secret = ZOHO_CLIENT_SECRET
-    refresh_token = ZOHO_REFRESH_TOKEN
-
-    url = f"{ACCESS_TOKEN_URL}?refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token"
-    response = requests.post(url)
+    params = {
+        'refresh_token': ZOHO_REFRESH_TOKEN,
+        'client_id': ZOHO_CLIENT_ID,
+        'client_secret': ZOHO_CLIENT_SECRET,
+        'grant_type': 'refresh_token'
+    }
+    response = requests.post(ACCESS_TOKEN_URL, params=params)
+    
     if response.status_code != HTTP_OK:
         raise APIException(f"Error refreshing token: {response.status_code}")
-
-    data = response.json()
-    new_access_token = data.get("access_token")
+    
+    new_access_token = response.json().get("access_token")
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
 
-
-def handle_response(response, headers, params):
-    if response.status_code == 200:
+def fetch_data_from_api(url, headers, params):
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == HTTP_OK:
         return response.json()
-    elif response.status_code == 401:
-        access_token = refresh_access_token()
-        headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-        response = requests.get(VERTRIEB_URL, headers=headers, params=params)
-        if response.status_code == 200:
+    elif response.status_code == HTTP_UNAUTHORIZED:
+        headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code == HTTP_OK:
             return response.json()
-        else:
-            print(f"Failed to fetch data, status code: {response.status_code}")
-            return None
-    else:
-        print(f"Failed to fetch data, status code: {response.status_code}")
-        return None
+    return None
 
-
-def fetch_all_user_angebots(request):
+def fetch_user_angebote_all(request):
     user = request.user
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-    if not access_token:
-        access_token = refresh_access_token()
-    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+    headers = get_headers()
 
     start_index = 1
     all_user_angebots_list = []
@@ -93,44 +74,20 @@ def fetch_all_user_angebots(request):
             "criteria": f"Vertriebler.ID == {user.zoho_id}",
         }
 
-        response = requests.get(VERTRIEB_URL, headers=headers, params=params)
-        json_data = json.loads(response.text)
-
-        with open(
-            "vertrieb_interface/json_tests/all_vertriebler_angebot.json", "w"
-        ) as f:
-            json.dump(json_data, f)
-        data = handle_response(response, headers, params)
-
+        data = fetch_data_from_api(VERTRIEB_URL, headers, params)
         if data:
             all_user_angebots_list = process_all_user_data(data, all_user_angebots_list)
-
-        elif response.status_code != 200:
-            if response.status_code == 401:
-                access_token = refresh_access_token()
-                headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-                break
-            else:
-                print(f"Failed to fetch data, status code: {response.status_code}")
-                break
-
-        print(f"access_token is alive, status code: {response.status_code}")
+        else:
+            break
         start_index += LIMIT_ALL
 
     return all_user_angebots_list
 
-
 def fetch_current_user_angebot(request, zoho_id):
     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1/{zoho_id}"
-
-    headers = {
-        "Authorization": f"Zoho-oauthtoken {access_token}",
-    }
-
+    url = f"{VERTRIEB_URL}/{zoho_id}"
+    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
     current_angebot_list = []
-
     start_index = 1
 
     while True:
@@ -139,91 +96,38 @@ def fetch_current_user_angebot(request, zoho_id):
             "limit": LIMIT_CURRENT,
         }
 
-        response = requests.get(url, headers=headers, params=params)
-        if response.status_code == 200:
-            print(f"access_token is alive, status code: {response.status_code}")
-            data = json.loads(response.text)
-            with open(
-                "vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w"
-            ) as f:
+        data = fetch_data_from_api(url, headers, params)
+        if data:
+            with open("vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w") as f:
                 json.dump(data, f)
             data_dict = data["data"]
-
             if not data.get("data"):
                 break
-
-            ausrichtung = data_dict.get("Dachausrichtung")
-            email = data_dict.get("Email")
-            angebot_bekommen_am = data_dict.get("Angebot_bekommen_am")
-            verbrauch = data_dict.get("Stromverbrauch_pro_Jahr")
-            leadstatus = data_dict.get("Leadstatus")
-            anfrage_berr = data_dict.get("Anfrage_ber")
-            notizen = data_dict.get("Notizen")
-            empfohlen_von = data_dict.get("empfohlen_von")
-            latitude = data_dict.get("Adresse_PVA", {}).get("latitude", "")
-            longitude = data_dict.get("Adresse_PVA", {}).get("longitude", "")
-
             try:
-                if ausrichtung in ["S\u00fcd", "Ost/West"]:
-                    termin = data_dict.get("Termine")
-                    current_angebot_list.append(
-                        {
-                            "email": email if email else "",
-                            "ausrichtung": 0 if ausrichtung == "S\u00fcd" else 1,
-                            "verbrauch": verbrauch if verbrauch else 15000,
-                            "notizen": notizen if notizen else "",
-                            "anfrage_berr": anfrage_berr if anfrage_berr else "",
-                            "angebot_bekommen_am": angebot_bekommen_am
-                            if angebot_bekommen_am
-                            else "",
-                            "empfohlen_von": empfohlen_von if empfohlen_von else "",
-                            "leadstatus": leadstatus if leadstatus else "",
-                            "termine_text": termin[0]["display_value"]
-                            if termin[0]["display_value"]
-                            else "",
-                            "termine_id": termin[0]["ID"] if termin[0]["ID"] else "",
-                            "latitude": latitude,
-                            "longitude": longitude,
-                        }
-                    )
-                else:
-                    termin = data_dict.get("Termine")
-                    current_angebot_list.append(
-                        {
-                            "ausrichtung": 0,
-                            "email": email if email else "",
-                            "angebot_bekommen_am": angebot_bekommen_am,
-                            "anfrage_berr": anfrage_berr,
-                            "verbrauch": verbrauch if verbrauch else 15000.0,
-                            "notizen": notizen,
-                            "leadstatus": leadstatus if leadstatus else "",
-                            "empfohlen_von": empfohlen_von,
-                            "termine_text": termin[0]["display_value"]
-                            if termin[0]["display_value"]
-                            else "none",
-                            "termine_id": termin[0]["ID"] if termin else "",
-                            "latitude": latitude,
-                            "longitude": longitude,
-                        }
-                    )
-
+                entry = {
+                    "ausrichtung": 0 if data_dict.get("Dachausrichtung") in ["S\u00fcd", "Ost/West"] else 1,
+                    "email": data_dict.get("Email", ""),
+                    "angebot_bekommen_am": data_dict.get("Angebot_bekommen_am", ""),
+                    "anfrage_berr": data_dict.get("Anfrage_ber", ""),
+                    "verbrauch": data_dict.get("Stromverbrauch_pro_Jahr", 15000.0),
+                    "notizen": data_dict.get("Notizen", ""),
+                    "leadstatus": data_dict.get("Leadstatus", ""),
+                    "empfohlen_von": data_dict.get("empfohlen_von", ""),
+                    "termine_text": data_dict.get("Termine", [{}])[0].get("display_value", "none"),
+                    "termine_id": data_dict.get("Termine", [{}])[0].get("ID", ""),
+                    "latitude": data_dict.get("Adresse_PVA", {}).get("latitude", ""),
+                    "longitude": data_dict.get("Adresse_PVA", {}).get("longitude", ""),
+                }
+                current_angebot_list.append(entry)
             except:
                 pass
             start_index += LIMIT_CURRENT
-
-        if response.status_code == 401:
-            print(f"Failed to fetch data, status code: {response.status_code}")
-            print("Re-trying....")
-            access_token = refresh_access_token()
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            continue
-        elif response.status_code != 200:
-            print(f"Failed to fetch data, status code: {response.status_code}")
+        else:
             break
 
     return current_angebot_list
 
-
+fetch_user_angebote_all
 def process_all_user_data(data, all_user_angebots_list):
     if not data["data"]:
         return all_user_angebots_list

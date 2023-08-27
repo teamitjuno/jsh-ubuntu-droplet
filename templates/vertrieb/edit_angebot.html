@@ -212,44 +212,7 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.elwa.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switchelwa" {% if form.elwa.value %}checked{% endif %} data-switch="success" name="{{ form.elwa.html_name }}" />
-                                                                                <label class="custom-control-label" for="switchelwa" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.thor.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switchthor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
-                                                                                <label class="custom-control-label" for="switchthor" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {% if user.role.name == "admin" %}
-                                                                    <tr>
-                                                                        <th>{{ form.elwa.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="elwa" {% if form.elwa.value %}checked{% endif %} data-switch="success" name="{{ form.elwa.html_name }}" />
-                                                                                <label class="custom-control-label" for="elwa" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.thor.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="thor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
-                                                                                <label class="custom-control-label" for="thor" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {% endif %}
+                                                                    
                                                                     <tr>
                                                                         <th>{{ form.notstrom.label_tag }}</th>
                                                                         <td>
@@ -288,12 +251,10 @@
                                                                         
                                                                         {% include 'vertrieb/extra/speicher_content.html' %}
                                                                         {% include 'vertrieb/extra/wand_content.html' %}
+                                                                        {% include 'vertrieb/extra/elwa_2_content.html' %}
+                                                                        {% include 'vertrieb/extra/thor_2_content.html' %}
                                                                         {% include 'vertrieb/extra/wallbox_content.html' %}
-
-                                                                        <tr>
-                                                                            <th>{{ form.komplex.label_tag }}</th>
-                                                                            <td id="komplex" name="komplex">{{ form.komplex }}</td>
-                                                                        </tr>
+                                                                        {% include 'vertrieb/extra/komplex_content.html' %}
                                                                         
                                                                     </tbody>
                                                                 </table>
@@ -1070,26 +1031,7 @@
                                                                             {% endif %}
                                                                         {% endif %}
                                                                     </tr>
-                                                                    {% if user.role.name == "admin" %}
-                                                                    <tr>
-                                                                        <th>{{ form.elwa.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switchelwa" {% if form.elwa.value %}checked{% endif %} data-switch="success" name="{{ form.elwa.html_name }}" />
-                                                                                <label class="custom-control-label" for="switchelwa" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.thor.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switchthor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
-                                                                                <label class="custom-control-label" for="switchthor" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {% endif %}
+                                                                    
                                                                     <tr>
                                                                         <th>{{ form.notstrom.label_tag }}</th>
                                                                         {% if user.role.name == "admin" %}
@@ -1148,7 +1090,9 @@
                                                                         
                                                                         
                                                                         {% include 'vertrieb/extra/speicher_content_readonly.html' %}    
-                                                                        {% include 'vertrieb/extra/wand_content_readonly.html' %}    
+                                                                        {% include 'vertrieb/extra/wand_content_readonly.html' %}
+                                                                        {% include 'vertrieb/extra/elwa_2_content_readonly.html' %}
+                                                                        {% include 'vertrieb/extra/thor_2_content_readonly.html' %}    
                                                                         {% include 'vertrieb/extra/wallbox_content_readonly.html' %}
 
                                                                         <tr>

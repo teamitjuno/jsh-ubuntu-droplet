@@ -1009,24 +1009,56 @@ class PDF(FPDF):
             self.cell(0, 6, "my-PV AC-THOR intelligente Steuerung", 0, 0, "L")
             self.set_y(y + 5)
             self.set_x(25)
-            self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(
-                0,
-                5,
-                "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
-                0,
-                "L",
-            )
-            self.set_y(y)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(0, 6, "inklusive", 0, 0, "R")
-            y += 15
+            if data["heizstab"] == True:
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(
+                    0,
+                    5,
+                    "Heizstab inklusive",
+                    0,
+                    "L",
+                )
+                self.set_y(y + 10)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(
+                    0,
+                    5,
+                    "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
+                    0,
+                    "L",
+                )
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(0, 6, "inklusive", 0, 0, "R")
+                y += 15
+            else:
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(
+                    0,
+                    5,
+                    "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
+                    0,
+                    "L",
+                )
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(0, 6, "inklusive", 0, 0, "R")
+                y += 15
+
         else:
             y_tmp += 15
+            
 
         if data["notstrom"] == True:
             # Tabelle Eintrag Ersatzstrom

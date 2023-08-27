@@ -111,7 +111,7 @@
                                                 <a href="{% url 'adminfeautures:user-orders' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Zeigen"><i class="uil uil-pen"></i></a>
                                             </td>
                                             <td>
-                                                <a href="{% url 'authentication:user-edit' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
+                                                <a href="{% url 'adminfeautures:user-edit' user.id %}" class="font-18 text-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="uil uil-pen"></i></a>
                                             </td>
 
                                     </tr>
@@ -143,13 +143,13 @@
                             </div>
                             <div id="cardCollpase3" class="collapse pt-3 show">
                                 
-                                <button id="update-users-button" class="btn btn-outline-info rounded-pill">
+                                <button id="update-users-button" class="btn btn-outline-info rounded-pill m-2">
                                     Erneuen Vertriebler Liste
                                     <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
                                     <span class="loading-text" style="display: none;">Herunterladen von Daten aus dem ZOHO-Portal...</span>
                                 </button>
                                 
-                                    <button id="update-elektrikers-button" style="margin-left: 25px;" class="btn btn-outline-info rounded-pill">
+                                    <button id="update-elektrikers-button" class="btn btn-outline-info rounded-pill m-2">
                                         Erneuen Elektriker Liste
                                         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
                                         <span class="loading-text" style="display: none;">Herunterladen von Daten aus dem ZOHO-Portal...</span>

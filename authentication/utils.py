@@ -15,7 +15,7 @@ def handle_avatar_upload(user, avatar_file):
     img.save(bio, "JPEG")
 
     # Get the UserProfile for this user, or create a new one if it doesn't exist
-    profile = User.objects.filter(id=user.id)
+    profile = User.objects.get(id=user.id)
 
     # Save the binary image data to the avatar field
     profile.avatar.save("avatar.jpg", ContentFile(bio.getvalue()))  # type:ignore
