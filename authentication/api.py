@@ -46,23 +46,13 @@ class LoginView(APIView):
         email = request.POST["email"]
         password = request.POST["password"]
 
-        try:
-            user_obj = User.objects.get(email=email)
-            # Printing the hashed password (Safe to print, but never the plaintext password)
-            print("Stored hashed password for user:", user_obj.password)
-            # Manually checking the provided password against the stored hash
-            if not check_password(password, user_obj.password):
-                print("Provided password does not match stored password for email:", email)
-        except User.DoesNotExist:
-            print("No user exists with email:", email)
-
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, username=email, password=password)
 
         if not user:
-            print("Authentication failed for email:", email)
+            print("Authentication failed for email:", email, user.password)
         else:
-            print("User authenticated:", user, user.beruf, user.kuerzel, user.is_staff)
-        
+            print("User authenticated:", user, user.beruf, user.kuerzel, user.is_staff, user.password)
+
         if user is not None and user.beruf == "Elektriker" and user.kuerzel == "TW":  # type: ignore
             login(request, user)
             return redirect("invoices:tom")
@@ -81,6 +71,7 @@ class LoginView(APIView):
             return redirect("/admin")
         else:
             return render(request, "pages-login.html", {"error": "Invalid credentials"})
+
 
 
 

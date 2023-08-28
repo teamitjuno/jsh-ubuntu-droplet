@@ -24,9 +24,12 @@ from prices.forms import (
     OptionalAccessoriesPreiseForm,
     AndereKonfigurationWerteForm,
 )
+from django.http import HttpResponseForbidden
+from django.views.decorators.http import require_POST
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404
 import logging
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import user_passes_test, login_required
 from authentication.utils import handle_avatar_upload
 from django.db.models import IntegerField, Q
@@ -53,11 +56,27 @@ from adminfeautures.forms import UserForm
 from authentication.forms import TopVerkauferContainerViewForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.edit import UpdateView
-from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import permission_required, login_required
+from django.utils.decorators import method_decorator
+from functools import wraps
+from django.contrib import auth
 load_dotenv(ENV_FILE)
 
-
+def _user_has_perm(user, perm, obj=None):
+    """
+    A backend can raise `PermissionDenied` to short-circuit permission checking.
+    """
+    for backend in auth.get_backends():
+        if not hasattr(backend, "has_perm"):
+            continue
+        try:
+            if backend.has_perm(user, perm, obj):
+                return True
+        except PermissionDenied:
+            return False
+    return False
 def handler404(request, exception):
     return render(request, "404.html", status=404)
 
@@ -277,6 +296,7 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
     template_name = "vertrieb/view_orders_admin.html"
     context_object_name = "angebots"
 
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
@@ -299,17 +319,28 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         except User.DoesNotExist:
             raise Http404("User not found")
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
+        # Check if it's a delete request
+        if 'delete_user' in request.POST:
+            user = self.get_object()
+            if user != request.user:
+                user.delete()
+                logging.error("User deleted successfully.")
+                return redirect("adminfeautures:user_list")
+            else:
+                logging.error("You cannot delete your own account!")
+                return redirect("adminfeautures:user_list")
         
+        # Otherwise, continue as usual
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
         response = super().form_valid(form)
         form.save()
-        
-        
         print(self.object)
         return super(UserUpdateView, self).form_valid(form)
 
     def form_invalid(self, form):
-        
         print("Form errors:", form.errors)
         return super().form_invalid(form)
 
@@ -325,47 +356,124 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 
 
-class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
+# @method_decorator(csrf_protect, name="dispatch")
+# class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
+#     model = User
+#     form_class = AdminPasswordChangeForm
+#     template_name = "vertrieb/password_change.html"
+
+#     def get_form(self, form_class=None):
+#         if form_class is None:
+#             form_class = self.get_form_class()
+        
+#         # Get the default form kwargs
+#         kwargs = self.get_form_kwargs()
+        
+#         # Explicitly set the 'user' key in the kwargs dictionary
+#         kwargs["user"] = self.get_object()
+        
+#         return form_class(**kwargs)
+
+#     def get_form_kwargs(self):
+#         """
+#         Returns the keyword arguments for instantiating the form.
+#         """
+#         kwargs = super(PasswordUpdateView, self).get_form_kwargs()
+#         # Explicitly set the 'user' key in the kwargs dictionary
+#         kwargs["user"] = self.get_object()
+#         # Remove the 'instance' key which is not expected by PasswordChangeForm
+#         kwargs.pop('instance', None)
+#         return kwargs
+
+#     def form_valid(self, form):
+#         """
+#         If the form is valid, change the user's password.
+#         """
+#         form.save()  # This calls AdminPasswordChangeForm's save method, which changes the password correctly.
+        
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Data saved successfully!")
+#         return response
+    
+#     def form_invalid(self, form):
+        
+#         print("Form errors:", form.errors)
+#         return super().form_invalid(form)def role_based_permission_required(perm):
+def user_has_permission(request, perm_name):
+    user = request.user
+    if _user_has_perm(request.user, "auth.change_user"):
+        logging.error(f"{user.username} has direct permission: {perm_name}")
+        return True
+    else:
+        logging.error(f"{user.username} does not have direct permission: {perm_name}")
+
+    if user.role and user.role.permissions.filter(codename=perm_name).exists():
+        logging.error(f"{user.username}'s role ({user.role.name}) has permission: {perm_name}")
+        return True
+    else:
+        if user.role:
+            logging.error(f"{user.username}'s role ({user.role.name}) does not have permission: {perm_name}")
+        else:
+            logging.error(f"{user.username} does not have an associated role.")
+    return False
+
+def role_based_permission_required(perm):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if user_has_permission(request, perm):
+                return view_func(request, *args, **kwargs)
+            return HttpResponseForbidden("Permission denied")
+        return _wrapped_view
+    return decorator
+
+@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(login_required, name="dispatch")
+@method_decorator(role_based_permission_required('change_user'), name="dispatch")
+class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
     model = User
-    form_class = AdminPasswordChangeForm
+    form_class = PasswordChangeForm
     template_name = "vertrieb/password_change.html"
 
     def get_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class()
-        
-        # Get the default form kwargs
         kwargs = self.get_form_kwargs()
-        
-        # Explicitly set the 'user' key in the kwargs dictionary
         kwargs["user"] = self.get_object()
-        
         return form_class(**kwargs)
 
     def get_form_kwargs(self):
-        """
-        Returns the keyword arguments for instantiating the form.
-        """
         kwargs = super(PasswordUpdateView, self).get_form_kwargs()
-        # Explicitly set the 'user' key in the kwargs dictionary
         kwargs["user"] = self.get_object()
-        # Remove the 'instance' key which is not expected by PasswordChangeForm
         kwargs.pop('instance', None)
         return kwargs
 
     def form_valid(self, form):
-        """
-        If the form is valid, change the user's password.
-        """
-        form.save()  # This calls AdminPasswordChangeForm's save method, which changes the password correctly.
+        user = self.get_object()
+        form.save()
+        logging.error(f"User ID: {user.id}, Password: {user.password}")
+        new_password = form.cleaned_data.get("password")
+        logging.error(f"User ID: {user.id}, Password: {new_password}")
         
-        response = super().form_valid(form)
-        messages.success(self.request, "Data saved successfully!")
-        return response
+
+    # This will hash the password and save it
+
+
+        user.save()
+
+        # Update the session auth hash if the user changes their own password
     
+        update_session_auth_hash(self.request, user)
+
+
+
+        logging.error("Password changed successfully!")
+        logging.error(f"User ID: {user.id}, Password: {user.password}")
+
+        return super().form_valid(form)
+
     def form_invalid(self, form):
-        
-        print("Form errors:", form.errors)
+        logging.error("Form errors:", form.errors)
         return super().form_invalid(form)
 # @staff_member_required
 # def change_password(request, user_id):
@@ -389,6 +497,19 @@ class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateVi
 #         "vertrieb/password_change.html",
 #         {"form": form, "target_user": target_user},
 #     )
+
+@require_POST
+def delete_user(request, pk):
+    user_id = request.POST.get("user_id")
+
+    try:
+        user = User.objects.get(pk=user_id)
+        user.delete()
+        logging.error("User deleted successfully.")
+    except User.DoesNotExist:
+        logging.error("User not found.")
+
+    return redirect("adminfeautures:user_list")
 
 
 class DeleteAngebot(DeleteView):

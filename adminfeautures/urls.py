@@ -10,6 +10,7 @@ from adminfeautures.views import (
     update_optional_accessories_preise_view,
     update_andere_konfiguration_werte_view,
     avatar_upload_form,
+    delete_user,
     PasswordUpdateView,
     ViewAdminOrders,
     UpdateAdminAngebot,
@@ -33,6 +34,7 @@ urlpatterns = [
     path('user/<int:pk>/top-verkaufer-container-update/', TopVerkauferContainerUpdateView.as_view(), name='top-verkaufer-container-update'),
     path('user/<int:pk>/user-update/', UserUpdateView.as_view(), name='user-update'),
     path('user/<int:pk>/change_password/', PasswordUpdateView.as_view(), name='change_password'),
+    path('user/<int:pk>/delete/', delete_user, name="delete_user"),
     
 
     path(

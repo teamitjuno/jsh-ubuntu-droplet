@@ -200,3 +200,11 @@ module2 = SolarModule(
     ticket_preis=516
 )
 module2.save()
+
+
+from django.contrib.auth.models import Permission
+from authentication.models import Role
+
+role = Role.objects.get(id=1)
+permission = Permission.objects.get(codename='change_user')
+role.permissions.add(permission)

@@ -8,7 +8,7 @@ from authentication.views import (
     update_vertrieblers,
     update_elektrikers,
     protected_schema_view,
-    delete_user_view,
+    delete_user,
 )
 
 app_name = "authentication"
@@ -18,7 +18,7 @@ urlpatterns = [
     path("admin/update_elektrikers/", update_elektrikers, name="update_elektrikers"),
     
     # path("change_password/<int:user_id>/", change_password, name="change_password"),
-    path("delete/", delete_user_view, name="delete_user_view"),
+   
     path("admin/schema/", protected_schema_view, name="schema_view"),
     path("", home, name="home"),
     path("login/", LoginView.as_view(), name="login"),

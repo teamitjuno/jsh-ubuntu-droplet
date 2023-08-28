@@ -1,17 +1,9 @@
 {% extends 'vertrieb/base.html' %}
-
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
-{% block head_extra %}
-<head>
-<title>AngebotsTool 2.0 | Juno-Solar Administration Tool</title>
-</head>
-{% endblock %}
 {% block content %}
-<style>
 
-</style>        
 <div class="content-page">
     <div class="content">
             {% if not vertrieb_angebot.is_locked %}

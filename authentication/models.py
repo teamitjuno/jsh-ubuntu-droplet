@@ -5,9 +5,12 @@ from django.db import models
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.utils import timezone
-from .constants import DEFAULT_ROLES
-
-
+from authentication.constants import DEFAULT_ROLES
+from django.contrib.auth.models import Permission
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.hashers import (
+    make_password,
+)
 class CustomUserManager(UserManager):
     """custom user manager"""
 
@@ -42,8 +45,10 @@ class CustomUserManager(UserManager):
 
 class Role(models.Model):
     """user's Role which is used for giving permissions"""
+    
 
     name = models.CharField(max_length=50)
+    permissions = models.ManyToManyField(Permission, blank=True)
 
     def __str__(self):
         return self.name
@@ -59,6 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
 
     zoho_id = models.PositiveBigIntegerField(unique=True, null=True)
     email = models.EmailField(unique=True)
+    password = models.CharField(_("password"), max_length=128)
     username = models.CharField(unique=True, max_length=100, null=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
@@ -172,6 +178,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         # db_table = "users"
         verbose_name_plural = "Users"
 
+
     def __str__(self) -> str:
         return self.email
 
@@ -183,7 +190,20 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
 
         super().save(*args, **kwargs)
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self._password = raw_password
+    
     @receiver(post_migrate)
     def create_default_roles(sender, **kwargs):
+        # Create or get default roles
         for role_name, role_id in DEFAULT_ROLES.items():
             get_or_create_role(role_id, role_name)
+
+        # Assign all permissions to admin role
+        try:
+            admin_role = Role.objects.get(name="admin")
+            all_permissions = Permission.objects.all()
+            admin_role.permissions.set(all_permissions)
+        except Role.DoesNotExist:
+            pass

@@ -112,7 +112,7 @@ def delete_user_view(request):
 
 
 @login_required
-@permission_required("authentication.delete_user", raise_exception=True)
+@permission_required("delete_user", raise_exception=True)
 def delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if request.method == "POST":

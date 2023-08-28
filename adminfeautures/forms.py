@@ -3,8 +3,8 @@ from authentication.models import User, Role
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import authenticate, get_user_model, password_validation
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.forms import SetPasswordForm, ReadOnlyPasswordHashField
-
+from django.contrib.auth.forms import SetPasswordForm, ReadOnlyPasswordHashField, PasswordChangeForm
+from django.core.exceptions import ValidationError
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -348,27 +348,15 @@ class UserForm(forms.ModelForm):
                     {"placeholder": self.initial[field]}
                 )
 
-class AdminPasswordChangeForm(SetPasswordForm):
+class AdminPasswordChangeForm(PasswordChangeForm):
     """
     A form that lets a user change set their password without entering the old
     password
     """
-    password1 = forms.CharField(
-        label=_("New password"),
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+    old_password = forms.CharField(
+        label=_("Old password"),
         strip=False,
-        help_text=password_validation.password_validators_help_text_html(),
+        widget=forms.PasswordInput(
+            attrs={"autocomplete": "current-password", "autofocus": True}
+        ),
     )
-    password2 = forms.CharField(
-        label=_("New password confirmation"),
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-    )
-
-    def save(self, commit=True):
-        """Save the new password."""
-        password = self.cleaned_data["password1"]
-        self.user.set_password(password)
-        if commit:
-            self.user.save()
-        return self.user
