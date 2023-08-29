@@ -56,7 +56,7 @@ from adminfeautures.forms import UserForm
 from authentication.forms import TopVerkauferContainerViewForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.edit import UpdateView
-from django.contrib.auth.forms import PasswordChangeForm
+from adminfeautures.forms import AdminPasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import permission_required, login_required
 from django.utils.decorators import method_decorator
@@ -325,8 +325,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             user = self.get_object()
             if user != request.user:
                 user.delete()
-                logging.error("User deleted successfully.")
-                return redirect("adminfeautures:user_list")
+                return redirect("vertrieb_interface:home")
             else:
                 logging.error("You cannot delete your own account!")
                 return redirect("adminfeautures:user_list")
@@ -353,8 +352,6 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy(
             "adminfeautures:user-edit", kwargs={"pk": self.object.pk}
         )
-
-
 
 # @method_decorator(csrf_protect, name="dispatch")
 # class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
@@ -432,7 +429,7 @@ def role_based_permission_required(perm):
 @method_decorator(role_based_permission_required('change_user'), name="dispatch")
 class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
     model = User
-    form_class = PasswordChangeForm
+    form_class = AdminPasswordChangeForm
     template_name = "vertrieb/password_change.html"
 
     def get_form(self, form_class=None):
@@ -449,28 +446,21 @@ class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
+
         user = self.get_object()
         form.save()
         logging.error(f"User ID: {user.id}, Password: {user.password}")
         new_password = form.cleaned_data.get("password")
         logging.error(f"User ID: {user.id}, Password: {new_password}")
-        
-
-    # This will hash the password and save it
-
-
-        user.save()
 
         # Update the session auth hash if the user changes their own password
     
         update_session_auth_hash(self.request, user)
 
-
-
         logging.error("Password changed successfully!")
         logging.error(f"User ID: {user.id}, Password: {user.password}")
 
-        return super().form_valid(form)
+        return redirect('authentication:login')
 
     def form_invalid(self, form):
         logging.error("Form errors:", form.errors)

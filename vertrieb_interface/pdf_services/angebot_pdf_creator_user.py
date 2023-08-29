@@ -13,7 +13,7 @@ class PDF(FPDF):
     def __init__(self, title1, *args, **kwargs):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
-        self.title1 = title1
+        self.title1=title1
 
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")

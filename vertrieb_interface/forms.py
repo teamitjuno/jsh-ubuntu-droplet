@@ -551,6 +551,7 @@ class VertriebAngebotForm(ModelForm):
     )
     ausrichtung = forms.ChoiceField(
         label="Ausrichtung PV-Anlage",
+        initial="Sud",
         choices=AUSRICHTUNG_CHOICES,
         required=True,
         widget=forms.Select(
@@ -713,7 +714,7 @@ class VertriebAngebotForm(ModelForm):
     )
 
     modul_anzahl_ticket = forms.IntegerField(
-        label="Module Ticket-Anzahl",
+        label="Module Anzahl",
         initial=0,
         required=False,
         validators=[validate_solar_module_ticket_anzahl],
@@ -721,8 +722,18 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
         ),
     )
+    
+    wandhalterung_fuer_speicher_ticket = forms.IntegerField(
+        label="Wandhalterung für Batteriespeicher",
+        initial=0,
+        required=False,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "wandhalterung_fuer_speicher_ticket"}
+        ),
+    )
     optimizer_ticket = forms.IntegerField(
-        label="Optimizer Ticket-Anzahl",
+        label="Optimirer",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -731,7 +742,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     batteriemodule_ticket = forms.IntegerField(
-        label="Batteriemodule Ticket-Anzahl",
+        label="Batteriemodule",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -740,7 +751,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     notstrom_ticket = forms.IntegerField(
-        label="Notstrom Ticket-Anzahl",
+        label="Notstrom",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -748,8 +759,35 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-control", "id": "notstrom_ticket"}
         ),
     )
+    elwa_ticket = forms.IntegerField(
+        label="ELWA 2",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "elwa_ticket"}
+        ),
+    )
+    thor_ticket = forms.IntegerField(
+        label="AC THOR 2 3kW ",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "thor_ticket", "style": "max-width: 100px"}
+        ),
+    )
+    heizstab_ticket = forms.IntegerField(
+        label="Heizstab ",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "heizstab_ticket", "style": "max-width: 100px"}
+        ),
+    )
     eddi_ticket = forms.IntegerField(
-        label="Eddi Ticket-Anzahl",
+        label="Eddi ",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -813,6 +851,10 @@ class VertriebAngebotForm(ModelForm):
             "indiv_price",
             "module_ticket",
             "modul_anzahl_ticket",
+            "elwa_ticket",
+            "wandhalterung_fuer_speicher_ticket",
+            "thor_ticket",
+            "heizstab_ticket",
             "optimizer_ticket",
             "batteriemodule_ticket",
             "notstrom_ticket",
@@ -1025,7 +1067,15 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         fields = ["is_locked"]  # Add other fields as needed
 
 
-class UpdateVertriebAngebotTicketForm(forms.ModelForm):
+class TicketForm(forms.ModelForm):
+    name = forms.ChoiceField(
+        choices=[],
+        label="Interessent",
+        required=True,
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
+        ),
+    )
     module_ticket = forms.ChoiceField(
         label="Zusätzlich & Abzüge: Module",
         choices=[
@@ -1046,6 +1096,42 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         validators=[validate_solar_module_ticket_anzahl],
         widget=forms.NumberInput(
             attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
+        ),
+    )
+    elwa_ticket = forms.IntegerField(
+        label="ELWA 2",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "elwa_ticket"}
+        ),
+    )
+    thor_ticket = forms.IntegerField(
+        label="AC THOR 2 3kW ",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "thor_ticket"}
+        ),
+    )
+    heizstab_ticket = forms.IntegerField(
+        label="Heizstab ",
+        required=False,
+        initial=0,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "heizstab_ticket"}
+        ),
+    )
+    wandhalterung_fuer_speicher_ticket = forms.IntegerField(
+        label="Wandhalterung für Batteriespeicher",
+        initial=0,
+        required=False,
+        validators=[validate_integers_ticket],
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "wandhalterung_fuer_speicher_ticket"}
         ),
     )
     optimizer_ticket = forms.IntegerField(
@@ -1087,7 +1173,12 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         model = VertriebAngebot
         fields = [
             "is_locked",
+            "name",
             "module_ticket",
+            "elwa_ticket",
+            "wandhalterung_fuer_speicher_ticket",
+            "thor_ticket",
+            "heizstab_ticket",
             "modul_anzahl_ticket",
             "optimizer_ticket",
             "batteriemodule_ticket",
@@ -1096,10 +1187,15 @@ class UpdateVertriebAngebotTicketForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, user, **kwargs):
-        super(UpdateVertriebAngebotTicketForm, self).__init__(*args, **kwargs)
+        super(TicketForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if self.initial.get(field):
+                self.fields[field].widget.attrs.update(
+                    {"placeholder": self.initial[field]}
+                )
 
     def save(self, commit=True):
-        form = super(UpdateVertriebAngebotTicketForm, self).save(commit=False)
+        form = super(TicketForm, self).save(commit=False)
         if commit:
             form.save()
         return form

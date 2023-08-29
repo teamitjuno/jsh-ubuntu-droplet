@@ -347,6 +347,10 @@ class VertriebAngebot(TimeStampMixin):
     )
     modul_anzahl_ticket = models.IntegerField(default=0)
     optimizer_ticket = models.IntegerField(default=0)
+    elwa_ticket = models.IntegerField(default=0)
+    thor_ticket = models.IntegerField(default=0)
+    heizstab_ticket = models.IntegerField(default=0)
+    wandhalterung_fuer_speicher_ticket = models.IntegerField(default=0)
     batteriemodule_ticket = models.IntegerField(default=0)
     notstrom_ticket = models.IntegerField(default=0)
     eddi_ticket = models.IntegerField(default=0)
@@ -374,6 +378,19 @@ class VertriebAngebot(TimeStampMixin):
     optimizer_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
+    # wandhalterung_ticket_preis = models.FloatField(
+    #     default=0.00, validators=[MinValueValidator(0)]
+    # ),
+    # elwa_ticket_preis = models.FloatField(
+    #     default=0.00, validators=[MinValueValidator(0)]
+    # ),
+    # thor_ticket_preis = models.FloatField(
+    #     default=0.00, validators=[MinValueValidator(0)]
+    # ),
+    # heizstab_ticket_preis = models.FloatField(
+    #     default=0.00, validators=[MinValueValidator(0)]
+    # ),
+
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
 
@@ -386,6 +403,7 @@ class VertriebAngebot(TimeStampMixin):
     benotigte_restenergie = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
+
     nutzbare_nutzenergie = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
@@ -434,6 +452,7 @@ class VertriebAngebot(TimeStampMixin):
         if self.batteriespeicher_preis:
             self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
+        # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
         self.fullticketpreis = self.full_ticket_preis
         self.anfrage_vom = self.get_current_date_formatted
         self.benotigte_restenergie = self.restenergie
@@ -643,12 +662,24 @@ class VertriebAngebot(TimeStampMixin):
 
     def get_arbeitspreis_and_list(self):
         if not hasattr(self, "_arbeitspreis_and_list"):
-            self._arbeitspreis_and_list = self.priceInflation(
-                float(self.arbeitspreis) / 100 * float(self.verbrauch),
-                float(self.prognose) / 100,
-                int(self.zeitraum),
-            )
+            try:
+                if float(self.verbrauch):
+                    
+                    self._arbeitspreis_and_list = self.priceInflation(
+                        float(self.arbeitspreis) / 100 * float(self.verbrauch),
+                        float(self.prognose) / 100,
+                        int(self.zeitraum),
+                    )
+                
+            except:
+                self.verbrauch = 15000.0
+                self._arbeitspreis_and_list = self.priceInflation(
+                        float(self.arbeitspreis) / 100 * float(self.verbrauch),
+                        float(self.prognose) / 100,
+                        int(self.zeitraum),
+                    )
         return self._arbeitspreis_and_list
+            
 
     @property
     def arbeitspreis_gesamt(self):
@@ -844,7 +875,14 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def restenergie(self):
-        return float(self.verbrauch) - float(self.nutz_energie)
+        rest = 0
+        try:
+            if float(self.verbrauch):
+               rest += float(self.verbrauch) - float(self.nutz_energie)
+        except:
+            self.verbrauch = 15000.0
+            rest += float(self.verbrauch) - float(self.nutz_energie)
+        return rest
 
     @property
     def rest_strom_preis(self):
@@ -989,6 +1027,37 @@ class VertriebAngebot(TimeStampMixin):
         return self.calculate_price(
             OptionalAccessoriesPreise, "eddi", int(self.eddi_ticket)
         )
+    
+    @property
+    def elwa_ticket_preis(self):
+        return self.calculate_price(
+            OptionalAccessoriesPreise, "elwa_2", int(self.elwa_ticket)
+        )
+    
+    @property
+    def wandhalterung_ticket_preis(self):
+        return self.calculate_price(
+            OptionalAccessoriesPreise, "wandhalterung_fuer_speicher", int(self.wandhalterung_fuer_speicher_ticket)
+        )
+    
+    @property
+    def thor_ticket_preis(self):
+        return self.calculate_price(
+            OptionalAccessoriesPreise, "ac_thor_3_kw", int(self.thor_ticket)
+        )
+    
+    @property
+    def heizstab_ticket_preis(self):
+        hz_ticket_preis = 0
+        try:
+            if self.heizstab_ticket <= self.thor_ticket:
+                hz_ticket_preis += self.calculate_price(
+                    OptionalAccessoriesPreise, "heizstab", int(self.heizstab_ticket)
+                )
+        except:
+            hz_ticket_preis = 0
+        return hz_ticket_preis
+
 
     @property
     def leistungsgewinn(self):
@@ -1006,6 +1075,10 @@ class VertriebAngebot(TimeStampMixin):
                     self.leistung_ticket_preis,
                     self.notstrom_ticket_preis,
                     self.eddi_ticket_preis,
+                    self.elwa_ticket_preis,
+                    self.thor_ticket_preis,
+                    self.heizstab_ticket_preis,
+                    self.wandhalterung_ticket_preis,
                 ],
             )
         )
@@ -1212,6 +1285,10 @@ class VertriebAngebot(TimeStampMixin):
             "batterieTicket": int(self.batteriemodule_ticket),
             "notstromTicket": int(self.notstrom_ticket),
             "eddiTicket": int(self.eddi_ticket),
+            "wandhalterungTicket": int(self.wandhalterung_fuer_speicher_ticket),
+            "elwaTicket": int(self.elwa_ticket),
+            "thorTicket": int(self.thor_ticket),
+            "heizstabTicket": int(self.heizstab_ticket),
             "gewinnTicket": self.leistungsgewinn,
             "modulTicketpreis": round(self.modul_ticket_preis, 2),
             "optimizerTicketpreis": round(self.optimizer_ticket_preis, 2),
@@ -1219,6 +1296,10 @@ class VertriebAngebot(TimeStampMixin):
             "leistungTicketpreis": round(self.leistung_ticket_preis, 2),
             "notstromTicketpreis": round(self.notstrom_ticket_preis, 2),
             "eddiTicketpreis": round(self.eddi_ticket_preis, 2),
+            "elwaTicketpreis": self.elwa_ticket_preis,
+            "thorTicketpreis": self.thor_ticket_preis,
+            "heizstabTicketpreis": self.heizstab_ticket_preis,
+            "wandhalterungTicketPreis": self.wandhalterung_ticket_preis,
             "ticketPreis": round(self.full_ticket_preis, 2),
             "stromverbrauch": self.verbrauch,
             "grundpreis": self.grundpreis,

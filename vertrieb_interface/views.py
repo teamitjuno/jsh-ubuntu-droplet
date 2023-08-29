@@ -41,7 +41,7 @@ from vertrieb_interface.get_user_angebots import (
     fetch_current_user_angebot,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
-from vertrieb_interface.forms import VertriebAngebotForm
+from vertrieb_interface.forms import VertriebAngebotForm, TicketForm
 from vertrieb_interface.utils import load_vertrieb_angebot
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
@@ -312,6 +312,41 @@ def home(request):
     }
 
     return render(request, "vertrieb/home.html", context)
+
+def filter_bekommen(data):
+    return [item for item in data if item.get("status") == "bekommen"]
+
+# Example data
+data = [
+    {
+        "zoho_id": "26172000007083013",
+        "status": "bekommen",
+
+    },
+]
+
+filtered_data = filter_bekommen(data)
+print(filtered_data)
+
+class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
+    model = VertriebAngebot
+    template_name = "vertrieb/ticket_creation.html"
+    context_object_name = "angebots"
+
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(  # type: ignore
+            user=self.request.user, status="angenommen", angebot_id_assigned=True
+        )
+
+        queryset = queryset.annotate(
+            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
+        )
+        queryset = queryset.order_by("-zoho_kundennumer_int")
+
+        return queryset
 
 
 def reset_calculator(request):
@@ -610,6 +645,184 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context["form"] = form
         erors = pformat(form.errors)
         pp(erors)
+        return render(self.request, self.template_name, context)
+
+    def load_data_from_zoho_to_angebot_id(self, request):
+        pass
+
+
+class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
+    model = VertriebAngebot
+    form_class = VertriebAngebotForm
+    template_name = "vertrieb/edit_ticket.html"
+    context_object_name = "vertrieb_angebot"
+
+    
+    def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")
+        if not request.user.is_authenticated:
+            raise PermissionDenied()  # This will use your custom 403.html template
+        self.handle_status_change(angebot_id)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vertrieb_angebot = self.get_object()
+
+        context["form"] = self.form_class(  # type: ignore
+            instance=vertrieb_angebot, user=self.request.user  # type: ignore
+        )
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def handle_status_change(self, angebot_id):
+        for angebot in VertriebAngebot.objects.filter(
+            angebot_id=angebot_id, status="bekommen"
+        ):
+            if angebot.status_change_field:
+                if (
+                    timezone.now() - angebot.status_change_field
+                ).total_seconds() >= 14 * 24 * 60 * 60:
+                    angebot.status = "abgelaufen"
+                    angebot.save()
+                    CustomLogEntry.objects.log_action(
+                        user_id=angebot.user_id,
+                        content_type_id=ContentType.objects.get_for_model(angebot).pk,
+                        object_id=angebot.pk,
+                        object_repr=str(angebot),
+                        action_flag=CHANGE,
+                        status=angebot.status,
+                    )
+
+    def get(self, request, angebot_id, *args, **kwargs):
+        vertrieb_angebot = VertriebAngebot.objects.get(
+            angebot_id=angebot_id, user=request.user
+        )
+        zoho_id = vertrieb_angebot.zoho_id
+
+        data = fetch_current_user_angebot(request, zoho_id)
+
+        for item in data:
+            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
+            vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
+
+            vertrieb_angebot.angebot_bekommen_am = (
+                item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
+            )
+
+            vertrieb_angebot.verbrauch = item["verbrauch"]
+
+            vertrieb_angebot.leadstatus = (
+                item["leadstatus"] if item["leadstatus"] else ""
+            )
+            vertrieb_angebot.notizen = item["notizen"]
+            vertrieb_angebot.email = item["email"]
+            vertrieb_angebot.postanschrift_latitude = item["latitude"]
+            vertrieb_angebot.postanschrift_longitude = item["longitude"]
+
+            vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
+            vertrieb_angebot.termine_text = item["termine_text"]
+            vertrieb_angebot.termine_id = item["termine_id"]
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+        user = request.user
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        calc_image = os.path.join(user_folder, "tmp.png")
+        calc_image_suffix = os.path.join(
+            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+        )
+        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+        relative_path_suffix = os.path.relpath(
+            calc_image_suffix, start=settings.MEDIA_ROOT
+        )
+
+        context = self.get_context_data()
+        countdown = vertrieb_angebot.countdown()
+        context = {
+            "countdown": vertrieb_angebot.countdown(),
+            "user": user,
+            "vertrieb_angebot": vertrieb_angebot,
+            "form": form,
+            "calc_image": relative_path,
+            "calc_image_suffix": relative_path_suffix,
+            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+            "OWNER_ID": settings.OWNER_ID,
+            "STYLE_ID": settings.STYLE_ID,
+            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        vertrieb_angebot = get_object_or_404(
+            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
+        )
+        user = request.user
+        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+
+        if "change_status_button" in request.POST:
+            if form.is_valid():
+                form.instance.status = "angenommen"  # type:ignore
+                form.save()  # type:ignore
+                CustomLogEntry.objects.log_action(
+                    user_id=vertrieb_angebot.user_id,
+                    content_type_id=ContentType.objects.get_for_model(
+                        vertrieb_angebot
+                    ).pk,
+                    object_id=vertrieb_angebot.pk,
+                    object_repr=str(vertrieb_angebot),
+                    action_flag=CHANGE,
+                    status=vertrieb_angebot.status,
+                )
+                return redirect(
+                    "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
+                )
+
+        elif form.is_valid():
+            vertrieb_angebot.angebot_id_assigned = True
+
+            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            name_to_kundennumer = {
+                item["name"]: item["zoho_kundennumer"] for item in data
+            }
+            name = form.cleaned_data["name"]
+            kundennumer = name_to_kundennumer[name]
+            vertrieb_angebot.zoho_kundennumer = kundennumer
+
+            form.save()  # type:ignore
+            CustomLogEntry.objects.log_action(
+                user_id=vertrieb_angebot.user_id,
+                content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
+                object_id=vertrieb_angebot.pk,
+                object_repr=str(vertrieb_angebot),
+                action_flag=CHANGE,
+                status=vertrieb_angebot.status,
+            )
+            return redirect(
+                "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
+            )
+
+        return self.form_invalid(form, vertrieb_angebot)
+
+    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
+        context = self.get_context_data()
+        countdown = vertrieb_angebot.countdown()
+        context["status_change_field"] = vertrieb_angebot.status_change_field
+        context["countdown"] = vertrieb_angebot.countdown()
+
+        context["vertrieb_angebot"] = vertrieb_angebot
+        context["form"] = form
+        
+
         return render(self.request, self.template_name, context)
 
     def load_data_from_zoho_to_angebot_id(self, request):

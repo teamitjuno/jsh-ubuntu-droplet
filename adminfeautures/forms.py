@@ -348,15 +348,7 @@ class UserForm(forms.ModelForm):
                     {"placeholder": self.initial[field]}
                 )
 
-class AdminPasswordChangeForm(PasswordChangeForm):
-    """
-    A form that lets a user change set their password without entering the old
-    password
-    """
-    old_password = forms.CharField(
-        label=_("Old password"),
-        strip=False,
-        widget=forms.PasswordInput(
-            attrs={"autocomplete": "current-password", "autofocus": True}
-        ),
-    )
+class AdminPasswordChangeForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ["new_password1", "new_password2"]

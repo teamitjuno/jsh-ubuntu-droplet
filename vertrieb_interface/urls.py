@@ -39,10 +39,16 @@ urlpatterns = [
     ),
     path("vertrieb/profile/", views.profile, name="profile"),
     path("vertrieb/view_orders/", views.ViewOrders.as_view(), name="view_orders"),
+    path("vertrieb/ticket_creation/", views.TicketCreationView.as_view(), name="ticket_creation"),
     path(
         "vertrieb/edit_angebot/<str:angebot_id>/",
         views.AngebotEditView.as_view(),
         name="edit_angebot",
+    ),
+    path(
+        "vertrieb/edit_ticket/<str:angebot_id>/",
+        views.TicketEditView.as_view(),
+        name="edit_ticket",
     ),
     path(
         "vertrieb/update_admin_angebot/<str:angebot_id>/",

@@ -2,7 +2,6 @@
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
-
 {% block content %}
 <div class="content-page">
     <div class="content">
@@ -22,97 +21,65 @@
                     <div class="card d-block">
                         <div class="card-body">
                             <div class="table-container">
-                                <table id="scroll-horizontal-datatable" class="table activate-select nowrap w-100">
+                                <table id="scroll-horizontal-datatable" class="table table-striped nowrap row-border order-column w-100">
                                     <thead>
                                         <tr>
-                                            <th>Kundennumer</th>
+                                            
                                             <th>Kunde</th>
-                                            <th>Angebot ID</th>
-                                            <th>Angebot Status</th>
-                                            <th>Angebot bekommen am:</th>
+                                            
+                                            <th>Solar Module</th>
                                             <th>Datum</th>
-                                            
-                                            <th>Link</th>
-                                            <th>Angebot PDF</th>
-                                            <th>Ticket PDF</th>
-                                            <th>Kalkulation PDF</th>
-                                            <th>Bearbeitbar</th>
-                                            
+                                            <th>Aktion</th>
+                                            <th>Angebot Nummer</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for vertrieb_angebot in angebots %}
                                         <tr>
-                                            <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
+                                            
                                             <td>{{ vertrieb_angebot.name }}</td>
 
-                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                           
+                                            
+                                                
+                                                <td>
+                                                    <h5 class="font-16 my-1 fw-normal link-warning">{{ vertrieb_angebot.solar_module }}  |  {{ vertrieb_angebot.modulanzahl }} </h5>
+                                                    {% if vertrieb_angebot.anzOptimizer > 0 %}
+                                                    <span class="text-warning font-13">Optimierer: {{ vertrieb_angebot.anzOptimizer }}</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.anz_speicher > 0 %}
+                                                    <span class="text-warning font-13">Batteriespeicher: {{ vertrieb_angebot.anz_speicher }} </span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.notstrom %}
+                                                    <span class="text-warning font-13">Notstrom inklusive</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.wallbox %}
+                                                    <span class="text-warning font-13">WallBox inklusive: {{ vertrieb_angebot.wallboxtyp }} </span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.elwa %}
+                                                    <span class="text-warning font-13">Elwa inklusive</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.thor %}
+                                                    <span class="text-warning font-13">Thor inklusive</span>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.heizstab %}
+                                                    <span class="text-warning font-13"> mit Heizstab</span> <br>
+                                                    {% endif %}
+                                                </td>
+                                                
+                                            
+                                            
+                                            <td>{{ vertrieb_angebot.anfrage_vom }}</td>
+                                            
+                                            <td>
+                                                <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+                                            </td>
+                                             {% if vertrieb_angebot.angebot_id_assigned %}
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>
                                             {% else %}
                                             <td> noch nicht zugeordnet </td>
                                             {% endif %}
                                             
-                                            {% if vertrieb_angebot.status == "bekommen" %}
-                                                <td class="link-warning">
-                                                    {{ vertrieb_angebot.status }}
-                                                </td>
-                                                {% elif vertrieb_angebot.status == "angenommen" %}
-                                                <td class="link-success">
-                                                    {{ vertrieb_angebot.status }}
-                                                </td>
-                                                {% elif vertrieb_angebot.status == "abgelaufen" or vertrieb_angebot.status == "abgelehnt" %}
-                                                <td class="link-danger">
-                                                    {{ vertrieb_angebot.status }}
-                                                </td>
-                                                {% elif vertrieb_angebot.status == "in Kontakt" or vertrieb_angebot.status == "Kontaktversuch" %}
-                                                <td class="link-primary">
-                                                    {{ vertrieb_angebot.status }}
-                                                </td>
-                                                {% else %}
-                                                <td>
-                                                    {{ vertrieb_angebot.status }}
-                                                </td>
-                                                {% endif %}
-                                            
-                                            <td>
-                                                {% if vertrieb_angebot.status == "bekommen" %} 
-                                                {{ vertrieb_angebot.status_change_date }}
-                                                {% endif %}
-                                            </td>
-                                            <td>{{ vertrieb_angebot.anfrage_vom }}</td>
-                                            
-                                            <td>
-                                                <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Öffnen</a>
-                                            </td>
-                                            <td>
-                                                {% if vertrieb_angebot.is_locked %}
-                                                <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
-                                                {% endif %}
-                                            </td>
-                                            
-                                            <td> 
-                                                {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
-                                                {% endif %}
-                                            </td>
-                                            
-                                            
-                                                {% if vertrieb_angebot.is_locked %}
-                                                <td>
-                                                <span class="badge bg-danger rounded-pill">Nein</span>
-                                                </td>
-                                                {% endif %}
-
-                                                {% if not vertrieb_angebot.is_locked %}
-                                                <td>
-                                                <span class="badge bg-success rounded-pill">Ja</span>
-                                                </td>
-                                                {% endif %}
                                                 
                                         </tr>
                                         {% empty %}
