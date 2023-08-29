@@ -49,9 +49,9 @@ class LoginView(APIView):
         user = authenticate(request, username=email, password=password)
 
         if not user:
-            print("Authentication failed for email:", email, user.password)
+            print("Authentication failed for email:", email)
         else:
-            print("User authenticated:", user, user.beruf, user.kuerzel, user.is_staff, user.password)
+            print("User authenticated:", user, user.beruf, user.kuerzel, user.is_staff)
 
         if user is not None and user.beruf == "Elektriker" and user.kuerzel == "TW":  # type: ignore
             login(request, user)
