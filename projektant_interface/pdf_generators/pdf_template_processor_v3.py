@@ -16,11 +16,11 @@ class CustomPDF(FPDF):
         roof_typ=None,
         height=None,
         kunden_tel_nummer=None,
-        datetime=None,
-        user_surname=None,
-        kunden_name=None,
-        kunden_strasse=None,
-        kunden_plz_ort=None,
+        datetime="30.08.23",
+        user_surname="",
+        kunden_name="Hui Nahui",
+        kunden_strasse="",
+        kunden_plz_ort="",
         **kwargs,
     ):
         self.roof_typ = roof_typ
@@ -31,7 +31,8 @@ class CustomPDF(FPDF):
         self.kunden_name = kunden_name
         self.kunden_strasse = kunden_strasse
         self.kunden_plz_ort = kunden_plz_ort
-        super().__init__(*args, **kwargs)
+        super().__init__('L', *args, **kwargs)
+
 
     def footer(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
@@ -40,41 +41,50 @@ class CustomPDF(FPDF):
         self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
         col_width = 55
         row_height = 6
-        self.set_xy(0, 258)
-        self.set_font("JUNO Solar Lt", "", 18)
+        self.set_xy(67, 181.5)
+        self.set_font("JUNO Solar Lt", "", 14)
         item = f"{self.roof_typ}"
         self.multi_cell(col_width, row_height, item, border=0)
 
-        self.set_xy(0, 267)
-        self.set_font("JUNO Solar Lt", "", 18)
+        self.set_xy(67, 187.7)
+        self.set_font("JUNO Solar Lt", "", 14)
         item = f"{self.height}"
         self.multi_cell(col_width, row_height, item, border=0)
 
-        self.set_xy(0, 277)
-        self.set_font("JUNO Solar Lt", "", 18)
+        self.set_xy(67, 194.5)
+        self.set_font("JUNO Solar Lt", "", 14)
         item = f"{self.kunden_tel_nummer}"
         self.multi_cell(col_width, row_height, item, border=0)
 
         self.set_font("JUNO Solar Lt", "", 9)
-        self.set_xy(173, 258)
-        item = str(self.datetime)
+        self.set_xy(187, 181)
+        item = f"{self.datetime}"
         self.multi_cell(col_width, row_height, item, border=0)
 
-        self.set_xy(190, 258)
-        item = str(self.user_surname)
+        self.set_font("JUNO Solar Lt", "", 9)
+        self.set_xy(206, 181)
+        item = f"{self.user_surname}"
         self.multi_cell(col_width, row_height, item, border=0)
 
-        row_height = 5
-        self.set_xy(231, 258)
-        item = str(self.kunden_name)
+        col_width = 290
+        row_height = 8
+        
+        self.set_xy(251, 179)
+        self.set_font("JUNO Solar Lt", "", 9)
+        item = f"{self.kunden_name}"
+        print(item)
         self.multi_cell(col_width, row_height, item, border=0)
 
-        self.set_xy(231, 268)
-        item = str(self.kunden_strasse)
+        self.set_font("JUNO Solar Lt", "", 9)
+        self.set_xy(251, 182.5)
+        item = f"{self.kunden_strasse}"
+        print(item)
         self.multi_cell(col_width, row_height, item, border=0)
 
-        self.set_xy(231, 189)
-        item = str(self.kunden_plz_ort)
+        self.set_font("JUNO Solar Lt", "", 9)
+        self.set_xy(251, 186)
+        item = f"{self.kunden_plz_ort}"
+        print(item)
         self.multi_cell(col_width, row_height, item, border=0)
 
     def add_right_top_table(self, processed_besodersheiten):
@@ -82,11 +92,13 @@ class CustomPDF(FPDF):
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
         self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
-        self.set_font("JUNO Solar Lt", "B", 13)
-        col_width = 38
-        row_height = 5
-        self.set_xy(230, 25)
-        item = str(processed_besodersheiten)
+        
+        col_width = 60
+        row_height = 6
+        self.set_xy(234, 5)
+        self.set_font("JUNO Solar Lt", "B", 14)
+        item = f'{processed_besodersheiten}'
+        print(item)
         self.multi_cell(col_width, row_height, item, border=1)
 
 
@@ -102,8 +114,9 @@ def generate_overlay_pdf(data):
         kunden_plz_ort=data["kunden_plz_ort"],
     )
     pdf.add_page()
-    pdf.footer()  # Note: No arguments here now
     pdf.add_right_top_table(data["processed_besodersheiten"])
+    pdf.footer()  # Note: No arguments here now
+    
     return pdf.output(dest="S").encode("latin1")
 
 
