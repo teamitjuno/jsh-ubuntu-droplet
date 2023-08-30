@@ -1,4 +1,4 @@
-import os, json, requests, time
+import os, json, requests, time, logging
 from dotenv import set_key, load_dotenv
 from random import randint
 from django.contrib.auth import get_user_model
@@ -135,6 +135,7 @@ def create_project_instances_from_zoho():
                 project.Processed_Besonderheiten = handle_message(
                     str(record.get("Besonderheiten"))
                 )
+                logging.error(f"Data Project #{new_projects_count}: {project.Processed_Besonderheiten}")
             except:
                 pass
             project.Elektriktermin = str(

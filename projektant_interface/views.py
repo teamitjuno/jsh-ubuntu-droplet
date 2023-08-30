@@ -15,7 +15,7 @@ from django.http import (
     HttpResponse,
     FileResponse,
 )
-import re
+import re, logging
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
 from shared.chat_bot import handle_message
@@ -83,6 +83,7 @@ def chat_bot(request):
         data = json.loads(request.body)
         question = data.get("question", "")
         response = handle_message(question)
+        logging.error(f"Response : {response}")
         return JsonResponse({"response": response})
     else:
         return JsonResponse({"error": "Invalid request method"}, status=400)
