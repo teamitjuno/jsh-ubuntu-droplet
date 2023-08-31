@@ -1,6 +1,16 @@
 import os, json, requests, time, logging
 from dotenv import set_key, load_dotenv
+from projektant_interface.models import (
+    Project,
+    Elektriktermin,
+    Bautermine,
+    Module1,
+    Wallbox1,
+    Wechselrichter1,
+    Speicher,
+)
 from random import randint
+from pprint import pprint, pformat, pp
 from django.contrib.auth import get_user_model
 from shared.projektant_text_processing import handle_message
 from config.settings import (
@@ -21,8 +31,9 @@ User = get_user_model()
 
 HTTP_OK = 200
 HTTP_UNAUTHORIZED = 401
-LIMIT = 200
-MAX_RETRIES = 5
+HTTP_NOT_FOUND = 404
+LIMIT = 25
+MAX_RETRIES = 20
 SLEEP_TIME = 1
 
 from datetime import datetime
@@ -48,61 +59,46 @@ class RateLimitExceededException(APIException):
 
 
 def get_headers():
-    access_token = ZOHO_ACCESS_TOKEN
-
+    access_token = ZOHO_ACCESS_TOKEN or refresh_access_token()
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
 
-def refresh_access_token():
-    client_id = ZOHO_CLIENT_ID
-    client_secret = ZOHO_CLIENT_SECRET
-    refresh_token = ZOHO_REFRESH_TOKEN
+def id_and_name_extractor(data):
+    for entry in data:
+        zoho_id = entry.get("zoho_id", None)
+        name = entry.get("name", None)
+        print(f"ZohoAngebotID:  {zoho_id},  Name: {name}")
 
-    url = f"{ACCESS_TOKEN_URL}?refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token"
-    response = requests.post(url)
+
+def refresh_access_token():
+    params = {
+        'refresh_token': ZOHO_REFRESH_TOKEN,
+        'client_id': ZOHO_CLIENT_ID,
+        'client_secret': ZOHO_CLIENT_SECRET,
+        'grant_type': 'refresh_token'
+    }
+    response = requests.post(ACCESS_TOKEN_URL, params=params)
+    print("REFRESH TOKEN", response)
     if response.status_code != HTTP_OK:
         raise APIException(f"Error refreshing token: {response.status_code}")
-
-    data = response.json()
-    new_access_token = data.get("access_token")
+    
+    new_access_token = response.json().get("access_token")
+    print(new_access_token)
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
 
 
-def fetch_records(
-    endpoint, headers, params, retries=MAX_RETRIES, sleep_time=SLEEP_TIME
-):
-    for i in range(retries):
-        try:
-            response = requests.get(endpoint, headers=headers, params=params)
-            if response.status_code == HTTP_UNAUTHORIZED:
-                headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
-                continue
-            elif response.status_code == 429:
-                time.sleep(sleep_time)
-                sleep_time *= 2
-                continue
-            elif response.status_code != HTTP_OK:
-                raise APIException(f"HTTPError: {response.status_code}")
-
+def fetch_records(url, headers, params):
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == HTTP_OK:
+        return response.json()
+    elif response.status_code == HTTP_UNAUTHORIZED:
+        headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code == HTTP_OK:
             return response.json()
-        except requests.exceptions.HTTPError as err:
-            print(f"An error occurred: {err}")
-            continue
-    raise APIException("Max retries exceeded.")
 
-
-from projektant_interface.models import (
-    Project,
-    Elektriktermin,
-    Bautermine,
-    Module1,
-    Wallbox1,
-    Wechselrichter1,
-    Speicher,
-)
-
-
+    
 def create_project_instances_from_zoho():
     endpoint = BASE_URL  # replace with your specific endpoint
     headers = get_headers()
@@ -135,7 +131,6 @@ def create_project_instances_from_zoho():
                 project.Processed_Besonderheiten = handle_message(
                     str(record.get("Besonderheiten"))
                 )
-                logging.error(f"Data Project #{new_projects_count}: {project.Processed_Besonderheiten}")
             except:
                 pass
             project.Elektriktermin = str(
@@ -200,12 +195,13 @@ def create_project_instances_from_zoho():
 def populate_project_instance_from_zoho(project_id):
     endpoint = BASE_URL + f"/{project_id}"
     headers = get_headers()
-    params = {}
+    params = {"limit": LIMIT}
 
+    print(project_id)
     response_data = fetch_records(endpoint, headers, params)
-
-    if not response_data.get("data"):
-        return None
+    print(response_data)
+    # if response_data and not response_data.get("data"):
+    #     return None
 
     record = response_data["data"]
 
