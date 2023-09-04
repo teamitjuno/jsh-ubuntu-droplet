@@ -36,6 +36,10 @@ LIMIT_CURRENT = 10
 MAX_RETRIES = 5
 SLEEP_TIME = 1
 
+def filter_hidden_choices(choices):
+    HIDDEN_CHOICES = ["on Hold", "storniert", "abgelaufen", "abgelehnt", "angenommen"]
+    return [(key, value) for key, value in choices if key not in HIDDEN_CHOICES]
+
 ANGEBOT_STATUS_CHOICES = [
     ("angenommen", "angenommen"),
     ("bekommen", "bekommen"),
@@ -178,6 +182,10 @@ def validate_empty(value):
 
 
 class VertriebAngebotForm(ModelForm):
+    # def __init__(self, *args, **kwargs):
+    #     super(VertriebAngebotForm, self).__init__(*args, **kwargs)
+    #     self.fields['status'].choices = filter_hidden_choices(ANGEBOT_STATUS_CHOICES)
+
     is_locked = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
@@ -189,7 +197,7 @@ class VertriebAngebotForm(ModelForm):
     )
     status = forms.ChoiceField(
         label="Angebotstatus",
-        initial="in Kontakt",
+        
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
@@ -884,7 +892,8 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
-        # self.fields["status"].widget.attrs.update({"id": "id_status"})
+        self.fields["vorname_nachname"].widget.attrs.update({"id": "id_vorname_nachname"})
+        self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
@@ -908,18 +917,18 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
 
-        for field in self.fields:
-            if self.initial.get(field):
-                self.fields[field].widget.attrs.update(
-                    {"placeholder": self.initial[field]}
-                )
-        if not user.role.name == "admin":
-            # Remove the 'angenommen' and 'abgelaufen' choices
-            self.fields["status"].choices = [
-                choice
-                for choice in self.fields["status"].choices
-                if choice[0] not in ["angenommen", "abgelaufen"]
-            ]
+        # for field in self.fields:
+        #     if self.initial.get(field):
+        #         self.fields[field].widget.attrs.update(
+        #             {"placeholder": self.initial[field]}
+        #         )
+        # if not user.role.name == "admin":
+        #     # Remove the 'angenommen' and 'abgelaufen' choices
+        #     self.fields["status"].choices = [
+        #         choice
+        #         for choice in self.fields["status"].choices
+        #         if choice[0] not in ["angenommen", "abgelaufen"]
+        #     ]
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)

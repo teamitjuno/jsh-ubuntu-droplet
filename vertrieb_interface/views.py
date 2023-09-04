@@ -1376,7 +1376,6 @@ class UpdateVertriebAngebotView(View):
         vertriebAngebot.save()
         return JsonResponse({"status": "success"})
 
-
 def get_data(request):
     data = VertriebAngebot.objects.all().values()
     return JsonResponse(list(data), safe=False)
