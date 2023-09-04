@@ -205,7 +205,7 @@ def populate_project_instance_from_zoho(project_id):
 
     print(project_id)
     response_data = fetch_records(endpoint, headers, params)
-    print(response_data)
+    
     # if response_data and not response_data.get("data"):
     #     return None
     if response_data is not None:
@@ -308,7 +308,6 @@ def update_all_project_instances():
         if updated_project:
             updated_count += 1
             print(f"Updating record...{updated_count}")
-        if updated_count == 150:
-            break
+        
 
     return f"Updated {updated_count} out of {all_projects.count()} projects."
