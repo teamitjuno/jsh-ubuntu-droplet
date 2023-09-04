@@ -1,9 +1,9 @@
 import openai
+from config.settings import OPENAI_API_KEY
+import logging
 
-# from config.settings import OPENAI_API_KEY
-
-OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
+
 
 start_chat_log = [
     {
