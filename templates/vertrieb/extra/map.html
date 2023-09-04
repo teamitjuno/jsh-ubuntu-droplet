@@ -1,37 +1,45 @@
 {% block content %}
-<head>
-    <meta charset="UTF-8">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet">
+<div class="col-lg-6">
+    <div class="card mb-3">
+            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Karte</div>
+            <div class="card-body">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <iframe 
+                            width="100%" 
+                            height="400px" 
+                            frameborder="0" 
+                            scrolling="yes" 
+                            src="https://www.openstreetmap.org/export/embed.html?bbox={{ LONGITUDE }}%2C{{ LATITUDE }}%2C{{ LONGITUDE }}%2C{{ LATITUDE }}&amp;layer=mapnik&amp;marker={{ LATITUDE }}%2C{{ LONGITUDE }}&amp;zoom=14" 
+                            style="border: 1px solid black">
+                        </iframe>
+                        <br/>
+                        <small>
+                            <a href="https://www.openstreetmap.org/?mlat={{ LATITUDE }}&amp;mlon={{ LONGITUDE }}#map=14/{{ LATITUDE }}/{{ LONGITUDE }}">Größere Karte anzeigen</a>
+                        </small>
+                    </div> <!-- end card-->
+                </div> <!-- end col-->
+            </div>
+        </div>
+    <div class="card mb-3">
+        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizen</div>
+        <div class="card-body">
+            <div class="col-xl-12">
+                <table class="table table-sm table-hover">
+                    <tbody>
+                     {% comment %} <tr>
+                            <th>OpenstreetMap zeigen:</th>
+                                <td><a href="{{ vertrieb_angebot.google_maps_url }}" style="width: 100%" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
+                        </tr>  {% endcomment %}
+                        <tr>
+                            <th>{{ form.notizen.label_tag }}</th>
+                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
+                        </tr>
 
-</head>
-<body style="margin:0;">
-
-    <div id="map" style="width: 100%; height: 400px;"></div>
-
-    <script>
-        mapboxgl.accessToken = '{{ MAPBOX_TOKEN }}'; 
-
-        var map = new mapboxgl.Map({
-            container: 'map',
-            center: [{{ LONGITUDE }}, {{ LATITUDE }}], // provided coordinates
-            style: 'mapbox://styles/mapbox/streets-v11',
-            hash: true,
-            zoom: 8
-        });
-        const nav = new mapboxgl.NavigationControl({
-            showZoom: true,
-            visualizePitch: true
-            });
-        map.addControl(nav, 'bottom-right');
-
-        // Add marker with default shape, but changed color and size due to CSS
-        new mapboxgl.Marker({
-            color: "#FF0000",
-            
-            })
-            .setLngLat([{{ LONGITUDE }}, {{ LATITUDE }}])
-            .addTo(map);
-    </script>
-</body>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
 {% endblock %}

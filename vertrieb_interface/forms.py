@@ -189,7 +189,7 @@ class VertriebAngebotForm(ModelForm):
     )
     status = forms.ChoiceField(
         label="Angebotstatus",
-        initial="Kontaktversuch",
+        initial="in Kontakt",
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
@@ -884,7 +884,7 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
-        self.fields["status"].widget.attrs.update({"id": "id_status"})
+        # self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})

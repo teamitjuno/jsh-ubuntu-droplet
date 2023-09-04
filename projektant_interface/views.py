@@ -15,6 +15,7 @@ from django.http import (
     HttpResponse,
     FileResponse,
 )
+from pprint import pprint, pformat, pp
 import re, logging
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
@@ -24,8 +25,23 @@ from projektant_interface.pdf_generators.pdf_template_processor_v3 import (
     CustomPDF,
 )
 from projektant_interface.models import Project
+from projektant_interface.forms import UploadJPGForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import ProjectUpdateForm
+from .models import Project
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib import messages
+from projektant_interface.management.commands import populate_projects
 
-
+def populate_projects_view(request):
+    
+    cmd = populate_projects.Command()
+    cmd.handle() 
+    messages.success(request, "Projects successfully populated from ZOHO API.")
+    return HttpResponseRedirect(reverse('projektant_interface:home'))
+    
+    
 def handler500(request):
     return render(request, "500.html", status=500)
 
@@ -120,7 +136,6 @@ def create_project_bauplan_pdf(request, project_id):
         if project.Kunde_Adresse_PVA
         else "Straße 0, Stadt, 00000"
     )
-    # Sample data for demonstration
     data = {
         "roof_typ": roof_typ,
         "height": height,
@@ -131,21 +146,36 @@ def create_project_bauplan_pdf(request, project_id):
         "kunden_strasse": kunden_strasse,
         "kunden_plz_ort": kunden_plz_ort,
         "processed_besodersheiten": processed_besodersheiten,
+        "bauplan_jpg_path": project.bauplan_img.path if project.bauplan_img else None,
     }
 
-    # Uncomment to use
-    # result_pdf_content = overlay_on_template(data)
     pdf_content = generate_pdf_bauplan(data)
     project.bauplan_pdf = pdf_content
     project.save()
 
     return redirect("projektant_interface:document_view", project_id=project_id)
 
-
 @user_passes_test(projektant_check)
 def document_view(request, project_id):
+    project = get_object_or_404(Project, ID=project_id)
     pdf_url = reverse("projektant_interface:serve_pdf", args=[project_id])
-    context = {"pdf_url": pdf_url, "ID": project_id}
+    form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
+    img_form = form = UploadJPGForm(request.POST, request.FILES, instance=project)
+
+    if request.method == "POST":
+        form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ProjectUpdateForm(instance=project)
+
+    context = {
+        "pdf_url": pdf_url,
+        "ID": project_id,
+        "img_form": img_form,
+        "form": form  # Add the form to the context
+    }
+
     return render(request, "projektant/document_view.html", context)
 
 
@@ -160,6 +190,34 @@ def serve_pdf(request, project_id):
 
     return response
 
+def upload_jpg(request, project_id):
+    project = get_object_or_404(Project, ID=project_id)
+    if request.method == 'POST':
+        form = UploadJPGForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('projektant_interface:document_view', project_id=project_id)
+    else:
+        form = UploadJPGForm(instance=project)
+    return render(request, 'projektant/upload_jpg.html', {'form': form, 'project': project})
+
+
+def update_project(request, project_id):
+    project = get_object_or_404(Project, ID=project_id)  # Assuming the primary key of Project model is ID
+
+    if request.method == "POST":
+        form = ProjectUpdateForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('projektant_interface:document_view', project_id=project_id)
+    else:
+        form = ProjectUpdateForm(instance=project)
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "projektant/project_update_form.html", context)
 
 # from django.http import FileResponse
 # from config import settings

@@ -339,6 +339,44 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <th>{{ calculator_form.elwa.label_tag }}</th>
+                                        <td>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="elwa" {% if calculator_form.elwa.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.elwa.html_name }}" />
+                                                <label class="custom-control-label" for="elwa" data-on-label="Ja" data-off-label="Nein"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ calculator_form.thor.label_tag }}</th>
+                                        <td>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="thor" {% if calculator_form.thor.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.thor.html_name }}" />
+                                                <label class="custom-control-label" for="thor" data-on-label="Ja" data-off-label="Nein"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="thor-details-table" style="{% if not calculator_form.thor.value %}display: none;{% endif %}">
+                                        <th>{{ calculator_form.heizstab.label_tag }}</th>
+                                        <td>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="heizstab-checkbox" {% if calculator_form.heizstab.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.heizstab.html_name }}" />
+                                                <label class="custom-control-label" for="heizstab-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <script>
+                                        // Toggle visibility of the inner table based on the checkbox state
+                                        document.getElementById("thor").addEventListener("change", function() {
+                                            let thorDetailsTable = document.getElementById("thor-details-table");
+                                            if (this.checked) {
+                                                thorDetailsTable.style.display = "table";
+                                            } else {
+                                                thorDetailsTable.style.display = "none";
+                                            }
+                                        });
+                                    </script>
                                 </tbody>
                             </table>
                             <table class="table table-hover table-centered mb-0">

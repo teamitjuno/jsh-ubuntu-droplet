@@ -118,6 +118,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 OWNER_ID = os.getenv("OWNER_ID")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 STYLE_ID = os.getenv("STYLE_ID")
 MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 DEFAULT_EMAIL_DOMAIN = os.getenv("DEFAULT_EMAIL_DOMAIN")

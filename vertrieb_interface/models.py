@@ -25,7 +25,7 @@ from prices.models import (
     SolarModulePreise,
     WallBoxPreise,
 )
-
+from config.settings import GOOGLE_MAPS_API_KEY
 
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
@@ -541,64 +541,111 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return None
 
+    # @property
+    # def coordinates_extractor(self):
+    #     # Return "0.0", "0.0" if strasse or ort is None
+    #     if self.strasse is None or self.ort is None:
+    #         return "0.0", "0.0"
+
+    #     # Load variables from .env
+    #     OWNER_ID = os.getenv("OWNER_ID")
+    #     STYLE_ID = os.getenv("STYLE_ID")
+    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+
+    #     # Prepare the query string
+    #     query = f"{self.strasse}, {self.ort}"
+
+    #     # You might need to adjust this URL to match the Mapbox API version/documentation you're using
+    #     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
+
+    #     # Make the API call
+    #     response = requests.get(url)
+    #     data = response.json()
+
+    #     # Extracting latitude and longitude from the response
+    #     try:
+    #         longitude, latitude = data["features"][0]["geometry"]["coordinates"]
+    #         return latitude, longitude
+    #     except (IndexError, KeyError):
+    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
+    #         return 0.0, 0.0
     @property
     def coordinates_extractor(self):
-        # Return "0.0", "0.0" if strasse or ort is None
         if self.strasse is None or self.ort is None:
             return "0.0", "0.0"
 
-        # Load variables from .env
-        OWNER_ID = os.getenv("OWNER_ID")
-        STYLE_ID = os.getenv("STYLE_ID")
-        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
-
-        # Prepare the query string
+        
         query = f"{self.strasse}, {self.ort}"
 
-        # You might need to adjust this URL to match the Mapbox API version/documentation you're using
-        url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
+        # Using the Google Maps Geocoding API
+        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={query}&key={GOOGLE_MAPS_API_KEY}"
 
-        # Make the API call
         response = requests.get(url)
         data = response.json()
 
         # Extracting latitude and longitude from the response
         try:
-            longitude, latitude = data["features"][0]["geometry"]["coordinates"]
-            return latitude, longitude
+            location = data['results'][0]['geometry']['location']
+            return location['lat'], location['lng']
         except (IndexError, KeyError):
             # Handle cases where the address isn't found or the API response structure has unexpected changes
             return 0.0, 0.0
 
     @property
     def mapbox_data(self):
-        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
-        OWNER_ID = os.getenv("OWNER_ID")
-        STYLE_ID = os.getenv("STYLE_ID")
+          # Replace with your Solar API key if different
+        latitude, longitude = self.coordinates_extractor
+        print(latitude, longitude)
 
-        data = {"token": MAPBOX_TOKEN, "latitude": None, "longitude": None}
+        url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&key={GOOGLE_MAPS_API_KEY}"
 
-        if self.postanschrift_latitude and self.postanschrift_longitude:
-            data["latitude"] = float(self.postanschrift_latitude)
-            data["longitude"] = float(self.postanschrift_longitude)
+        response = requests.get(url)
+        print(response.json())
+        return response.json()
 
-        url_template = "https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}"
-        url = url_template.format(
-            owner=OWNER_ID,
-            style=STYLE_ID,
-            token=MAPBOX_TOKEN,
-            lat=data["latitude"] if data["latitude"] is not None else "48.138",
-            lon=data["longitude"] if data["longitude"] is not None else "11.575",
-        )
-
-        return url
-
-    @property
-    def google_maps_url(self):
+    @property 
+    def get_building_insights(self, latitude=None, longitude=None, requiredQuality="HIGH"):
+        # Replace with your Solar API key if different
         if self.postanschrift_latitude and self.postanschrift_longitude:
             latitude = float(self.postanschrift_latitude)
             longitude = float(self.postanschrift_longitude)
+        else:
+            latitude, longitude = self.coordinates_extractor
+        print(latitude, longitude)
+        url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&requiredQuality={requiredQuality}&key={GOOGLE_MAPS_API_KEY}"
+        response = requests.get(url)
+        print(response.json())
+        return response.json()
+    # @property
+    # def mapbox_data(self):
+    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+    #     OWNER_ID = os.getenv("OWNER_ID")
+    #     STYLE_ID = os.getenv("STYLE_ID")
 
+    #     data = {"token": MAPBOX_TOKEN, "latitude": None, "longitude": None}
+
+    #     if self.postanschrift_latitude and self.postanschrift_longitude:
+    #         data["latitude"] = float(self.postanschrift_latitude)
+    #         data["longitude"] = float(self.postanschrift_longitude)
+
+    #     url_template = "https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}"
+    #     url = url_template.format(
+    #         owner=OWNER_ID,
+    #         style=STYLE_ID,
+    #         token=MAPBOX_TOKEN,
+    #         lat=data["latitude"] if data["latitude"] is not None else "48.138",
+    #         lon=data["longitude"] if data["longitude"] is not None else "11.575",
+    #     )
+
+    #     return url
+
+    @property
+    def google_maps_url(self):
+        latitude, longitude = self.coordinates_extractor
+        if self.postanschrift_latitude and self.postanschrift_longitude:
+            latitude = float(self.postanschrift_latitude)
+            longitude = float(self.postanschrift_longitude)
+        
             maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
             return maps_url
         else:

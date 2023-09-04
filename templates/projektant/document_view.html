@@ -68,13 +68,14 @@
                                         <div class="row">
                                             
                                             <div class="col-sm-8">
-                                            <iframe src="{{ pdf_url }}" width='150%' height="700px">
-                                            <!-- Display a message for browsers that do not support iframes -->
-                                            Your browser does not support iframes.
-                                        </iframe>
+                                                <iframe src="{{ pdf_url }}" width='150%' height="700px">
+                                                <!-- Display a message for browsers that do not support iframes -->
+                                                Your browser does not support iframes.
+                                                </iframe>
                                                 
                                                 <div class="clearfix"></div>
                                             </div> <!-- end col -->
+                                            
                                         </div>
                                         <!-- end row-->
     
@@ -142,6 +143,48 @@
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card -->
                             </div> <!-- end col-->
+                            <div class="col-xl-4">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kunde Info</div>
+                                    <div class="card-body">
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label for="{{ img_form.bauplan_img.id_for_label }}">Bauplan Image:</label>
+                                                {{ img_form.bauplan_img }}
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary">Upload</button>
+                                        </form>
+
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <table class="table table-sm table-hover">
+                                            <tr>
+                                                <th>Besonderheiten:</th>
+                                                <td>{{ form.Processed_Besonderheiten }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.roof_typ.label_tag }}</th>
+                                                <td>{{ form.roof_typ }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.height.label_tag }}</th>
+                                                <td>{{ form.height }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ form.bauplan_img.label_tag }}</th>
+                                                <td>{{ form.bauplan_img }}</td>
+                                            </tr>
+                                            </table>
+                                            <button class="btn btn-info" type="submit">Update</button>
+                                            <a href="{% url 'projektant_interface:create_bauplan_pdf' ID %}" class="btn btn-outline-info btn-sm">Bauplan erstellen</a>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div> <!-- end col -->
                         </div>
                         <!-- end row -->
                         

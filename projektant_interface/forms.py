@@ -446,3 +446,66 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = "__all__"
+
+
+
+class UploadJPGForm(forms.ModelForm):
+    bauplan_img = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control-file",
+            "id": "id_bauplan_jpg",
+        })
+    )
+    class Meta:
+        model = Project
+        fields = ['bauplan_img']
+
+class ProjectUpdateForm(forms.ModelForm):
+    Processed_Besonderheiten = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "rows": 6,
+                "class": "form-control",
+                "placeholder": "Processed_Besonderheiten",
+                "id": "id_Processed_Besonderheiten",
+            }
+        ),
+        required=False,
+    )
+
+    roof_typ = forms.CharField(
+        label="Dacheindeckung",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Dacheindeckung",
+                "id": "id_rooftyp",
+            }
+        ),
+        required=False,
+    )
+
+    height = forms.CharField(
+        label="Traufhöhe",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Traufhöhe",
+                "id": "id_height",
+            }
+        ),
+        required=False,
+    )
+
+    bauplan_jpg = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control-file",
+            "id": "id_bauplan_jpg",
+        })
+    )
+
+    class Meta:
+        model = Project
+        fields = ['Processed_Besonderheiten', 'roof_typ', 'height', 'bauplan_jpg']

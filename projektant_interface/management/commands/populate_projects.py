@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from projektant_interface.utils import create_project_instances_from_zoho
+from projektant_interface.utils import create_project_instances_from_zoho, update_all_project_instances
 
 
 class Command(BaseCommand):
@@ -10,5 +10,11 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Successfully processed {records_processed} records from ZOHO API"
+            )
+        )
+        records_updated = update_all_project_instances()
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully updated {records_updated} records from ZOHO API"
             )
         )

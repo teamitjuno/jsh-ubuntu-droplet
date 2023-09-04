@@ -12,6 +12,7 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("help/", views.help, name="help"),
     path("chat_bot/", views.chat_bot, name="chat_bot"),
+    path('populate_projects/', views.populate_projects_view, name='populate_projects'),
     path("view_orders/", views.ViewOrders.as_view(), name="view_orders"),
     path(
         "create_bauplan_pdf/<int:project_id>/",
@@ -20,6 +21,8 @@ urlpatterns = [
     ),
     path("document_view/<int:project_id>/", views.document_view, name="document_view"),
     path("serve_pdf/<int:project_id>/", views.serve_pdf, name="serve_pdf"),
+    path('project/<int:project_id>/upload_jpg/', views.upload_jpg, name='upload_jpg'),  # New URL pattern for JPG upload
+    path('project/<int:project_id>/update/', views.update_project, name='update_project'),
     # path('test_pdf/', views.test_pdf_generation, name='test_pdf_generation'),
 ]
 

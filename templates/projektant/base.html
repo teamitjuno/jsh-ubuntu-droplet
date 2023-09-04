@@ -194,13 +194,13 @@
                                         <li>
                                             <a href="{% url 'projektant_interface:home' %}">Home</a>
                                         </li>                                
-                                        <li>
+                                        {% comment %} <li>
                                             <a href="{% url 'authentication:logout' %}">Abmelden</a>
-                                        </li>                                         
+                                        </li>                                          {% endcomment %}
                                     </ul>
                                 </div>
                             </li>
-                            <li class="side-nav-item">
+                            {% comment %} <li class="side-nav-item">
                                 <a data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="#sidebarDashboards" class="side-nav-link">
                                     <i class="uil-chart-pie-alt"></i>
                                     <span>Leistungen</span>
@@ -222,7 +222,7 @@
                                         </li>                              
                                     </ul>
                                 </div>
-                            </li>
+                            </li> {% endcomment %}
                             
                             <li class="side-nav-item">
                                 <a data-bs-toggle="collapse" href="#sidebarCrm" aria-expanded="false" aria-controls="sidebarCrm" class="side-nav-link">

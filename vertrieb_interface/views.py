@@ -94,8 +94,6 @@ def get_recent_activities(user):
         .order_by("-action_time")[:15]
     )
 
-    activ = pformat(recent_activities)
-    pp(activ)
     activities = []
     for entry in recent_activities:
         vertrieb_angebot = entry.get_vertrieb_angebot()
@@ -316,17 +314,7 @@ def home(request):
 def filter_bekommen(data):
     return [item for item in data if item.get("status") == "bekommen"]
 
-# Example data
-data = [
-    {
-        "zoho_id": "26172000007083013",
-        "status": "bekommen",
 
-    },
-]
-
-filtered_data = filter_bekommen(data)
-print(filtered_data)
 
 class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
@@ -400,8 +388,7 @@ def chat_bot(request):
 @user_passes_test(vertrieb_check)
 def create_angebot(request):
     form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
-    erors = pformat(form_angebot.errors)
-    pp(erors)
+    print(request.user, "Neue Angebot created")
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
         vertrieb_angebot.user = request.user
@@ -466,8 +453,6 @@ def map_view(request, angebot_id, *args, **kwargs):
     # Any context data you want to pass to the template
 
     context = {
-        "MAPBOX_TOKEN": MAPBOX_TOKEN,
-        "STYLE_ID": "mapbox://styles/sam1206morfey/clldpoqf200zc01ph5h660576",
         "LATITUDE": vertrieb_angebot.postanschrift_latitude,
         "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
     }

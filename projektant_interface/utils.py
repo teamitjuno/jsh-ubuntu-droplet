@@ -195,94 +195,101 @@ def create_project_instances_from_zoho():
 def populate_project_instance_from_zoho(project_id):
     endpoint = BASE_URL + f"/{project_id}"
     headers = get_headers()
-    params = {"limit": LIMIT}
+    start_index = 1
+    params = {
+        "from": start_index,
+        "limit": LIMIT,}
 
     print(project_id)
     response_data = fetch_records(endpoint, headers, params)
     print(response_data)
     # if response_data and not response_data.get("data"):
     #     return None
+    if response_data is not None:
+        record = response_data["data"]
 
-    record = response_data["data"]
+        defaults = {
+            "UK_vsl_Lieferung": record.get("UK_vsl_Lieferung", ""),
+            "Modul_Summe_kWp": record.get("Modul_Summe_kWp", ""),
+            "Berechnung_erhalten_am": record.get("Berechnung_erhalten_am", ""),
+            "Module1": str(record.get("Module1", [])),
+            "EDDI": record.get("EDDI") == "❌",
+            "Besonderheiten": record.get("Besonderheiten", ""),
+            "Netzbetreiber": record.get("Netzbetreiber", ""),
+            "Garantie_WR_beantragt_am": record.get("Garantie_WR_beantragt_am", ""),
+            "Ticket_form": record.get("Ticket_form", ""),
+            "Status_Inbetriebnahmeprotokoll": record.get(
+                "Status_Inbetriebnahmeprotokoll", ""
+            ),
+            "Auftragsbest_tigung_versendet": record.get(
+                "Auftragsbest_tigung_versendet", ""
+            ),
+            "Auftrag_Erteilt_am": convert_date_format(
+                record.get("Auftrag_Erteilt_am", "08-Aug-2000")
+            ),
+            "Zahlungsmodalit_ten": record.get("Zahlungsmodalit_ten", ""),
+            "Berechnung_bergeben_am": record.get("Berechnung_bergeben_am", ""),
+            "Vertriebler": record.get("Vertriebler", ""),
+            "Notstromversorgung_Backup_Box_vorhanden": record.get(
+                "Notstromversorgung_Backup_Box_vorhanden", ""
+            )
+            == "❌",
+            "Status_Marktstammdatenregistrierung": record.get(
+                "Status_Marktstammdatenregistrierung", ""
+            ),
+            "Garantieerweiterung": record.get("Garantieerweiterung", ""),
+            "Bauabschluss_am": record.get("Bauabschluss_am", ""),
+            "Rechnung_versandt": record.get("Rechnung_versandt", ""),
+            "Status_Betreiberwechsel": record.get("Status_Betreiberwechsel", ""),
+            "Status_Einspeiseanfrage": record.get("Status_Einspeiseanfrage", ""),
+            "Wallbox1": str(record.get("Wallbox1", [])),
+            "Hub1": record.get("Hub1", "") == "❌",
+            "Status": record.get("Status", ""),
+            "Lager": record.get("UK_auf_Lager", "") == "❌",
+            "Wechselrichter1": str(record.get("Wechselrichter1", [])),
+            "UK_bestellt_am": record.get("UK_bestellt_am", ""),
+            "Power_Boost_vorhanden": record.get("Power_Boost_vorhanden", "") == "❌",
+            "Unterkonstruktion1": record.get("Unterkonstruktion1", ""),
+            "Harvi1": record.get("Harvi1", ""),
+            "Optimizer1": record.get("Optimizer1", ""),
+            "Kunde_Adresse_PVA": record.get("Kunde.Adresse_PVA", ""),
+            "Status_Elektrik": record.get("Status_Elektrik", ""),
+            "Kunde_Kundennummer": record.get("Kunde.Kundennummer"),
+            "Kunde_display_value": record.get("Kunde", {}),
+            "Kunde_Email": record.get("Kunde.Email", ""),
+            "Termin_Z_hlerwechsel": record.get("Termin_Z_hlerwechsel", ""),
+            "Nummer_der_PVA": record.get("Nummer_der_PVA", ""),
+            "Kunde_Postanschrift": record.get("Kunde.Postanschrift", ""),
+            "Kunde_Telefon_Festnetz": record.get("Kunde.Telefon_Festnetz", ""),
+            "Speicher": str(record.get("Speicher", [])),
+            "Status_Fertigmeldung": record.get("Status_Fertigmeldung", ""),
+            "Bauleiter": record.get("Bauleiter", ""),
+            "Hauselektrik": record.get("Hauselektrik", ""),
+            "Kunde_Telefon_mobil": record.get("Kunde.Telefon_mobil", ""),
+        }
+        try:
+            existing_project = Project.objects.get(ID=project_id)
+        except Project.DoesNotExist:
+            existing_project = None
 
-    defaults = {
-        "UK_vsl_Lieferung": record.get("UK_vsl_Lieferung", ""),
-        "Modul_Summe_kWp": record.get("Modul_Summe_kWp", ""),
-        "Berechnung_erhalten_am": record.get("Berechnung_erhalten_am", ""),
-        "Module1": str(record.get("Module1", [])),
-        "EDDI": record.get("EDDI") == "❌",
-        "Besonderheiten": record.get("Besonderheiten", ""),
-        "Netzbetreiber": record.get("Netzbetreiber", ""),
-        "Garantie_WR_beantragt_am": record.get("Garantie_WR_beantragt_am", ""),
-        "Ticket_form": record.get("Ticket_form", ""),
-        "Status_Inbetriebnahmeprotokoll": record.get(
-            "Status_Inbetriebnahmeprotokoll", ""
-        ),
-        "Auftragsbest_tigung_versendet": record.get(
-            "Auftragsbest_tigung_versendet", ""
-        ),
-        "Auftrag_Erteilt_am": convert_date_format(
-            record.get("Auftrag_Erteilt_am", "08-Aug-2000")
-        ),
-        "Zahlungsmodalit_ten": record.get("Zahlungsmodalit_ten", ""),
-        "Berechnung_bergeben_am": record.get("Berechnung_bergeben_am", ""),
-        "Vertriebler": record.get("Vertriebler", ""),
-        "Notstromversorgung_Backup_Box_vorhanden": record.get(
-            "Notstromversorgung_Backup_Box_vorhanden", ""
-        )
-        == "❌",
-        "Status_Marktstammdatenregistrierung": record.get(
-            "Status_Marktstammdatenregistrierung", ""
-        ),
-        "Garantieerweiterung": record.get("Garantieerweiterung", ""),
-        "Bauabschluss_am": record.get("Bauabschluss_am", ""),
-        "Rechnung_versandt": record.get("Rechnung_versandt", ""),
-        "Status_Betreiberwechsel": record.get("Status_Betreiberwechsel", ""),
-        "Status_Einspeiseanfrage": record.get("Status_Einspeiseanfrage", ""),
-        "Wallbox1": str(record.get("Wallbox1", [])),
-        "Hub1": record.get("Hub1", "") == "❌",
-        "Status": record.get("Status", ""),
-        "Lager": record.get("UK_auf_Lager", "") == "❌",
-        "Wechselrichter1": str(record.get("Wechselrichter1", [])),
-        "UK_bestellt_am": record.get("UK_bestellt_am", ""),
-        "Power_Boost_vorhanden": record.get("Power_Boost_vorhanden", "") == "❌",
-        "Unterkonstruktion1": record.get("Unterkonstruktion1", ""),
-        "Harvi1": record.get("Harvi1", ""),
-        "Optimizer1": record.get("Optimizer1", ""),
-        "Kunde_Adresse_PVA": record.get("Kunde.Adresse_PVA", ""),
-        "Status_Elektrik": record.get("Status_Elektrik", ""),
-        "Kunde_Kundennummer": record.get("Kunde.Kundennummer"),
-        "Kunde_display_value": record.get("Kunde", {}),
-        "Kunde_Email": record.get("Kunde.Email", ""),
-        "Termin_Z_hlerwechsel": record.get("Termin_Z_hlerwechsel", ""),
-        "Nummer_der_PVA": record.get("Nummer_der_PVA", ""),
-        "Kunde_Postanschrift": record.get("Kunde.Postanschrift", ""),
-        "Kunde_Telefon_Festnetz": record.get("Kunde.Telefon_Festnetz", ""),
-        "Speicher": str(record.get("Speicher", [])),
-        "Status_Fertigmeldung": record.get("Status_Fertigmeldung", ""),
-        "Bauleiter": record.get("Bauleiter", ""),
-        "Hauselektrik": record.get("Hauselektrik", ""),
-        "Kunde_Telefon_mobil": record.get("Kunde.Telefon_mobil", ""),
-    }
-    try:
-        existing_project = Project.objects.get(ID=project_id)
-    except Project.DoesNotExist:
-        existing_project = None
+        # If project instance exists, only update fields that are None or ""
+        if existing_project:
+            for field_name, new_value in defaults.items():
+                current_value = getattr(existing_project, field_name, None)
+                if current_value in [None, ""]:
+                    setattr(existing_project, field_name, new_value)
+            existing_project.save()
+            project = existing_project
+        else:
+            # If project instance does not exist, create a new one with the defaults
+            project = Project.objects.create(ID=project_id, **defaults)
+            project.save()
+        return project
 
-    # If project instance exists, only update fields that are None or ""
-    if existing_project:
-        for field_name, new_value in defaults.items():
-            current_value = getattr(existing_project, field_name, None)
-            if current_value in [None, ""]:
-                setattr(existing_project, field_name, new_value)
-        existing_project.save()
-        project = existing_project
     else:
-        # If project instance does not exist, create a new one with the defaults
-        project = Project.objects.create(ID=project_id, **defaults)
-        project.save()
+        pass
 
-    return project
+    
 
 
 def update_all_project_instances():
@@ -298,5 +305,7 @@ def update_all_project_instances():
         if updated_project:
             updated_count += 1
             print(f"Updating record...{updated_count}")
+        if updated_count == 30:
+            break
 
     return f"Updated {updated_count} out of {all_projects.count()} projects."

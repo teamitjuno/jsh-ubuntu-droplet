@@ -55,12 +55,14 @@
                                                     <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
                                             </li>
+                                            {% if vertrieb_angebot.status == "angenommen" %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#ticket" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-altimeter d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Ticket</span>
                                                 </a>
                                             </li>
+                                            {% endif %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
@@ -139,7 +141,8 @@
                                                         </div>
                                                     </div>
                                                         <!-- Column 2 -->
-                                                                {% include 'vertrieb/extra/map_openstreet.html' %}
+                                                                
+                                                                {% include 'vertrieb/extra/map.html' %}
                                                 </div><!-- End of row -->
                                             </div>
 
@@ -373,6 +376,7 @@
                                             </div>
                                         </div>
                                             <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
+                                        {% if vertrieb_angebot.status == "angenommen" %}
                                         <div class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
@@ -456,6 +460,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% endif %}
                                         <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
                         
                                         <div class="tab-pane" id="kalkulationen" role="presentation">                       
@@ -629,7 +634,7 @@
                                 </div> <!-- end col-->
                             </div> <!-- end row -->
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div hidden class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
                                             {% if vertrieb_angebot.status == 'bekommen' %} 
@@ -735,9 +740,9 @@
                                                         </div>
 
                                                     {% endif %}
-                                                    <div class="row m-2">
+                                                    {% comment %} <div class="row m-2">
                                                         <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-outline-info rounded-pill">PDF Files </a>
-                                                    </div>
+                                                    </div> {% endcomment %}
 
                                                 
                                             
@@ -843,12 +848,14 @@
                                             <span class="d-none d-md-block h4">Module & Zubehör</span>
                                         </a>
                                     </li>
+                                    {% if vertrieb_angebot.status == "angenommen" %}
                                     <li class="nav-item" role="presentation">
                                         <a href="#ticket" data-bs-toggle="tab" aria-expanded="false" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
                                         <i class="mdi mdi-altimeter d-md-none d-block"></i>
                                             <span class="d-none d-md-block h4">Ticket</span>
                                         </a>
                                     </li>
+                                    {% endif %}
                                     <li class="nav-item" role="presentation">
                                         <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                             <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
@@ -918,9 +925,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                 {% include 'vertrieb/extra/map_openstreet.html' %}
+                                                    {% comment %} <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe> {% endcomment %}
+                                                 {% include 'vertrieb/extra/map.html' %}
                                                 </div>
-                                                
                                             </div>
                                         </div>
                                         {% comment %} <div class="tab-pane" hidden id="wallbox" role="tabpanel">
@@ -1079,20 +1086,15 @@
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
-                                                                        
-                                                                        
                                                                         {% include 'vertrieb/extra/speicher_content_readonly.html' %}    
                                                                         {% include 'vertrieb/extra/wand_content_readonly.html' %}
                                                                         {% include 'vertrieb/extra/elwa_2_content_readonly.html' %}
                                                                         {% include 'vertrieb/extra/thor_2_content_readonly.html' %}    
                                                                         {% include 'vertrieb/extra/wallbox_content_readonly.html' %}
-
                                                                         <tr>
                                                                             <th>{{ form.komplex.label_tag }}</th>
-                                                                            
                                                                             <td><input type="text" id="komplex" class="form-control" name="{{ form.komplex.name }}" value="{{ form.komplex.value }}" readonly></td>
                                                                         </tr>
-
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1218,6 +1220,7 @@
                                             </div>
                                         </div>
                                                 <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
+                                    {% if vertrieb_angebot.status == "angenommen" %}
                                     <div class="tab-pane" id="ticket" role="presentation">
                                         <div class="card-body">
                                             <div class="row">
@@ -1300,8 +1303,9 @@
                                                 {% endif %}
                                             </div>
                                         </div>
-                                        
-                                </div>
+                                    </div>
+                                    {% endif %}
+
                                         <div class="tab-pane" id="kalkulationen" role="tabpanel">
                                             <div class="card-body">
                                                 <div class="row">
@@ -1554,9 +1558,9 @@
                                                     <div class="col-sm-6 m-1">
                                                         <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
                                                     </div>    
-                                                    <div class="col-sm-4 m-1">
+                                                    {% comment %} <div class="col-sm-4 m-1">
                                                         <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info rounded-pill">PDF Files Liste</a>
-                                                    </div>
+                                                    </div> {% endcomment %}
                                                 </div>
                                     </div>
                                 </div>

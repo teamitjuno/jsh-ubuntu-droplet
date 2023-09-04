@@ -201,7 +201,8 @@ module2 = SolarModule(
 )
 module2.save()
 
-
+from projektant_interface.utils import update_all_project_instances
+update_all_project_instances()
 from django.contrib.auth.models import Permission
 from authentication.models import Role
 

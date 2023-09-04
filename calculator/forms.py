@@ -140,6 +140,27 @@ class CalculatorForm(forms.ModelForm):
             attrs={"class": "form-check-input form-check-input mb-3", "id": "notstrom"}
         ),
     )
+    elwa = forms.BooleanField(
+        label="AC-ELWA 2",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa", "style": "max-width: 70px",}),
+    )
+    thor = forms.BooleanField(
+        label="AC-THOR",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
+    )
+    heizstab = forms.BooleanField(
+        label="Heizstab inklusive",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "heizstab-checkbox",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     anzOptimizer = forms.IntegerField(
         label="Optimizer",
         required=True,
@@ -215,6 +236,9 @@ class CalculatorForm(forms.ModelForm):
             "solar_module",
             "modulanzahl",
             "notstrom",
+            "elwa",
+            "thor",
+            "heizstab",
             "optimizer",
             "anzOptimizer",
             "wallboxtyp",

@@ -143,6 +143,19 @@ class Calculator(models.Model):
         max_length=10, choices=GARANTIE_WR_CHOICES, default="keine"
     )
     eddi = models.BooleanField(default=False)
+    elwa = models.BooleanField(default=False)
+    elwa_typ = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    thor = models.BooleanField(default=False)
+    thor_typ = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
@@ -457,6 +470,23 @@ class Calculator(models.Model):
     @property
     def optimizer_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
+    
+
+    @property
+    def elwa_price(self):
+        prices = self.get_prices()
+        return float(prices["elwa_2"])
+
+    @property
+    def thor_price(self):
+        prices = self.get_prices()
+        return float(prices["ac_thor_3_kw"])
+    
+    @property
+    def heizstab_price(self):
+        prices = self.get_prices()
+        return float(prices["heizstab"])
+    
 
     @property
     def optimizer_full_preis(self):
@@ -488,16 +518,24 @@ class Calculator(models.Model):
     @property
     def full_accessories_price(self):
         accessories_price = 0
-        if self.anzOptimizer > 0:
+        if self.full_optimizer_preis:
             accessories_price += self.full_optimizer_preis
-        if self.wallbox_anzahl > 0:
+        if self.full_wallbox_preis:
             accessories_price += self.full_wallbox_preis
-        if self.anz_speicher:
+        if self.batteriespeicher_angebot_price:
             accessories_price += self.batteriespeicher_angebot_price
+        if self.eddi:
+            accessories_price += self.get_optional_accessory_price("eddi")
         if self.notstrom:
             accessories_price += self.get_optional_accessory_price("backup_box")
         if self.hub_included == True:
             accessories_price += self.get_optional_accessory_price("hub")
+        if self.elwa:
+            accessories_price += float(self.elwa_price)
+        if self.thor:
+            accessories_price += float(self.thor_price)
+        if self.heizstab:
+            accessories_price += float(self.heizstab_price)
         return accessories_price
 
     @property
