@@ -83,9 +83,12 @@ def refresh_access_token():
         raise APIException(f"Error refreshing token: {response.status_code}")
     
     new_access_token = response.json().get("access_token")
-    print(new_access_token)
-    set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
-    return new_access_token
+    if new_access_token:
+        set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
+        return new_access_token
+    else:
+        raise APIException("New access token not found in the API response.")
+    
 
 
 def fetch_records(url, headers, params):
@@ -305,7 +308,7 @@ def update_all_project_instances():
         if updated_project:
             updated_count += 1
             print(f"Updating record...{updated_count}")
-        if updated_count == 30:
+        if updated_count == 50:
             break
 
     return f"Updated {updated_count} out of {all_projects.count()} projects."
