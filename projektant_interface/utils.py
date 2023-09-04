@@ -308,7 +308,7 @@ def update_all_project_instances():
         if updated_project:
             updated_count += 1
             print(f"Updating record...{updated_count}")
-        if updated_count == 100:
+        if updated_count == 150:
             break
 
     return f"Updated {updated_count} out of {all_projects.count()} projects."
