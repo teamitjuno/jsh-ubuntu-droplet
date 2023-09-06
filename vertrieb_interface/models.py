@@ -541,55 +541,55 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return None
 
-    # @property
-    # def coordinates_extractor(self):
-    #     # Return "0.0", "0.0" if strasse or ort is None
-    #     if self.strasse is None or self.ort is None:
-    #         return "0.0", "0.0"
-
-    #     # Load variables from .env
-    #     OWNER_ID = os.getenv("OWNER_ID")
-    #     STYLE_ID = os.getenv("STYLE_ID")
-    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
-
-    #     # Prepare the query string
-    #     query = f"{self.strasse}, {self.ort}"
-
-    #     # You might need to adjust this URL to match the Mapbox API version/documentation you're using
-    #     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
-
-    #     # Make the API call
-    #     response = requests.get(url)
-    #     data = response.json()
-
-    #     # Extracting latitude and longitude from the response
-    #     try:
-    #         longitude, latitude = data["features"][0]["geometry"]["coordinates"]
-    #         return latitude, longitude
-    #     except (IndexError, KeyError):
-    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
-    #         return 0.0, 0.0
     @property
     def coordinates_extractor(self):
+        # Return "0.0", "0.0" if strasse or ort is None
         if self.strasse is None or self.ort is None:
             return "0.0", "0.0"
 
-        
+        # Load variables from .env
+        OWNER_ID = os.getenv("OWNER_ID")
+        STYLE_ID = os.getenv("STYLE_ID")
+        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+
+        # Prepare the query string
         query = f"{self.strasse}, {self.ort}"
 
-        # Using the Google Maps Geocoding API
-        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={query}&key={GOOGLE_MAPS_API_KEY}"
+        # You might need to adjust this URL to match the Mapbox API version/documentation you're using
+        url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
 
+        # Make the API call
         response = requests.get(url)
         data = response.json()
 
         # Extracting latitude and longitude from the response
         try:
-            location = data['results'][0]['geometry']['location']
-            return location['lat'], location['lng']
+            longitude, latitude = data["features"][0]["geometry"]["coordinates"]
+            return latitude, longitude
         except (IndexError, KeyError):
             # Handle cases where the address isn't found or the API response structure has unexpected changes
             return 0.0, 0.0
+    # @property
+    # def coordinates_extractor(self):
+    #     if self.strasse is None or self.ort is None:
+    #         return "0.0", "0.0"
+
+        
+    #     query = f"{self.strasse}, {self.ort}"
+
+    #     # Using the Google Maps Geocoding API
+    #     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={query}&key={GOOGLE_MAPS_API_KEY}"
+
+    #     response = requests.get(url)
+    #     data = response.json()
+
+    #     # Extracting latitude and longitude from the response
+    #     try:
+    #         location = data['results'][0]['geometry']['location']
+    #         return location['lat'], location['lng']
+    #     except (IndexError, KeyError):
+    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
+    #         return 0.0, 0.0
 
     @property
     def mapbox_data(self):
@@ -641,11 +641,13 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def google_maps_url(self):
-        latitude, longitude = self.coordinates_extractor
         if self.postanschrift_latitude and self.postanschrift_longitude:
             latitude = float(self.postanschrift_latitude)
             longitude = float(self.postanschrift_longitude)
-        
+            maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
+            return maps_url
+        elif not self.postanschrift_latitude or not self.postanschrift_longitude:
+            latitude, longitude = self.coordinates_extractor
             maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
             return maps_url
         else:
