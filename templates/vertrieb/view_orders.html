@@ -91,7 +91,7 @@
                                             </td>
                                             
                                             <td> 
-                                                {% if vertrieb_angebot.angebot_id_assigned %}
+                                                {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status == "angenommen" %}
                                                 <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
                                                 {% endif %}
                                             </td>
