@@ -900,16 +900,23 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def get_zuschlag(self):
+        # Fetch all the values
         values = self.get_values()
-        module_name = (
-            self.solar_module.lower()
-            if self.solar_module
-            else ("Phono Solar PS420M7GFH-18/VNH").lower()
-        )
 
-        return values.get(
-            module_name, "Phono Solar PS420M7GFH-18/VNH"
-        )  # Add default value
+        # Check if 'self.solar_module' is not None, else assign the default module name
+        module_name = self.solar_module or "Phono Solar PS420M7GFH-18/VNH"
+        module_name = module_name.lower()
+
+        # Return value based on module_name's prefix
+        if module_name.startswith("jinko solar"):
+            return values.get("jinko_solar", 1.06)  # return 1.06 as default if not found in values
+
+        if module_name.startswith("phono solar"):
+            return values.get("phono_solar", 1.075)  # return 1.075 as default if not found in values
+
+        # Return a default value if no conditions are met (you can adjust this as per your requirements)
+        return 1.075  # This is arbitrary; modify as needed
+
 
     @property
     def nutz_energie(self):
@@ -1185,7 +1192,7 @@ class VertriebAngebot(TimeStampMixin):
         def get_price(prefix, kw):
             name = prefix + str(kw)
 
-            return float(ModulePreise.objects.get(name=name).price)
+            return (float(ModulePreise.objects.get(name=name).price)) * float(self.get_zuschlag)
 
         def get_garantie_price(kw, years):
             name = f"garantie{kw}_{years}"

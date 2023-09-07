@@ -115,7 +115,7 @@ class OptionalAccessoriesPreise(models.Model):
 
 class AndereKonfigurationWerte(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    value = models.DecimalField(max_digits=10, decimal_places=2)
+    value = models.DecimalField(max_digits=10, decimal_places=3)
 
     def __str__(self) -> str:
         return f"{self.value}"

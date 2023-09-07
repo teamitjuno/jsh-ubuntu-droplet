@@ -1086,7 +1086,7 @@ def send_invoice(request, angebot_id):
             user.smtp_subject,
             user.smtp_body,
             user.smtp_username,
-            ["si@juno-solar.com"],
+            [f"{vertrieb_angebot.email}"],
             connection=connection,
         )
         file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore
@@ -1288,7 +1288,6 @@ def PDFCalculationsListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    # Create a list of calculation file paths
     calc_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/")  # type: ignore
 
     calc_files = [
@@ -1296,7 +1295,6 @@ def PDFCalculationsListView(request, angebot_id):
         for angebot in user_angebots
     ]
 
-    # Zip the two lists together
     zipped_calculations = zip(user_angebots, calc_files)
 
     return render(
@@ -1317,7 +1315,6 @@ def PDFTicketListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    # Create a list of ticket file paths
     ticket_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/")  # type: ignore
 
     ticket_files = [
@@ -1325,7 +1322,6 @@ def PDFTicketListView(request, angebot_id):
         for angebot in user_angebots
     ]
 
-    # Zip the two lists together
     zipped_tickets = zip(user_angebots, ticket_files)
 
     return render(
@@ -1338,7 +1334,6 @@ def PDFTicketListView(request, angebot_id):
     )
 
 
-# views.py
 class UpdateAdminAngebot(AdminRequiredMixin, VertriebCheckMixin, UpdateView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders_admin.html"
@@ -1351,10 +1346,10 @@ class UpdateAdminAngebot(AdminRequiredMixin, VertriebCheckMixin, UpdateView):
         "anfrage_vom",
         "name",
         "is_synced",
-    ]  # add other fields here as needed
+    ]  
 
     def get_success_url(self):
-        # return to the orders view after a successful update
+
         return reverse("vertrieb_interface:view_orders")
 
 

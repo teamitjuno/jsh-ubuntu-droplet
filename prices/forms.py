@@ -16,7 +16,7 @@ class AndereKonfigurationWerteForm(forms.ModelForm):
         required=True,
         initial=0.00,
         max_digits=10,
-        decimal_places=2,
+        decimal_places=3,
         widget=forms.NumberInput(
             attrs={"class": "form-control", "id": "id_andere_konfiguration_value"}
         ),
