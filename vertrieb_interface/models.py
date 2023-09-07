@@ -1225,7 +1225,7 @@ class VertriebAngebot(TimeStampMixin):
             garantie_years = int(self.garantieWR.split(" ")[0])
             garantie_kw = next(
                 kw
-                for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30]
+                for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30, 35]
                 if self.modulsumme_kWp <= kw
             )
             angebotsSumme += get_garantie_price(garantie_kw, garantie_years)

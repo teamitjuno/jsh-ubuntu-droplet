@@ -135,10 +135,10 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if value < 6 and value != 0 or value > 50:
+    if value < 6 and value != 0 or value > 70:
         raise ValidationError(
             (
-                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 50 liegen."
+                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 70 liegen."
             ),
             params={"value": value},
         )

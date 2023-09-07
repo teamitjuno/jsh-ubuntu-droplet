@@ -118,6 +118,7 @@ ModulePreise.objects.create(name='Preis15', price=1276.00, actual_price=0.00, ol
 ModulePreise.objects.create(name='Preis20', price=990.00, actual_price=0.00, old_price=0.00)
 ModulePreise.objects.create(name='Preis25', price=880.00, actual_price=0.00, old_price=0.00)
 ModulePreise.objects.create(name='Preis30', price=660.00, actual_price=0.00, old_price=0.00)
+ModulePreise.objects.create(name='Preis30.0', price=660.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import OptionalAccessoriesPreise
 OptionalAccessoriesPreise.objects.create(name='elwa_2', price=1250.00, actual_price=0.00,old_price=0.00)
