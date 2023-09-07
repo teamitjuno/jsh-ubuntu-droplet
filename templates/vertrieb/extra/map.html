@@ -7,7 +7,7 @@
                     <div class="card">
                         <iframe 
                             width="100%" 
-                            height="400px" 
+                            height="550px" 
                             frameborder="0" 
                             scrolling="yes" 
                             src="https://www.openstreetmap.org/export/embed.html?bbox={{ LONGITUDE }}%2C{{ LATITUDE }}%2C{{ LONGITUDE }}%2C{{ LATITUDE }}&amp;layer=mapnik&amp;marker={{ LATITUDE }}%2C{{ LONGITUDE }}&amp;zoom=14" 
@@ -21,25 +21,6 @@
                 </div> <!-- end col-->
             </div>
         </div>
-    <div class="card mb-3">
-        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Notizen</div>
-        <div class="card-body">
-            <div class="col-xl-12">
-                <table class="table table-sm table-hover">
-                    <tbody>
-                     {% comment %} <tr>
-                            <th>OpenstreetMap zeigen:</th>
-                                <td><a href="{{ vertrieb_angebot.google_maps_url }}" style="width: 100%" target="_blank">{{ vertrieb_angebot.google_maps_url }}</a></td>
-                        </tr>  {% endcomment %}
-                        <tr>
-                            <th>{{ form.notizen.label_tag }}</th>
-                            <td><input type="text" id="notizen" class="form-control" name="{{ form.notizen.name }}" value="{{ form.notizen.value }}" readonly style="height: 150px; width: 100%;"></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    
     </div>
 {% endblock %}

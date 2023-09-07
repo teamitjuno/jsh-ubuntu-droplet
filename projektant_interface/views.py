@@ -1,7 +1,15 @@
 import os
 import json
 import logging
+from django.core.mail import (
+    send_mail,
+    EmailMultiAlternatives,
+    get_connection,
+    EmailMessage,
+)
+from config.settings import ENV_FILE, EMAIL_BACKEND, MAPBOX_TOKEN, STYLE_ID
 from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 from authentication.models import User
@@ -126,8 +134,9 @@ def create_project_bauplan_pdf(request, project_id):
     processed_besodersheiten = project.Processed_Besonderheiten
     roof_typ = project.roof_typ
     height = project.height
-    kunden_tel_nummer = project.Kunde_Telefon_mobil
+    kunden_tel_nummer = project.Kunde_Telefon_mobil if project.Kunde_Telefon_mobil else project.Kunde_Telefon_Festnetz
     datetime = project.current_date
+    font_size = project.font_size
     user_surname = user.last_name
     kunden_name = project.kunden_name
     temp = project.temp_content_pdf
@@ -147,6 +156,9 @@ def create_project_bauplan_pdf(request, project_id):
         "kunden_plz_ort": kunden_plz_ort,
         "processed_besodersheiten": processed_besodersheiten,
         "bauplan_jpg_path": project.bauplan_img.path if project.bauplan_img else None,
+        "bauplan_jpg_secondary_path": project.bauplan_img_secondary.path if project.bauplan_img_secondary else None,
+        "bauplan_jpg_third_path": project.bauplan_img_third.path if project.bauplan_img_third else None,
+        "font_size": font_size,
     }
 
     pdf_content = generate_pdf_bauplan(data)
@@ -160,7 +172,7 @@ def document_view(request, project_id):
     project = get_object_or_404(Project, ID=project_id)
     pdf_url = reverse("projektant_interface:serve_pdf", args=[project_id])
     form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
-    img_form = form = UploadJPGForm(request.POST, request.FILES, instance=project)
+    
 
     if request.method == "POST":
         form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
@@ -171,8 +183,8 @@ def document_view(request, project_id):
 
     context = {
         "pdf_url": pdf_url,
-        "ID": project_id,
-        "img_form": img_form,
+        "project_id": project_id,
+        
         "form": form  # Add the form to the context
     }
 
@@ -190,7 +202,7 @@ def serve_pdf(request, project_id):
 
     return response
 
-def upload_jpg(request, project_id):
+def upload_jpg(request, project_id): 
     project = get_object_or_404(Project, ID=project_id)
     if request.method == 'POST':
         form = UploadJPGForm(request.POST, request.FILES, instance=project)
@@ -218,6 +230,56 @@ def update_project(request, project_id):
     }
 
     return render(request, "projektant/project_update_form.html", context)
+
+@login_required
+def send_invoice(request):
+    print("Request method received in send_invoice:", request.method)
+
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        project_id = body_data.get('project_id')
+        
+        print("Hit send_invoice with method:", request.method)
+        
+        try:
+            send_project_invoice(request.user, project_id)
+            messages.success(request, "Email sent successfully")
+            return JsonResponse({"status": "success"}, status=200)
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+            return JsonResponse({"status": "failed", "error": str(e)}, status=400)
+    else:
+        return JsonResponse({"status": "failed", "error": "Not a POST request."}, status=400)
+
+def send_project_invoice(user, project_id):
+    project = get_object_or_404(Project, ID=project_id)
+    pdf = project.bauplan_pdf
+    subject = f"Project Bauplan {project.kunden_name}"
+    body = "Body"
+
+
+    connection = get_connection(
+        backend=EMAIL_BACKEND,
+        host=user.smtp_server,
+        port=user.smtp_port,
+        username=user.smtp_username,
+        password=user.smtp_password,
+        use_tsl=True,
+        fail_silently=False,
+    )
+    
+    email = EmailMultiAlternatives(
+        subject,
+        body,
+        user.smtp_username,
+        [f"{project.email_form}"] if project.email_form else [f"{user.email}"],
+        connection=connection,
+    )
+    
+    file_data = pdf.tobytes()
+    email.attach(f"Bauplan_{project.ID}.pdf", file_data, "application/pdf")
+    email.send()
 
 # from django.http import FileResponse
 # from config import settings

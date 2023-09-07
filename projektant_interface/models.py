@@ -95,7 +95,11 @@ class Project(models.Model):
 
     temp_content_pdf = models.BinaryField(blank=True, null=True)
     bauplan_pdf = models.BinaryField(blank=True, null=True)
-    bauplan_img = models.ImageField(null=True, blank=True)
+    bauplan_img = models.ImageField(upload_to="assets/images/layouts/", null=True, blank=True)
+    bauplan_img_secondary = models.ImageField(upload_to="assets/images/layouts/", null=True, blank=True)
+    bauplan_img_third = models.ImageField(upload_to="assets/images/layouts/", null=True, blank=True)
+    font_size = models.PositiveIntegerField(default=18, blank=True, null=True)
+    email_form = models.CharField(max_length=255, blank=True, null=True)
 
     roof_typ = models.CharField(max_length=255, blank=True, null=True)
     height = models.CharField(max_length=255, blank=True, null=True)

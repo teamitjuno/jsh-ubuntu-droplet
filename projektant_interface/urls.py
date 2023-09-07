@@ -20,10 +20,11 @@ urlpatterns = [
         name="create_bauplan_pdf",
     ),
     path("document_view/<int:project_id>/", views.document_view, name="document_view"),
+    path('send_invoice/', views.send_invoice, name='send_invoice'),
     path("serve_pdf/<int:project_id>/", views.serve_pdf, name="serve_pdf"),
     path('project/<int:project_id>/upload_jpg/', views.upload_jpg, name='upload_jpg'),  # New URL pattern for JPG upload
     path('project/<int:project_id>/update/', views.update_project, name='update_project'),
-    # path('test_pdf/', views.test_pdf_generation, name='test_pdf_generation'),
+    
 ]
 
 

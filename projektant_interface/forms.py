@@ -454,7 +454,7 @@ class UploadJPGForm(forms.ModelForm):
         required=False,
         widget=forms.ClearableFileInput(attrs={
             "class": "form-control-file",
-            "id": "id_bauplan_jpg",
+            "id": "id_bauplan_img",
         })
     )
     class Meta:
@@ -498,14 +498,53 @@ class ProjectUpdateForm(forms.ModelForm):
         required=False,
     )
 
-    bauplan_jpg = forms.ImageField(
+    bauplan_img = forms.ImageField(
+        label="Haupt Bild",
         required=False,
         widget=forms.ClearableFileInput(attrs={
             "class": "form-control-file",
-            "id": "id_bauplan_jpg",
+            "id": "id_bauplan_img",
         })
+    )
+    bauplan_img_secondary = forms.ImageField(
+        label="Bild 2",
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control-file",
+            "id": "id_bauplan_img_secondary",
+        })
+    )
+    bauplan_img_third = forms.ImageField(
+        label="Bild 3",
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control-file",
+            "id": "id_bauplan_img_third",
+        })
+    )
+    email_form = forms.CharField(
+        label="Email für Sendung",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email für Sendung",
+                "id": "id_email_form",
+            }
+        ),
+        required=False,
+    )
+    font_size = forms.CharField(
+        label="Fontgröße",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Fontgröße",
+                "id": "id_font_size",
+            }
+        ),
+        required=False,
     )
 
     class Meta:
         model = Project
-        fields = ['Processed_Besonderheiten', 'roof_typ', 'height', 'bauplan_jpg']
+        fields = ['Processed_Besonderheiten', 'roof_typ', 'height', 'bauplan_img', "bauplan_img_secondary", "bauplan_img_third", "email_form", "font_size"]

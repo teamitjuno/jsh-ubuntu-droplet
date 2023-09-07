@@ -38,7 +38,7 @@
                                 <div class="card-body">
                                         <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
                                             <li class="nav-item" role="presentation">
-                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="fakse" role="tab">
+                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="fakse" role="tab">
                                                     <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Info</span>
                                                 </a>
@@ -50,7 +50,7 @@
                                                 </a>
                                             </li> {% endcomment %}
                                             <li class="nav-item" role="presentation">
-                                                <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="true" tabindex="-1" role="tab">
+                                                <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
@@ -71,7 +71,7 @@
                                             </li>
                                         </ul>
                                     <div class="tab-content">
-                                        <div class="tab-pane" id="info" role="presentation">
+                                        <div class="tab-pane show active" id="info" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
                                                     <!-- Column 1 -->
@@ -143,6 +143,7 @@
                                                         <!-- Column 2 -->
                                                                 
                                                                 {% include 'vertrieb/extra/map.html' %}
+                                                           
                                                 </div><!-- End of row -->
                                             </div>
 
@@ -176,7 +177,7 @@
                                         </div> {% endcomment %}
                             
                                             <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM -->
-                                        <div class="tab-pane show active" id="module" role="presentation">
+                                        <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row"> 
                                                     <div class="col-lg-5">
@@ -292,6 +293,7 @@
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis }} €</td>
+                                                                        
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1136,6 +1138,7 @@
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis }} €</td>
+                                                                        <td>{{ vertrieb_angebot.get_zuschlag }} €</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1726,6 +1729,7 @@ $(document).ready(function() {
                 $("#id_telefon_mobil").val(data.telefon_mobil);
                 $("#id_telefon_festnetz").val(data.telefon_festnetz);
                 $("#id_ort").val(data.ort);
+                $("#id_notizen").val(data.notizen);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
                 
                 

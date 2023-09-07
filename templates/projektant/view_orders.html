@@ -2,21 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
-{% block head %}
-        <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
-    <script src="{% static 'assets/js/hyper-config.js' %}"></script>
-    <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />  
-{% endblock %}
+
 {% block content %}
 <div class="content-page">
     <div class="content">
@@ -36,50 +22,47 @@
                     <div class="card d-block">
                         <div class="card-body">
                             <div class="table-container">
-                                <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
+                                <table id="scroll-horizontal-datatable" class="table nowrap row-border order-column w-100">
                                     <thead>
                                         <tr>
                                             <th>Action</th>
-                                            <th>ID</th>
-                                            <th>Status</th>
-                                            <th>Auftragsbestätigung</th>
-                                            <th>Auftrag Erteilt am</th>
+                                            <th>Kunde Kundennummer</th>
                                             <th>Kunden Name</th>
                                             <th>Kunde Adresse PVA</th>
-                                            <th>Modul Summe kWp</th>
+                                            <th>ID</th>
+                                            <th>Kunde Email</th>
+                                            <th>Status</th>
+                                            <th>Auftrag Erteilt am</th>
+                                            <th>Auftragsbestätigung</th>
                                             <th>Solar Module</th>
-                                            <th>Rechnung versandt</th>
-                                            <th>Berechnung erhalten am</th>
-                                            <th>EDDI</th>
-                                            <th>Netzbetreiber</th>
-                                            <th>Garantie WR beantragt am</th>
-                                            <th>Ticket ID</th>
-                                            <th>Status Inbetriebnahmeprotokoll</th>
-                                            <th>Zahlungsmodalitäten</th>
-                                            <th>Berechnung übergeben am</th>
-                                            <th>Vertriebler</th>
+                                            <th>Modul Summe kWp</th>
+                                            
+                                            
+                                            
                                             <th>Notstromversorgung Backup Box vorhanden</th>
-                                            <th>Status Marktstammdatenregistrierung</th>
-                                            <th>Garantieerweiterung</th>
-                                            <th>Bauabschluss am</th>
-                                            <th>Status Betreiberwechsel</th>
-                                            <th>Status Einspeiseanfrage</th>
+                                            
+                                            <th>Optimizer</th>
+                                            <th>Speicher</th>
+                                            
+                                            
+                                            
+                                            
+                                            
                                             <th>Wallbox</th>
                                             <th>Hub</th>
-                                            <th>Kunde Kundennummer</th>
+                                            
                                             <th>UK auf Lager</th>
                                             <th>Wechselrichter</th>
                                             <th>UK bestellt am</th>
                                             <th>Power Boost vorhanden</th>
                                             <th>Unterkonstruktion</th>
-                                            <th>Harvi</th>
-                                            <th>Optimizer</th>
-                                            <th>Status Elektrik</th>
-                                            <th>Kunde Email</th>
+                                            
+                                            <th>Status Einspeiseanfrage</th>
+                                            
                                             <th>Nummer der PVA</th>
-                                            <th>Kunde Postanschrift</th>
+                                            
                                             <th>Kunde Telefon Festnetz</th>
-                                            <th>Speicher</th>
+                                            
                                             <th>Status Fertigmeldung</th>
                                             <th>Kunde Telefon mobil</th> 
                                         </tr>
@@ -88,56 +71,42 @@
                                         {% for project in projects %}
                                         <tr>
                                             <td><a href="{% url 'projektant_interface:create_bauplan_pdf' project.ID %}" class="btn btn-outline-info btn-sm">Bauplan erstellen</a></td>
+                                            <td>{{ project.Kunde_Kundennummer }}</td>
+                                            <td>{{ project.kunden_name }}</td>
+                                            <td>{{ project.Kunde_Adresse_PVA }}</td>
                                             <td>{{ project.ID }}</td>
+                                            <td>{{ project.Kunde_Email }}</td>
                                             <td>{{ project.Status }}</td>
+                                            <td>{{ project.Auftrag_Erteilt_am }}</td>
                                             {% if project.Auftragsbest_tigung_versendet %}
                                                 <td><span class="badge bg-success rounded-pill">Ja</span></td>
                                             {% else %}
                                                 <td><span class="badge bg-danger rounded-pill">Nein</span></td>
                                             {% endif %}
-                                            <td>{{ project.Auftrag_Erteilt_am }}</td>
-                                            <td>{{ project.kunden_name }}</td>
-                                            <td>{{ project.Kunde_Adresse_PVA }}</td>
-                                            <td>{{ project.Modul_Summe_kWp }}</td>
-                                            <td>{{ project.solar_module }}</td>
-                                            {% if project.Rechnung_versandt %}
-                                                <td><span class="badge bg-success rounded-pill">Ja</span></td>
-                                            {% else %}
-                                                <td><span class="badge bg-danger rounded-pill">Nein</span></td>
-                                            {% endif %}
                                             
-                                            <td>{{ project.Berechnung_erhalten_am }}</td>
-
-                                            {% if project.EDDI %}
-                                            <td><span class="badge bg-success rounded-pill">Ja</span></td>
-                                            {% else %}
-                                            <td><span class="badge bg-danger rounded-pill">Nein</span></td>
-                                            {% endif %}
-
-                                            <td>{{ project.Netzbetreiber }}</td>
-                                            <td>{{ project.Garantie_WR_beantragt_am }}</td>
-                                            <td>{{ project.ticket_id }}</td>
-                                            <td>{{ project.Status_Inbetriebnahmeprotokoll }}</td>
-                                            <td>{{ project.Zahlungsmodalit_ten }}</td>
-                                            <td>{{ project.Berechnung_bergeben_am }}</td>
-                                            <td>{{ project.vertriebler }}</td>
+                                            <td>{{ project.solar_module }}</td>
+                                            <td>{{ project.Modul_Summe_kWp }}</td>
+                                            
                                             {% if project.Notstromversorgung_Backup_Box_vorhanden %}
                                             <td><span class="badge bg-success rounded-pill">Ja</span></td>
                                             {% else %}
                                             <td><span class="badge bg-danger rounded-pill">Nein</span></td>
                                             {% endif %}
-                                            <td>{{ project.Status_Marktstammdatenregistrierung }}</td>
-                                            <td>{{ project.Garantieerweiterung }}</td>
-                                            <td>{{ project.Bauabschluss_am }}</td>
-                                            <td>{{ project.Status_Betreiberwechsel }}</td>
-                                            <td>{{ project.Status_Einspeiseanfrage }}</td>
+                                            
+                                            <td>{{ project.Optimizer1 }}</td>
+                                            <td>{{ project.speicher }}</td>
+                                            
+                                            
+                                            
+                                            
+                                            
                                             <td>{{ project.wallbox }}</td>
                                             {% if project.Hub1 %}
                                             <td><span class="badge bg-success rounded-pill">Ja</span></td>
                                             {% else %}
                                             <td><span class="badge bg-danger rounded-pill">Nein</span></td>
                                             {% endif %}
-                                            <td>{{ project.Kunde_Kundennummer }}</td>
+                                            
                                             {% if project.UK_auf_Lager %}
                                             <td><span class="badge bg-success rounded-pill">Ja</span></td>
                                             {% else %}
@@ -151,14 +120,13 @@
                                                 <td><span class="badge bg-danger rounded-pill">Nein</span></td>
                                             {% endif %}
                                             <td>{{ project.unterkonstrution }}</td>
-                                            <td>{{ project.Harvi1 }}</td>
-                                            <td>{{ project.Optimizer1 }}</td>
-                                            <td>{{ project.Status_Elektrik }}</td>
-                                            <td>{{ project.Kunde_Email }}</td>
+
+                                            <td>{{ project.Status_Einspeiseanfrage }}</td>
+                                            
                                             <td>{{ project.Nummer_der_PVA }}</td>
-                                            <td>{{ project.Kunde_Postanschrift }}</td>
+                                            
                                             <td>{{ project.Kunde_Telefon_Festnetz }}</td>
-                                            <td>{{ project.speicher }}</td>
+                                            
                                             <td>{{ project.Status_Fertigmeldung }}</td>
                                             <td>{{ project.Kunde_Telefon_mobil }}</td> 
                                         </tr>
@@ -193,11 +161,7 @@
     </div>
 </div>
 {% endblock %}
-{% comment %} <script>
-$(document).ready(function() {
-    $('#invoiceTable').DataTable();
-} );
-</script> {% endcomment %}
+
 {% block extra_js %}
 <script src="{% static 'assets/js/vendor.min.js' %}"></script>
 <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
