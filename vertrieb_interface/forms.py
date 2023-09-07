@@ -195,6 +195,15 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    angebot_id_assigned = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "angebot_id_assigned",
+            }
+        ),
+    )
     status = forms.ChoiceField(
         label="Angebotstatus",
         
@@ -547,7 +556,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     heizstab = forms.BooleanField(
-        label="Heizstab inklusive",
+        label="Heizstab für THOR inklusive",
         required=False,
         widget=forms.CheckboxInput(
             attrs={
@@ -582,12 +591,13 @@ class VertriebAngebotForm(ModelForm):
     )
 
     notizen = forms.CharField(
+        label="Notizen",
         required=False,
         widget=forms.Textarea(
             attrs={
                 "rows": 6,
                 "class": "form-control",
-                "id": "notizen",
+                "id": "id_notizen",
             }
         ),
     )
@@ -786,7 +796,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     heizstab_ticket = forms.IntegerField(
-        label="Heizstab ",
+        label="Heizstab für THOR",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -806,6 +816,7 @@ class VertriebAngebotForm(ModelForm):
         model = VertriebAngebot
         fields = [
             "is_locked",
+            "angebot_id_assigned",
             "status",
             "anrede",
             "telefon_festnetz",
@@ -892,6 +903,7 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+        self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update({"id": "id_vorname_nachname"})
         self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})

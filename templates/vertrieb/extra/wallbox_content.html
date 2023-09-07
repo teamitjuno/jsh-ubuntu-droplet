@@ -1,5 +1,5 @@
 {% block content %}
-<tr>
+<tr hidden>
     <th>{{ form.wallbox.label_tag }}</th>
     <td>
         <div class="custom-control custom-switch">
@@ -8,7 +8,7 @@
         </div>
     </td>
 </tr>
-<table class="table table-sm table-hover" id="wallbox-details-table" style="{% if not form.wallbox.value %}display: none;{% endif %}">
+<table class="table table-sm table-hover">
     <tr>
         <th>{{ form.wallboxtyp.label_tag }}</th>
         <td>{{ form.wallboxtyp }}</td>
@@ -22,7 +22,7 @@
         <td>{{ form.kabelanschluss }}</td>
     </tr>
 </table>
-<script>
+{% comment %} <script>
     // Toggle visibility of the inner table based on the checkbox state
     document.getElementById("wallbox-checkbox").addEventListener("change", function() {
         let wallboxDetailsTable = document.getElementById("wallbox-details-table");
@@ -32,6 +32,6 @@
             wallboxDetailsTable.style.display = "none";
         }
     });
-</script>
+</script> {% endcomment %}
 
 {% endblock %}

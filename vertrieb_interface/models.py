@@ -449,8 +449,8 @@ class VertriebAngebot(TimeStampMixin):
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
-        if self.batteriespeicher_preis:
-            self.batteriespeicher_angebot_price = self.batteriespeicher_preis
+        
+        self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
         self.fullticketpreis = self.full_ticket_preis
@@ -857,8 +857,8 @@ class VertriebAngebot(TimeStampMixin):
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
         if (
-            self.wandhalterung_fuer_speicher == True
-            and self.anz_wandhalterung_fuer_speicher != 0
+            
+            self.anz_wandhalterung_fuer_speicher != 0
         ):
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
@@ -872,7 +872,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def batteriespeicher_preis(self):
         batteriePreis = 0
-        if self.speicher == True and self.anz_speicher != 0:
+        if self.anz_speicher != 0:
             leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
             batteriePreis = self.calculate_price(
@@ -882,6 +882,10 @@ class VertriebAngebot(TimeStampMixin):
                 leistungsmodulePreis
             )
             return batteriePreis
+        elif self.anz_speicher == 0:
+            batteriePreis = 0
+            return batteriePreis
+            
 
     @property
     def modulsumme_kWp(self):

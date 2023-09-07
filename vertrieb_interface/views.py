@@ -431,6 +431,8 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             self.data != []
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
+            zoho_data_p = pformat(data)
+            pp(zoho_data_p)
             return JsonResponse(data)
         except:
             self.data = fetch_user_angebote_all(request)
@@ -593,7 +595,29 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
-
+        if "angebotsumme_rechnen" in request.POST:
+            if form.is_valid():
+                if vertrieb_angebot.angebot_id_assigned == True: 
+                    vertrieb_angebot.angebot_id_assigned = True
+                    form.instance.angebot_id_assigned = True  # type:ignore
+                    form.save()  # type:ignore
+                else:
+                    vertrieb_angebot.angebot_id_assigned = False
+                    form.instance.angebot_id_assigned = False  # type:ignore
+                    form.save()  # type:ignore
+                # CustomLogEntry.objects.log_action(
+                #     user_id=vertrieb_angebot.user_id,
+                #     content_type_id=ContentType.objects.get_for_model(
+                #         vertrieb_angebot
+                #     ).pk,
+                #     object_id=vertrieb_angebot.pk,
+                #     object_repr=str(vertrieb_angebot),
+                #     action_flag=CHANGE,
+                #     status=vertrieb_angebot.status,
+                # )
+                return redirect(
+                    "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                )
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
@@ -850,7 +874,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def get_queryset(self):
         queryset = self.model.objects.filter(  # type: ignore
-            user=self.request.user, zoho_kundennumer__regex=r"^\d+$"
+            user=self.request.user, angebot_id_assigned=True, zoho_kundennumer__regex=r"^\d+$"
         )
 
         query = self.request.GET.get("q")

@@ -376,7 +376,7 @@ class PDF(FPDF):
                 x=10,
                 y=185,
                 w=200,
-            )
+            ) 
             calc_folder = f"{user_folder}/"
             calc_image = f"{user_folder}/calc_tmp_{vertrieb_angebot.angebot_id}.png"
         except Exception as e:

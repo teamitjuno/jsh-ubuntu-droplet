@@ -1,5 +1,5 @@
 {% block content %}
-<tr>
+<tr hidden>
     <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
     <td>
         <div class="custom-control custom-switch">
@@ -8,14 +8,14 @@
         </div>
     </td>
 </tr>
-<tr id="row_anz_wandhalterung" style="{% if not form.wandhalterung_fuer_speicher.value %}display: none;{% endif %}">
+<tr>
     <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
     <td>
         <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
     </td>
 </tr>
 
-<script>
+{% comment %} <script>
     // Toggle visibility based on the checkbox state
     document.getElementById("switch31").addEventListener("change", function() {
         let row_anz_wandhalterung = document.getElementById("row_anz_wandhalterung");
@@ -37,6 +37,6 @@
             alert("Die Anzahl der Wandhalterung für Speicher kann nicht 0 seinwenn Wandhalterung inkludet = True.");
         }
     });
-</script>
+</script> {% endcomment %}
 
 {% endblock %}

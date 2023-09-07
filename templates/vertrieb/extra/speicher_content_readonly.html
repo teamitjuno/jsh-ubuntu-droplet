@@ -1,5 +1,5 @@
 {% block content %}
-<tr>
+<tr hidden>
     <th>{{ form.speicher.label_tag }}</th>
     <td>
         <div class="custom-control custom-switch">
@@ -8,13 +8,13 @@
         </div>
     </td>
 </tr>
-<tr id="anzSpeicherRow" style="display:none;">
+<tr>
     <th>{{ form.anz_speicher.label_tag }}</th>
     <td>
         <input type="text" id="anz_speicher" class="form-control" name="{{ form.anz_speicher.html_name }}" value="{{ form.anz_speicher.value }}" readonly />
     </td>
 </tr>
-<script>
+{% comment %} <script>
     // Function to toggle the visibility of the anzSpeicherRow
     function toggleAnzSpeicherRow() {
         let speicherSwitch = document.getElementById("switch01");
@@ -43,5 +43,5 @@
             alert("Die Anzahl der Speicher kann nicht 0 seinwenn speicher inkludet = True.");
         }
     });
-</script>
+</script> {% endcomment %}
 {% endblock %}

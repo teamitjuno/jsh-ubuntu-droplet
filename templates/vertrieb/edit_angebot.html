@@ -43,12 +43,6 @@
                                                     <span class="d-none d-md-block h4">Info</span>
                                                 </a>
                                             </li>
-                                            {% comment %} <li class="nav-item" role="tabpanel">
-                                                <a href="#wallbox" id="wallbox-tab" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-account-circle d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block">Wallbox</span>
-                                                </a>
-                                            </li> {% endcomment %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
@@ -369,7 +363,8 @@
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                             <div class="card-body">
-                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
+                                                                                                                                           
+                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" onclick=saveFormAngebotSummeRechnen() class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
 
                                                             </div>
                                                         </div>
@@ -1214,8 +1209,8 @@
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
                                                             <div class="card-body">
-                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
-
+                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
+                                                                
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1666,6 +1661,23 @@
 
 {% endblock %}    
 {% block javascript %}
+<script>
+$(document).ready(function() {
+    // Get the previously active tab from local storage
+    var activeTab = localStorage.getItem('activeTab');
+
+    // If there's an active tab stored, activate it
+    if (activeTab) {
+        $('[href="' + activeTab + '"]').tab('show');
+    }
+
+    // When any tab is clicked, save it to the local storage
+    $('.nav-tabs a').on('click', function() {
+        var tabId = $(this).attr('href');
+        localStorage.setItem('activeTab', tabId);
+    });
+});
+</script>
 
 <script>
   function getCookie(name) {

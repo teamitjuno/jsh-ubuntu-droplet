@@ -8,7 +8,7 @@
         </div>
     </td>
 </tr>
-<tr id="thor-details-table" style="{% if not form.thor.value %}display: none;{% endif %}">
+<tr>
     <th>{{ form.heizstab.label_tag }}</th>
     <td>
         <div class="custom-control custom-switch">
@@ -17,7 +17,7 @@
         </div>
     </td>
 </tr>
-<script>
+{% comment %} <script>
     // Toggle visibility of the inner table based on the checkbox state
     document.getElementById("thor").addEventListener("change", function() {
         let thorDetailsTable = document.getElementById("thor-details-table");
@@ -27,7 +27,7 @@
             thorDetailsTable.style.display = "none";
         }
     });
-</script>
+</script> {% endcomment %}
 
 
 {% endblock %}
