@@ -1037,7 +1037,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y += 15
+                y += 20
             else:
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
@@ -1054,7 +1054,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y += 15
+                y += 20
 
         else:
             y_tmp += 15

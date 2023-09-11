@@ -1,10 +1,14 @@
+# Python standard libraries
 import os
 import io
 import json
 import datetime
+from pprint import pformat, pp
 from urllib.parse import unquote
-from dotenv import load_dotenv
-from django.urls import reverse_lazy, reverse
+
+# Django related imports
+from django.urls import reverse
+from django.contrib import messages
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,53 +20,34 @@ from django.views.generic.edit import FormMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, Http404, JsonResponse, FileResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.formats import date_format
 from django.core.exceptions import PermissionDenied
-from django.core.mail import (
-    send_mail,
-    EmailMultiAlternatives,
-    get_connection,
-    EmailMessage,
-)
-from pprint import pprint, pformat, pp
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q, Sum, Count
 from django.views.defaults import page_not_found
-from django.core.files.base import ContentFile
+from django.conf import settings
+
+# Third party libraries
+from dotenv import load_dotenv
+
+# Local imports
+from config import settings
+from config.settings import ENV_FILE, EMAIL_BACKEND
 from prices.models import SolarModulePreise
 from calculator.models import Calculator
 from calculator.forms import CalculatorForm
-from config import settings
-from config.settings import ENV_FILE, EMAIL_BACKEND, MAPBOX_TOKEN, STYLE_ID
-from django.utils.decorators import method_decorator
 from shared.chat_bot import handle_message
-from django.contrib import messages
-from vertrieb_interface.get_user_angebots import (
-    fetch_user_angebote_all,
-    fetch_current_user_angebot,
-)
+from vertrieb_interface.get_user_angebots import fetch_user_angebote_all, fetch_current_user_angebot
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
-from vertrieb_interface.forms import VertriebAngebotForm, TicketForm
+from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
-from vertrieb_interface.pdf_services import (
-    angebot_pdf_creator,
-    angebot_pdf_creator_user,
-    calc_pdf_creator,
-    ticket_pdf_creator,
-)
-from vertrieb_interface.permissions import (
-    user_required,
-    admin_required,
-    AdminRequiredMixin,
-)
-from django.conf import settings
-from django.utils.module_loading import import_string
-from django.template.loader import render_to_string
+from vertrieb_interface.pdf_services import angebot_pdf_creator, angebot_pdf_creator_user, calc_pdf_creator, ticket_pdf_creator
+from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from .models import VertriebAngebot
 from authentication.models import User
-from io import BytesIO
 from authentication.forms import TopVerkauferContainerViewForm
-from django.utils.formats import date_format
-
 
 NAMES_CHOICES = ""
 
@@ -1095,7 +1080,8 @@ def send_invoice(request, angebot_id):
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
         pdf = vertrieb_angebot.angebot_pdf
         subject = f"Angebot Photovoltaikanlage {angebot_id}"
-        body = user.smtp_body
+        geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
+        body = geerter + user.smtp_body
 
         connection = get_connection(
             backend=EMAIL_BACKEND,
@@ -1107,8 +1093,8 @@ def send_invoice(request, angebot_id):
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
-            user.smtp_subject,
-            user.smtp_body,
+            subject,
+            body,
             user.smtp_username,
             [f"{vertrieb_angebot.email}"],
             connection=connection,
@@ -1141,8 +1127,9 @@ def send_calc_invoice(request, angebot_id):
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
         pdf = vertrieb_angebot.calc_pdf
 
-        subject = user.smtp_subject
-        body = user.smtp_body
+        subject = f"Kalkulation Photovoltaikanlage {angebot_id}"
+        geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
+        body = geerter + user.smtp_body
 
         connection = get_connection(
             backend=EMAIL_BACKEND,
@@ -1191,9 +1178,9 @@ def send_ticket_invoice(request, angebot_id):
 
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
         pdf = vertrieb_angebot.ticket_pdf
-
-        subject = user.smtp_subject
-        body = user.smtp_body
+        subject = f"Ticket Photovoltaikanlage {angebot_id}"
+        geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
+        body = geerter + user.smtp_body
 
         connection = get_connection(
             backend=EMAIL_BACKEND,
