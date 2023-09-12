@@ -39,11 +39,20 @@ from prices.models import SolarModulePreise
 from calculator.models import Calculator
 from calculator.forms import CalculatorForm
 from shared.chat_bot import handle_message
-from vertrieb_interface.get_user_angebots import fetch_user_angebote_all, fetch_current_user_angebot
+from vertrieb_interface.get_user_angebots import (
+    fetch_user_angebote_all,
+    fetch_current_user_angebot,
+    fetch_angenommen_status,
+)
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.forms import VertriebAngebotForm
 from vertrieb_interface.utils import load_vertrieb_angebot
-from vertrieb_interface.pdf_services import angebot_pdf_creator, angebot_pdf_creator_user, calc_pdf_creator, ticket_pdf_creator
+from vertrieb_interface.pdf_services import (
+    angebot_pdf_creator,
+    angebot_pdf_creator_user,
+    calc_pdf_creator,
+    ticket_pdf_creator,
+)
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from .models import VertriebAngebot
 from authentication.models import User
@@ -296,9 +305,9 @@ def home(request):
 
     return render(request, "vertrieb/home.html", context)
 
+
 def filter_bekommen(data):
     return [item for item in data if item.get("status") == "bekommen"]
-
 
 
 class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
@@ -375,7 +384,7 @@ def create_angebot(request):
     form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
     print(request.user, "Neue Angebot created")
     if form_angebot.is_valid():
-        vertrieb_angebot = form_angebot.save(commit=False)
+        vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
         vertrieb_angebot.user = request.user
 
         vertrieb_angebot.save()
@@ -416,14 +425,12 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             self.data != []
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
-            zoho_data_p = pformat(data)
-            pp(zoho_data_p)
+            
             return JsonResponse(data)
         except:
             self.data = fetch_user_angebote_all(request)
             zoho_data = json.dumps(self.data)
-            zoho_data_p = pformat(zoho_data)
-            # pp(zoho_data_p)
+            
             profile.zoho_data_text = zoho_data  # type: ignore
             profile.save()
             name = request.GET.get("name", None)
@@ -431,13 +438,14 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             if data is None:
                 data = {}
             return JsonResponse(data)
+        
+        
 
 
 def map_view(request, angebot_id, *args, **kwargs):
     vertrieb_angebot = VertriebAngebot.objects.get(
         angebot_id=angebot_id, user=request.user
     )
-    # Any context data you want to pass to the template
 
     context = {
         "LATITUDE": vertrieb_angebot.postanschrift_latitude,
@@ -455,8 +463,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     def dispatch(self, request, *args, **kwargs):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
-            raise PermissionDenied()  # This will use your custom 403.html template
+            raise PermissionDenied()
         self.handle_status_change(angebot_id)
+        self.handle_zoho_status_change(request, angebot_id)
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
@@ -494,6 +503,44 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         action_flag=CHANGE,
                         status=angebot.status,
                     )
+    def handle_zoho_status_change(self, request, angebot_id):
+        try:
+            vertrieb_angebot = VertriebAngebot.objects.get(angebot_id=angebot_id, user=request.user)
+            if vertrieb_angebot.angebot_id_assigned == True:
+            
+                zoho_id = vertrieb_angebot.zoho_id
+                
+                fetched_angebote = fetch_angenommen_status(request, zoho_id)
+                
+                
+                if fetched_angebote and fetched_angebote.get('Status') == "angenommen":
+                    
+                    vertrieb_angebot.status = "angenommen"
+                    vertrieb_angebot.status_change_field = None
+                    vertrieb_angebot.save()
+                    # Assuming you want to create a form instance with the fetched data
+                    form = self.form_class(fetched_angebote, instance=vertrieb_angebot, user=request.user)
+                    
+                    if form.is_valid():
+                        form.save()
+                elif fetched_angebote and fetched_angebote.get('Status') != "bekommen":
+                    status = fetched_angebote.get('Status')
+                    
+                    vertrieb_angebot.status = status
+                    
+                    vertrieb_angebot.save()
+                    # Assuming you want to create a form instance with the fetched data
+                    form = self.form_class(fetched_angebote, instance=vertrieb_angebot, user=request.user)
+                    
+                    if form.is_valid():
+                        form.save()
+                else:
+                    pass
+            else:
+                pass
+        except VertriebAngebot.DoesNotExist:
+            pass
+
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
@@ -561,6 +608,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
         )
         user = request.user
+        user_zoho_id = user.zoho_id
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
 
         if "change_status_button" in request.POST:
@@ -582,24 +630,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 )
         if "angebotsumme_rechnen" in request.POST:
             if form.is_valid():
-                if vertrieb_angebot.angebot_id_assigned == True: 
-                    vertrieb_angebot.angebot_id_assigned = True
-                    form.instance.angebot_id_assigned = True  # type:ignore
+                if vertrieb_angebot.angebot_id_assigned == True:
+                    # type:ignore
                     form.save()  # type:ignore
                 else:
-                    vertrieb_angebot.angebot_id_assigned = False
-                    form.instance.angebot_id_assigned = False  # type:ignore
+                    
+                     # type:ignore
                     form.save()  # type:ignore
-                # CustomLogEntry.objects.log_action(
-                #     user_id=vertrieb_angebot.user_id,
-                #     content_type_id=ContentType.objects.get_for_model(
-                #         vertrieb_angebot
-                #     ).pk,
-                #     object_id=vertrieb_angebot.pk,
-                #     object_repr=str(vertrieb_angebot),
-                #     action_flag=CHANGE,
-                #     status=vertrieb_angebot.status,
-                # )
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
@@ -651,11 +688,10 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     template_name = "vertrieb/edit_ticket.html"
     context_object_name = "vertrieb_angebot"
 
-    
     def dispatch(self, request, *args, **kwargs):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
-            raise PermissionDenied()  # This will use your custom 403.html template
+            raise PermissionDenied()
         self.handle_status_change(angebot_id)
         return super().dispatch(request, *args, **kwargs)
 
@@ -815,7 +851,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
-        
 
         return render(self.request, self.template_name, context)
 
@@ -825,9 +860,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
 class DeleteAngebot(DeleteView):
     model = VertriebAngebot
-    template_name = (
-        "view_admin_orders.html"  # This will be the main page with your modal inside
-    )
+    template_name = "view_admin_orders.html"
 
     def get_success_url(self):
         return reverse("vertrieb_interface:view_admin_orders")
@@ -859,7 +892,9 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def get_queryset(self):
         queryset = self.model.objects.filter(  # type: ignore
-            user=self.request.user, angebot_id_assigned=True, zoho_kundennumer__regex=r"^\d+$"
+            user=self.request.user,
+            angebot_id_assigned=True,
+            zoho_kundennumer__regex=r"^\d+$",
         )
 
         query = self.request.GET.get("q")
@@ -967,10 +1002,9 @@ def create_calc_pdf(request, angebot_id):
     )
     vertrieb_angebot.calc_pdf = pdf_content
     vertrieb_angebot.save()
-    # Create the link to the PDF file
+
     pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
 
-    # Redirect to the PDF file link
     return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
 
 
@@ -1240,7 +1274,6 @@ def pdf_angebots_list_view(request):
     angebots_and_urls = []
 
     for angebot in user_angebots:
-        # Only add to list if angebot_pdf field is not None
         if angebot.angebot_pdf is not None:
             angebot_url = reverse(
                 "vertrieb_interface:serve_pdf", args=[angebot.angebot_id]
@@ -1265,7 +1298,7 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
         user = vertrieb_angebot.user  # type: ignore
         if not request.user.is_authenticated and self.request.user != user:
-            raise PermissionDenied()  # This will use your custom 403.html template
+            raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -1357,10 +1390,9 @@ class UpdateAdminAngebot(AdminRequiredMixin, VertriebCheckMixin, UpdateView):
         "anfrage_vom",
         "name",
         "is_synced",
-    ]  
+    ]
 
     def get_success_url(self):
-
         return reverse("vertrieb_interface:view_orders")
 
 
@@ -1381,6 +1413,7 @@ class UpdateVertriebAngebotView(View):
         vertriebAngebot.ausrichtung = data.get("ausrichtung")
         vertriebAngebot.save()
         return JsonResponse({"status": "success"})
+
 
 def get_data(request):
     data = VertriebAngebot.objects.all().values()

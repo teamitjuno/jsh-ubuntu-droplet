@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
+{% load custom_filter %}
 {% block content %}
 
 <div class="content-page">
@@ -141,11 +142,11 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <th>Gesamtticketpreis Netto</th>
-                                                                            <td class="link-success font-15">{{ vertrieb_angebot.Full_ticket_preis }} €</td>
+                                                                            <td class="link-success font-15">{{ vertrieb_angebot.Full_ticket_preis|format_price }}</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Gesamtticketpreis Brutto</th>
-                                                                            <td class="link-success font-15">{{ vertrieb_angebot.Full_ticket_preis }} €</td>
+                                                                            <td class="link-success font-15">{{ vertrieb_angebot.Full_ticket_preis|format_price }}</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>

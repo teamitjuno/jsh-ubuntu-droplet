@@ -1,5 +1,4 @@
 import os
-from smtplib import SMTP_PORT
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.db import models
 from django.db.models.signals import post_migrate
@@ -11,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import (
     make_password,
 )
+
+
 class CustomUserManager(UserManager):
     """custom user manager"""
 
@@ -45,7 +46,6 @@ class CustomUserManager(UserManager):
 
 class Role(models.Model):
     """user's Role which is used for giving permissions"""
-    
 
     name = models.CharField(max_length=50)
     permissions = models.ManyToManyField(Permission, blank=True)
@@ -178,7 +178,6 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         # db_table = "users"
         verbose_name_plural = "Users"
 
-
     def __str__(self) -> str:
         return self.email
 
@@ -193,7 +192,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
         self._password = raw_password
-    
+
     @receiver(post_migrate)
     def create_default_roles(sender, **kwargs):
         # Create or get default roles

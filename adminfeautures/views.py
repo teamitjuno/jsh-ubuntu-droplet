@@ -1,14 +1,42 @@
+# Standard Library Imports:
 import json
-from prices.models import SolarModulePreise
-from functools import wraps
-from django.db.models import F, ExpressionWrapper, IntegerField
-from django.db.models import Sum
-from django.db.models.functions import ExtractMonth, ExtractYear, TruncMonth, Coalesce
-import calendar
+import logging
+
+# Third-party Library Imports:
 from dotenv import load_dotenv
-from django.db.models.functions import Cast
+
+# Django Core and Component Imports:
 from django import forms
+from django.http import (
+    Http404,
+    HttpResponseForbidden,
+    JsonResponse,
+    HttpResponseBadRequest,
+    HttpResponseServerError,
+)
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear, Coalesce
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages, auth
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.views.generic import ListView, UpdateView, DeleteView
+from django.utils.decorators import method_decorator
+from django.forms import RadioSelect
+from django.forms.widgets import RadioSelect
+from django.core.exceptions import PermissionDenied
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth import update_session_auth_hash
+
+# App-specific Imports:
+from config.settings import ENV_FILE
+from authentication.models import User
+from authentication.utils import handle_avatar_upload
+from authentication.forms import AvatarUploadForm, TopVerkauferContainerViewForm
 from prices.models import (
+    SolarModulePreise,
     ElektrikPreis,
     ModuleGarantiePreise,
     ModulePreise,
@@ -16,52 +44,22 @@ from prices.models import (
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
 )
-from django.contrib.admin.views.decorators import staff_member_required
-from authentication.forms import AvatarUploadForm
 from prices.forms import (
     SolarModulePreiseForm,
     WallBoxPreiseForm,
     OptionalAccessoriesPreiseForm,
     AndereKonfigurationWerteForm,
 )
-from django.http import HttpResponseForbidden
-from django.views.decorators.http import require_POST
-from django.contrib.admin.views.decorators import staff_member_required
-from django.http import Http404
-import logging
-from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.decorators import user_passes_test, login_required
-from authentication.utils import handle_avatar_upload
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import ListView, UpdateView, DeleteView
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.utils.decorators import method_decorator
-from django.forms import RadioSelect
-from django.forms.widgets import RadioSelect
-from django.core.exceptions import PermissionDenied
-from config.settings import ENV_FILE
-from authentication.models import User
 from vertrieb_interface.models import VertriebAngebot
-from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
-from adminfeautures.forms import UserForm
-from authentication.forms import TopVerkauferContainerViewForm
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic.edit import UpdateView
-from adminfeautures.forms import AdminPasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import permission_required, login_required
-from django.utils.decorators import method_decorator
+from vertrieb_interface.permissions import AdminRequiredMixin
+from adminfeautures.forms import UserForm, AdminPasswordChangeForm
+
+# Python Standard Library Utilities:
 from functools import wraps
-from django.contrib import auth
+
+
 load_dotenv(ENV_FILE)
+
 
 def _user_has_perm(user, perm, obj=None):
     """
@@ -76,6 +74,8 @@ def _user_has_perm(user, perm, obj=None):
         except PermissionDenied:
             return False
     return False
+
+
 def handler404(request, exception):
     return render(request, "404.html", status=404)
 
@@ -98,11 +98,15 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         model = VertriebAngebot
         fields = ["is_locked"]  # Only include the 'is_locked' field
 
+
 class UserUpdateSuccessUrlMixin:
     def get_success_url(self):
         return reverse_lazy("adminfeautures:user-edit", kwargs={"pk": self.object.pk})
 
-class TopVerkauferContainerUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
+
+class TopVerkauferContainerUpdateView(
+    LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView
+):
     model = User
     form_class = TopVerkauferContainerViewForm
     template_name = "vertrieb/user_update_form.html"
@@ -113,6 +117,7 @@ class TopVerkauferContainerUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMi
         """
         form.save()
         return super().form_valid(form)
+
 
 class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
     model = VertriebAngebot
@@ -148,30 +153,38 @@ class UpdateAdminAngebot(AdminRequiredMixin, UpdateView):
         messages.success(self.request, "Data saved successfully!")
         return response
 
-@login_required    
+
+@login_required
 def avatar_upload_form(request, user_id):
     # Removed unused user query.
     profile = User.objects.get(id=user_id)
-    
+
     form = AvatarUploadForm(request.POST, request.FILES)
-    
+
     if not form.is_valid():
-        return JsonResponse({"message": "Invalid form"}, status=HttpResponseBadRequest.status_code)
-    
+        return JsonResponse(
+            {"message": "Invalid form"}, status=HttpResponseBadRequest.status_code
+        )
+
     avatar_file = form.cleaned_data.get("avatar")
-    
+
     if not avatar_file:
-        return JsonResponse({"message": "No file uploaded"}, status=HttpResponseBadRequest.status_code)
-    
+        return JsonResponse(
+            {"message": "No file uploaded"}, status=HttpResponseBadRequest.status_code
+        )
+
     try:
         handle_avatar_upload(profile, avatar_file)
     except Exception as e:
         logging.error(f"Error uploading avatar: {e}")
-        return JsonResponse({"message": "Error processing the uploaded file."}, status=HttpResponseServerError.status_code)
-    
+        return JsonResponse(
+            {"message": "Error processing the uploaded file."},
+            status=HttpResponseServerError.status_code,
+        )
+
     return JsonResponse({"message": "Avatar uploaded successfully."})
 
-    
+
 def user_list_view(request):
     users = User.objects.all()
     solar_module_names = [module.name for module in SolarModulePreise.objects.all()]
@@ -295,7 +308,6 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
     template_name = "vertrieb/view_orders_admin.html"
     context_object_name = "angebots"
 
-
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
@@ -306,13 +318,14 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
         queryset = self.model.objects.filter(user=self.user)  # type: ignore
         return queryset
 
+
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
     template_name = "vertrieb/user_update_form.html"
 
     def get_object(self, queryset=None):
-        user_id = self.kwargs.get('pk')
+        user_id = self.kwargs.get("pk")
         try:
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
@@ -320,7 +333,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         # Check if it's a delete request
-        if 'delete_user' in request.POST:
+        if "delete_user" in request.POST:
             user = self.get_object()
             if user != request.user:
                 user.delete()
@@ -328,7 +341,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             else:
                 logging.error("You cannot delete your own account!")
                 return redirect("adminfeautures:user_list")
-        
+
         # Otherwise, continue as usual
         return super().post(request, *args, **kwargs)
 
@@ -348,9 +361,8 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy(
-            "adminfeautures:user-edit", kwargs={"pk": self.object.pk}
-        )
+        return reverse_lazy("adminfeautures:user-edit", kwargs={"pk": self.object.pk})
+
 
 # @method_decorator(csrf_protect, name="dispatch")
 # class PasswordUpdateView(LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView):
@@ -361,13 +373,13 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 #     def get_form(self, form_class=None):
 #         if form_class is None:
 #             form_class = self.get_form_class()
-        
+
 #         # Get the default form kwargs
 #         kwargs = self.get_form_kwargs()
-        
+
 #         # Explicitly set the 'user' key in the kwargs dictionary
 #         kwargs["user"] = self.get_object()
-        
+
 #         return form_class(**kwargs)
 
 #     def get_form_kwargs(self):
@@ -386,13 +398,14 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 #         If the form is valid, change the user's password.
 #         """
 #         form.save()  # This calls AdminPasswordChangeForm's save method, which changes the password correctly.
-        
+
 #         response = super().form_valid(form)
 #         messages.success(self.request, "Data saved successfully!")
 #         return response
-    
+
 #     def form_invalid(self, form):
-        
+
+
 #         print("Form errors:", form.errors)
 #         return super().form_invalid(form)def role_based_permission_required(perm):
 def user_has_permission(request, perm_name):
@@ -404,14 +417,19 @@ def user_has_permission(request, perm_name):
         logging.error(f"{user.username} does not have direct permission: {perm_name}")
 
     if user.role and user.role.permissions.filter(codename=perm_name).exists():
-        logging.error(f"{user.username}'s role ({user.role.name}) has permission: {perm_name}")
+        logging.error(
+            f"{user.username}'s role ({user.role.name}) has permission: {perm_name}"
+        )
         return True
     else:
         if user.role:
-            logging.error(f"{user.username}'s role ({user.role.name}) does not have permission: {perm_name}")
+            logging.error(
+                f"{user.username}'s role ({user.role.name}) does not have permission: {perm_name}"
+            )
         else:
             logging.error(f"{user.username} does not have an associated role.")
     return False
+
 
 def role_based_permission_required(perm):
     def decorator(view_func):
@@ -420,12 +438,15 @@ def role_based_permission_required(perm):
             if user_has_permission(request, perm):
                 return view_func(request, *args, **kwargs)
             return HttpResponseForbidden("Permission denied")
+
         return _wrapped_view
+
     return decorator
+
 
 @method_decorator(csrf_protect, name="dispatch")
 @method_decorator(login_required, name="dispatch")
-@method_decorator(role_based_permission_required('change_user'), name="dispatch")
+@method_decorator(role_based_permission_required("change_user"), name="dispatch")
 class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
     model = User
     form_class = AdminPasswordChangeForm
@@ -441,11 +462,10 @@ class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super(PasswordUpdateView, self).get_form_kwargs()
         kwargs["user"] = self.get_object()
-        kwargs.pop('instance', None)
+        kwargs.pop("instance", None)
         return kwargs
 
     def form_valid(self, form):
-
         user = self.get_object()
         form.save()
         logging.error(f"User ID: {user.id}, Password: {user.password}")
@@ -453,17 +473,19 @@ class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
         logging.error(f"User ID: {user.id}, Password: {new_password}")
 
         # Update the session auth hash if the user changes their own password
-    
+
         update_session_auth_hash(self.request, user)
 
         logging.error("Password changed successfully!")
         logging.error(f"User ID: {user.id}, Password: {user.password}")
 
-        return redirect('authentication:login')
+        return redirect("authentication:login")
 
     def form_invalid(self, form):
         logging.error("Form errors:", form.errors)
         return super().form_invalid(form)
+
+
 # @staff_member_required
 # def change_password(request, user_id):
 #     target_user = get_object_or_404(User, pk=user_id)
@@ -486,6 +508,7 @@ class PasswordUpdateView(UserUpdateSuccessUrlMixin, UpdateView):
 #         "vertrieb/password_change.html",
 #         {"form": form, "target_user": target_user},
 #     )
+
 
 @require_POST
 def delete_user(request, pk):

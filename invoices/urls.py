@@ -2,7 +2,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from invoices import views
-from invoices.views import handler404, handler403, handler500
 
 
 app_name = "invoices"
@@ -24,16 +23,6 @@ urlpatterns = [
     path("create_xlsx/<invoice_id>'/", views.create_excel, name="create_excel"),
     path("process_files/", views.ProcessFilesView.as_view(), name="process_files"),
     path("tom/", views.tom, name="tom"),
-    # path(
-    #     "pdf_invoices/<str:invoice_id>/",
-    #     views.PDFInvoicesListView,
-    #     name="pdf_invoices_list",
-    # ),
-    # path(
-    #     "xlsx_invoices/<str:invoice_id>/",
-    #     views.EXCELInvoicesListView,
-    #     name="excel_invoices_list",
-    # ),
     path(
         "pdf_invoices_list/",
         views.PDFInvoicesListViewCBV.as_view(),

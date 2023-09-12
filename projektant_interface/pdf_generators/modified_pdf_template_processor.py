@@ -46,11 +46,11 @@ def create_pdf():
     overlay.add_right_top_table()
     overlay.add_right_bottom_table()
 
-    temp_output_path = "temp_content.pdf"
+    temp_output_path = "docs/temp_content.pdf"
     overlay.output(temp_output_path)
 
     # Overlay the new content on the existing 'template.pdf'
-    original = PdfReader("template2.pdf")
+    original = PdfReader("docs/template2.pdf")
     overlay_pdf = PdfReader(temp_output_path)
     writer = PdfWriter()
 

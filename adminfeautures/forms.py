@@ -1,15 +1,15 @@
 from django import forms
 from authentication.models import User, Role
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib.auth import authenticate, get_user_model, password_validation
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.forms import SetPasswordForm, ReadOnlyPasswordHashField, PasswordChangeForm
-from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import SetPasswordForm, ReadOnlyPasswordHashField
+
 
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        exclude = ["zoho_id", "date_joined", "sim_pin", "imei" ]
+        exclude = ["zoho_id", "date_joined", "sim_pin", "imei"]
 
     email = forms.EmailField(
         label="E-Mail",
@@ -347,6 +347,7 @@ class UserForm(forms.ModelForm):
                 self.fields[field].widget.attrs.update(
                     {"placeholder": self.initial[field]}
                 )
+
 
 class AdminPasswordChangeForm(SetPasswordForm):
     class Meta:

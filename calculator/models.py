@@ -1,7 +1,5 @@
-from os import path
 from django.db import models
 from authentication.models import User
-from shared.models import TimeStampMixin
 from django.core.validators import MinValueValidator
 from prices.models import (
     ModuleGarantiePreise,
@@ -11,51 +9,14 @@ from prices.models import (
     SolarModulePreise,
     WallBoxPreise,
 )
-from django.contrib.auth import get_user_model
-import datetime
-from datetime import timedelta
 from math import ceil
-
 from django.utils import timezone
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.urls import reverse
 from django.utils.formats import date_format
-import dateparser
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
-from django.contrib.contenttypes.models import ContentType
 
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
-
-
-class LogEntryManager(models.Manager):
-    def log_action(
-        self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
-    ):
-        if status is not None:
-            if status == "angenommen":
-                change_message = f"<<Angenommen>>"
-            elif status == "bekommen":
-                change_message = f"Status geändert zu <<{status}>> "
-            elif status == "abgelaufen":
-                change_message = f"<<Abgelaufen>>"
-            elif status == "in Kontakt":
-                change_message = f"Status geändert zu <<{status}>>"
-            elif status == "Kontaktversuch":
-                change_message = f"Status geändert zu <<{status}>>"
-        else:
-            change_message = ""
-
-        return self.model.objects.create(
-            action_time=timezone.now(),
-            user_id=user_id,
-            content_type_id=content_type_id,
-            object_id=object_id,
-            object_repr=object_repr,
-            action_flag=action_flag,
-            change_message=change_message,
-        )
 
 
 def get_price(model, name):
@@ -470,7 +431,6 @@ class Calculator(models.Model):
     @property
     def optimizer_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
-    
 
     @property
     def elwa_price(self):
@@ -481,12 +441,11 @@ class Calculator(models.Model):
     def thor_price(self):
         prices = self.get_prices()
         return float(prices["ac_thor_3_kw"])
-    
+
     @property
     def heizstab_price(self):
         prices = self.get_prices()
         return float(prices["heizstab"])
-    
 
     @property
     def optimizer_full_preis(self):

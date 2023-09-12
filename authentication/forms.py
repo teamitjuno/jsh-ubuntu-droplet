@@ -5,11 +5,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django import forms
 from .models import User
-import base64
 
 from django import forms
 from .models import User
 from django.utils.translation import gettext_lazy as _
+
 
 class AvatarUploadForm(forms.ModelForm):
     class Meta:
@@ -28,5 +28,3 @@ class TopVerkauferContainerViewForm(forms.ModelForm):
             "pv_rechner_view",
             "anzahl_sol_module_view",
         ]
-
-

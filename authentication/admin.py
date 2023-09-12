@@ -65,12 +65,12 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
         "last_login",
     ]
     list_filter = ["beruf", "typ", "role", "created_at"]
-    ordering = ('email',)
+    ordering = ("email",)
     fieldsets = (
         (
             None,
-            {   
-                'classes': ('wide',),
+            {
+                "classes": ("wide",),
                 "fields": (
                     "username",
                     "password",
@@ -124,13 +124,12 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                 ),
             },
         ),
-        (_('Permissions'), {'fields': ('user_permissions',)}),
+        (_("Permissions"), {"fields": ("user_permissions",)}),
     )
     add_fieldsets = (
         (
             None,
             {
-                
                 "fields": (
                     "username",
                     "password1",
@@ -162,9 +161,8 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                 ),
             },
         ),
-        
     )
-    filter_horizontal = ('user_permissions',)
+    filter_horizontal = ("user_permissions",)
     formfield_overrides = {
         models.ImageField: {"widget": FileInput},
     }

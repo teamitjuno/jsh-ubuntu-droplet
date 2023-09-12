@@ -1,15 +1,15 @@
 {% load static %}
 {% load i18n %}
 {% load widget_tweaks %}
-
-{% block head %}
 <!DOCTYPE html>
 <html lang="de" data-menu-color="dark">
         <meta charset="utf-8" />
-        <title>JSH-Home | Juno-Solar Administration Tool</title>
-        <meta name="viewport" content="width=device-width, initial-scale=0.7">
+        <title>JSH-Home | Juno-Solar AngebotsTool 2.0</title>
+        <meta name="viewport" content="width=device-width, initial-scale=0.5">
         
         <meta content="Coderthemes" name="Sam Ivanov" />
+{% block head %}
+
         <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
         <!-- Theme Config Js -->
         <script src="{% static 'assets/js/hyper-config.js' %}"></script>
@@ -37,11 +37,15 @@
     <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Select2 css -->
+    <link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+
+    <!--  Select2 Js -->
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>  
     {% endblock %}   
     <body>
-            
             <!-- Begin page -->
         <div class="wrapper">
     
@@ -175,29 +179,25 @@
                     </a>
     
                     <!-- Sidebar Hover Menu Toggle Button -->
-                    <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
+                    {% comment %} <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
                         <i class="ri-checkbox-blank-circle-line align-middle"></i>
-                    </div>
+                    </div> {% endcomment %}
     
                     <!-- Full Sidebar Menu Close Button -->
-                    <div class="button-close-fullsidebar">
+                    {% comment %} <div class="button-close-fullsidebar">
                         <i class="ri-close-fill align-middle"></i>
-                    </div>
+                    </div> {% endcomment %}
     
                     <!-- Sidebar -left -->
                     <div class="h-100" id="leftside-menu-container" data-simplebar>
-                        <!-- Leftbar User -->
-                        <div class="leftbar-user">
-                            <a href="{% url 'vertrieb_interface:profile' %}">
-                            </a>
-                        </div>
+                        
                         <!--- Sidemenu -->
                         <ul class="side-nav">
                             <li class="side-nav-title">Navigation</li>
                                 <li class="side-nav-item">
                                     <ul class="side-nav-link">               
                                         <a href="{% url 'vertrieb_interface:home' %}"><i class="uil-chart-pie-alt"></i></a>
-                                        <span href="{% url 'vertrieb_interface:home' %}">Home</span>
+                                        <span href="{% url 'vertrieb_interface:home' %}"><a href="{% url 'vertrieb_interface:home' %}">Home</a></span>
                                     </ul>    
                                 </li>
                                 <li class="side-nav-item">
@@ -336,8 +336,12 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div>
+            
+        
             {% endblock %}
-        </div>        
+            
+        </div>
+        
             <!-- Theme Settings -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
             <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
@@ -1047,6 +1051,7 @@
     <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
     <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
     <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="assets/vendor/select2/js/select2.min.js"></script>
     <script src="{% static 'assets/js/app.min.js' %}"></script>
 {% endblock %}
 

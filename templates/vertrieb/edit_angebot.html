@@ -3,7 +3,9 @@
 {% load i18n %}
 {% load widget_tweaks %}
 {% block content %}
+{% load custom_filter %}
 
+<link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
             {% if not vertrieb_angebot.is_locked %}
@@ -24,11 +26,12 @@
                     <div class="row">
                         <div class="col-7">
                             <div class="page-title-box">
-                                {% if user.role.name == "admin" %}
+                                {% comment %} {% if user.role.name == "admin" %}
                                 <h4 class="page-title">Angebotstool 2.0 : {{ user.role.name }}</h4>
                                 {% else %}
                                 <h4 class="page-title">Angebotstool 2.0</h4>
-                                {% endif %}
+                                {% endif %} {% endcomment %}
+                                <div class="page-title-right"></div>
                             </div>
                         </div>
                     </div>
@@ -50,7 +53,7 @@
                                                 </a>
                                             </li>
                                             {% if vertrieb_angebot.status == "angenommen" %}
-                                            <li class="nav-item" role="presentation">
+                                            <li hidden class="nav-item" role="presentation">
                                                 <a href="#ticket" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-altimeter d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Ticket</span>
@@ -84,7 +87,12 @@
                                                                                 </div>
                                                                             </td>
                                                                         </tr>
+                                                                        <tr hidden>
+                                                                            <th>{{ form.zoho_id.label_tag }}</th>
+                                                                            <td>{{ form.zoho_id }}</td>
+                                                                        </tr>
                                                                         <tr>
+                                                                            <script src="assets/vendor/select2/js/select2.min.js"></script>
                                                                             <th>{{ form.name.label_tag }}</th>
                                                                             <td>{{ form.name }}</td>
                                                                         </tr>
@@ -258,35 +266,35 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>kosten für Restenegie</th>
-                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
+                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Einspreisevergütung gesamt [€]</th>
-                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
+                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_angebot.strom_ohne }} €</td>
+                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis abzgl Vergütung und inkl. Restrom</th>
-                                                                        <td>{{ vertrieb_angebot.abzug_vergutung }} €</td>
+                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
-                                                                        <td>{{ vertrieb_angebot.Ersparnis }} €</td>
+                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                         
                                                                     </tr>
                                                                 </table>
@@ -302,11 +310,11 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme }} €</td>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -359,13 +367,13 @@
                                                         </div>
                                                     </div>
                                                     {% endif %}
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">AngebotSumme rechnen</div>
                                                             <div class="card-body">
                                                                                                                                            
-                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" onclick=saveFormAngebotSummeRechnen() class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
-
+                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
+                                                                {% comment %} onclick=saveFormAngebotSummeRechnen() {% endcomment %}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -374,7 +382,7 @@
                                         </div>
                                             <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
                                         {% if vertrieb_angebot.status == "angenommen" %}
-                                        <div class="tab-pane" id="ticket" role="presentation">
+                                        <div hidden class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-lg-5">
@@ -526,41 +534,41 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>kosten für Restenegie</th>
-                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
+                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Einspreisevergütung gesamt [€]</th>
-                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
+                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_angebot.strom_ohne }} €</td>
+                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis abzgl Vergütung und inkl. Restrom</th>
-                                                                        <td>{{ vertrieb_angebot.abzug_vergutung }} €</td>
+                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
-                                                                        <td>{{ vertrieb_angebot.Ersparnis }} €</td>
+                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {% if vertrieb_angebot.angebot_id_assigned %}
+                                                    
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
@@ -569,7 +577,15 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {% endif %}
+                                                    <div class="col-lg-3">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
+                                                            <div class="card-body">
+                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -668,10 +684,10 @@
                                                         <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                     </div>
                                                 
-                                                    {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
+                                                    {% comment %} {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
                                                         <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
-                                                                {% else %}
+                                                                {% else %} {% endcomment %}
                                                     
                                                     <div class="row m-2">
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
@@ -736,7 +752,7 @@
                                                             </div><!-- /.modal-dialog -->
                                                         </div>
 
-                                                    {% endif %}
+                                                    {% comment %} {% endif %} {% endcomment %}
                                                     {% comment %} <div class="row m-2">
                                                         <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-outline-info rounded-pill">PDF Files </a>
                                                     </div> {% endcomment %}
@@ -846,7 +862,7 @@
                                         </a>
                                     </li>
                                     {% if vertrieb_angebot.status == "angenommen" %}
-                                    <li class="nav-item" role="presentation">
+                                    <li hidden class="nav-item" role="presentation">
                                         <a href="#ticket" data-bs-toggle="tab" aria-expanded="false" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
                                         <i class="mdi mdi-altimeter d-md-none d-block"></i>
                                             <span class="d-none d-md-block h4">Ticket</span>
@@ -878,6 +894,10 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr hidden>
+                                                                            <th>{{ form.zoho_id.label_tag }}</th>
+                                                                            <td>{{ form.zoho_id }}</td>
+                                                                        </tr>
                                                                     <tr>
                                                                         <th>{{ form.name.label_tag }}</th>
                                                                         <td><input type="text" class="form-control" name="{{ form.name.name }}" value="{{ form.name.value }}" readonly></td>
@@ -1104,36 +1124,35 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>kosten für Restenegie</th>
-                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
+                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Einspreisevergütung gesamt [€]</th>
-                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
+                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_angebot.strom_ohne }} €</td>
+                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis abzgl Vergütung und inkl. Restrom</th>
-                                                                        <td>{{ vertrieb_angebot.abzug_vergutung }} €</td>
+                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
-                                                                        <td>{{ vertrieb_angebot.Ersparnis }} €</td>
-                                                                        <td>{{ vertrieb_angebot.get_zuschlag }} €</td>
+                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1205,21 +1224,21 @@
                                                             </div>
                                                         </div> 
                                                     {% endif %}
-                                                    <div class="col-lg-2">
+                                                    {% comment %} <div class="col-lg-2">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Angebotsumme rechnen</div>
                                                             <div class="card-body">
                                                                 <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
                                                                 
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> {% endcomment %}
                                                 </div>
                                             </div>
                                         </div>
                                                 <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
                                     {% if vertrieb_angebot.status == "angenommen" %}
-                                    <div class="tab-pane" id="ticket" role="presentation">
+                                    <div hidden class="tab-pane" id="ticket" role="presentation">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-lg-4">
@@ -1369,35 +1388,35 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>kosten für Restenegie</th>
-                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie }} €</td>
+                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Einspreisevergütung gesamt [€]</th>
-                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt }} €</td>
+                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_angebot.strom_ohne }} €</td>
+                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis abzgl Vergütung und inkl. Restrom</th>
-                                                                        <td>{{ vertrieb_angebot.abzug_vergutung }} €</td>
+                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
-                                                                        <td>{{ vertrieb_angebot.Ersparnis }} €</td>
+                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1412,6 +1431,14 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        {% comment %} <div class="col-lg-2">
+                                                            <div class="card mb-3">
+                                                                <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
+                                                                <div class="card-body">
+                                                                    <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
+                                                                </div>
+                                                            </div>
+                                                        </div> {% endcomment %}
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -1436,7 +1463,7 @@
                                         {% else %}
                                             <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
                                         {% endif %}
-                                        {% if vertrieb_angebot.countdown %}
+                                        {% if vertrieb_angebot.countdown and vertrieb_angebot.status == 'bekommen' %}
                                         <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
                                         <p></p>
                                         {% endif %}
@@ -1479,7 +1506,7 @@
                                     <div class="card-body">
                                         {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
                                         <div class="float-end">
-                                            <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
+                                            <button hidden name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
                                         </div>
                                         {% endif %}
                                         <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
@@ -1590,72 +1617,72 @@
         </form>
         {% endif %}
         <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6">
-                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
-                    </div>
-                    <div class="col-md-6">
-                        <div class="text-md-end footer-links d-none d-md-block">
-                            <a type="submit" href="javascript:void(0)" id="send_support_message">Support</a>
-                            <div class="d-print-none mt-4">
-                                <div class="text-end">
-                                    <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content modal-filled bg-success">
-                                                <div class="modal-body p-4">
-                                                    <div class="text-center">
-                                                        <i class="ri-check-line h1"></i>
-                                                        <h4 class="mt-2">Erfolgreich!</h4>
-                                                        <p class="mt-3">Die Unterstützungsnachricht per E-Mail wurde erfolgreich gesendet</p>
-                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
-                                                    </div>
-                                                </div>
-                                            </div><!-- /.modal-content -->
-                                        </div><!-- /.modal-dialog -->
-                                    </div>
-                                    <script>
-                                        function getCookie(name) {
-                                            let cookieValue = null;
-                                            if (document.cookie && document.cookie !== '') {
-                                                const cookies = document.cookie.split(';');
-                                                for (let i = 0; i < cookies.length; i++) {
-                                                    const cookie = cookies[i].trim();
-                                                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            return cookieValue;
-                                        }
-
-                                        document.getElementById('send_support_message').addEventListener('click', function() {
-                                            var csrfToken = getCookie('csrftoken'); 
-                                            fetch('{% url 'vertrieb_interface:send_support_message' %}', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRFToken': csrfToken
-                                                },
-                                                body: JSON.stringify({})
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                console.log(data);
-                                                if (data.status === 'success') {
-                                                    $('#success-alert-modal').modal('show');
-                                                }
-                                            });
-                                        });
-                                    </script>
-                                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end footer-links d-none d-md-block">
+                                <a type="submit" href="javascript:void(0)" id="send_support_message">Support</a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </footer>
+            <div class="d-print-none mt-4">
+                <div class="text-end">
+                    <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content modal-filled bg-success">
+                                <div class="modal-body p-4">
+                                    <div class="text-center">
+                                        <i class="ri-check-line h1"></i>
+                                        <h4 class="mt-2">Gut gemacht!</h4>
+                                        <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
+                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                </div>
             </div>
-        </footer>
+            <script>
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                document.getElementById('send_support_message').addEventListener('click', function() {
+                    var csrfToken = getCookie('csrftoken'); 
+                    fetch('{% url 'vertrieb_interface:send_support_message' %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.status === 'success') {
+                            $('#success-alert-modal').modal('show');
+                        }
+                    });
+                });
+            </script>
     </div>
 </div>
 
@@ -1734,6 +1761,7 @@ $(document).ready(function() {
             success: function(data) {
                 // Fill the form fields with data
                 $("#id_vorname_nachname").val(data.name);
+                $("#id_zoho_id").val(data.zoho_id);
                 $("#id_anrede").val(data.anrede);
                 $("#zoho_kundennumer").val(data.zoho_kundennumer);
                 $("#id_strasse").val(data.strasse);

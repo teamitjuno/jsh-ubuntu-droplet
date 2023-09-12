@@ -6,7 +6,7 @@ from authentication.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
-from django.contrib.auth.hashers import check_password
+
 
 def handler500(request):
     return render(request, "500.html", status=500)
@@ -36,6 +36,7 @@ def verkaufer_check(user):
 class ElektrikerCheckMixin(UserPassesTestMixin):
     def test_func(self):
         return elektriker_check(self.request.user)  # type: ignore
+
 
 @method_decorator(csrf_protect, name="dispatch")
 class LoginView(APIView):
@@ -71,8 +72,6 @@ class LoginView(APIView):
             return redirect("/admin")
         else:
             return render(request, "pages-login.html", {"error": "Invalid credentials"})
-
-
 
 
 class LogoutView(APIView):

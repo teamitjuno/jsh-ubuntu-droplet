@@ -2,7 +2,6 @@ from django.conf import settings
 from django.views import defaults as default_views
 from django.urls import path, re_path
 from django.conf.urls.static import static
-
 from adminfeautures.views import (
     user_list_view,
     update_solar_module_preise_view,
@@ -19,24 +18,29 @@ from adminfeautures.views import (
     TopVerkauferContainerUpdateView,
 )
 
-
 app_name = "adminfeautures"
 
 urlpatterns = [
     path("user-list/", user_list_view, name="user_list"),
-    path("user/<int:user_id>/orders/", ViewAdminOrders.as_view(), name="user-orders"),
     path("user/<int:pk>/edit/", UserUpdateView.as_view(), name="user-edit"),
+    path(
+        "user/<int:pk>/top-verkaufer-container-update/",
+        TopVerkauferContainerUpdateView.as_view(),
+        name="top-verkaufer-container-update",
+    ),
+    path("user/<int:user_id>/orders/", ViewAdminOrders.as_view(), name="user-orders"),
+    path("user/<int:pk>/user-update/", UserUpdateView.as_view(), name="user-update"),
+    path(
+        "user/<int:pk>/change_password/",
+        PasswordUpdateView.as_view(),
+        name="change_password",
+    ),
+    path("user/<int:pk>/delete/", delete_user, name="delete_user"),
     path(
         "user/<int:user_id>/orders/",
         ViewAdminOrders.as_view(),
         name="view_admin_orders",
     ),
-    path('user/<int:pk>/top-verkaufer-container-update/', TopVerkauferContainerUpdateView.as_view(), name='top-verkaufer-container-update'),
-    path('user/<int:pk>/user-update/', UserUpdateView.as_view(), name='user-update'),
-    path('user/<int:pk>/change_password/', PasswordUpdateView.as_view(), name='change_password'),
-    path('user/<int:pk>/delete/', delete_user, name="delete_user"),
-    
-
     path(
         "user/<int:user_id>/orders/<str:angebot_id>/",
         UpdateAdminAngebot.as_view(),
@@ -47,7 +51,7 @@ urlpatterns = [
         DeleteAngebot.as_view(),
         name="delete_angebot",
     ),
-    path('user/<int:user_id>/upload-avatar/', avatar_upload_form, name='upload_avatar'),
+    path("user/<int:user_id>/upload-avatar/", avatar_upload_form, name="upload_avatar"),
     path(
         "prices/update_solar_module_preise/<int:module_id>/",
         update_solar_module_preise_view,
@@ -68,7 +72,6 @@ urlpatterns = [
         update_andere_konfiguration_werte_view,
         name="update_andere_konfiguration_werte",
     ),
-]+ [
     re_path(
         r"^400/$",
         default_views.bad_request,

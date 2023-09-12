@@ -2,6 +2,7 @@ from fpdf import FPDF
 import os, tempfile, fitz
 from config import settings
 
+
 class CustomPDF(FPDF):
     def __init__(
         self,
@@ -14,10 +15,10 @@ class CustomPDF(FPDF):
         kunden_name="Hui Nahui",
         kunden_strasse="",
         kunden_plz_ort="",
-        bauplan_img = None,
-        bauplan_img_secondary = None,
-        bauplan_img_third = None,
-        font_size = 18,
+        bauplan_img=None,
+        bauplan_img_secondary=None,
+        bauplan_img_third=None,
+        font_size=18,
         **kwargs,
     ):
         self.roof_typ = roof_typ
@@ -32,7 +33,7 @@ class CustomPDF(FPDF):
         self.bauplan_img_secondary = bauplan_img_secondary
         self.bauplan_img_third = bauplan_img_third
         self.font_size = font_size
-        super().__init__('L', *args, **kwargs)
+        super().__init__("L", *args, **kwargs)
 
     def footer(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
@@ -68,7 +69,7 @@ class CustomPDF(FPDF):
 
         col_width = 290
         row_height = 8
-        
+
         self.set_xy(251, 179)
         self.set_font("JUNO Solar Lt", "", 9)
         item = f"{self.kunden_name}"
@@ -92,26 +93,26 @@ class CustomPDF(FPDF):
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
         self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
-        
+
         col_width = 80
         row_height = 6
         self.set_xy(214, 4)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
-        item = f'{processed_besodersheiten}'
+        item = f"{processed_besodersheiten}"
         print(item)
         self.multi_cell(col_width, row_height, item, border=1)
-    
+
     def add_right_top_table2(self, processed_besodersheiten):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
         self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
-        
+
         col_width = 111
         row_height = 6
         self.set_xy(183, 105)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
-        item = f'{processed_besodersheiten}'
+        item = f"{processed_besodersheiten}"
         print(item)
         self.multi_cell(col_width, row_height, item, border=1)
 
@@ -120,14 +121,15 @@ class CustomPDF(FPDF):
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
         self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
-        
+
         col_width = 152
         row_height = 6
         self.set_xy(143, 120)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
-        item = f'{processed_besodersheiten}'
+        item = f"{processed_besodersheiten}"
         print(item)
         self.multi_cell(col_width, row_height, item, border=1)
+
 
 def generate_overlay_pdf(data):
     pdf = CustomPDF(
@@ -144,11 +146,11 @@ def generate_overlay_pdf(data):
         bauplan_img_third=data["bauplan_jpg_third_path"],
         font_size=data["font_size"],
     )
-    
+
     img_paths = [
         (pdf.bauplan_img, 2, 4, 210, 167),
         (pdf.bauplan_img_secondary, 183, 4, 111, 100),
-        (pdf.bauplan_img_third, 219, 4, 76, 115)
+        (pdf.bauplan_img_third, 219, 4, 76, 115),
     ]
 
     if pdf.bauplan_img:
@@ -171,9 +173,10 @@ def generate_overlay_pdf(data):
 
     return pdf.output(dest="S").encode("latin1")
 
+
 def generate_pdf_bauplan(data):
     # Load the original template and the overlay content
-    original = fitz.open("template2.pdf")
+    original = fitz.open("docs/template2.pdf")
     overlay_pdf_content = generate_overlay_pdf(data)
     overlay = fitz.open("pdf", overlay_pdf_content)
 

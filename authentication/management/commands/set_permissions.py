@@ -2,8 +2,9 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Permission
 from authentication.models import User, Role
 
+
 class Command(BaseCommand):
-    help = 'Set the necessary permissions for user and role'
+    help = "Set the necessary permissions for user and role"
 
     def handle(self, *args, **kwargs):
         user = User.objects.get(email="cw@juno-solar.com")
@@ -22,5 +23,4 @@ class Command(BaseCommand):
         permission = Permission.objects.get(codename="can_change_user")
         role.permissions.add(permission)
 
-
-        self.stdout.write(self.style.SUCCESS('Permissions set successfully'))
+        self.stdout.write(self.style.SUCCESS("Permissions set successfully"))

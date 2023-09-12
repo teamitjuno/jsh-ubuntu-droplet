@@ -70,7 +70,6 @@ ElektrikPreis.objects.create(name='Hutschienenhalter Installationsklemmen', pric
 ElektrikPreis.objects.create(name='Aufputz-Abzweigdosen', price=7.00, actual_price=0.00,old_price=7.00)
 ElektrikPreis.objects.create(name='Hauptleitungsabzweigklemmen 35mm', price=7.00, actual_price=0.00,old_price=7.00)
 
-
 from prices.models import ModuleGarantiePreise
 ModuleGarantiePreise.objects.create(name='garantie3_10', price=0.00, actual_price=0.00,old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie4_10', price=0.00, actual_price=0.00,old_price=0.00)
@@ -163,50 +162,3 @@ AndereKonfigurationWerte.objects.create(name='sehr_komplex', value=1.10)
 AndereKonfigurationWerte.objects.create(name='phono_solar', value=1.075)
 AndereKonfigurationWerte.objects.create(name='jinko_solar', value=1.06)
 
-
-from .models import Wallbox
-
-wallbox1 = Wallbox(wallboxname='Pulsar Plus', preis=1600)
-wallbox1.save()
-
-wallbox2 = Wallbox(wallboxname='Pulsar Plus inkl. Power Boost', preis=2000)
-wallbox2.save()
-
-wallbox3 = Wallbox(wallboxname='Commander 2', preis=1900)
-wallbox3.save()
-
-wallbox4 = Wallbox(wallboxname='Commander 2 Inkl. Power Boost', preis=2300)
-wallbox4.save()
-
-from your_app.models import SolarModule
-
-module1 = SolarModule(
-    modulname='Phono Solar PS420M7GFH-18/VNH',
-    leistung=420,
-    zuschlag=1.075,
-    produktgarantie=15,
-    leistungsgarantie_zeile1='30 Jahre',
-    leistungsgarantie_zeile2='',
-    ticket_preis=530
-)
-module1.save()
-
-module2 = SolarModule(
-    modulname='Jinko Solar Tiger Neo N-type JKM420N-54HL4-B',
-    leistung=420,
-    zuschlag=1.06,
-    produktgarantie=25,
-    leistungsgarantie_zeile1='0,4 % Jährliche Degradation',
-    leistungsgarantie_zeile2='über 30 Jahre',
-    ticket_preis=516
-)
-module2.save()
-
-from projektant_interface.utils import update_all_project_instances
-update_all_project_instances()
-from django.contrib.auth.models import Permission
-from authentication.models import Role
-
-role = Role.objects.get(id=1)
-permission = Permission.objects.get(codename='change_user')
-role.permissions.add(permission)

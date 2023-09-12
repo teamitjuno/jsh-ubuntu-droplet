@@ -1,16 +1,8 @@
-import os, json, requests, time, logging
-from dotenv import set_key, load_dotenv
+import requests
+from dotenv import set_key
 from projektant_interface.models import (
     Project,
-    Elektriktermin,
-    Bautermine,
-    Module1,
-    Wallbox1,
-    Wechselrichter1,
-    Speicher,
 )
-from random import randint
-from pprint import pprint, pformat, pp
 from django.contrib.auth import get_user_model
 from shared.projektant_text_processing import handle_message
 from config.settings import (
@@ -20,9 +12,6 @@ from config.settings import (
     ZOHO_CLIENT_ID,
     ZOHO_CLIENT_SECRET,
     ZOHO_REFRESH_TOKEN,
-    DEFAULT_EMAIL_DOMAIN,
-    DEFAULT_USER_CREATION_PASSWORD,
-    DEFAULT_PHONE,
 )
 
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/PVA_klein1"
@@ -72,23 +61,22 @@ def id_and_name_extractor(data):
 
 def refresh_access_token():
     params = {
-        'refresh_token': ZOHO_REFRESH_TOKEN,
-        'client_id': ZOHO_CLIENT_ID,
-        'client_secret': ZOHO_CLIENT_SECRET,
-        'grant_type': 'refresh_token'
+        "refresh_token": ZOHO_REFRESH_TOKEN,
+        "client_id": ZOHO_CLIENT_ID,
+        "client_secret": ZOHO_CLIENT_SECRET,
+        "grant_type": "refresh_token",
     }
     response = requests.post(ACCESS_TOKEN_URL, params=params)
     print("REFRESH TOKEN", response)
     if response.status_code != HTTP_OK:
         raise APIException(f"Error refreshing token: {response.status_code}")
-    
+
     new_access_token = response.json().get("access_token")
     if new_access_token:
         set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
         return new_access_token
     else:
         raise APIException("New access token not found in the API response.")
-    
 
 
 def fetch_records(url, headers, params):
@@ -101,7 +89,7 @@ def fetch_records(url, headers, params):
         if response.status_code == HTTP_OK:
             return response.json()
 
-    
+
 def create_project_instances_from_zoho():
     endpoint = BASE_URL  # replace with your specific endpoint
     headers = get_headers()
@@ -201,11 +189,12 @@ def populate_project_instance_from_zoho(project_id):
     start_index = 1
     params = {
         "from": start_index,
-        "limit": LIMIT,}
+        "limit": LIMIT,
+    }
 
     print(project_id)
     response_data = fetch_records(endpoint, headers, params)
-    
+
     # if response_data and not response_data.get("data"):
     #     return None
     if response_data is not None:
@@ -292,8 +281,6 @@ def populate_project_instance_from_zoho(project_id):
     else:
         pass
 
-    
-
 
 def update_all_project_instances():
     # Fetch all the Project instances
@@ -308,6 +295,5 @@ def update_all_project_instances():
         if updated_project:
             updated_count += 1
             print(f"Updating record...{updated_count}")
-        
 
     return f"Updated {updated_count} out of {all_projects.count()} projects."

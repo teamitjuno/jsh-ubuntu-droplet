@@ -3,7 +3,6 @@ from .models import Calculator
 from prices.models import SolarModulePreise, WallBoxPreise
 from django.core.exceptions import ValidationError
 import decimal
-import ast
 
 
 def validate_two_decimal_places(value):
@@ -143,7 +142,13 @@ class CalculatorForm(forms.ModelForm):
     elwa = forms.BooleanField(
         label="AC-ELWA 2",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa", "style": "max-width: 70px",}),
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "elwa",
+                "style": "max-width: 70px",
+            }
+        ),
     )
     thor = forms.BooleanField(
         label="AC-THOR",

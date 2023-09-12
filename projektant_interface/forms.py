@@ -448,18 +448,21 @@ class ProjectForm(forms.ModelForm):
         fields = "__all__"
 
 
-
 class UploadJPGForm(forms.ModelForm):
     bauplan_img = forms.ImageField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={
-            "class": "form-control-file",
-            "id": "id_bauplan_img",
-        })
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "form-control-file",
+                "id": "id_bauplan_img",
+            }
+        ),
     )
+
     class Meta:
         model = Project
-        fields = ['bauplan_img']
+        fields = ["bauplan_img"]
+
 
 class ProjectUpdateForm(forms.ModelForm):
     Processed_Besonderheiten = forms.CharField(
@@ -501,26 +504,32 @@ class ProjectUpdateForm(forms.ModelForm):
     bauplan_img = forms.ImageField(
         label="Haupt Bild",
         required=False,
-        widget=forms.ClearableFileInput(attrs={
-            "class": "form-control-file",
-            "id": "id_bauplan_img",
-        })
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "form-control-file",
+                "id": "id_bauplan_img",
+            }
+        ),
     )
     bauplan_img_secondary = forms.ImageField(
         label="Bild 2",
         required=False,
-        widget=forms.ClearableFileInput(attrs={
-            "class": "form-control-file",
-            "id": "id_bauplan_img_secondary",
-        })
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "form-control-file",
+                "id": "id_bauplan_img_secondary",
+            }
+        ),
     )
     bauplan_img_third = forms.ImageField(
         label="Bild 3",
         required=False,
-        widget=forms.ClearableFileInput(attrs={
-            "class": "form-control-file",
-            "id": "id_bauplan_img_third",
-        })
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "form-control-file",
+                "id": "id_bauplan_img_third",
+            }
+        ),
     )
     email_form = forms.CharField(
         label="Email für Sendung",
@@ -547,4 +556,13 @@ class ProjectUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['Processed_Besonderheiten', 'roof_typ', 'height', 'bauplan_img', "bauplan_img_secondary", "bauplan_img_third", "email_form", "font_size"]
+        fields = [
+            "Processed_Besonderheiten",
+            "roof_typ",
+            "height",
+            "bauplan_img",
+            "bauplan_img_secondary",
+            "bauplan_img_third",
+            "email_form",
+            "font_size",
+        ]

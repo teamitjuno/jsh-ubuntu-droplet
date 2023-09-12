@@ -449,7 +449,7 @@ class VertriebAngebot(TimeStampMixin):
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
-        
+
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
@@ -474,12 +474,12 @@ class VertriebAngebot(TimeStampMixin):
             user_id=self.user_id,
             content_type_id=ContentType.objects.get_for_model(self).pk,
             object_id=self.pk,
-            object_repr=str(self),
+            object_repr=str(self.angebot_id),
             action_flag=action_flag,
         )
 
     def __str__(self) -> str:
-        return f"AngebotID: {self.angebot_id}"
+        return f"{self.angebot_id}"
 
     def generate_angebot_id(self):
         user = User.objects.get(id=self.user.pk)
@@ -569,12 +569,12 @@ class VertriebAngebot(TimeStampMixin):
         except (IndexError, KeyError):
             # Handle cases where the address isn't found or the API response structure has unexpected changes
             return 0.0, 0.0
+
     # @property
     # def coordinates_extractor(self):
     #     if self.strasse is None or self.ort is None:
     #         return "0.0", "0.0"
 
-        
     #     query = f"{self.strasse}, {self.ort}"
 
     #     # Using the Google Maps Geocoding API
@@ -593,7 +593,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def mapbox_data(self):
-          # Replace with your Solar API key if different
+        # Replace with your Solar API key if different
         latitude, longitude = self.coordinates_extractor
         print(latitude, longitude)
 
@@ -603,8 +603,10 @@ class VertriebAngebot(TimeStampMixin):
         print(response.json())
         return response.json()
 
-    @property 
-    def get_building_insights(self, latitude=None, longitude=None, requiredQuality="HIGH"):
+    @property
+    def get_building_insights(
+        self, latitude=None, longitude=None, requiredQuality="HIGH"
+    ):
         # Replace with your Solar API key if different
         if self.postanschrift_latitude and self.postanschrift_longitude:
             latitude = float(self.postanschrift_latitude)
@@ -616,6 +618,7 @@ class VertriebAngebot(TimeStampMixin):
         response = requests.get(url)
         print(response.json())
         return response.json()
+
     # @property
     # def mapbox_data(self):
     #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
@@ -713,22 +716,20 @@ class VertriebAngebot(TimeStampMixin):
         if not hasattr(self, "_arbeitspreis_and_list"):
             try:
                 if float(self.verbrauch):
-                    
                     self._arbeitspreis_and_list = self.priceInflation(
                         float(self.arbeitspreis) / 100 * float(self.verbrauch),
                         float(self.prognose) / 100,
                         int(self.zeitraum),
                     )
-                
+
             except:
                 self.verbrauch = 15000.0
                 self._arbeitspreis_and_list = self.priceInflation(
-                        float(self.arbeitspreis) / 100 * float(self.verbrauch),
-                        float(self.prognose) / 100,
-                        int(self.zeitraum),
-                    )
+                    float(self.arbeitspreis) / 100 * float(self.verbrauch),
+                    float(self.prognose) / 100,
+                    int(self.zeitraum),
+                )
         return self._arbeitspreis_and_list
-            
 
     @property
     def arbeitspreis_gesamt(self):
@@ -825,7 +826,7 @@ class VertriebAngebot(TimeStampMixin):
     def modulleistung_price(self):
         prices = self.get_prices()
         return float(prices[ACCESSORY_NAME])
-    
+
     @property
     def elwa_price(self):
         prices = self.get_prices()
@@ -835,12 +836,12 @@ class VertriebAngebot(TimeStampMixin):
     def thor_price(self):
         prices = self.get_prices()
         return float(prices["ac_thor_3_kw"])
-    
+
     @property
     def heizstab_price(self):
         prices = self.get_prices()
         return float(prices["heizstab"])
-    
+
     @property
     def solar_module_gesamt_preis(self):
         module_prices = self.get_module_prices()
@@ -856,10 +857,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
-        if (
-            
-            self.anz_wandhalterung_fuer_speicher != 0
-        ):
+        if self.anz_wandhalterung_fuer_speicher != 0:
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
                 OptionalAccessoriesPreise,
@@ -885,7 +883,6 @@ class VertriebAngebot(TimeStampMixin):
         elif self.anz_speicher == 0:
             batteriePreis = 0
             return batteriePreis
-            
 
     @property
     def modulsumme_kWp(self):
@@ -913,14 +910,17 @@ class VertriebAngebot(TimeStampMixin):
 
         # Return value based on module_name's prefix
         if module_name.startswith("jinko solar"):
-            return values.get("jinko_solar", 1.06)  # return 1.06 as default if not found in values
+            return values.get(
+                "jinko_solar", 1.06
+            )  # return 1.06 as default if not found in values
 
         if module_name.startswith("phono solar"):
-            return values.get("phono_solar", 1.075)  # return 1.075 as default if not found in values
+            return values.get(
+                "phono_solar", 1.075
+            )  # return 1.075 as default if not found in values
 
         # Return a default value if no conditions are met (you can adjust this as per your requirements)
         return 1.075  # This is arbitrary; modify as needed
-
 
     @property
     def nutz_energie(self):
@@ -938,7 +938,7 @@ class VertriebAngebot(TimeStampMixin):
         rest = 0
         try:
             if float(self.verbrauch):
-               rest += float(self.verbrauch) - float(self.nutz_energie)
+                rest += float(self.verbrauch) - float(self.nutz_energie)
         except:
             self.verbrauch = 15000.0
             rest += float(self.verbrauch) - float(self.nutz_energie)
@@ -1087,25 +1087,27 @@ class VertriebAngebot(TimeStampMixin):
         return self.calculate_price(
             OptionalAccessoriesPreise, "eddi", int(self.eddi_ticket)
         )
-    
+
     @property
     def elwa_ticket_preis(self):
         return self.calculate_price(
             OptionalAccessoriesPreise, "elwa_2", int(self.elwa_ticket)
         )
-    
+
     @property
     def wandhalterung_ticket_preis(self):
         return self.calculate_price(
-            OptionalAccessoriesPreise, "wandhalterung_fuer_speicher", int(self.wandhalterung_fuer_speicher_ticket)
+            OptionalAccessoriesPreise,
+            "wandhalterung_fuer_speicher",
+            int(self.wandhalterung_fuer_speicher_ticket),
         )
-    
+
     @property
     def thor_ticket_preis(self):
         return self.calculate_price(
             OptionalAccessoriesPreise, "ac_thor_3_kw", int(self.thor_ticket)
         )
-    
+
     @property
     def heizstab_ticket_preis(self):
         hz_ticket_preis = 0
@@ -1117,7 +1119,6 @@ class VertriebAngebot(TimeStampMixin):
         except:
             hz_ticket_preis = 0
         return hz_ticket_preis
-
 
     @property
     def leistungsgewinn(self):
@@ -1196,7 +1197,9 @@ class VertriebAngebot(TimeStampMixin):
         def get_price(prefix, kw):
             name = prefix + str(kw)
 
-            return (float(ModulePreise.objects.get(name=name).price)) * float(self.get_zuschlag)
+            return (float(ModulePreise.objects.get(name=name).price)) * float(
+                self.get_zuschlag
+            )
 
         def get_garantie_price(kw, years):
             name = f"garantie{kw}_{years}"

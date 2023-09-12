@@ -14,7 +14,6 @@ class PDF(FPDF):
     def __init__(self, *args, **kwargs):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
-        
 
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
@@ -229,7 +228,9 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "zur Nutzung überschüssiger Energie im Hausnetz", 0, "L")
+            self.multi_cell(
+                0, 5, "zur Nutzung überschüssiger Energie im Hausnetz", 0, "L"
+            )
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
@@ -245,7 +246,7 @@ class PDF(FPDF):
                 "R",
             )
             y += 15
-        # Wand halterung 
+        # Wand halterung
         if data["wandhalterungTicket"] > 0:
             # self.line(10, y + 3, 200, y + 3)
             # self.line(25, y + 7.5, 83, y + 7.5)
@@ -342,13 +343,17 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["thorTicketpreis"] + data["heizstabTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
+                    0,
+                    6,
+                    convertCurrency(
+                        "{:,.2f} €".format(
+                            data["thorTicketpreis"] + data["heizstabTicketpreis"]
+                        )
+                    ),
+                    0,
+                    0,
+                    "R",
+                )
                 y += 5
             else:
                 self.set_font("JUNO Solar Lt", "", 10)
@@ -366,17 +371,17 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["thorTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["thorTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
                 y += 5
             y += 15
         # Tabelle Eintrag Ersatzstrom
-        if data["notstromTicket"] > 0: 
+        if data["notstromTicket"] > 0:
             self.set_font("JUNO Solar Lt", "", 11)
             self.set_y(y)
             eintrag += 1
@@ -387,7 +392,11 @@ class PDF(FPDF):
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
             self.multi_cell(
-                0, 5, "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung", 0, "L"
+                0,
+                5,
+                "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung",
+                0,
+                "L",
             )
             self.set_y(y)
             self.set_x(150)

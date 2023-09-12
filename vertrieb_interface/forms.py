@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-
+from vertrieb_interface.get_user_angebots import update_status, post_angebot_to_zoho
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot
@@ -17,8 +17,8 @@ now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
 load_dotenv(ENV_FILE)
 
-User = get_user_model()
 
+from authentication.models import User
 
 class ModulePreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -36,9 +36,11 @@ LIMIT_CURRENT = 10
 MAX_RETRIES = 5
 SLEEP_TIME = 1
 
+
 def filter_hidden_choices(choices):
     HIDDEN_CHOICES = ["on Hold", "storniert", "abgelaufen", "abgelehnt", "angenommen"]
     return [(key, value) for key, value in choices if key not in HIDDEN_CHOICES]
+
 
 ANGEBOT_STATUS_CHOICES = [
     ("angenommen", "angenommen"),
@@ -195,6 +197,8 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
+    zoho_id = forms.IntegerField(required=False)
+
     angebot_id_assigned = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
@@ -206,7 +210,6 @@ class VertriebAngebotForm(ModelForm):
     )
     status = forms.ChoiceField(
         label="Angebotstatus",
-        
         choices=ANGEBOT_STATUS_CHOICES,
         widget=forms.Select(
             attrs={
@@ -291,7 +294,7 @@ class VertriebAngebotForm(ModelForm):
         label="Interessent",
         required=True,
         widget=forms.Select(
-            attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
+            attrs={"class": "form-control select2", "data-toggle" : "select2", "id": "id_name", "style": "max-width: 300px"}
         ),
     )
     vorname_nachname = forms.CharField(
@@ -684,7 +687,13 @@ class VertriebAngebotForm(ModelForm):
     elwa = forms.BooleanField(
         label="AC-ELWA 2",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "elwa", "style": "max-width: 70px",}),
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "elwa",
+                "style": "max-width: 70px",
+            }
+        ),
     )
     thor = forms.BooleanField(
         label="AC-THOR",
@@ -740,7 +749,7 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
         ),
     )
-    
+
     wandhalterung_fuer_speicher_ticket = forms.IntegerField(
         label="Wandhalterung für Batteriespeicher",
         initial=0,
@@ -782,9 +791,7 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "elwa_ticket"}
-        ),
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "elwa_ticket"}),
     )
     thor_ticket = forms.IntegerField(
         label="AC THOR 2 3kW ",
@@ -792,7 +799,11 @@ class VertriebAngebotForm(ModelForm):
         initial=0,
         validators=[validate_integers_ticket],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "thor_ticket", "style": "max-width: 100px"}
+            attrs={
+                "class": "form-control",
+                "id": "thor_ticket",
+                "style": "max-width: 100px",
+            }
         ),
     )
     heizstab_ticket = forms.IntegerField(
@@ -801,7 +812,11 @@ class VertriebAngebotForm(ModelForm):
         initial=0,
         validators=[validate_integers_ticket],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "heizstab_ticket", "style": "max-width: 100px"}
+            attrs={
+                "class": "form-control",
+                "id": "heizstab_ticket",
+                "style": "max-width: 100px",
+            }
         ),
     )
     eddi_ticket = forms.IntegerField(
@@ -819,6 +834,7 @@ class VertriebAngebotForm(ModelForm):
             "angebot_id_assigned",
             "status",
             "anrede",
+            "zoho_id",
             "telefon_festnetz",
             "telefon_mobil",
             "email",
@@ -904,7 +920,9 @@ class VertriebAngebotForm(ModelForm):
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
-        self.fields["vorname_nachname"].widget.attrs.update({"id": "id_vorname_nachname"})
+        self.fields["vorname_nachname"].widget.attrs.update(
+            {"id": "id_vorname_nachname"}
+        )
         self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
@@ -944,14 +962,16 @@ class VertriebAngebotForm(ModelForm):
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
-
+        
         # Check if status is 'bekommen'
 
         if form.status == "bekommen":
             try:
                 # Try to get the object from the database
                 db_object = VertriebAngebot.objects.get(angebot_id=form.angebot_id)
+                vertrieb_angebot = db_object
                 db_countdown_on = db_object.countdown_on
+                db_zoho_id = db_object.zoho_id
                 if db_countdown_on == False:
                     form.status = "bekommen"
                     form.is_locked = True
@@ -960,9 +980,11 @@ class VertriebAngebotForm(ModelForm):
                     form.status_change_field = now_localized
                     form.status_change_date = timezone.now().date().isoformat()
                     db_object.countdown_on = True
-
+                    update_status(db_zoho_id, form.status)
+                    # post_angebot_to_zoho(form)
                     db_object.save()
                     form.save()
+                    
 
                 if db_countdown_on == True:
                     form.status_change_date = db_object.status_change_date
@@ -1124,18 +1146,14 @@ class TicketForm(forms.ModelForm):
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "elwa_ticket"}
-        ),
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "elwa_ticket"}),
     )
     thor_ticket = forms.IntegerField(
         label="AC THOR 2 3kW ",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "thor_ticket"}
-        ),
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "thor_ticket"}),
     )
     heizstab_ticket = forms.IntegerField(
         label="Heizstab ",

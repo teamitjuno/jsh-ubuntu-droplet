@@ -1,0 +1,872 @@
+[
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Jan Himmelreich - DP",
+            "PVA_klein1_calfield": 26172000005542052,
+            "Privatkunde.Adresse_PVA": "Falkensteinstraße 22, Leipzig, 04249, Germany",
+            "Besonderheiten": "IBN ",
+            "Elektriktermin_am": "29-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Jan Himmelreich - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Jan Himmelreich - 3.78",
+                "ID": "26172000005542052"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006952232",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "JUNO intern - DP",
+            "Privatkunde.Adresse_PVA": "",
+            "Besonderheiten": "BL-Meeting",
+            "Elektriktermin_am": "22-Aug-2023 07:30",
+            "Kundenname-rawdata": "JUNO intern - DP",
+            "PVA_klein1": "",
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006942299",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Hendrik Wendler - JES",
+            "PVA_klein1_calfield": 26172000005631240,
+            "Privatkunde.Adresse_PVA": "Lutherstraße 14, 08209, Auerbach",
+            "Besonderheiten": "IBN\n\n(18.07.; LP) Termin per Mail angefragt\n(18.07.; LP) Termin klappt nicht am 26.07., bitte umplanen ( sind bis 06.08. im Urlaub)\n(24.07.; LP) Termin per Mail angefragt\n(25.07.; LP) Termin per Mail bestätigt\n\n05.08. JeS, per Mail über Änderung der Uhrzeit informiert.",
+            "Elektriktermin_am": "10-Aug-2023 10:00",
+            "Kundenname-rawdata": "Herr Hendrik Wendler - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Hendrik Wendler - 5.04",
+                "ID": "26172000005631240"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006942234",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Frau Isolde Schnabel - JES",
+            "PVA_klein1_calfield": 26172000006069461,
+            "Privatkunde.Adresse_PVA": "Harthstraße 6, Crimmitschau, 08451, Germany",
+            "Besonderheiten": "IBN\n\n(27.07;CH) bestätigt per Telefon \n\n03.08. JeS, Terminabsage für 07.08. per Mail unsererseits",
+            "Elektriktermin_am": "28-Aug-2023 07:30",
+            "Kundenname-rawdata": "Frau Isolde Schnabel - JES",
+            "PVA_klein1": {
+                "display_value": "Frau Isolde Schnabel - 5.88",
+                "ID": "26172000006069461"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006898105",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Burkhard  Laudel - DP",
+            "PVA_klein1_calfield": 26172000005758078,
+            "Privatkunde.Adresse_PVA": "Rossbacher Str. 3, Eichigt  , 08626, Germany",
+            "Besonderheiten": "IBN",
+            "Elektriktermin_am": "08-Sep-2023 07:30",
+            "Kundenname-rawdata": "Herr Burkhard  Laudel - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Burkhard  Laudel - 12.60",
+                "ID": "26172000005758078"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006885094",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Ronny Schmutzler  - JES",
+            "PVA_klein1_calfield": 26172000005791057,
+            "Privatkunde.Adresse_PVA": "St Jacober Hauptstraße 8, 08132 , Mülsen, Germany",
+            "Besonderheiten": "IBN\n\nalt: 08.08.23; 11:30\n\n(24.07.; LP) Termin per Mail angefragt\n\n(25.07; CH) bestätigt per Telefon\n\n05.08. JeS, Terminabsage per Mail für 08.08. + neuen Termin angefragt",
+            "Elektriktermin_am": "11-Aug-2023 09:00",
+            "Kundenname-rawdata": "Herr Ronny Schmutzler  - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Ronny Schmutzler  - 7.56",
+                "ID": "26172000005791057"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006876589",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Firma Wetra Dach & Wandprodukte GmbH - CH",
+            "PVA_klein1_calfield": 26172000005791052,
+            "Privatkunde.Adresse_PVA": "Schachtstraße 10, Mülsen, 08132, Germany",
+            "Besonderheiten": "IBN\n\n(24.07.; LP) Termin per Mail angefragt\n\n(25.07; CH) bestätigt per Telefon",
+            "Elektriktermin_am": "08-Aug-2023 07:30",
+            "Kundenname-rawdata": "Firma Wetra Dach & Wandprodukte GmbH - CH",
+            "PVA_klein1": {
+                "display_value": "Firma Wetra Dach & Wandprodukte GmbH - 30.24",
+                "ID": "26172000005791052"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876579",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Frau Carola Meinhold - DP",
+            "PVA_klein1_calfield": 26172000005877032,
+            "Privatkunde.Adresse_PVA": "Thomas-Müntzer-Straße 10B, Zwickau, 08060, Germany",
+            "Besonderheiten": "Einweisung PVA + App",
+            "Elektriktermin_am": "11-Aug-2023 12:00",
+            "Kundenname-rawdata": "Frau Carola Meinhold - DP",
+            "PVA_klein1": {
+                "display_value": "Frau Carola Meinhold - 6.72",
+                "ID": "26172000005877032"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876534",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Gerd Schirner - CH",
+            "PVA_klein1_calfield": 26172000005843136,
+            "Privatkunde.Adresse_PVA": "Oststraße 11, Glauchau, 08371",
+            "Besonderheiten": "gemeinsame IBN mit NB\n\n(27.07;CH) bestätigt per Telefon bei VG ",
+            "Elektriktermin_am": "11-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Gerd Schirner - CH",
+            "PVA_klein1": {
+                "display_value": "Herr Gerd Schirner - 4.20",
+                "ID": "26172000005843136"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876524",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Aaron Böttcher - ANG",
+            "PVA_klein1_calfield": 26172000005534447,
+            "Privatkunde.Adresse_PVA": "Kornaerstrasse 7, Kottengrün, 08223, Germany",
+            "Besonderheiten": "IBN\n\n(24.07.; LP) Termin per Mail angefragt\n(25.07.; LP) Termin per mail bestätigt",
+            "Elektriktermin_am": "10-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Aaron Böttcher - ANG",
+            "PVA_klein1": {
+                "display_value": "Herr Aaron Böttcher - 5.70",
+                "ID": "26172000005534447"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876504",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Ronny  Grahmann - JES",
+            "PVA_klein1_calfield": 26172000005627213,
+            "Privatkunde.Adresse_PVA": "Damaschkeplatz 9, Oelsnitz, 09376, Germany",
+            "Besonderheiten": "24.07. DP: Absage wg. technischer Komplikationen\n\nIBN\nKunde: 0170-3847386\n\n05.07. JeS, per Mail angefragt\n05.07. JeS, bestätigt\n\n02.08. JeS, neuen Termin per Mail bestätigt + Nutzungsausfall",
+            "Elektriktermin_am": "09-Aug-2023 10:00",
+            "Kundenname-rawdata": "Herr Ronny  Grahmann - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Ronny  Grahmann - 6.72",
+                "ID": "26172000005627213"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876494",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Ronny Schmalfuß - JES",
+            "PVA_klein1_calfield": 26172000005919139,
+            "Privatkunde.Adresse_PVA": "Badergasse 1, Hartenstein, 08118, Germany",
+            "Besonderheiten": "IBN\nbestätigt bei VG am 19.07.\nErsatztermin\n\nalt: 09.08.23\n\n(18.07.; LP) Termin per Mail angefragt\n(18.07.; LP) Termin klappt nicht am 31.07., bitte evt. auf den Zeitraum vom 07.08. - 11.08. planen\n\n05.08. JeS, Terminabsage per Mail für 09.08. + neuen Termin angefragt",
+            "Elektriktermin_am": "24-Aug-2023 11:30",
+            "Kundenname-rawdata": "Herr Ronny Schmalfuß - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Ronny Schmalfuß - 10.08",
+                "ID": "26172000005919139"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006876482",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Rene Krahl - DP",
+            "PVA_klein1_calfield": 26172000005649119,
+            "Privatkunde.Adresse_PVA": "Gutsweg 7, Zwenkau, 04442, Germany",
+            "Besonderheiten": "IBN\n\n(24.07; CH) bestätigt per Telefon",
+            "Elektriktermin_am": "07-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Rene Krahl - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Rene Krahl - 11.34",
+                "ID": "26172000005649119"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876247",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Dr. Horst Baacke - DP",
+            "PVA_klein1_calfield": 26172000004820209,
+            "Privatkunde.Adresse_PVA": "Immenstrasse  29, 04249, Leipzig ",
+            "Besonderheiten": "Anlage mit Netzwerk verbinden, Im Portal anlegen, Einweisung App\n",
+            "Elektriktermin_am": "13-Aug-2023 10:00",
+            "Kundenname-rawdata": "Herr Dr. Horst Baacke - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Dr. Horst Baacke - 5.40",
+                "ID": "26172000004820209"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006876233",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Frau Katja  Seidel  - JES",
+            "PVA_klein1_calfield": 26172000005210111,
+            "Privatkunde.Adresse_PVA": "Uthmannstraße 6, Zwickau , 08064",
+            "Besonderheiten": "App mit Kd. einrichten\n\nKundin vor Ankunft anrufen, wg. genauer Uhrzeit\n\n04.08. JeS, Uhrzeit geändert auf späten Nachmittag per Mail",
+            "Elektriktermin_am": "07-Aug-2023 14:00",
+            "Kundenname-rawdata": "Frau Katja  Seidel  - JES",
+            "PVA_klein1": {
+                "display_value": "Frau Katja  Seidel  - 12.18",
+                "ID": "26172000005210111"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876223",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Bernd Thurow - KP",
+            "PVA_klein1_calfield": 26172000005484074,
+            "Privatkunde.Adresse_PVA": "Bachweg 61, Zwickau, 08058",
+            "Besonderheiten": "IBN\n\n19.07.DP: bestätigt bei VG",
+            "Elektriktermin_am": "04-Aug-2023 10:00",
+            "Kundenname-rawdata": "Herr Bernd Thurow - KP",
+            "PVA_klein1": {
+                "display_value": "Herr Bernd Thurow - 8.40",
+                "ID": "26172000005484074"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876213",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Andreas Geipel - DP",
+            "PVA_klein1_calfield": 26172000005618473,
+            "Privatkunde.Adresse_PVA": "Talstraße 42, Ponitz OT Grünberg, 04639",
+            "Besonderheiten": "IBN\n\n07.07. JeS, tel. bestätigt bei JD",
+            "Elektriktermin_am": "04-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Andreas Geipel - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Andreas Geipel - 7.14",
+                "ID": "26172000005618473"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876201",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Ronny  \tGünther - ANG",
+            "PVA_klein1_calfield": 26172000005756364,
+            "Privatkunde.Adresse_PVA": "Gut Reusa 16a, Plauen, 08529, Germany",
+            "Besonderheiten": "IBN\n\n(18.07.; LP) Termin per Mail angefragt\n(20.07; LP) Termin per Mail bestätigt",
+            "Elektriktermin_am": "03-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Ronny  \tGünther - ANG",
+            "PVA_klein1": {
+                "display_value": "Herr Ronny  \tGünther - 10.08",
+                "ID": "26172000005756364"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876175",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Lutz Gündel - ANG",
+            "PVA_klein1_calfield": 26172000005846247,
+            "Privatkunde.Adresse_PVA": "Grünerweg 14, Reichenbach , 08468, Germany",
+            "Besonderheiten": "10KTL nachrüsten; \n@KM: ÜSS(Sammelschiene) verbauen; ist Nachbar von Intemann\n(18.07.; LP) Termin per Mail angefragt\n(19.07.; LP) Termin per Mail bestätigt",
+            "Elektriktermin_am": "02-Aug-2023 12:00",
+            "Kundenname-rawdata": "Herr Lutz Gündel - ANG",
+            "PVA_klein1": {
+                "display_value": "Herr Lutz Gündel - 9.66",
+                "ID": "26172000005846247"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876165",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Olaf Grieseler - CH",
+            "PVA_klein1_calfield": 26172000005335431,
+            "Privatkunde.Adresse_PVA": "Rudolf-Hallmeyer-Siedlung 7, Reichenbach, 08499 ",
+            "Besonderheiten": "IBN + Pulsar + Powerboost\n\n(18.07.; LP) Termin per Mail angefragt\n(19.07.; LP) Termin per Mail bestätigt\n\n(28.07;CH) bestätigt per Telefon",
+            "Elektriktermin_am": "23-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Olaf Grieseler - CH",
+            "PVA_klein1": {
+                "display_value": "Herr Olaf Grieseler - 7.56",
+                "ID": "26172000005335431"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006876153",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Jörg Zirotzki - DP",
+            "PVA_klein1_calfield": 26172000005708779,
+            "Privatkunde.Adresse_PVA": "Schneppendorfer Straße 53, Zwickau, 08058, Germany",
+            "Besonderheiten": "IBN",
+            "Elektriktermin_am": "30-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Jörg Zirotzki - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Jörg Zirotzki - 4.20",
+                "ID": "26172000005708779"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006874859",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Firma Matthias Pilz / Bäckerei - CH",
+            "PVA_klein1_calfield": 26172000004903764,
+            "Privatkunde.Adresse_PVA": "Rödlitzer Str. 27, Hohndorf, 09394",
+            "Besonderheiten": "IBN\n20.07.DP: Ersatztermin; \nalt 21.07.23\n\n12.06. LP, Kunde kann am 29.06. leider nur vormittags, deswegen geht der vorgeschlagene Termin nicht\nbitte umplanen\n\n14.07. nicht mgl. wg KKH Aufenthalt\nTermin 21.07. MUSS stattfinden \n(24.07.; LP) Termin per Mail angefragt\n\n(25.07; CH) bestätigt per Telefon ",
+            "Elektriktermin_am": "02-Aug-2023 07:30",
+            "Kundenname-rawdata": "Firma Matthias Pilz / Bäckerei - CH",
+            "PVA_klein1": {
+                "display_value": "Firma Matthias Pilz / Bäckerei - 9.96",
+                "ID": "26172000004903764"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006874792",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Henrik Glatzel - DP",
+            "PVA_klein1_calfield": 26172000004745224,
+            "Privatkunde.Adresse_PVA": "Rosa-Luxemburg-Straße 32, Crimmitschau, 08451",
+            "Besonderheiten": "IBN",
+            "Elektriktermin_am": "28-Aug-2023 11:30",
+            "Kundenname-rawdata": "Herr Henrik Glatzel - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Henrik Glatzel - 4.57",
+                "ID": "26172000004745224"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006874536",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Marcel Timm - DP",
+            "PVA_klein1_calfield": 26172000005082770,
+            "Privatkunde.Adresse_PVA": "Bauernweg  42C, 08412, Werdau",
+            "Besonderheiten": "IBN + nachrüsten Backup Box",
+            "Elektriktermin_am": "21-Aug-2023 11:30",
+            "Kundenname-rawdata": "Herr Marcel Timm - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Marcel Timm - 5.81",
+                "ID": "26172000005082770"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006874395",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Andreas Schumann - CH",
+            "PVA_klein1_calfield": 26172000005158002,
+            "Privatkunde.Adresse_PVA": "Am Stein 6, Elsterwerda, 04910",
+            "Besonderheiten": "(27.07;CH) bestätigt per Telefon",
+            "Elektriktermin_am": "01-Aug-2023 11:30",
+            "Kundenname-rawdata": "Herr Andreas Schumann - CH",
+            "PVA_klein1": {
+                "display_value": "Herr Andreas Schumann - 8.40",
+                "ID": "26172000005158002"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006871147",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Steffen Martin - DP",
+            "PVA_klein1_calfield": 26172000005158254,
+            "Privatkunde.Adresse_PVA": "Siedlung Naundorf 59, Waldenburg, 08396",
+            "Besonderheiten": "(25.07;FV) E-Termin tel. bestätigt\n\nAndreas 8KTL austauschen\nAltgerät ins Büro wg. Rückversand",
+            "Elektriktermin_am": "31-Jul-2023 18:00",
+            "Kundenname-rawdata": "Herr Steffen Martin - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Steffen Martin - 8.40",
+                "ID": "26172000005158254"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006849744",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Familie Mirko Schelle - JES",
+            "PVA_klein1_calfield": 26172000005918071,
+            "Privatkunde.Adresse_PVA": "Gutsweg 9, Zwenkau, 04442, Germany",
+            "Besonderheiten": "IBN\n\n(24.07; CH) bestätigt per Telefon\n\n04.08. JeS, per Mail über Änderung der Uhrzeit informiert.",
+            "Elektriktermin_am": "07-Aug-2023 07:30",
+            "Kundenname-rawdata": "Familie Mirko Schelle - JES",
+            "PVA_klein1": {
+                "display_value": "Familie Mirko Schelle - 6.08",
+                "ID": "26172000005918071"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006813366",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Gerhard Schneider - JES",
+            "PVA_klein1_calfield": 26172000005758083,
+            "Privatkunde.Adresse_PVA": "Maxim-Gorki-Strasse 10a, Plauen, 08529, Germany",
+            "Besonderheiten": "IBN\n\n!!! Termin muss stattfinden !!!\n\n14.07. JeS, per Mail bestätigt\nalt 03.08. \n\n05.08. JeS, Termin am 22.08. per Mail angefragt + Nutzungsausfall\n05.08. JeS, bestätigt\n",
+            "Elektriktermin_am": "22-Aug-2023 10:00",
+            "Kundenname-rawdata": "Herr Gerhard Schneider - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Gerhard Schneider - 5.04",
+                "ID": "26172000005758083"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006632837",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "nicht Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Dirk Schmidt - DP",
+            "PVA_klein1_calfield": 26172000005203009,
+            "Privatkunde.Adresse_PVA": "Fontaneweg 11, Crimmitschau, 08451",
+            "Besonderheiten": "Backup-Box nachrüsten\n\n12.07.CH per Mail angefragt\n\n13.07.CH bestätigt per Mail",
+            "Elektriktermin_am": "31-Jul-2023 11:30",
+            "Kundenname-rawdata": "Herr Dirk Schmidt - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Dirk Schmidt - 9.24",
+                "ID": "26172000005203009"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006632795",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Jörg Trommer - KP",
+            "PVA_klein1_calfield": 26172000005842218,
+            "Privatkunde.Adresse_PVA": "Meeraner Str. 164d, Glauchau, 08371, Germany",
+            "Besonderheiten": "IBN (WR-Kaskade) + nachrüsten Backup Box\n\n12.07. CH bestätigt per Telefon",
+            "Elektriktermin_am": "31-Jul-2023 15:15",
+            "Kundenname-rawdata": "Herr Jörg Trommer - KP",
+            "PVA_klein1": {
+                "display_value": "Herr Jörg Trommer - 19.32",
+                "ID": "26172000005842218"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006632785",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Denny Reisinger - DP",
+            "PVA_klein1_calfield": 26172000005828301,
+            "Privatkunde.Adresse_PVA": "Nordstraße 6, 04617, Starkenberg",
+            "Besonderheiten": "IBN\n\nErsatztermin\n\n04.07. JeS, per Mail angefragt\n04.07. JeS, bestätigt\n\n(27.07; CH) Terminabsage unsererseits (01.08.23) ",
+            "Elektriktermin_am": "29-Aug-2023 11:30",
+            "Kundenname-rawdata": "Herr Denny Reisinger - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Denny Reisinger - 6.72",
+                "ID": "26172000005828301"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006622957",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Torsten  Neumann - JES",
+            "PVA_klein1_calfield": 26172000005117608,
+            "Privatkunde.Adresse_PVA": "Lengenfelder Str. 48, 08228, Rodewisch",
+            "Besonderheiten": "10KTL nachrüsten\n\n14.07. JeS, per Mail angefragt\n14.07. JeS, Kunde im Urlaub, ab 19.07. bis KW 30 verfügbar (Betriebsruhe)\n\n03.08. JeS, neuen Termin per Mail angefragt für 21.08. - 07:30 Uhr\n03.08. JeS, bestätigt",
+            "Elektriktermin_am": "21-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Torsten  Neumann - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Torsten  Neumann - 10.08",
+                "ID": "26172000005117608"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006622869",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Dr. Alexander  Leißring - JES",
+            "PVA_klein1_calfield": 26172000005297008,
+            "Privatkunde.Adresse_PVA": "Thierfelder Straße 13, Hartenstein, 08118",
+            "Besonderheiten": "03.07. JeS, per Mail angefragt\n07.07. JeS, kann erst ab KW31\n07.07. JeS, neuen Termin per Mail angefragt\n10.07. LP, Termin per Mail bei JeS bestätigt",
+            "Elektriktermin_am": "24-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Dr. Alexander  Leißring - JES",
+            "PVA_klein1": {
+                "display_value": "Herr Dr. Alexander  Leißring - 11.76",
+                "ID": "26172000005297008"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006600024",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr René Schönleber - DP",
+            "PVA_klein1_calfield": 26172000005115268,
+            "Privatkunde.Adresse_PVA": "Cainsdorfer Bergstrasse 4, Zwickau, 08064",
+            "Besonderheiten": "IBN\n\n07.07 CH Termin (28.07) geht nicht da Kunde im Urlaub, Vorschlag von Kunde 04.08\n(24.07.; LP) Termin per Mail angefragt\n\n03.08. JeS, neuen Termin per Mail angefragt am 01.09., statt 04.08. ",
+            "Elektriktermin_am": "25-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr René Schönleber - DP",
+            "PVA_klein1": {
+                "display_value": "Herr René Schönleber - 9.66",
+                "ID": "26172000005115268"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006582083",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Torsten Kirchberger - DP",
+            "PVA_klein1_calfield": 26172000005386119,
+            "Privatkunde.Adresse_PVA": "Beutenbergstrasse 38, Chemnitz, 09128",
+            "Besonderheiten": "IBN\n\n@KM: Anlage ist teiloptimiert\n\n27.06. JeS, per Mail angefragt\n28.06. JeS, klappt nicht\n\n29.06. JeS, neuer Termin angefragt\n29.06. JeS, bestätigt\n",
+            "Elektriktermin_am": "31-Jul-2023 07:30",
+            "Kundenname-rawdata": "Herr Torsten Kirchberger - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Torsten Kirchberger - 13.44",
+                "ID": "26172000005386119"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006582060",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Wolfgang Geister - CH",
+            "PVA_klein1_calfield": 26172000005102086,
+            "Privatkunde.Adresse_PVA": "Langestraße 1, Schlieben, 04936",
+            "Besonderheiten": "IBN\nBestätigt bei VG am 19.07.23\nErstattung für Kd. von 250€ auf 300€\nErsatztermin; alt:19.07.23;8:00\n14.06. CH bestätigt per Telefon\n\n(26.07; CH) Termin unsererseits abgesagt (alter Termin 27.07)\n\n(27.07;CH) bestätigt per Telefon \nTermin muss stattfinden!!!!!! ",
+            "Elektriktermin_am": "01-Aug-2023 07:30",
+            "Kundenname-rawdata": "Herr Wolfgang Geister - CH",
+            "PVA_klein1": {
+                "display_value": "Herr Wolfgang Geister - 9.50",
+                "ID": "26172000005102086"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006448065",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Jens Gräbner - DP",
+            "PVA_klein1_calfield": 26172000005110073,
+            "Privatkunde.Adresse_PVA": "Silcher Str. 2, Chemnitz, 09131",
+            "Besonderheiten": "IBN (WR-Kaskade)",
+            "Elektriktermin_am": "01-Sep-2023 07:30",
+            "Kundenname-rawdata": "Herr Jens Gräbner - DP",
+            "PVA_klein1": {
+                "display_value": "Herr Jens Gräbner - 17.64",
+                "ID": "26172000005110073"
+            },
+            "Termin_best_tigt": "❌",
+            "ID": "26172000006334082",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    },
+    {
+        "code": 3000,
+        "data": {
+            "Anschluss_PVA": "ist Anschluss PVA",
+            "Elektriker_calfield": 26172000005856265,
+            "Kundenname": "Herr Henry Hofmann - ANG",
+            "PVA_klein1_calfield": 26172000004592315,
+            "Privatkunde.Adresse_PVA": "Hauptstr. 6, Chemnitz, 09128",
+            "Besonderheiten": "Anschlusskontrolle\n20.07. DP, Ersatztermin\nalt 19.07.23\n\n!!! Bitte 1h vor Ankunft Kunde informieren, wegen seinem Elektriker (will bei IBN anwesend sein) !!!\n\n14.07. JeS, per Mail angefragt\n(24.07.; LP) Termin per Mail angefragt\n(26.07.; LP) Termin per Mail bestätigt\n\n@KM bitte eine halbe Stunde vor Ankunft Kunde anrufen",
+            "Elektriktermin_am": "31-Jul-2023 12:00",
+            "Kundenname-rawdata": "Herr Henry Hofmann - ANG",
+            "PVA_klein1": {
+                "display_value": "Herr Henry Hofmann - 10.79",
+                "ID": "26172000004592315"
+            },
+            "Termin_best_tigt": "✅",
+            "ID": "26172000006291374",
+            "Elektriker": {
+                "display_value": "Konrad Meßner",
+                "ID": "26172000005856265"
+            }
+        }
+    }
+]

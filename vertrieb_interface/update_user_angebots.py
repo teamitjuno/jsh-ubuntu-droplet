@@ -96,6 +96,7 @@ def process_all_user_data(data, all_user_angebots_list):
                     "telefon_mobil": item.get("Telefon_mobil", ""),
                     "zoho_kundennumer": item.get("Kundennummer", ""),
                     "email": item.get("Email", ""),
+                    "notizen": item.get("Notizen", ""),
                     "name": item.get("Name", {}).get("first_name", "")
                     + " "
                     + item.get("Name", {}).get("suffix", "")
@@ -112,6 +113,3 @@ def process_all_user_data(data, all_user_angebots_list):
                 }
             )
     return all_user_angebots_list
-
-
-

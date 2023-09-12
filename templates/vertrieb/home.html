@@ -376,12 +376,12 @@
                                     </script>
                                 </tbody>
                             </table>
-                            <table class="table table-hover table-centered mb-0">
+                            <table class="table table-sm table-centered mb-0">
                                 <tbody>
                                     <tr>
-                                        <th><p class="h4">{{ calculator_form.angebotsumme.label }}</p></th>
+                                        <th><p class="h5">{{ calculator_form.angebotsumme.label }}</p></th>
                                         <input hidden type="number" class="form-control" id="id_angebotsumme" name="{{ calculator_form.angebotsumme.html_name }}" value="{{ calculator_form.angebotsumme.value }}" data-resettable="true" />
-                                        <td><p class="h4" id="angebotsumme">{{ calculator_instance.angebotsumme }} €</p></td>
+                                        <td><p class="h5" id="angebotsumme">{{ calculator_instance.angebotsumme|format_price }}</p></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -447,8 +447,8 @@
                                     {% for activity in activities %}
                                         <div class="timeline-item">
                                             <i class="mdi {{ activity.icon }} timeline-icon"></i>
-                                            <div class="timeline-item-info">
-                                                <a href="javascript:void(0);" class="{{ activity.action.class }} fw-bold mb-1 d-block">{{ activity.action.message }}</a>
+                                            <div class="timeline-item-info"> 
+                                                <a href="{% url 'vertrieb_interface:edit_angebot' activity.object.repr %}" class="{{ activity.action.class }} fw-bold mb-1 d-block">{{ activity.action.message }}</a>
                                                 <p class="{{ activity.object.class }}">{{ activity.object.repr }}</p>
                                                 <small>Angebotstatus: {{ activity.status }}</small>
                                                 <p class="mb-0 pb-2">

@@ -1,13 +1,10 @@
-import os
 import json
 import logging
 from django.core.mail import (
-    send_mail,
     EmailMultiAlternatives,
     get_connection,
-    EmailMessage,
 )
-from config.settings import ENV_FILE, EMAIL_BACKEND, MAPBOX_TOKEN, STYLE_ID
+from config.settings import EMAIL_BACKEND
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.urls import reverse
@@ -17,20 +14,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import unquote
 from django.http import (
-    Http404,
     HttpResponseRedirect,
     JsonResponse,
-    HttpResponse,
     FileResponse,
 )
-from pprint import pprint, pformat, pp
 import re, logging
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
 from shared.chat_bot import handle_message
 from projektant_interface.pdf_generators.pdf_template_processor_v3 import (
     generate_pdf_bauplan,
-    CustomPDF,
 )
 from projektant_interface.models import Project
 from projektant_interface.forms import UploadJPGForm
@@ -42,14 +35,14 @@ from django.urls import reverse
 from django.contrib import messages
 from projektant_interface.management.commands import populate_projects
 
+
 def populate_projects_view(request):
-    
     cmd = populate_projects.Command()
-    cmd.handle() 
+    cmd.handle()
     messages.success(request, "Projects successfully populated from ZOHO API.")
-    return HttpResponseRedirect(reverse('projektant_interface:home'))
-    
-    
+    return HttpResponseRedirect(reverse("projektant_interface:home"))
+
+
 def handler500(request):
     return render(request, "500.html", status=500)
 
@@ -134,7 +127,11 @@ def create_project_bauplan_pdf(request, project_id):
     processed_besodersheiten = project.Processed_Besonderheiten
     roof_typ = project.roof_typ
     height = project.height
-    kunden_tel_nummer = project.Kunde_Telefon_mobil if project.Kunde_Telefon_mobil else project.Kunde_Telefon_Festnetz
+    kunden_tel_nummer = (
+        project.Kunde_Telefon_mobil
+        if project.Kunde_Telefon_mobil
+        else project.Kunde_Telefon_Festnetz
+    )
     datetime = project.current_date
     font_size = project.font_size
     user_surname = user.last_name
@@ -156,8 +153,12 @@ def create_project_bauplan_pdf(request, project_id):
         "kunden_plz_ort": kunden_plz_ort,
         "processed_besodersheiten": processed_besodersheiten,
         "bauplan_jpg_path": project.bauplan_img.path if project.bauplan_img else None,
-        "bauplan_jpg_secondary_path": project.bauplan_img_secondary.path if project.bauplan_img_secondary else None,
-        "bauplan_jpg_third_path": project.bauplan_img_third.path if project.bauplan_img_third else None,
+        "bauplan_jpg_secondary_path": project.bauplan_img_secondary.path
+        if project.bauplan_img_secondary
+        else None,
+        "bauplan_jpg_third_path": project.bauplan_img_third.path
+        if project.bauplan_img_third
+        else None,
         "font_size": font_size,
     }
 
@@ -167,12 +168,12 @@ def create_project_bauplan_pdf(request, project_id):
 
     return redirect("projektant_interface:document_view", project_id=project_id)
 
+
 @user_passes_test(projektant_check)
 def document_view(request, project_id):
     project = get_object_or_404(Project, ID=project_id)
     pdf_url = reverse("projektant_interface:serve_pdf", args=[project_id])
     form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
-    
 
     if request.method == "POST":
         form = ProjectUpdateForm(request.POST, request.FILES, instance=project)
@@ -184,8 +185,7 @@ def document_view(request, project_id):
     context = {
         "pdf_url": pdf_url,
         "project_id": project_id,
-        
-        "form": form  # Add the form to the context
+        "form": form,  # Add the form to the context
     }
 
     return render(request, "projektant/document_view.html", context)
@@ -202,26 +202,31 @@ def serve_pdf(request, project_id):
 
     return response
 
-def upload_jpg(request, project_id): 
+
+def upload_jpg(request, project_id):
     project = get_object_or_404(Project, ID=project_id)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UploadJPGForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
             form.save()
-            return redirect('projektant_interface:document_view', project_id=project_id)
+            return redirect("projektant_interface:document_view", project_id=project_id)
     else:
         form = UploadJPGForm(instance=project)
-    return render(request, 'projektant/upload_jpg.html', {'form': form, 'project': project})
+    return render(
+        request, "projektant/upload_jpg.html", {"form": form, "project": project}
+    )
 
 
 def update_project(request, project_id):
-    project = get_object_or_404(Project, ID=project_id)  # Assuming the primary key of Project model is ID
+    project = get_object_or_404(
+        Project, ID=project_id
+    )  # Assuming the primary key of Project model is ID
 
     if request.method == "POST":
         form = ProjectUpdateForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            return redirect('projektant_interface:document_view', project_id=project_id)
+            return redirect("projektant_interface:document_view", project_id=project_id)
     else:
         form = ProjectUpdateForm(instance=project)
 
@@ -231,17 +236,18 @@ def update_project(request, project_id):
 
     return render(request, "projektant/project_update_form.html", context)
 
+
 @login_required
 def send_invoice(request):
     print("Request method received in send_invoice:", request.method)
 
     if request.method == "POST":
-        body_unicode = request.body.decode('utf-8')
+        body_unicode = request.body.decode("utf-8")
         body_data = json.loads(body_unicode)
-        project_id = body_data.get('project_id')
-        
+        project_id = body_data.get("project_id")
+
         print("Hit send_invoice with method:", request.method)
-        
+
         try:
             send_project_invoice(request.user, project_id)
             messages.success(request, "Email sent successfully")
@@ -250,14 +256,16 @@ def send_invoice(request):
             messages.error(request, f"Failed to send email: {str(e)}")
             return JsonResponse({"status": "failed", "error": str(e)}, status=400)
     else:
-        return JsonResponse({"status": "failed", "error": "Not a POST request."}, status=400)
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )
+
 
 def send_project_invoice(user, project_id):
     project = get_object_or_404(Project, ID=project_id)
     pdf = project.bauplan_pdf
     subject = f"Project Bauplan {project.kunden_name}"
     body = "Body"
-
 
     connection = get_connection(
         backend=EMAIL_BACKEND,
@@ -268,7 +276,7 @@ def send_project_invoice(user, project_id):
         use_tsl=True,
         fail_silently=False,
     )
-    
+
     email = EmailMultiAlternatives(
         subject,
         body,
@@ -276,10 +284,11 @@ def send_project_invoice(user, project_id):
         [f"{project.email_form}"] if project.email_form else [f"{user.email}"],
         connection=connection,
     )
-    
+
     file_data = pdf.tobytes()
     email.attach(f"Bauplan_{project.ID}.pdf", file_data, "application/pdf")
     email.send()
+
 
 # from django.http import FileResponse
 # from config import settings

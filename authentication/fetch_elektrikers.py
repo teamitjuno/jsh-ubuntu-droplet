@@ -1,4 +1,4 @@
-import os, json, requests, time
+import json, requests, time
 from dotenv import set_key, load_dotenv
 from random import randint
 from django.contrib.auth import get_user_model
@@ -12,7 +12,6 @@ from config.settings import (
     ZOHO_REFRESH_TOKEN,
     DEFAULT_EMAIL_DOMAIN,
     DEFAULT_USER_CREATION_PASSWORD,
-    DEFAULT_PHONE,
 )
 
 # Constants
