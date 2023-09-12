@@ -74,10 +74,10 @@ def post_angebot_to_zoho(vertrieb_angebot, request_user):
     """
     # Endpoint URL
     url = "https://creator.zoho.eu/appbuilder/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
-    
+
     # Headers for the request
     headers = get_headers()
-    
+
     # Data structure
     payload = {
         "code": 3000,
@@ -101,13 +101,15 @@ def post_angebot_to_zoho(vertrieb_angebot, request_user):
             "AC_ELWA_2": vertrieb_angebot.elwa,
             "AC_THOR": vertrieb_angebot.thor,
             "Angebotssumme": vertrieb_angebot.angebotsumme,
-        }
+        },
     }
-    
+
     # Send the POST request
     response = requests.post(url, headers=headers, json=payload)
-    
+
     if response.status_code != HTTP_OK:
-        raise APIException(f"Error updating status: {response.status_code} - {response.text}")
-    
+        raise APIException(
+            f"Error updating status: {response.status_code} - {response.text}"
+        )
+
     return response.json()

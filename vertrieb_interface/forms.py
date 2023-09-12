@@ -20,6 +20,7 @@ load_dotenv(ENV_FILE)
 
 from authentication.models import User
 
+
 class ModulePreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.name}"  # type: ignore
@@ -294,7 +295,12 @@ class VertriebAngebotForm(ModelForm):
         label="Interessent",
         required=True,
         widget=forms.Select(
-            attrs={"class": "form-control select2", "data-toggle" : "select2", "id": "id_name", "style": "max-width: 300px"}
+            attrs={
+                "class": "form-control select2",
+                "data-toggle": "select2",
+                "id": "id_name",
+                "style": "max-width: 300px",
+            }
         ),
     )
     vorname_nachname = forms.CharField(
@@ -962,7 +968,7 @@ class VertriebAngebotForm(ModelForm):
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
-        
+
         # Check if status is 'bekommen'
 
         if form.status == "bekommen":
@@ -984,7 +990,6 @@ class VertriebAngebotForm(ModelForm):
                     # post_angebot_to_zoho(form)
                     db_object.save()
                     form.save()
-                    
 
                 if db_countdown_on == True:
                     form.status_change_date = db_object.status_change_date

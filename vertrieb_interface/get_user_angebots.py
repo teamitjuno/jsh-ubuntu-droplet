@@ -28,6 +28,7 @@ SLEEP_TIME = 1
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
 
+
 class APIException(Exception):
     pass
 
@@ -96,6 +97,7 @@ def fetch_user_angebote_all(request):
 
     return all_user_angebots_list
 
+
 def fetch_angenommen_status(request, zoho_id):
     try:
         access_token = os.getenv("ZOHO_ACCESS_TOKEN")
@@ -110,7 +112,7 @@ def fetch_angenommen_status(request, zoho_id):
         }
 
         data = fetch_data_from_api(url, headers, params)
-        
+
         if data:
             with open(
                 "vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w"
@@ -120,7 +122,7 @@ def fetch_angenommen_status(request, zoho_id):
         return data_dict
     except:
         pass
-            
+
 
 def fetch_current_user_angebot(request, zoho_id):
     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
@@ -136,14 +138,14 @@ def fetch_current_user_angebot(request, zoho_id):
         }
 
         data = fetch_data_from_api(url, headers, params)
-        
+
         if data:
             with open(
                 "vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w"
             ) as f:
                 json.dump(data, f)
             data_dict = data["data"]
-            
+
             if not data.get("data"):
                 break
             try:
@@ -172,7 +174,7 @@ def fetch_current_user_angebot(request, zoho_id):
             start_index += LIMIT_CURRENT
         else:
             break
-    
+
     return current_angebot_list
 
 
@@ -278,20 +280,22 @@ def update_status(zoho_id, new_status):
 
         # Handling the response
         if response.status_code != HTTP_OK:
-            raise APIException(f"Error updating status: {response.status_code} - {response.text}")
+            raise APIException(
+                f"Error updating status: {response.status_code} - {response.text}"
+            )
 
         return response.json()
-    
+
     except:
         pass
 
 
 def post_data_to_api(url, headers, data):
     response = requests.post(url, headers=headers, json=data)
-    
+
     if response.status_code in [HTTP_OK, HTTP_CREATED]:
         return response.json()
-    
+
     if response.status_code == HTTP_UNAUTHORIZED:
         headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
         response = requests.post(url, headers=headers, json=data)
@@ -311,8 +315,8 @@ def post_angebot_to_zoho(form):
 
     # Format the 'angebot_gultig' date
     date_gultig_str = vertrieb_angebot.angebot_gultig
-    date_obj_gultig = datetime.datetime.strptime(date_gultig_str, '%d.%m.%Y')
-    formatted_gultig_date_str = date_obj_gultig.strftime('%d-%b-%Y')
+    date_obj_gultig = datetime.datetime.strptime(date_gultig_str, "%d.%m.%Y")
+    formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
 
     Privatkunde_ID = int(vertrieb_angebot.zoho_id)
     Anz_Speicher = int(vertrieb_angebot.anz_speicher)
@@ -324,12 +328,14 @@ def post_angebot_to_zoho(form):
     Optimierer_Menge = int(vertrieb_angebot.anzOptimizer)
 
     # Data structure
-    print(type(vertrieb_angebot.angebot_id),vertrieb_angebot.angebot_id)
+    print(type(vertrieb_angebot.angebot_id), vertrieb_angebot.angebot_id)
     print(type(vertrieb_angebot.zoho_id), vertrieb_angebot.zoho_id)
     print(type(vertrieb_angebot.current_date), vertrieb_angebot.current_date)
     print(type(vertrieb_angebot.anfrage_vom), vertrieb_angebot.anfrage_vom)
-    
-    print(type(vertrieb_angebot.angebot_bekommen_am), vertrieb_angebot.angebot_bekommen_am)
+
+    print(
+        type(vertrieb_angebot.angebot_bekommen_am), vertrieb_angebot.angebot_bekommen_am
+    )
     print(type(vertrieb_angebot.angebot_gultig), vertrieb_angebot.angebot_gultig)
     print(type(vertrieb_angebot.anz_speicher), vertrieb_angebot.anz_speicher)
     print(type(vertrieb_angebot.wallboxtyp), vertrieb_angebot.wallboxtyp)
@@ -344,7 +350,6 @@ def post_angebot_to_zoho(form):
     print(type(vertrieb_angebot.elwa), vertrieb_angebot.elwa)
     print(type(vertrieb_angebot.thor), vertrieb_angebot.thor)
     print(type(vertrieb_angebot.angebotsumme), vertrieb_angebot.angebotsumme)
-
 
     payload = {
         "Angebot_ID": f"{vertrieb_angebot.angebot_id}",
@@ -367,11 +372,8 @@ def post_angebot_to_zoho(form):
         "Angebotssumme": Angebotssumme,
     }
 
+    new_payload = {"Angebote": [payload]}
 
-    new_payload = {
-        "Angebote": [payload]
-    }
-    
     response = post_data_to_api(url, headers, new_payload)
-    
+
     return response

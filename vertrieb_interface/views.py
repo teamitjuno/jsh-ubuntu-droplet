@@ -425,12 +425,12 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             self.data != []
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
-            
+
             return JsonResponse(data)
         except:
             self.data = fetch_user_angebote_all(request)
             zoho_data = json.dumps(self.data)
-            
+
             profile.zoho_data_text = zoho_data  # type: ignore
             profile.save()
             name = request.GET.get("name", None)
@@ -438,8 +438,6 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             if data is None:
                 data = {}
             return JsonResponse(data)
-        
-        
 
 
 def map_view(request, angebot_id, *args, **kwargs):
@@ -503,35 +501,39 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         action_flag=CHANGE,
                         status=angebot.status,
                     )
+
     def handle_zoho_status_change(self, request, angebot_id):
         try:
-            vertrieb_angebot = VertriebAngebot.objects.get(angebot_id=angebot_id, user=request.user)
+            vertrieb_angebot = VertriebAngebot.objects.get(
+                angebot_id=angebot_id, user=request.user
+            )
             if vertrieb_angebot.angebot_id_assigned == True:
-            
                 zoho_id = vertrieb_angebot.zoho_id
-                
+
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-                
-                
-                if fetched_angebote and fetched_angebote.get('Status') == "angenommen":
-                    
+
+                if fetched_angebote and fetched_angebote.get("Status") == "angenommen":
                     vertrieb_angebot.status = "angenommen"
                     vertrieb_angebot.status_change_field = None
                     vertrieb_angebot.save()
                     # Assuming you want to create a form instance with the fetched data
-                    form = self.form_class(fetched_angebote, instance=vertrieb_angebot, user=request.user)
-                    
+                    form = self.form_class(
+                        fetched_angebote, instance=vertrieb_angebot, user=request.user
+                    )
+
                     if form.is_valid():
                         form.save()
-                elif fetched_angebote and fetched_angebote.get('Status') != "bekommen":
-                    status = fetched_angebote.get('Status')
-                    
+                elif fetched_angebote and fetched_angebote.get("Status") != "bekommen":
+                    status = fetched_angebote.get("Status")
+
                     vertrieb_angebot.status = status
-                    
+
                     vertrieb_angebot.save()
                     # Assuming you want to create a form instance with the fetched data
-                    form = self.form_class(fetched_angebote, instance=vertrieb_angebot, user=request.user)
-                    
+                    form = self.form_class(
+                        fetched_angebote, instance=vertrieb_angebot, user=request.user
+                    )
+
                     if form.is_valid():
                         form.save()
                 else:
@@ -540,7 +542,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 pass
         except VertriebAngebot.DoesNotExist:
             pass
-
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
@@ -634,8 +635,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     # type:ignore
                     form.save()  # type:ignore
                 else:
-                    
-                     # type:ignore
+                    # type:ignore
                     form.save()  # type:ignore
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
