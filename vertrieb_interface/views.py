@@ -43,6 +43,7 @@ from vertrieb_interface.get_user_angebots import (
     fetch_user_angebote_all,
     fetch_current_user_angebot,
     fetch_angenommen_status,
+    pushAngebot,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.forms import VertriebAngebotForm
@@ -640,7 +641,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             if form.is_valid():
                 form.instance.status = "bekommen"
                 vertrieb_angebot.angebot_id_assigned = True
-                    # type:ignore
+                print(pushAngebot(vertrieb_angebot, user_zoho_id))
                 form.save()  # type:ignore
 
                 return redirect(
