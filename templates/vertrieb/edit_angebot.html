@@ -659,10 +659,11 @@
                                             <p></p>
                                             {% if not vertrieb_angebot.is_locked %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                                <h4 hidden>{{ form.status }}</h4>
                                                 <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                             {% else %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-
+                                                <h4 hidden>{{ form.status }}</h4>
                                                 <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                                 
                                             {% endif %}
@@ -684,10 +685,10 @@
                                                         <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                     </div>
                                                 
-                                                    {% comment %} {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
-                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button>
+                                                    
+                                                        {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
-                                                                {% else %} {% endcomment %}
+                                                                
                                                     
                                                     <div class="row m-2">
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
@@ -744,7 +745,7 @@
                                                                                 }
                                                                             </script>
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                                                                            <button type="button" id="continueButtonn" onclick=saveFormAndGeneratePDF() class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
+                                                                            <button type="submit" form="main-form" name="bekommen_zu_machen" id="continueButtonn" onclick=saveFormAndGeneratePDF() class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
                                                                             
                                                                         </div>
                                                                     </div>
@@ -1514,9 +1515,10 @@
                                         {% if not vertrieb_angebot.is_locked %}
                                             <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
                                             <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                            <h4 hidden>{{ form.status }}</h4>
                                         {% else %}
                                         <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                        <h5 hidden class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
+                                        <h4 hidden>{{ form.status }}</h4>
                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
                                         {% endif %}
                                         {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
