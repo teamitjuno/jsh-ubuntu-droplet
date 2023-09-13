@@ -636,6 +636,19 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
+        if "bekommen_zu_machen" in request.POST:
+            if form.is_valid():
+                form.instance.status = "bekommen"
+                if vertrieb_angebot.angebot_id_assigned == True:
+                    # type:ignore
+                    form.save()  # type:ignore
+                else:
+                    # type:ignore
+                    form.save()  # type:ignore
+                return redirect(
+                    "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                )
+
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
