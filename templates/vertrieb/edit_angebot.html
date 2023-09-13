@@ -8,7 +8,7 @@
 <link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
-            {% if not vertrieb_angebot.is_locked %}
+            {% if not vertrieb_angebot.is_locked and vertrieb_angebot.status != "angenommen" %}
         <form id="main-form" method="POST" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
                 <div class="container-fluid">     
@@ -659,7 +659,7 @@
                                             <p></p>
                                             {% if not vertrieb_angebot.is_locked %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                             {% else %}
                                                 <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
 
@@ -806,13 +806,13 @@
                     </div><!-- End ROW -->
                 </div> 
         </form>
-    {% endif %}
+    
 
 
     <!--- #############################################################################################-->
 
 
-    {% if vertrieb_angebot.is_locked %}
+    {% else %}
         <form id="main-form" method="POST" onsubmit="updateDisplay();" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
             <div class="container-fluid">     
@@ -1513,11 +1513,11 @@
                                         <p></p>
                                         {% if not vertrieb_angebot.is_locked %}
                                             <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
+                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                         {% else %}
                                         <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
                                         <h5 hidden class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status }}</h5>
-                                            <h4><input type="text" readonly class="form-control-plaintext h2" id="id_angebot_status" value="{{ form.status.value }}"></h4>                                                
+                                           <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
                                         {% endif %}
                                         {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
                                             <p class="mb-0 text-muted">                                         

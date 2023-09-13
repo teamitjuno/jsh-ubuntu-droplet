@@ -58,8 +58,6 @@ from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import TopVerkauferContainerViewForm
 
-NAMES_CHOICES = ""
-
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -507,7 +505,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot = VertriebAngebot.objects.get(
                 angebot_id=angebot_id, user=request.user
             )
-            if vertrieb_angebot.angebot_id_assigned == True:
+            if vertrieb_angebot.angebot_id_assigned == True and vertrieb_angebot.zoho_id:
                 zoho_id = vertrieb_angebot.zoho_id
 
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
@@ -536,8 +534,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     if form.is_valid():
                         form.save()
-                else:
-                    pass
             else:
                 pass
         except VertriebAngebot.DoesNotExist:

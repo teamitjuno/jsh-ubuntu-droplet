@@ -99,29 +99,27 @@ def fetch_user_angebote_all(request):
 
 
 def fetch_angenommen_status(request, zoho_id):
-    try:
-        access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-        url = f"{VERTRIEB_URL}/{zoho_id}"
-        headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
-        current_angebot_list = []
-        start_index = 1
+    
+    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+    url = f"{VERTRIEB_URL}/{zoho_id}"
+    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+    current_angebot_list = []
+    start_index = 1
 
-        params = {
-            "from": start_index,
-            "limit": LIMIT_CURRENT,
-        }
+    params = {
+        "from": start_index,
+        "limit": LIMIT_CURRENT,
+    }
 
-        data = fetch_data_from_api(url, headers, params)
+    data = fetch_data_from_api(url, headers, params)
 
-        if data:
-            with open(
-                "vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w"
-            ) as f:
-                json.dump(data, f)
-        data_dict = data["data"]
-        return data_dict
-    except:
-        pass
+    if data:
+        with open(
+            "vertrieb_interface/json_tests/current_vertriebler_angebot.json", "w"
+        ) as f:
+            json.dump(data, f)
+    data_dict = data["data"]
+    return data_dict
 
 
 def fetch_current_user_angebot(request, zoho_id):
@@ -258,36 +256,35 @@ def update_status(zoho_id, new_status):
     :param new_status: The new value for the 'Status' field.
     :return: The server's response to the POST request or None if there's an error.
     """
-    try:
-        # Endpoint for updating
-        update_url = f"{VERTRIEB_URL}/{zoho_id}"
+    
+    # Endpoint for updating
+    update_url = f"{VERTRIEB_URL}/{zoho_id}"
 
-        # Headers for the request
-        headers = get_headers()
-        current_datetime = datetime.datetime.now()
-        bekommen_am = current_datetime.strftime("%d-%b-%Y")
+    # Headers for the request
+    headers = get_headers()
+    current_datetime = datetime.datetime.now()
+    bekommen_am = current_datetime.strftime("%d-%b-%Y")
 
-        # Payload structured for ZOHOCreator updates (assuming it uses a 'data' key)
-        payload = {
-            "data": {
-                "Status": new_status,
-                "Angebot_bekommen_am": bekommen_am,
-            }
+    # Payload structured for ZOHOCreator updates (assuming it uses a 'data' key)
+    payload = {
+        "data": {
+            "Status": new_status,
+            "Angebot_bekommen_am": bekommen_am,
         }
+    }
 
-        # Making the POST request
-        response = requests.put(update_url, headers=headers, json=payload)
+    # Making the POST request
+    response = requests.put(update_url, headers=headers, json=payload)
 
-        # Handling the response
-        if response.status_code != HTTP_OK:
-            raise APIException(
-                f"Error updating status: {response.status_code} - {response.text}"
-            )
+    # Handling the response
+    if response.status_code != HTTP_OK:
+        raise APIException(
+            f"Error updating status: {response.status_code} - {response.text}"
+        )
 
-        return response.json()
+    return response.json()
 
-    except:
-        pass
+
 
 
 def post_data_to_api(url, headers, data):
