@@ -521,19 +521,19 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     if form.is_valid():
                         form.save()
-                elif fetched_angebote and fetched_angebote.get("Status") != "bekommen":
-                    status = fetched_angebote.get("Status")
+                # elif fetched_angebote and fetched_angebote.get("Status") != "bekommen":
+                #     status = fetched_angebote.get("Status")
 
-                    vertrieb_angebot.status = status
+                #     vertrieb_angebot.status = status
 
-                    vertrieb_angebot.save()
-                    # Assuming you want to create a form instance with the fetched data
-                    form = self.form_class(
-                        fetched_angebote, instance=vertrieb_angebot, user=request.user
-                    )
+                #     vertrieb_angebot.save()
+                #     # Assuming you want to create a form instance with the fetched data
+                #     form = self.form_class(
+                #         fetched_angebote, instance=vertrieb_angebot, user=request.user
+                #     )
 
-                    if form.is_valid():
-                        form.save()
+                #     if form.is_valid():
+                #         form.save()
             else:
                 pass
         except VertriebAngebot.DoesNotExist:
