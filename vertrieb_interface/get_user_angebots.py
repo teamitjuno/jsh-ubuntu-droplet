@@ -375,6 +375,12 @@ def post_angebot_to_zoho(form):
 
     return response
 
+def return_lower_bull(val):
+    if val == True:
+        return "true"
+    else:
+        return "false"
+
 def pushAngebot(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
     headerMap = get_headers()
@@ -382,9 +388,12 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     date_gultig_str = vertrieb_angebot.angebot_gultig
     date_obj_gultig = datetime.datetime.strptime(date_gultig_str, "%d.%m.%Y")
     formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
-    notstrom = str((f"{vertrieb_angebot.notstrom}").lower)
-    elwa = str((f"{vertrieb_angebot.elwa}").lower)
-    thor = str((f"{vertrieb_angebot.thor}").lower)
+    notstrom = return_lower_bull(vertrieb_angebot.notstrom)
+    elwa = return_lower_bull(vertrieb_angebot.elwa)
+    thor = return_lower_bull(vertrieb_angebot.thor)
+
+    print(notstrom, elwa, thor)
+
     dataMap = {"data": {
       "Angebot_ID":f"{vertrieb_angebot.angebot_id}",
       "Privatkunde_ID":f"{vertrieb_angebot.zoho_id}",

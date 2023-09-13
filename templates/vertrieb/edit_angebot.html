@@ -4,8 +4,8 @@
 {% load widget_tweaks %}
 {% block content %}
 {% load custom_filter %}
+<link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
 
-<link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
             {% if not vertrieb_angebot.is_locked and vertrieb_angebot.status != "angenommen" %}
@@ -92,7 +92,7 @@
                                                                             <td>{{ form.zoho_id }}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <script src="assets/vendor/select2/js/select2.min.js"></script>
+                                                                            
                                                                             <th>{{ form.name.label_tag }}</th>
                                                                             <td>{{ form.name }}</td>
                                                                         </tr>
@@ -1690,6 +1690,7 @@
 
 {% endblock %}    
 {% block javascript %}
+<script src="{% static 'assets/vendor/select2/js/select2.min.js' %}"></script>
 <script>
 $(document).ready(function() {
     // Get the previously active tab from local storage
@@ -1784,6 +1785,7 @@ $(document).ready(function() {
         });
     });
 });
+
 </script>
 <script>
     let arbeitsListe = JSON.parse('{{ vertrieb_angebot.Arbeits_liste|escapejs }}');
