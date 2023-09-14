@@ -1317,7 +1317,7 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         if self.request.user != user and not self.request.user.is_staff:  # type: ignore
             raise Http404()
 
-        user_angebots = self.model.objects.filter(user=user)  # type: ignore
+        user_angebots = self.model.objects.filter(user=user, angebot_id_assigned=True)  # type: ignore
 
         angebot_urls = [
             reverse("serve_pdf", args=[vertrieb_angebot.angebot_id])  # type:ignore
