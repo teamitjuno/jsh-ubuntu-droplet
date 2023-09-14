@@ -1,9 +1,8 @@
 import os
 import json
 import requests
-from dotenv import load_dotenv, find_dotenv, set_key
+from dotenv import load_dotenv, set_key
 from django.utils import timezone
-from datetime import timedelta
 import datetime
 from django.utils.formats import date_format
 from config.settings import (
@@ -13,8 +12,7 @@ from config.settings import (
     ZOHO_CLIENT_SECRET,
     ZOHO_REFRESH_TOKEN,
 )
-from vertrieb_interface.models import VertriebAngebot
-
+load_dotenv()
 VERTRIEB_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
 BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Elektrikkalender"
 ACCESS_TOKEN_URL = "https://accounts.zoho.eu/oauth/v2/token"
