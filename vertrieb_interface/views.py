@@ -502,10 +502,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     )
 
     def handle_zoho_status_change(self, request, angebot_id):
+        user=request.user
+        
+
         try:
             vertrieb_angebot = VertriebAngebot.objects.get(
                 angebot_id=angebot_id, user=request.user
             )
+            print(" ANGEBOT_ID : ", (vertrieb_angebot.zoho_id))
             if vertrieb_angebot.angebot_id_assigned == True and vertrieb_angebot.zoho_id:
                 zoho_id = vertrieb_angebot.zoho_id
 
@@ -669,6 +673,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 print(kundennumer)
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.save()
                 form.instance.status = "bekommen"
                 vertrieb_angebot.angebot_id_assigned = True
                 print(pushAngebot(vertrieb_angebot, user_zoho_id))
@@ -696,7 +701,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             print(kundennumer)
             vertrieb_angebot.zoho_kundennumer = kundennumer
             vertrieb_angebot.zoho_id = int(zoho_id)
-
+            vertrieb_angebot.save()
             form.save()  # type:ignore
             CustomLogEntry.objects.log_action(
                 user_id=vertrieb_angebot.user_id,
