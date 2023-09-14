@@ -628,6 +628,21 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 )
         if "angebotsumme_rechnen" in request.POST:
             if form.is_valid():
+                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                name_to_kundennumer = {
+                    item["name"]: item["zoho_kundennumer"] for item in data
+                }
+                name_to_zoho_id = {
+                    item["name"]: item["zoho_id"] for item in data
+                }
+                name = form.cleaned_data["name"]
+                zoho_id = form.cleaned_data["zoho_id"]
+                kundennumer = name_to_kundennumer[name]
+                print(kundennumer)
+                zoho_id = name_to_zoho_id[name]
+                print(kundennumer)
+                vertrieb_angebot.zoho_kundennumer = kundennumer
+                vertrieb_angebot.zoho_id = int(zoho_id)
                 if vertrieb_angebot.angebot_id_assigned == True:
                     # type:ignore
                     form.save()  # type:ignore
@@ -639,6 +654,21 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 )
         if "bekommen_zu_machen" in request.POST:
             if form.is_valid():
+                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                name_to_kundennumer = {
+                    item["name"]: item["zoho_kundennumer"] for item in data
+                }
+                name_to_zoho_id = {
+                    item["name"]: item["zoho_id"] for item in data
+                }
+                name = form.cleaned_data["name"]
+                zoho_id = form.cleaned_data["zoho_id"]
+                kundennumer = name_to_kundennumer[name]
+                print(kundennumer)
+                zoho_id = name_to_zoho_id[name]
+                print(kundennumer)
+                vertrieb_angebot.zoho_kundennumer = kundennumer
+                vertrieb_angebot.zoho_id = int(zoho_id)
                 form.instance.status = "bekommen"
                 vertrieb_angebot.angebot_id_assigned = True
                 print(pushAngebot(vertrieb_angebot, user_zoho_id))
@@ -655,9 +685,17 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             name_to_kundennumer = {
                 item["name"]: item["zoho_kundennumer"] for item in data
             }
+            name_to_zoho_id = {
+                item["name"]: item["zoho_id"] for item in data
+            }
             name = form.cleaned_data["name"]
+            zoho_id = form.cleaned_data["zoho_id"]
             kundennumer = name_to_kundennumer[name]
+            print(kundennumer)
+            zoho_id = name_to_zoho_id[name]
+            print(kundennumer)
             vertrieb_angebot.zoho_kundennumer = kundennumer
+            vertrieb_angebot.zoho_id = int(zoho_id)
 
             form.save()  # type:ignore
             CustomLogEntry.objects.log_action(
