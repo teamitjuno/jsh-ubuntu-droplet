@@ -56,6 +56,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "status_change_date",
                     "user",
                     "is_locked",
+                    "angebot_id_assigned",
                     "termine_text",
                     "termine_id",
                 ),
