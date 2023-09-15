@@ -45,21 +45,29 @@ def get_headers():
 
 
 def refresh_access_token():
-    params = {
-        "refresh_token": ZOHO_REFRESH_TOKEN,
-        "client_id": ZOHO_CLIENT_ID,
-        "client_secret": ZOHO_CLIENT_SECRET,
-        "grant_type": "refresh_token",
-    }
-    response = requests.post(ACCESS_TOKEN_URL, params=params)
+    retry_count = 0
+    new_access_token = None
 
-    if response.status_code != HTTP_OK:
-        raise APIException(f"Error refreshing token: {response.status_code}")
+    while new_access_token is None and retry_count < MAX_RETRIES:
+        params = {
+            "refresh_token": ZOHO_REFRESH_TOKEN,
+            "client_id": ZOHO_CLIENT_ID,
+            "client_secret": ZOHO_CLIENT_SECRET,
+            "grant_type": "refresh_token",
+        }
+        response = requests.post(ACCESS_TOKEN_URL, params=params)
 
-    new_access_token = response.json().get("access_token")
+        if response.status_code != HTTP_OK:
+            raise APIException(f"Error refreshing token: {response.status_code}")
+
+        new_access_token = response.json().get("access_token")
+        retry_count += 1
+
+    if new_access_token is None:
+        raise APIException("Failed to retrieve a new access token after maximum retries.")
+
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
-
 
 def fetch_data_from_api(url, headers, params):
     response = requests.get(url, headers=headers, params=params)

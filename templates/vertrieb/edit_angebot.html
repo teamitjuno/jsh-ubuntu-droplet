@@ -747,39 +747,13 @@
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
                                                                             <button type="submit" form="main-form" name="bekommen_zu_machen" id="continueButtonn" onclick=saveFormAndGeneratePDF() class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
                                                                             
-                                                                        </div>
                                                                     </div>
-                                                                </div><!-- /.modal-content -->
-                                                            </div><!-- /.modal-dialog -->
-                                                        </div>
-
-                                                    {% comment %} {% endif %} {% endcomment %}
-                                                    {% comment %} <div class="row m-2">
-                                                        <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-outline-info rounded-pill">PDF Files </a>
-                                                    </div> {% endcomment %}
-
-                                                
-                                            
-                                            
-                                                {% comment %} {% if vertrieb_angebot.angebot_id_assigned %}
-                                                    <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Kalkulation PDF erstellen</a>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="col-sm-5">
-                                                        <button href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Kalkulation PDF erstellen</button>
+                                                                </div>
+                                                            </div><!-- /.modal-content -->
+                                                        </div><!-- /.modal-dialog -->
                                                     </div>
 
-                                                {% endif %} {% endcomment %}
-                                                {% comment %} {% if vertrieb_angebot.is_locked %}
-                                                    <div class="col-sm-5">
-                                                        <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
-                                                    </div>
-                                                {% else %}
-                                                <div class="col-sm-5">
-                                                    <button href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-danger opacity-25 rounded-pill" disabled>Angebot PDF erstellen</button>
-                                                </div>
-                                                {% endif %} {% endcomment %}
+
                                             
                                         </div>
                                     </div>
@@ -1536,7 +1510,7 @@
                                     <div class="card-body">
                                         <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
                                         <div class="row">
-                                                    {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' or vertrieb_angebot.status == 'abgelaufen' %}
+                                                    {% if user.role.name == 'user' and vertrieb_angebot.status == 'angenommen' %}
                                                         {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                                 {% else %}

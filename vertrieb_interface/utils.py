@@ -48,13 +48,10 @@ def load_vertrieb_angebot(data, user, kurz):
 
                     try:
                         instance = VertriebAngebot(**item)
-                        instance.full_clean()
-                        instance.save()
+
                     except:
                         item["email"] = "keine@email.com"
                         instance = VertriebAngebot(**item)
-                        instance.full_clean()
-                        instance.save()
 
                     print(f"VertriebAngebot for {item['name']} created successfully")
 

@@ -509,12 +509,12 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot = VertriebAngebot.objects.get(
                 angebot_id=angebot_id, user=request.user
             )
-            print(" ANGEBOT_ID : ", (vertrieb_angebot.zoho_id))
+            
             if vertrieb_angebot.angebot_id_assigned == True and vertrieb_angebot.zoho_id:
                 zoho_id = vertrieb_angebot.zoho_id
-
+                print(" ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-
+                print(fetched_angebote.get("Status"))
                 if fetched_angebote and fetched_angebote.get("Status") == "angenommen":
                     vertrieb_angebot.status = "angenommen"
                     vertrieb_angebot.status_change_field = None
@@ -549,61 +549,94 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
+        if zoho_id is not None:
+            data = fetch_current_user_angebot(request, zoho_id)
 
-        data = fetch_current_user_angebot(request, zoho_id)
+            for item in data:
+                vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
+                vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
 
-        for item in data:
-            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-            vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
+                vertrieb_angebot.angebot_bekommen_am = (
+                    item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
+                )
 
-            vertrieb_angebot.angebot_bekommen_am = (
-                item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
+                vertrieb_angebot.verbrauch = item["verbrauch"]
+
+                vertrieb_angebot.leadstatus = (
+                    item["leadstatus"] if item["leadstatus"] else ""
+                )
+                vertrieb_angebot.notizen = item["notizen"]
+                vertrieb_angebot.email = item["email"]
+                vertrieb_angebot.postanschrift_latitude = item["latitude"]
+                vertrieb_angebot.postanschrift_longitude = item["longitude"]
+
+                vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
+                vertrieb_angebot.termine_text = item["termine_text"]
+                vertrieb_angebot.termine_id = item["termine_id"]
+            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+            user = request.user
+            user_folder = os.path.join(
+                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+            )
+            calc_image = os.path.join(user_folder, "tmp.png")
+            calc_image_suffix = os.path.join(
+                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+            )
+            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+            relative_path_suffix = os.path.relpath(
+                calc_image_suffix, start=settings.MEDIA_ROOT
             )
 
-            vertrieb_angebot.verbrauch = item["verbrauch"]
+            context = self.get_context_data()
+            countdown = vertrieb_angebot.countdown()
+            context = {
+                "countdown": vertrieb_angebot.countdown(),
+                "user": user,
+                "vertrieb_angebot": vertrieb_angebot,
+                "form": form,
+                "calc_image": relative_path,
+                "calc_image_suffix": relative_path_suffix,
+                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+                "OWNER_ID": settings.OWNER_ID,
+                "STYLE_ID": settings.STYLE_ID,
+                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+            }
 
-            vertrieb_angebot.leadstatus = (
-                item["leadstatus"] if item["leadstatus"] else ""
+            return render(request, self.template_name, context)
+        else:
+            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+            user = request.user
+            user_folder = os.path.join(
+                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
             )
-            vertrieb_angebot.notizen = item["notizen"]
-            vertrieb_angebot.email = item["email"]
-            vertrieb_angebot.postanschrift_latitude = item["latitude"]
-            vertrieb_angebot.postanschrift_longitude = item["longitude"]
+            calc_image = os.path.join(user_folder, "tmp.png")
+            calc_image_suffix = os.path.join(
+                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+            )
+            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+            relative_path_suffix = os.path.relpath(
+                calc_image_suffix, start=settings.MEDIA_ROOT
+            )
 
-            vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
-            vertrieb_angebot.termine_text = item["termine_text"]
-            vertrieb_angebot.termine_id = item["termine_id"]
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
-        user = request.user
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(
-            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-        )
-        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(
-            calc_image_suffix, start=settings.MEDIA_ROOT
-        )
+            context = self.get_context_data()
+            countdown = vertrieb_angebot.countdown()
+            context = {
+                "countdown": vertrieb_angebot.countdown(),
+                "user": user,
+                "vertrieb_angebot": vertrieb_angebot,
+                "form": form,
+                "calc_image": relative_path,
+                "calc_image_suffix": relative_path_suffix,
+                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+                "OWNER_ID": settings.OWNER_ID,
+                "STYLE_ID": settings.STYLE_ID,
+                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+            }
 
-        context = self.get_context_data()
-        countdown = vertrieb_angebot.countdown()
-        context = {
-            "countdown": vertrieb_angebot.countdown(),
-            "user": user,
-            "vertrieb_angebot": vertrieb_angebot,
-            "form": form,
-            "calc_image": relative_path,
-            "calc_image_suffix": relative_path_suffix,
-            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-            "OWNER_ID": settings.OWNER_ID,
-            "STYLE_ID": settings.STYLE_ID,
-            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-        }
+            return render(request, self.template_name, context)
 
-        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
@@ -680,7 +713,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 form.save()  # type:ignore
 
                 return redirect(
-                    "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                    "vertrieb_interface:create_angebot_pdf_user", vertrieb_angebot.angebot_id
                 )
 
         elif form.is_valid():
