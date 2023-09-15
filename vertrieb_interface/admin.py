@@ -8,6 +8,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "user",
         "status",
         "zoho_id",
+        "angebot_id_assigned",
         "zoho_kundennumer",
         "name",
         "termine_text",
@@ -28,6 +29,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "user",
         "status",
         "is_locked",
+        "angebot_id_assigned",
     )
 
     readonly_fields = (

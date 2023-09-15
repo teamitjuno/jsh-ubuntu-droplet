@@ -449,7 +449,7 @@ class VertriebAngebot(TimeStampMixin):
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
-
+        self.name_display_value = self.swap_name_order
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
@@ -602,6 +602,16 @@ class VertriebAngebot(TimeStampMixin):
         response = requests.get(url)
         print(response.json())
         return response.json()
+
+    @property
+    def swap_name_order(self):
+        parts = self.name.split()
+        if len(parts) == 2:
+            return f"{parts[1]} {parts[0]}"
+        elif len(parts) == 3:
+            return f"{parts[2]} {parts[1]} {parts[0].lower()}"
+        else:
+            return self.name
 
     @property
     def get_building_insights(
@@ -1300,7 +1310,7 @@ class VertriebAngebot(TimeStampMixin):
         dt = {
             "firma": self.firma,
             "anrede": self.anrede,
-            "kunde": self.name,
+            "kunde": self.name_display_value,
             "adresse": self.full_adresse,
             "vertriebler": str(self.get_vertribler),
             "vertriebAbk": self.vertrieb_abk,
