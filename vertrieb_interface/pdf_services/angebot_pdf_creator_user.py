@@ -698,7 +698,7 @@ class PDF(FPDF):
             # Seite voll
             y = y + 70
             self.set_y(y)
-        if data["optionVorh"]:
+        if data["optionVorh"] or data["elwa"] or data["thor"] or data["anzOptimierer"] > 0:
             # Optionales Zubehör zur Anlagenoptimierung
             if y == 235 or y == 220:
                 self.add_page()
