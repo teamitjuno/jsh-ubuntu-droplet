@@ -245,7 +245,6 @@ def process_current_user_data(data, current_angebot_list):
 
     return current_angebot_list
 
-
 def update_status(zoho_id, new_status):
     """
     Update the 'Status' field of a given Zoho record.
@@ -274,6 +273,11 @@ def update_status(zoho_id, new_status):
     # Making the POST request
     response = requests.put(update_url, headers=headers, json=payload)
 
+    # If Unauthorized, refresh token and retry
+    if response.status_code == HTTP_UNAUTHORIZED:
+        headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
+        response = requests.put(update_url, headers=headers, json=payload)
+
     # Handling the response
     if response.status_code != HTTP_OK:
         raise APIException(
@@ -281,6 +285,7 @@ def update_status(zoho_id, new_status):
         )
 
     return response.json()
+
 
 
 

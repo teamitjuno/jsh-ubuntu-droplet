@@ -986,7 +986,8 @@ class VertriebAngebotForm(ModelForm):
                     form.status_change_field = now_localized
                     form.status_change_date = timezone.now().date().isoformat()
                     db_object.countdown_on = True
-                    update_status(db_zoho_id, form.status)
+                    if db_zoho_id:
+                        update_status(db_zoho_id, form.status)
                     # post_angebot_to_zoho(form)
                     db_object.save()
                     form.save()
