@@ -431,7 +431,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     print(response)
     if response.status_code == HTTP_UNAUTHORIZED:
         headerMap["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
-        response = requests.put(url, headers=headerMap, json=dataMap)
+        response = requests.post(url, headers=headerMap, json=dataMap)
 
     # Handling the response
     if response.status_code != HTTP_OK:
