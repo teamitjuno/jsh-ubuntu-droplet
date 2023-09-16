@@ -403,8 +403,6 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     elwa = return_lower_bull(vertrieb_angebot.elwa)
     thor = return_lower_bull(vertrieb_angebot.thor)
 
-    print(notstrom, elwa, thor)
-
     dataMap = {"data": {
       "Angebot_ID":f"{vertrieb_angebot.angebot_id}",
       "Privatkunde_ID":f"{vertrieb_angebot.zoho_id}",
@@ -429,4 +427,16 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     }
     
     response = requests.post(url, json=dataMap,headers=headerMap)
+    # If Unauthorized, refresh token and retry
+    print(response)
+    if response.status_code == HTTP_UNAUTHORIZED:
+        headerMap["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
+        response = requests.put(url, headers=headerMap, json=dataMap)
+
+    # Handling the response
+    if response.status_code != HTTP_OK:
+        raise APIException(
+            f"Error updating status: {response.status_code} - {response.text}"
+        )
+    
     return response

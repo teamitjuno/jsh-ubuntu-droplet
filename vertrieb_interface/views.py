@@ -701,15 +701,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 name = form.cleaned_data["name"]
                 zoho_id = form.cleaned_data["zoho_id"]
                 kundennumer = name_to_kundennumer[name]
-                print(kundennumer)
+                print("Kundennummer:", kundennumer)
                 zoho_id = name_to_zoho_id[name]
-                print(kundennumer)
+                print("ZOHO_ID:", zoho_id)
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
                 form.instance.status = "bekommen"
                 vertrieb_angebot.angebot_id_assigned = True
-                print(pushAngebot(vertrieb_angebot, user_zoho_id))
+                pushAngebot(vertrieb_angebot, user_zoho_id)
                 form.save()  # type:ignore
 
                 return redirect(
