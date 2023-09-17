@@ -239,6 +239,23 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Preis Netto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Preis Brutto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    
                                                     </div>
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
@@ -295,31 +312,24 @@
                                                                     <tr>
                                                                         <th>Ersparnis [€]</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
-                                                                        
                                                                     </tr>
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">AngebotSumme rechnen</div>
+                                                            <div class="card-body">
+                                                                                                                                           
+                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
+                                                                {% comment %} onclick=saveFormAngebotSummeRechnen() {% endcomment %}
+                                                            </div>
+                                                        </div>
+                                                    
                                                     </div>
                                                 </div>
                                                 <div class="row"> 
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
                                                     
                                                     {% if user.role.name == "admin" %}
                                                     <div class="col-lg-3">
@@ -367,16 +377,7 @@
                                                         </div>
                                                     </div>
                                                     {% endif %}
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">AngebotSumme rechnen</div>
-                                                            <div class="card-body">
-                                                                                                                                           
-                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
-                                                                {% comment %} onclick=saveFormAngebotSummeRechnen() {% endcomment %}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
                                                 </div> 
                                             </div>
                                         </div>
@@ -498,6 +499,12 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
+                                                            <div class="card-body">
+                                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Kalkulation Erstellen</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <!-- Column 2 -->
                                                     <div class="col-lg-4">
@@ -524,6 +531,12 @@
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
+                                                            <div class="card-body">
+                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -568,24 +581,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
-                                                            <div class="card-body">
-                                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Kalkulation Erstellen</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
-                                                            <div class="card-body">
-                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -1878,6 +1873,7 @@ $(document).ready(function() {
         })
     }(window.jQuery)
 </script>
+
 {% endblock %}
 
 {% block extra_js %}
