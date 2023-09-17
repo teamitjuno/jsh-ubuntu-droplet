@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+from time import sleep
 from dotenv import load_dotenv, set_key
 from django.utils import timezone
 import datetime
@@ -61,6 +62,7 @@ def refresh_access_token():
             raise APIException(f"Error refreshing token: {response.status_code}")
 
         new_access_token = response.json().get("access_token")
+        sleep(1)
         retry_count += 1
 
     if new_access_token is None:
