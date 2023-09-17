@@ -10,12 +10,14 @@ from adminfeautures.views import (
     update_andere_konfiguration_werte_view,
     avatar_upload_form,
     delete_user,
+    test_delete_selected,
     PasswordUpdateView,
     ViewAdminOrders,
     UpdateAdminAngebot,
     DeleteAngebot,
     UserUpdateView,
     TopVerkauferContainerUpdateView,
+    DeleteSelectedAngebots,
 )
 
 app_name = "adminfeautures"
@@ -51,6 +53,9 @@ urlpatterns = [
         DeleteAngebot.as_view(),
         name="delete_angebot",
     ),
+    path("user/<int:user_id>/orders/test-delete-selected/", test_delete_selected, name="test_delete_selected"),
+
+    path("user/<int:user_id>/orders/delete-selected/", DeleteSelectedAngebots.as_view(), name="delete_selected_angebots"),
     path("user/<int:user_id>/upload-avatar/", avatar_upload_form, name="upload_avatar"),
     path(
         "prices/update_solar_module_preise/<int:module_id>/",

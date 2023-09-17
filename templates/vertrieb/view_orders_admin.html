@@ -4,7 +4,31 @@
 {% load widget_tweaks %}
 
 {% block content %}
+<script>
+    function deleteSelectedAngebots() {
+    let userId = "{{ user_id }}";  // Directly interpolate the user_id from the template
+    let selectedAngebotIds = [];
+    document.querySelectorAll('.angebot-checkbox:checked').forEach(function(checkbox) {
+        selectedAngebotIds.push(checkbox.value);
+    });
 
+    fetch('/user/' + userId + '/orders/delete-selected/', {
+        method: 'POST',
+        body: JSON.stringify({ selected_angebot_ids: selectedAngebotIds }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Selected Angebots deleted successfully!") {
+            location.reload();
+        }
+    });
+}
+
+</script>
 <div class="content-page">
     <div class="content">
 
@@ -17,6 +41,9 @@
                         </div>
                         
                         <h4 class="page-title">PDF Angebote von {{ vertrieb_angebot.user.first_name}}</h4>
+                        
+                        
+
                     </div>
                 </div>
             </div>      
@@ -46,6 +73,9 @@
                                                     <th>Admin Ang PDF</th>
                                                     <th>Ticket PDF</th>
                                                     <th>Kalkulation PDF</th>
+                                                    <th>Select</th>
+                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -191,11 +221,19 @@
                                                             <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
                                                             {% endif %}
                                                         </td>
+                                                        <td>
+                                                            <input type="checkbox" class="angebot-checkbox" value="{{ vertrieb_angebot.angebot_id }}">
+                                                        </td>
+
                                                     </tr>
                                                 
                                                 {% endfor %}
                                             </tbody>
                                             </table>
+                                            <div>Debug User ID: {{ user_id }}</div>
+                                            <input type="hidden" id="userId" value="{{ user_id }}">
+
+                                            <button onclick="deleteSelectedAngebots()">Delete Selected</button>
                                         </div>
                                     </div> 
                                 </div>

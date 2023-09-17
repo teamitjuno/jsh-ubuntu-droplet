@@ -1,6 +1,7 @@
 {% load static %}
 {% block content %}
 <!-- Form for uploading avatar -->
+{% if not user.avatar %}
 <form action="{% url 'adminfeautures:upload_avatar' user.id %}" method="post" enctype="multipart/form-data" id="myAwesomeDropzone">
     {% csrf_token %}
     <div class="fallback">
@@ -16,30 +17,6 @@
     <button id="submit-all">Upload All Files</button>
 </form>
 
-<!-- Preview of uploaded file -->
-<div class="dropzone-previews mt-3" id="file-previews"></div>
-
-<!-- Template for file preview -->
-<div class="d-none" id="uploadPreviewTemplate">
-    <div class="card mt-1 mb-0 shadow-none border">
-        <div class="p-2">
-            <div class="row align-items-center">
-                <div class="col-auto">
-                    <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
-                </div>
-                <div class="col ps-0">
-                    <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
-                    <p class="mb-0" data-dz-size></p>
-                </div>
-                <div class="col-auto">
-                    <a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" data-dz-remove>
-                        <i class="ri-close-line"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
 // Configurations for Dropzone
 Dropzone.options.myAwesomeDropzone = {
@@ -67,7 +44,7 @@ Dropzone.options.myAwesomeDropzone = {
     }
 };
 </script>
-
+{% endif %}
 <!-- plugin js -->
 <script src="{% static 'assets/vendor/dropzone/min/dropzone.min.js' %}"></script>
 <!-- init js -->

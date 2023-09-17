@@ -14,6 +14,7 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponseServerError,
 )
+from django.http import HttpResponse
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear, Coalesce
 from django.views.decorators.http import require_POST
@@ -22,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.views.generic import ListView, UpdateView, DeleteView
+from django.views.generic import ListView, UpdateView, DeleteView, View
 from django.utils.decorators import method_decorator
 from django.forms import RadioSelect
 from django.forms.widgets import RadioSelect
@@ -313,6 +314,11 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
             raise PermissionDenied()
         self.user = get_object_or_404(User, pk=kwargs["user_id"])
         return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_id'] = self.kwargs.get("user_id")
+        return context
 
     def get_queryset(self):
         queryset = self.model.objects.filter(user=self.user)  # type: ignore
@@ -529,13 +535,29 @@ class DeleteAngebot(DeleteView):
     template_name = "view_admin_orders.html"
 
     def get_success_url(self):
-        return reverse(
-            "adminfeautures:user_list",
-        )
-
+        user_id = self.kwargs["user_id"]
+        return reverse("adminfeautures:user-orders", args=[user_id])
     def get_object(self, queryset=None):
         return VertriebAngebot.objects.get(angebot_id=self.kwargs["angebot_id"])
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         return response
+    
+class DeleteSelectedAngebots(AdminRequiredMixin, View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            selected_angebot_ids = data.get("selected_angebot_ids")
+            VertriebAngebot.objects.filter(angebot_id__in=selected_angebot_ids).delete()
+        except (ValueError, KeyError) as e:
+            return HttpResponseBadRequest("Invalid request: {}".format(e))
+
+        return JsonResponse({"message": "Selected Angebots deleted successfully!"})
+
+def test_delete_selected(request, user_id):
+    return HttpResponse(f"Testing delete-selected for User ID: {user_id}")
