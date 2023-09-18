@@ -7,6 +7,7 @@ from django.http import (
     HttpResponseNotAllowed,
     JsonResponse,
     StreamingHttpResponse,
+    HttpResponse
 )
 from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -97,3 +98,17 @@ def delete_user(request, user_id):
             messages.error(request, "You cannot delete your own account!")
 
     return redirect("adminfeautures:user_list")
+
+def zoho_callback(request):
+    # Get the authorization code from the query parameters
+    auth_code = request.GET.get('code', None)
+
+    if not auth_code:
+        return HttpResponse("Authorization code not found.", status=400)
+
+    # Here, you'd typically exchange the authorization code for an access token
+    # and then store that token for future use. This process might involve
+    # making a POST request to Zoho's token endpoint.
+
+    # For now, let's just return a simple response
+    return HttpResponse(f"Received authorization code: {auth_code}")

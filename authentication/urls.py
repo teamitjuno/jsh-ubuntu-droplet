@@ -9,6 +9,7 @@ from authentication.views import (
     update_vertrieblers,
     update_elektrikers,
     protected_schema_view,
+    zoho_callback
 )
 
 app_name = "authentication"
@@ -18,6 +19,7 @@ urlpatterns = [
     path("", home, name="home"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path('auth/callback', zoho_callback, name='zoho_callback'),
     # Updates
     path("update_vertrieblers/", update_vertrieblers, name="update_vertrieblers"),
     path("admin/update_elektrikers/", update_elektrikers, name="update_elektrikers"),
