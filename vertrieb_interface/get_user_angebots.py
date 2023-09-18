@@ -108,9 +108,9 @@ def fetch_user_angebote_all(request):
 
 def fetch_angenommen_status(request, zoho_id):
     
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+    
     url = f"{VERTRIEB_URL}/{zoho_id}"
-    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+    headers = get_headers()
     current_angebot_list = []
     start_index = 1
 
@@ -131,9 +131,8 @@ def fetch_angenommen_status(request, zoho_id):
 
 
 def fetch_current_user_angebot(request, zoho_id):
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
     url = f"{VERTRIEB_URL}/{zoho_id}"
-    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+    headers = get_headers()
     current_angebot_list = []
     start_index = 1
 
