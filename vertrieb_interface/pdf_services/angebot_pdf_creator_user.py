@@ -940,7 +940,7 @@ class PDF(FPDF):
         self.add_page()
         y = 30
         y_tmp = 0
-        if not data["optionVorh"]:
+        if not data["optionVorh"] and not data["elwa"] and not data["thor"] and not data["anzOptimierer"] > 0:
             self.line(10, y + 7, 86, y + 7)
             # self.line(10, y + 13, 200, y + 13)
             # self.line(10, y + 19, 148, y + 19)

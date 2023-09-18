@@ -136,6 +136,10 @@ SERVER_UPLINK_KEY = os.getenv("SERVER_UPLINK_KEY")
 CLIENT_UPLINK_KEY = os.getenv("CLIENT_UPLINK_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", default="openaikey")
 DEVELOPEMENT_MODE = os.getenv(f"DEVELOPEMENT")
+TELEBOT_TOKEN = os.getenv("TELEBOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
+TELEGRAM_LOGGING = True
 
 DATABASES = {
     "default": {

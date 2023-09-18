@@ -98,6 +98,7 @@ django-cors-headers = "==4.2.0"
 fitz = "*"
 pymupdf = "*"
 bcrypt = "*"
+pytelegrambotapi = "*"
 
 [dev-packages]
 
