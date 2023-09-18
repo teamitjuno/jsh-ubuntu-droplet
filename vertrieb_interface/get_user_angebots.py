@@ -5,8 +5,7 @@ import requests
 import datetime
 from time import sleep
 from dotenv import load_dotenv, set_key
-from django.utils import timezone
-from django.utils.formats import date_format
+from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
     ENV_FILE,
     ZOHO_ACCESS_TOKEN,
@@ -57,6 +56,7 @@ def refresh_access_token():
 
         if response.status_code != HTTP_OK:
             print(f"Unexpected status code on attempt {retry_count + 1}: {response.status_code} - {response.content.decode('utf-8')}")
+            send_message_to_bot(f"Unexpected status code on attempt {retry_count + 1}: {response.status_code} - {response.content.decode('utf-8')}")
             sleep(SLEEP_TIME)
             retry_count += 1
             continue
@@ -67,12 +67,14 @@ def refresh_access_token():
         # Log the response content if access_token is not found
         if new_access_token is None:
             print(f"Failed to retrieve access token on attempt {retry_count + 1}. Response content: {response.content.decode('utf-8')}")
+            send_message_to_bot(f"Failed to retrieve access token on attempt {retry_count + 1}. Response content: {response.content.decode('utf-8')}")
         
         # Increase the sleep time after each unsuccessful attempt
         sleep(SLEEP_TIME * (retry_count + 1))
         retry_count += 1
 
     if new_access_token is None:
+        send_message_to_bot("Failed to retrieve a new access token after maximum retries.")
         raise APIException("Failed to retrieve a new access token after maximum retries.")
 
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
@@ -284,6 +286,7 @@ def update_status(zoho_id, new_status):
 
     # Handling the response
     if response.status_code != HTTP_OK:
+        send_message_to_bot(f"Error updating status: {response.status_code} - {response.text}")
         raise APIException(
             f"Error updating status: {response.status_code} - {response.text}"
         )
@@ -338,8 +341,9 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
     # Handling the response
     if response.status_code != HTTP_OK:
+        send_message_to_bot(f"Error pushing data: {response.status_code} - {response.text}")
         raise APIException(
-            f"Error updating status: {response.status_code} - {response.text}"
+            f"Error pushing data: {response.status_code} - {response.text}"
         )
     
     return response
