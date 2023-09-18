@@ -18,7 +18,7 @@ from django.views import View
 from django.views.generic import ListView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect, Http404, JsonResponse, FileResponse
+from django.http import HttpResponseRedirect, Http404, JsonResponse, FileResponse, HttpResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.formats import date_format
@@ -29,12 +29,9 @@ from django.db.models import IntegerField, Q, Sum, Count
 from django.views.defaults import page_not_found
 from django.conf import settings
 
-# Third party libraries
-from dotenv import load_dotenv
-
 # Local imports
 from config import settings
-from config.settings import ENV_FILE, EMAIL_BACKEND, TELEGRAM_LOGGING
+from config.settings import EMAIL_BACKEND, TELEGRAM_LOGGING
 from prices.models import SolarModulePreise
 from calculator.models import Calculator
 from calculator.forms import CalculatorForm
@@ -64,9 +61,6 @@ from authentication.forms import TopVerkauferContainerViewForm
 now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
-
-load_dotenv(ENV_FILE)
-
 
 def handler404(request, exception):
     return render(request, "404.html", status=404)

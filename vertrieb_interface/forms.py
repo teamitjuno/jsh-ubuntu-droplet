@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from vertrieb_interface.get_user_angebots import update_status, post_angebot_to_zoho
+from vertrieb_interface.get_user_angebots import update_status
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot

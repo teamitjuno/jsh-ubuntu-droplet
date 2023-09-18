@@ -100,15 +100,10 @@ def delete_user(request, user_id):
     return redirect("adminfeautures:user_list")
 
 def zoho_callback(request):
-    # Get the authorization code from the query parameters
+    
     auth_code = request.GET.get('code', None)
 
     if not auth_code:
         return HttpResponse("Authorization code not found.", status=400)
 
-    # Here, you'd typically exchange the authorization code for an access token
-    # and then store that token for future use. This process might involve
-    # making a POST request to Zoho's token endpoint.
-
-    # For now, let's just return a simple response
     return HttpResponse(f"Received authorization code: {auth_code}")
