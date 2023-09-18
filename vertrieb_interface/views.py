@@ -520,7 +520,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 zoho_id = vertrieb_angebot.zoho_id
                 if TELEGRAM_LOGGING:
                     send_message_to_bot(f"{user.email}: Handling status change... ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}")
-                print(f"{user.email}: Opened Angebot {vertrieb_angebot.ange} Handling status change... ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
+                print(f"{user.email}: Opened Angebot {vertrieb_angebot.angebot_id} Handling status change... ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
                 print("Angebot status handled: ", fetched_angebote.get("Status"))
                 if TELEGRAM_LOGGING:
