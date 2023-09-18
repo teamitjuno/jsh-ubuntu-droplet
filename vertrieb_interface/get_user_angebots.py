@@ -44,7 +44,6 @@ def get_headers():
     access_token = ZOHO_ACCESS_TOKEN or refresh_access_token()
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-
 def refresh_access_token():
     retry_count = 0
     new_access_token = None
@@ -62,6 +61,11 @@ def refresh_access_token():
             raise APIException(f"Error refreshing token: {response.status_code}")
 
         new_access_token = response.json().get("access_token")
+        
+        # Log the response content if access_token is not found
+        if new_access_token is None:
+            print(f"Failed to retrieve access token on attempt {retry_count + 1}. Response content: {response.content.decode('utf-8')}")
+
         sleep(2)
         retry_count += 1
 
@@ -70,6 +74,7 @@ def refresh_access_token():
 
     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
     return new_access_token
+
 
 def fetch_data_from_api(url, headers, params):
     response = requests.get(url, headers=headers, params=params)
