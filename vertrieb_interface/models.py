@@ -941,7 +941,7 @@ class VertriebAngebot(TimeStampMixin):
         nutzEnergie = float(self.verbrauch)
         if self.erzeugte_energie < nutzEnergie:
             nutzEnergie = float(self.erzProJahr) * float(self.modulsumme_kWp)
-        if self.speicher and self.anz_speicher != 0:
+        if self.anz_speicher != 0:
             nutzEnergie = nutzEnergie * BATT_DICT[self.anz_speicher]
         else:
             nutzEnergie = nutzEnergie * DEFAULT_BATT_USAGE
