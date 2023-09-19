@@ -25,7 +25,7 @@ HTTP_UNAUTHORIZED = 401
 LIMIT_ALL = 200
 LIMIT_CURRENT = 200
 MAX_RETRIES = 9
-SLEEP_TIME = 3
+SLEEP_TIME = 4
 
 # Exceptions
 class APIException(Exception):
