@@ -237,6 +237,12 @@
                                                                         <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }}</td>
                                                                     </tr>
                                                                 </table>
+                                                                 <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Zahlungsmodalitäten</th>
+                                                                        <td>{{ form.zahlungsbedingungen }}</td>
+                                                                    </tr>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                         
@@ -255,6 +261,7 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+
                                                     
                                                     </div>
                                                     <div class="col-lg-3">
@@ -1746,10 +1753,7 @@ $(document).ready(function() {
                 
                 
                 
-                // Only set value if data.verbrauch is not empty
-                if (data.verbrauch) {
-                    $("#id_verbrauch").val(data.verbrauch);
-                }
+
             }
         });
     });

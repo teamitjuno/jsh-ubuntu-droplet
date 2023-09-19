@@ -1351,6 +1351,7 @@ class VertriebAngebot(TimeStampMixin):
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "eddiPreis": self.get_optional_accessory_price("eddi"),
+            "zahlungs_bedingungen": self.zahlungsbedingungen,
             "angebotssumme": self.angebots_summe,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

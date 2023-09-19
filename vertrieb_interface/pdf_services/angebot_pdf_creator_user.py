@@ -14,6 +14,9 @@ class PDF(FPDF):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
         self.title1 = title1
+        self.set_left_margin(12.875)
+        self.set_right_margin(12.875)
+
 
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
@@ -46,7 +49,7 @@ class PDF(FPDF):
                 self.cell(0, 10, title, 0, 0, "")
             self.image(
                 os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg"),
-                x=170,
+                x=167,
                 y=10,
                 w=30,
                 h=15,
@@ -1213,7 +1216,7 @@ class PDF(FPDF):
         self.set_y(70)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, netto, 0, 0, "R")
-        self.line(175, 70, 200, 70)
+        self.line(175, 70, 197, 70)
         # Verbindlichkeiten
         self.set_y(80)
         self.set_font("JUNO Solar Lt", "B", 12)
@@ -1231,28 +1234,34 @@ class PDF(FPDF):
         self.set_y(100)
         self.multi_cell(0, 6, "Zur Realisierung des Projektes, zur Anmeldung der Photovoltaik-Anlage beim Netzbetreiber, zur Registrierung der Photovoltaik-Anlage bei der Bundesnetzagentur, etc. erteilt der Auftraggeber dem Auftragnehmer eine Vollmacht gem. Anlage.", 0, 0, "L")  # type: ignore
         # Garantiebediungen
-        self.set_y(115)
+        self.set_y(120)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Garantiebedingungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(120)
+        self.set_y(125)
         self.multi_cell(0, 6, "Die Garantie der Hardware richtet sich nach den gültigen Garantiebedingungen des jeweiligen Herstellers.", 0, 0, "L")  # type: ignore
         # Auftragserteilung
-        self.set_y(130)
+        self.set_y(135)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Auftragserteilung", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(135)
+        self.set_y(140)
         self.multi_cell(0, 6, "Die oben stehenden Angebotsdetails werden akzeptiert und der Auftrag nach Prüfung der technischen Machbarkeit erteilt. Bis zur vollständigen Zahlung verbleibt das Eigentum an der Photovoltaik-Anlage beim Auftragnehmer. Der Auftraggeber tritt bis dahin die Ansprüche aus der Einspeisevergütung an den Auftragnehmer ab. Des Weiteren gestattet der Auftragnehmer bis zur vollständigen Zahlung dem Auftraggeber, die Photovoltaik-Anlage kostenfrei auf den Dachflächen zu belassen und zu betreiben.", 0, 0, "L")  # type: ignore
-        self.set_y(165)
+        self.set_y(170)
         self.multi_cell(0, 6, "Die Installation der Photovoltaikanlage erfolgt an einem Zählpunkt. Besitzt der Auftraggeber mehrere Stromzähler bzw. Zählpunkte (z.B. für eine Wärmepumpe) und möchte diese zusammenlegen, bietet der Auftragnehmer die Abmeldung verschiedener Zählpunkte beim Netzbetreiber an. Nach dem Ausbau der abgemeldeten Stromzähler durch den Netzbetreiber bleiben die dort installierten Verbraucher stromlos! Das erneute Verdrahten der stromlosen Verbraucher ist kein Bestandteil des hier vorliegenden Auftrags. Der Auftraggeber organisiert eigenständig Fachpersonal, welches die Verdrahtung durchführt.", 0, 0, "L")  # type: ignore
         # Zahlungsmodalitäten
-        self.set_y(200)
+        self.set_y(210)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Zahlungsmodalitäten", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(205)
-        self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
+        self.set_y(215)
+        if data["zahlungs_bedingungen"]:
+            if data["zahlungs_bedingungen"] == "20 – 70 – 10 %":
+                self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
+            elif data ["zahlungs_bedingungen"] == "10 – 80 – 10 %":
+                self.multi_cell(0, 6, "10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
+        else:
+            self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(255)

@@ -713,10 +713,15 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-check-input", "id": "notstrom"}
         ),
     )
-    # zahlungsbedingungen = forms.ChoiceField(
-    #     label="Zahlungsbedingungen",
-    #     widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
-    # )
+
+    zahlungsbedingungen = forms.ChoiceField(
+        choices=[
+            ("20 – 70 – 10 %", "20 – 70 – 10 %"),
+            ("10 – 80 – 10 %", "10 – 80 – 10 %"),
+        ],
+        initial="20 – 70 – 10 %",
+        widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
+    )
 
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
@@ -886,6 +891,7 @@ class VertriebAngebotForm(ModelForm):
             "solar_module",
             "modulanzahl",
             "garantieWR",
+            "zahlungsbedingungen",
             "elwa",
             "thor",
             "heizstab",
@@ -929,6 +935,7 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+        self.fields["zahlungsbedingungen"].widget.attrs.update({"id": "zahlungsbedingungen"})
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
             {"id": "id_vorname_nachname"}
