@@ -713,10 +713,10 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-check-input", "id": "notstrom"}
         ),
     )
-    zahlungsbedingungen = forms.ChoiceField(
-        label="Zahlungsbedingungen",
-        widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
-    )
+    # zahlungsbedingungen = forms.ChoiceField(
+    #     label="Zahlungsbedingungen",
+    #     widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
+    # )
 
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
