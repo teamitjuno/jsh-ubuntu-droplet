@@ -1054,6 +1054,9 @@ def load_user_angebots(request):
         )
 
 
+def replace_spaces_with_underscores(s: str) -> str:
+    return s.replace(' ', '_')
+
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     data = vertrieb_angebot.data
@@ -1072,7 +1075,7 @@ def create_angebot_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = vertrieb_angebot.user
     data = vertrieb_angebot.data
-
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
     if vertrieb_angebot.angebot_pdf_admin is None:
         pdf_content = angebot_pdf_creator.createOfferPdf(
             data,
@@ -1087,7 +1090,7 @@ def create_angebot_pdf(request, angebot_id):
     )
     response[
         "Content-Disposition"
-    ] = f"inline; filename=Angebot_{vertrieb_angebot.angebot_id}.pdf"
+    ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
     return response
 
 
@@ -1113,6 +1116,7 @@ def create_calc_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = request.user
     data = vertrieb_angebot.data
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     pdf_content = calc_pdf_creator.createCalcPdf2(
         data,
@@ -1122,7 +1126,7 @@ def create_calc_pdf(request, angebot_id):
     vertrieb_angebot.calc_pdf = pdf_content
     vertrieb_angebot.save()
 
-    pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
+    pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
 
     return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
 
@@ -1152,7 +1156,8 @@ def document_ticket_view(request, angebot_id):
 def serve_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-    filename = f"Angebot_{vertrieb_angebot.angebot_id}.pdf"
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
 
     response = FileResponse(
         vertrieb_angebot.angebot_pdf, content_type="application/pdf"
@@ -1166,7 +1171,9 @@ def serve_pdf(request, angebot_id):
 def serve_calc_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-    filename = f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf"
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    filename = f"Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf"
+
 
     response = FileResponse(vertrieb_angebot.calc_pdf, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
@@ -1178,7 +1185,8 @@ def serve_calc_pdf(request, angebot_id):
 def serve_ticket_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-    filename = f"Ticket_{vertrieb_angebot.angebot_id}.pdf"
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    filename = f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf"
 
     response = FileResponse(vertrieb_angebot.ticket_pdf, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
@@ -1204,8 +1212,8 @@ def send_support_message(request):
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
-            user.smtp_subject,
-            user.smtp_body,
+            subject,
+            body,
             user.smtp_username,
             ["si@juno-solar.com"],
             connection=connection,
@@ -1235,6 +1243,7 @@ def send_invoice(request, angebot_id):
         subject = f"Angebot Photovoltaikanlage {angebot_id}"
         geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
         body = geerter + user.smtp_body
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
         connection = get_connection(
             backend=EMAIL_BACKEND,
@@ -1254,7 +1263,7 @@ def send_invoice(request, angebot_id):
         )
         file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore
         email.attach(
-            f"Angebot_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+            f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
         )
 
         try:
@@ -1283,7 +1292,7 @@ def send_calc_invoice(request, angebot_id):
         subject = f"Kalkulation Photovoltaikanlage {angebot_id}"
         geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
         body = geerter + user.smtp_body
-
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
         connection = get_connection(
             backend=EMAIL_BACKEND,
             host=user.smtp_server,
@@ -1304,7 +1313,7 @@ def send_calc_invoice(request, angebot_id):
 
         file_data = pdf.tobytes()  # type:ignore
         email.attach(
-            f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf",
+            f"Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf",
             file_data,
             "application/pdf",
         )
@@ -1334,7 +1343,7 @@ def send_ticket_invoice(request, angebot_id):
         subject = f"Ticket Photovoltaikanlage {angebot_id}"
         geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
         body = geerter + user.smtp_body
-
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
         connection = get_connection(
             backend=EMAIL_BACKEND,
             host=user.smtp_server,
@@ -1355,7 +1364,7 @@ def send_ticket_invoice(request, angebot_id):
 
         file_data = pdf.tobytes()  # type:ignore
         email.attach(
-            f"Ticket_{vertrieb_angebot.angebot_id}.pdf",
+            f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf",
             file_data,
             "application/pdf",
         )
@@ -1452,9 +1461,10 @@ def PDFCalculationsListView(request, angebot_id):
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
     calc_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/")  # type: ignore
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     calc_files = [
-        os.path.join(calc_path, f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf")
+        os.path.join(calc_path, f"Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf")
         for angebot in user_angebots
     ]
 
@@ -1481,7 +1491,7 @@ def PDFTicketListView(request, angebot_id):
     ticket_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/")  # type: ignore
 
     ticket_files = [
-        os.path.join(ticket_path, f"Ticket_{vertrieb_angebot.angebot_id}.pdf")
+        os.path.join(ticket_path, f"Ticket_{vertrieb_angebot.name}_{vertrieb_angebot.angebot_id}.pdf")
         for angebot in user_angebots
     ]
 

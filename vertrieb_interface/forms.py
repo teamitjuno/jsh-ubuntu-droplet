@@ -713,6 +713,10 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-check-input", "id": "notstrom"}
         ),
     )
+    zahlungsbedingungen = forms.ChoiceField(
+        label="Zahlungsbedingungen",
+        widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
+    )
 
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
@@ -941,7 +945,6 @@ class VertriebAngebotForm(ModelForm):
         )
 
         self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
-        self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "wandhalterung_fuer_speicher"}
         )

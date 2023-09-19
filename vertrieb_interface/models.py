@@ -390,7 +390,11 @@ class VertriebAngebot(TimeStampMixin):
     # heizstab_ticket_preis = models.FloatField(
     #     default=0.00, validators=[MinValueValidator(0)]
     # ),
-
+    zahlungsbedingungen = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+    )
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
 
@@ -1387,7 +1391,7 @@ class VertriebAngebot(TimeStampMixin):
             "grundpreisGes": self.stromgrundpreis_gesamt,
             "arbeitspreisGes": self.arbeitspreis_gesamt,
             "erzeugteEnergie": self.erzeugte_energie,
-            "nutzEnergie": self.nutz_energie,
+            "nutzEnergie": self.nutzbare_nutzenergie,
             "restenergie": self.restenergie,
             "reststromPreis": self.rest_strom_preis,
             "einspVerg": self.einsp_verg,

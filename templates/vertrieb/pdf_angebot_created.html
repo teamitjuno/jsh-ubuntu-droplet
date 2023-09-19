@@ -70,7 +70,7 @@
                                                 <td>
                                                     <a href="{{ angebot_file }}" target="_blank" class="link-info">
                                                         {% if angebot.is_locked %}
-                                                            Angebot_{{ angebot.angebot_id }}.pdf
+                                                            {{ angebot.name }}_{{ angebot.angebot_id }}.pdf
                                                         {% endif %}
                                                     </a>                    
                                                 </td>
