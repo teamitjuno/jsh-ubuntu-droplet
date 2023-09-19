@@ -707,6 +707,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
+        if "zahlungs" in request.POST:
+            if form.is_valid():
+                instance = form.instance
+                instance.zahlungsbedingungen = form.cleaned_data['zahlungsbedingungen']
+                instance.save(update_fields=['zahlungsbedingungen'])
+                return redirect(
+                        "vertrieb_interface:create_angebot_pdf_user", vertrieb_angebot.angebot_id
+                    )
+
         if "bekommen_zu_machen" in request.POST:
             print(f"{user.email}: Creating PDF für ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
             if TELEGRAM_LOGGING:
