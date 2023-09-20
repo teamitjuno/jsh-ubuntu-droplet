@@ -1060,7 +1060,7 @@ class PDF(FPDF):
                 y += 20
 
         else:
-            y_tmp += 15
+            y_tmp += 20
 
         if data["notstrom"] == True:
             # Tabelle Eintrag Ersatzstrom
