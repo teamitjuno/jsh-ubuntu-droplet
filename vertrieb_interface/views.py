@@ -3,6 +3,7 @@ import os
 import io
 import json
 import datetime
+from time import sleep
 from pprint import pformat, pprint
 from urllib.parse import unquote
 
@@ -1286,6 +1287,10 @@ def serve_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
+    sleep(0.5)
+    # Check if the file exists and is not None
+    if not vertrieb_angebot.angebot_pdf:
+        return HttpResponse("File not found.", status=404)
 
     response = FileResponse(
         vertrieb_angebot.angebot_pdf, content_type="application/pdf"
@@ -1295,13 +1300,16 @@ def serve_pdf(request, angebot_id):
     return response
 
 
+
 @login_required
 def serve_calc_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     filename = f"Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf"
-
+    sleep(0.5)
+    if not vertrieb_angebot.calc_pdf:
+        return HttpResponse("File not found.", status=404)
 
     response = FileResponse(vertrieb_angebot.calc_pdf, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
@@ -1315,6 +1323,9 @@ def serve_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     filename = f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf"
+    sleep(0.5)
+    if not vertrieb_angebot.ticket_pdf:
+        return HttpResponse("File not found.", status=404)
 
     response = FileResponse(vertrieb_angebot.ticket_pdf, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"

@@ -1010,6 +1010,29 @@
         </div>
         {% block javascript %}
         {% endblock %}
+        <script>
+                document.addEventListener('DOMContentLoaded', function() {
+            let body = document.querySelector('body');
+            let spinner = document.querySelector('.spinner-border');
+
+            // This assumes the page is loading. Adjust accordingly based on your needs.
+            body.classList.add('loading');
+
+            // Make the spinner follow the cursor
+            document.addEventListener('mousemove', function(event) {
+                if (body.classList.contains('loading')) {
+                    spinner.style.left = (event.clientX - spinner.offsetWidth / 2) + 'px';
+                    spinner.style.top = (event.clientY - spinner.offsetHeight / 2) + 'px';
+                }
+            });
+
+            // When the page finishes loading, you might remove the 'loading' class.
+            // This is just an example, adapt to your actual loading criteria:
+            window.addEventListener('load', function() {
+                body.classList.remove('loading');
+            });
+        });
+        </script>
             <script>
                 function disableFor30Seconds(event) {
                     var loadButton = document.getElementById('loadButton');
