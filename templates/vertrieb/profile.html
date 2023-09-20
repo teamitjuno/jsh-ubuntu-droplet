@@ -5,6 +5,15 @@
 {% block content%}
 <div class="content-page">
     <div class="content">
+    {% if form.errors %}
+<ul>
+    {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+        <li><strong>{{ field }}:</strong> {{ error|escape }}</li>
+        {% endfor %}
+    {% endfor %}
+</ul>
+{% endif %}
         <!-- Start Content-->
         <div class="container-fluid">
             <!-- start page title -->
@@ -17,8 +26,10 @@
                     </div>
                 </div>
             </div>
+            <form method="post">
+                {% csrf_token %}
             <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
-                <div class="col-sm-4">
+                <div class="col-3">
                     <div class="card bg-gradient border-success border">
                         <div class="card-body profile-user-box">
                             <div class="row">
@@ -83,12 +94,11 @@
                         </div>
                     </div>
                 </div> <!-- end col-->
-                <div class="col-md-5">
+                <div class="col-4">
                     <div class="card border-primary border">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Anzeige von Containern auf der HOME-Seite</h5>
-                            <form method="post">
-                                {% csrf_token %}
+
                                 <table class="table table-striped">
                                     <tbody>
                                         <tr>
@@ -123,23 +133,160 @@
                                         </tr>
                                     </tbody>
                                 </table>
+
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col-->
+                {% comment %} </div>
+                <div class="row"> {% endcomment %}
+               <div class="col-4">
+                    <div class="card border-primary border">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Initial Data for ANGEBOT creation</h5>
+
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th>{{ form.map_notizen_container_view.label_tag }}</th>
+                                            <td>{{ form.map_notizen_container_view }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_solar_module.label_tag }}</th>
+                                            <td>{{ form.initial_solar_module }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_modulanzahl.label_tag }}</th>
+                                            <td>{{ form.initial_modulanzahl }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_anz_speicher.label_tag }}</th>
+                                            <td>{{ form.initial_anz_speicher }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_wandhalterung_fuer_speicher.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="id_initial_wandhalterung_fuer_speicher" {% if form.initial_wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.initial_wandhalterung_fuer_speicher.html_name }}" />
+                                                    <label class="custom-control-label" for="id_initial_wandhalterung_fuer_speicher" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_ausrichtung.label_tag }}</th>
+                                            <td>{{ form.initial_ausrichtung }}</td>
+                                        </tr>
+                                        
+                                        
+                                        
+                                        
+                                        <tr>
+                                            <th>{{ form.initial_elwa.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="id_initial_elwa" {% if form.initial_elwa.value %}checked{% endif %} data-switch="success" name="{{ form.initial_elwa.html_name }}" />
+                                                    <label class="custom-control-label" for="id_initial_elwa" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_thor.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="thor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
+                                                    <label class="custom-control-label" for="thor" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_heizstab.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="heizstab-checkbox" {% if form.heizstab.value %}checked{% endif %} data-switch="success" name="{{ form.heizstab.html_name }}" />
+                                                    <label class="custom-control-label" for="heizstab-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_notstrom.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="switch044" {% if form.initial_notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.initial_notstrom.html_name }}" />
+                                                    <label class="custom-control-label" for="switch044" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_anzOptimizer.label_tag }}</th>
+                                            <td>{{ form.initial_anzOptimizer }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_wallboxtyp.label_tag }}</th>
+                                            <td>{{ form.initial_wallboxtyp }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_wallbox_anzahl.label_tag }}</th>
+                                            <td>{{ form.initial_wallbox_anzahl }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.intial_kabelanschluss.label_tag }}</th>
+                                            <td>{{ form.intial_kabelanschluss }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_garantieWR.label_tag }}</th>
+                                            <td>{{ form.initial_garantieWR }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>{{ form.initial_komplex.label_tag }}</th>
+                                            <td>{{ form.initial_komplex }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>{{ form.initial_verbrauch.label_tag }}</th>
+                                            <td>{{ form.initial_verbrauch }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_grundpreis.label_tag }}</th>
+                                            <td>{{ form.initial_grundpreis }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_arbeitspreis.label_tag }}</th>
+                                            <td>{{ form.initial_arbeitspreis }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_prognose.label_tag }}</th>
+                                            <td>{{ form.initial_prognose }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_zeitraum.label_tag }}</th>
+                                            <td>{{ form.initial_zeitraum }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_bis10kWp.label_tag }}</th>
+                                            <td>{{ form.initial_bis10kWp }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_bis40kWp.label_tag }}</th>
+                                            <td>{{ form.initial_bis40kWp }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
                                 <!-- Submit Button -->
                                 <div class="text-right mt-3">
                                     <button type="submit" class="btn btn-outline-info rounded-pill">Speichern</button>
                                 </div>
-                            </form>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
-            
-                
-                    
-                
-            
-                
             </div>
+            
+
+            </form>
 
         </div>
+
+
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">

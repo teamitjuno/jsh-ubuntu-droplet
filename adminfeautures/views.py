@@ -35,7 +35,7 @@ from django.contrib.auth import update_session_auth_hash
 from config.settings import ENV_FILE
 from authentication.models import User
 from authentication.utils import handle_avatar_upload
-from authentication.forms import AvatarUploadForm, TopVerkauferContainerViewForm
+from authentication.forms import AvatarUploadForm, InitialAngebotDataViewForm
 from prices.models import (
     SolarModulePreise,
     ElektrikPreis,
@@ -109,7 +109,7 @@ class TopVerkauferContainerUpdateView(
     LoginRequiredMixin, UserUpdateSuccessUrlMixin, UpdateView
 ):
     model = User
-    form_class = TopVerkauferContainerViewForm
+    form_class = InitialAngebotDataViewForm
     template_name = "vertrieb/user_update_form.html"
 
     def form_valid(self, form):

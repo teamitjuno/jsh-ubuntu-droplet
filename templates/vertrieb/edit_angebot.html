@@ -143,9 +143,11 @@
                                                         </div>
                                                     </div>
                                                         <!-- Column 2 -->
-                                                                
+                                                            {% if user.map_notizen_container_view == "Map" %}
                                                                 {% include 'vertrieb/extra/map.html' %}
-                                                           
+                                                            {% elif user.map_notizen_container_view == "Notizen" %}
+                                                                {% include 'vertrieb/extra/notizen.html' %}
+                                                           {% endif %}
                                                 </div><!-- End of row -->
                                             </div>
 
@@ -327,9 +329,11 @@
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">AngebotSumme rechnen</div>
                                                             <div class="card-body">
-                                                                                                                                           
-                                                                <button type="submit" form="main-form" name="angebotsumme_rechnen" id="save-forms" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
-                                                                {% comment %} onclick=saveFormAngebotSummeRechnen() {% endcomment %}
+                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% else %}
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     
@@ -510,6 +514,11 @@
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
                                                             <div class="card-body">
                                                                 <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Kalkulation Erstellen</a>
+                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
+                                                                {% else %}
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -543,7 +552,11 @@
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
                                                             <div class="card-body">
-                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
+                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Kalkulation rechnen</button>
+                                                                {% else %}
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">Kalkulation rechnen</button>
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -920,7 +933,11 @@
                                                         </div>
                                                     </div>
                                                     {% comment %} <iframe width="100%" height="400px" frameborder="0" scrolling="yes" src="{% url 'vertrieb_interface:map_view' angebot_id=vertrieb_angebot.angebot_id %}" style="border:none;"></iframe> {% endcomment %}
-                                                 {% include 'vertrieb/extra/map.html' %}
+                                                 {% if user.map_notizen_container_view == "Map" %}
+                                                    {% include 'vertrieb/extra/map.html' %}
+                                                {% elif user.map_notizen_container_view == "Notizen" %}
+                                                    {% include 'vertrieb/extra/notizen.html' %}
+                                            {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -1675,7 +1692,7 @@
 {% endblock %}    
 {% block javascript %}
 <script src="{% static 'assets/vendor/select2/js/select2.min.js' %}"></script>
-<script>
+{% comment %} <script>
 $(document).ready(function() {
     // Get the previously active tab from local storage
     var activeTab = localStorage.getItem('activeTab');
@@ -1691,7 +1708,7 @@ $(document).ready(function() {
         localStorage.setItem('activeTab', tabId);
     });
 });
-</script>
+</script> {% endcomment %}
 
 <script>
   function getCookie(name) {
@@ -1715,7 +1732,7 @@ $(document).ready(function() {
       fetch('/update_vertrieb_angebot/{{ angebot_id }}/', {
           method: 'POST',
           body: JSON.stringify({
-              'verbrauch': document.getElementById('verbrauch-input').value,
+              
               'grundpreis': document.getElementById('grundpreis-input').value,
               'arbeitspreis': document.getElementById('arbeitspreis-input').value,
               'prognose': document.getElementById('prognose-input').value,
@@ -1758,9 +1775,6 @@ $(document).ready(function() {
                 $("#id_ort").val(data.ort);
                 $("#id_notizen").val(data.notizen);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
-                
-                
-                
 
             }
         });

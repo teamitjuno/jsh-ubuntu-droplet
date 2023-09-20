@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 from django.db import models
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator
 from django.utils import timezone
 from authentication.constants import DEFAULT_ROLES
 from django.contrib.auth.models import Permission
@@ -161,6 +162,68 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     angebot_statusubersicht_view = models.BooleanField(default=True)
     pv_rechner_view = models.BooleanField(default=True)
     anzahl_sol_module_view = models.BooleanField(default=True)
+
+    MAP_NOTIZEN_CHOICES = [
+        ("Map", "Map"),
+        ("Notizen", "Notizen"),
+    ]
+    map_notizen_container_view = models.CharField(choices=MAP_NOTIZEN_CHOICES, default="Map")
+
+    initial_verbrauch = models.FloatField(
+        default=15000, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    initial_grundpreis = models.FloatField(
+        default=9.8, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    initial_arbeitspreis = models.FloatField(
+        default=46.8, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    initial_prognose = models.FloatField(
+        default=5.2, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    initial_zeitraum = models.PositiveIntegerField(default=15)
+    initial_bis10kWp = models.FloatField(
+        default=8.20, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    initial_bis40kWp = models.FloatField(
+        default=7.10, validators=[MinValueValidator(0)]  # type: ignore
+    )
+    
+    initial_anz_speicher = models.PositiveIntegerField(default=0)
+    initial_wandhalterung_fuer_speicher = models.BooleanField(default=False)
+    
+    initial_ausrichtung = models.CharField(
+        max_length=10, default="Ost/West"
+    )
+    initial_komplex = models.CharField(
+        max_length=30, default="sehr komplex"
+    )
+
+    initial_solar_module = models.CharField(
+        max_length=100,
+        default="Phono Solar PS420M7GFH-18/VNH",
+    )
+    initial_modulanzahl = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
+    initial_garantieWR = models.CharField(
+        max_length=10, default="10 Jahre"
+    )
+    initial_elwa = models.BooleanField(default=False)
+    initial_thor = models.BooleanField(default=False)
+    initial_heizstab = models.BooleanField(default=False)
+    initial_notstrom = models.BooleanField(default=False)
+    initial_anzOptimizer = models.PositiveIntegerField(default=0)
+
+    initial_wallboxtyp = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    initial_wallbox_anzahl = models.PositiveIntegerField(default=0)
+    intial_kabelanschluss = models.FloatField(
+        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )    
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

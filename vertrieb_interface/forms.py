@@ -425,12 +425,13 @@ class VertriebAngebotForm(ModelForm):
     )
     verbrauch = forms.FloatField(
         label="Strom Verbrauch [kWh]",
-        initial=15000.0,
+        initial=5000,
         required=False,
         validators=[validate_floats],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
+                "placeholder": "Strom Verbrauch [kWh]",
                 "id": "id_verbrauch",
             }
         ),  # include your new validator here
@@ -604,7 +605,7 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.Textarea(
             attrs={
-                "rows": 6,
+                "rows": 16,
                 "class": "form-control",
                 "id": "id_notizen",
             }
@@ -665,7 +666,7 @@ class VertriebAngebotForm(ModelForm):
     )
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
-        initial=0,
+        
         validators=[validate_solar_module_anzahl],
         widget=forms.NumberInput(
             attrs={
@@ -914,7 +915,7 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-        # Save the initial status so we can check if it's changed in the save method
+    
         profile = User.objects.get(zoho_id=user.zoho_id)
         self.fields["solar_module"].choices = [
             (module.name, module.name)
@@ -935,6 +936,7 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+        self.fields["angebot_id_assigned"].widget.attrs.update({"id": "angebot_id_assigned"})
         self.fields["zahlungsbedingungen"].widget.attrs.update({"id": "zahlungsbedingungen"})
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(

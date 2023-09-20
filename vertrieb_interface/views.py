@@ -3,7 +3,7 @@ import os
 import io
 import json
 import datetime
-from pprint import pformat, pp
+from pprint import pformat, pprint
 from urllib.parse import unquote
 
 # Django related imports
@@ -55,7 +55,7 @@ from vertrieb_interface.pdf_services import (
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from .models import VertriebAngebot
 from authentication.models import User
-from authentication.forms import TopVerkauferContainerViewForm
+from authentication.forms import InitialAngebotDataViewForm
 
 
 now = timezone.now()
@@ -344,15 +344,27 @@ def reset_calculator(request):
 @user_passes_test(vertrieb_check)
 def profile(request, *args, **kwargs):
     user = request.user
+
     if request.method == "POST":
-        form = TopVerkauferContainerViewForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Setting updated successfully!")
+        
+        initial_data_form = InitialAngebotDataViewForm(request.POST, instance=request.user, user=request.user)
+        
+        if initial_data_form.is_valid():
+            initial_data_form.save()
+            print((request, "Settings updated successfully!"))
+            messages.success(request, "Settings updated successfully!")
             return redirect("vertrieb_interface:profile")
     else:
-        form = TopVerkauferContainerViewForm(instance=request.user)
-    context = {"user": user, "form": form}
+        print((request, "xyu"))
+        
+        initial_data_form = InitialAngebotDataViewForm(instance=request.user, user=request.user)
+        
+
+    context = {
+        "user": user, 
+        "form": initial_data_form 
+    }
+    
     return render(request, "vertrieb/profile.html", context)
 
 
@@ -373,33 +385,108 @@ def chat_bot(request):
         return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
+# @user_passes_test(vertrieb_check)
+# def create_angebot(request):
+#     form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
+#     if TELEGRAM_LOGGING:
+#         send_message_to_bot(f"{request.user}, Neue Angebot created")
+#     print(request.user, "Neue Angebot created")
+#     if form_angebot.is_valid():
+#         vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
+#         vertrieb_angebot.user = request.user
+
+#         vertrieb_angebot.save()
+
+#         return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
+
+#     if request.POST and "create_blank_angebot" in request.POST:
+#         blank_angebot = VertriebAngebot(user=request.user)
+#         blank_angebot.created_at = timezone.now()
+#         blank_angebot.current_date = datetime.datetime.now()
+
+#         blank_angebot.save()
+#         return HttpResponseRedirect(
+#             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
+#         )
+
+#     if not form_angebot.is_valid():
+#         if TELEGRAM_LOGGING:
+#             send_message_to_bot(form_angebot.errors)
+#         print(form_angebot.errors)
+#         return page_not_found(request, Exception())
+
+#     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
+
 @user_passes_test(vertrieb_check)
 def create_angebot(request):
-    form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
+    user = request.user
+
+    # Extract initial values from the User model instance
+    initial_data = {
+        "verbrauch": user.initial_verbrauch,
+        "grundpreis": user.initial_grundpreis,
+        "arbeitspreis": user.initial_arbeitspreis,
+        "prognose": user.initial_prognose,
+        "zeitraum": user.initial_zeitraum,
+        "bis10kWp": user.initial_bis10kWp,
+        "bis40kWp": user.initial_bis40kWp,
+        "anz_speicher": user.initial_anz_speicher,
+        "wandhalterung_fuer_speicher": user.initial_wandhalterung_fuer_speicher,
+        "ausrichtung": user.initial_ausrichtung,
+        "komplex": user.initial_komplex,
+        "solar_module": user.initial_solar_module,
+        "modulanzahl": user.initial_modulanzahl,
+        "garantieWR": user.initial_garantieWR,
+        "elwa": user.initial_elwa,
+        "thor": user.initial_thor,
+        "heizstab": user.initial_heizstab,
+        "notstrom": user.initial_notstrom,
+        "anzOptimizer": user.initial_anzOptimizer,
+        "wallboxtyp": user.initial_wallboxtyp,
+        "wallbox_anzahl": user.initial_wallbox_anzahl,
+        "kabelanschluss": user.intial_kabelanschluss,
+        "map_notizen_container_view": user.map_notizen_container_view
+    }
+
+    form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
+
     if TELEGRAM_LOGGING:
         send_message_to_bot(f"{request.user}, Neue Angebot created")
     print(request.user, "Neue Angebot created")
+
     if form_angebot.is_valid():
-        vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
-        vertrieb_angebot.user = request.user
-
+        vertrieb_angebot = form_angebot.save(commit=False)
+        vertrieb_angebot.user = user
         vertrieb_angebot.save()
-
         return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
 
     if request.POST and "create_blank_angebot" in request.POST:
-        blank_angebot = VertriebAngebot(user=request.user)
+        blank_angebot = VertriebAngebot(user=user)
         blank_angebot.created_at = timezone.now()
         blank_angebot.current_date = datetime.datetime.now()
-
+        blank_angebot.verbrauch = user.initial_verbrauch
+        blank_angebot.grundpreis = user.initial_grundpreis
+        blank_angebot.arbeitspreis = user.initial_arbeitspreis
+        blank_angebot.prognose = user.initial_prognose
+        blank_angebot.zeitraum = user.initial_zeitraum
+        blank_angebot.bis10kWp = user.initial_bis10kWp
+        blank_angebot.bis40kWp = user.initial_bis40kWp
+        blank_angebot.anz_speicher = user.initial_anz_speicher
+        blank_angebot.wandhalterung_fuer_speicher = user.initial_wandhalterung_fuer_speicher
+        blank_angebot.ausrichtung = user.initial_ausrichtung
+        blank_angebot.komplex = user.initial_komplex
+        blank_angebot.solar_module = user.initial_solar_module
+        blank_angebot.modulanzahl = user.initial_modulanzahl
+        blank_angebot.garantieWR = user.initial_garantieWR
+        blank_angebot.elwa = user.initial_elwa
+        blank_angebot.thor = user.initial_thor
+        blank_angebot.heizstab = user.initial_heizstab
+        blank_angebot.notstrom = user.initial_notstrom
+        blank_angebot.anzOptimizer = user.initial_anzOptimizer
+        blank_angebot.wallboxtyp = user.initial_wallboxtyp
+        blank_angebot.wallbox_anzahl = user.initial_wallbox_anzahl
+        blank_angebot.kabelanschluss = user.intial_kabelanschluss  # fixed typo from 'intial' to 'initial'
         blank_angebot.save()
-        # CustomLogEntry.objects.log_action(
-        #         user_id=request.user.id,
-        #         content_type_id=ContentType.objects.get_for_model(blank_angebot).pk,
-        #         object_id=blank_angebot.angebot_id,
-        #         object_repr=str(blank_angebot),
-        #         action_flag=ADDITION
-        #     )
         return HttpResponseRedirect(
             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
         )
@@ -411,7 +498,6 @@ def create_angebot(request):
         return page_not_found(request, Exception())
 
     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
-
 
 class VertriebAutoFieldView(View, VertriebCheckMixin):
     data = []
@@ -471,8 +557,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
 
-        context["form"] = self.form_class(  # type: ignore
-            instance=vertrieb_angebot, user=self.request.user  # type: ignore
+        user_profile = self.request.user  # assuming a profile model is linked to the user
+        
+        context["form"] = self.form_class(
+            instance=vertrieb_angebot, 
+            user=self.request.user,
         )
         return context
 
@@ -516,38 +605,29 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     send_message_to_bot(f"{user.email}: Handling status change... ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}")
                 print(f"{user.email}: Opened Angebot {vertrieb_angebot.angebot_id} Handling status change... ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-                print("Angebot status handled: ", fetched_angebote.get("Status"))
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(f"Angebot status handled: , {fetched_angebote.get('Status')}")
-                if fetched_angebote and fetched_angebote.get("Status") == "angenommen":
-                    vertrieb_angebot.status = "angenommen"
-                    vertrieb_angebot.status_change_field = None
-                    vertrieb_angebot.save()
-                    print("Angebot saved with status 'angenommen'")
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot("Angebot saved with status 'angenommen'")
-                    # Assuming you want to create a form instance with the fetched data
-                    form = self.form_class(
-                        fetched_angebote, instance=vertrieb_angebot, user=request.user
-                    )
-
-                    if form.is_valid():
-                        form.save()
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot("Form saved successfull")
-                # elif fetched_angebote and fetched_angebote.get("Status") != "bekommen":
-                #     status = fetched_angebote.get("Status")
-
-                #     vertrieb_angebot.status = status
-
-                #     vertrieb_angebot.save()
-                #     # Assuming you want to create a form instance with the fetched data
-                #     form = self.form_class(
-                #         fetched_angebote, instance=vertrieb_angebot, user=request.user
-                #     )
-
-                #     if form.is_valid():
-                #         form.save()
+                
+                if fetched_angebote:
+                    vertrieb_angebot.notizen = fetched_angebote.get("Notizen")
+                    
+                    if fetched_angebote.get("Status") == "angenommen":
+                        vertrieb_angebot.status = "angenommen"
+                        vertrieb_angebot.status_change_field = None
+                        vertrieb_angebot.save()
+                        print("Angebot saved with status 'angenommen'")
+                        # Assuming you want to create a form instance with the fetched data
+                        form = self.form_class(
+                            fetched_angebote, instance=vertrieb_angebot, user=request.user
+                        )
+                        if form.is_valid():
+                            form.save()
+                    else:
+                        form = self.form_class(
+                                fetched_angebote, instance=vertrieb_angebot, user=request.user
+                            )
+                        if form.is_valid():
+                                form.save()
+                else:
+                    pass
             else:
                 pass
         except VertriebAngebot.DoesNotExist:
@@ -560,7 +640,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
         if zoho_id is not None:
             data = fetch_current_user_angebot(request, zoho_id)
-
+            pprint(data)
             for item in data:
                 vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
                 vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
@@ -569,7 +649,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
                 )
 
-                vertrieb_angebot.verbrauch = item["verbrauch"]
+                
 
                 vertrieb_angebot.leadstatus = (
                     item["leadstatus"] if item["leadstatus"] else ""
@@ -578,7 +658,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 vertrieb_angebot.email = item["email"]
                 vertrieb_angebot.postanschrift_latitude = item["latitude"]
                 vertrieb_angebot.postanschrift_longitude = item["longitude"]
-
                 vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
                 vertrieb_angebot.termine_text = item["termine_text"]
                 vertrieb_angebot.termine_id = item["termine_id"]
@@ -673,37 +752,71 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
         if "angebotsumme_rechnen" in request.POST:
-            print(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
-            if TELEGRAM_LOGGING:
-                send_message_to_bot(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}")
+            # print(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
+            # if TELEGRAM_LOGGING:
+            #     send_message_to_bot(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}")
             if form.is_valid():
-                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
-                name_to_zoho_id = {
-                    item["name"]: item["zoho_id"] for item in data
-                }
-                name = form.cleaned_data["name"]
-                zoho_id = form.cleaned_data["zoho_id"]
-                kundennumer = name_to_kundennumer[name]
-                zoho_id = name_to_zoho_id[name]
-                vertrieb_angebot.zoho_kundennumer = kundennumer
-                vertrieb_angebot.zoho_id = int(zoho_id)
-                if vertrieb_angebot.angebot_id_assigned == True:
-                    vertrieb_angebot.angebot_id_assigned = True
-                    vertrieb_angebot.save()
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.email}: Angebot, {vertrieb_angebot.zoho_id}, {vertrieb_angebot.angebot_id}")
-                    print("Angebot", (vertrieb_angebot.zoho_id), "assigned with ID ", (vertrieb_angebot.angebot_id))
-                    form.save()  # type:ignore
-                else:
-                    vertrieb_angebot.angebot_id_assigned = False
-                    vertrieb_angebot.save()
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.email}: Angebot {vertrieb_angebot.zoho_id}, saved with no assign")
-                    print("Angebot", (vertrieb_angebot.zoho_id), "saved with no assign")
-                    form.save()  # type:ignore
+                instance = form.instance
+                instance.save(update_fields=['modulanzahl', "anrede",
+                    "zoho_id",
+                    "telefon_festnetz",
+                    "telefon_mobil",
+                    "email",
+                    "name",
+                    "vertriebler_display_value",
+                    "adresse_pva_display_value",
+                    "postanschrift_latitude",
+                    "postanschrift_longitude",
+                    "vertriebler_id",
+                    "notizen",
+                    "zoho_kundennumer",
+                    "angebot_bekommen_am",
+                    "status_change_date",
+                    "status_change_field",
+                    "ablehnungs_grund",
+                    "name",
+                    "vorname_nachname",
+                    "firma",
+                    "strasse",
+                    "ort",
+                    "anlagenstandort",
+                    "verbrauch",
+                    "grundpreis",
+                    "arbeitspreis",
+                    "prognose",
+                    "zeitraum",
+                    "bis10kWp",
+                    "bis40kWp",
+                    "speicher",
+                    "anz_speicher",
+                    "wandhalterung_fuer_speicher",
+                    "anz_wandhalterung_fuer_speicher",
+                    "wallbox",
+                    "ausrichtung",
+                    "komplex",
+                    "wallboxtyp",
+                    "wallbox_anzahl",
+                    "kabelanschluss",
+                    "solar_module",
+                    "modulanzahl",
+                    "garantieWR",
+                    "zahlungsbedingungen",
+                    "elwa",
+                    "thor",
+                    "heizstab",
+                    "eddi",
+                    "notstrom",
+                    "anzOptimizer",
+                    "indiv_price_included",
+                    "indiv_price",])
+                instance.save()
+
+
+                if TELEGRAM_LOGGING:
+                    send_message_to_bot(f"{user.email}: Angebot, {vertrieb_angebot.zoho_id}, {vertrieb_angebot.angebot_id}")
+                print("Angebot", (vertrieb_angebot.zoho_id), "assigned with ID ", (vertrieb_angebot.angebot_id))
+                
+                
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
@@ -1015,16 +1128,22 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     template_name = "vertrieb/view_orders.html"
     context_object_name = "angebots"
 
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
-        queryset = self.model.objects.filter(  # type: ignore
+        return self._get_filtered_and_ordered_queryset()
+
+    def zoho_kundennumer_is_numeric(self):
+        return Q(zoho_kundennumer__regex=r"^\d+$")
+
+    def _get_contact_statuses(self):
+        return ["in Kontakt", "Kontaktversuch"]
+
+    def _get_filtered_and_ordered_queryset(self):
+        queryset = self.model.objects.filter(
             user=self.request.user,
             angebot_id_assigned=True,
-            zoho_kundennumer__regex=r"^\d+$",
-        )
-
+            status__in=self._get_contact_statuses(),
+        ).filter(self.zoho_kundennumer_is_numeric())
+        
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(

@@ -86,6 +86,7 @@ CSRF_TRUSTED_ORIGINS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # "config.malformed.MalformedRequestMiddleware"
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -127,6 +128,7 @@ DEFAULT_PHONE = os.getenv("DEFAULT_PHONE")
 BASE_URL = os.getenv("BASE_URL")
 BASE_URL_PRIV_KUNDEN = os.getenv("BASE_URL_PRIV_KUNDEN")
 REFRESH_URL = os.getenv("REFRESH_URL")
+POST_ANGEBOT_URL = os.getenv("POST_ANGEBOT_URL")
 ACCESS_TOKEN_URL = os.getenv("ACCESS_TOKEN_URL")
 ZOHO_ACCESS_TOKEN = os.getenv("ZOHO_ACCESS_TOKEN")
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
