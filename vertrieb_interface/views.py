@@ -1211,24 +1211,22 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         queryset = queryset.order_by("-zoho_kundennumer_int")
 
         return queryset
-    
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     try:
-        
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
-        kurz = user.kuerzel  # type: ignore
         
         all_user_angebots_list = fetch_user_angebote_all(request)
-
+        zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
 
         # Save zoho data to the user
         user.zoho_data_text = json.dumps(all_user_angebots_list)
         user.save()
 
+        # Update VertriebAngebot status
         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
         vertrieb_angebots_map = {str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user}
-        # Update VertriebAngebot status
+        
         angebots_to_update = []
         angebots_to_unassign = []
         for item in all_user_angebots_list:

@@ -1,97 +1,3 @@
-# import os
-# import json
-
-# import requests
-# import datetime
-# from time import sleep
-# from dotenv import load_dotenv, set_key
-# from vertrieb_interface.telegram_logs_sender import send_message_to_bot
-# from config.settings import (
-#     ENV_FILE,
-#     ZOHO_ACCESS_TOKEN,
-#     ZOHO_CLIENT_ID,
-#     ZOHO_CLIENT_SECRET,
-#     ZOHO_REFRESH_TOKEN,
-#     ACCESS_TOKEN_URL,
-
-# )
-
-# # Constants
-# LOAD_ENV = load_dotenv()
-# BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report"
-# VERTRIEB_URL = f"{BASE_URL}/Privatkunden1"
-# HTTP_OK = 200
-# HTTP_UNAUTHORIZED = 401
-# LIMIT_ALL = 200
-# LIMIT_CURRENT = 200
-# MAX_RETRIES = 9
-# SLEEP_TIME = 4
-
-# # Exceptions
-# class APIException(Exception):
-#     pass
-
-# class UnauthorizedException(APIException):
-#     pass
-
-# class RateLimitExceededException(APIException):
-#     pass
-
-
-# def get_headers():
-#     access_token = ZOHO_ACCESS_TOKEN or refresh_access_token()
-#     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
-
-# def refresh_access_token():
-#     retry_count = 0
-#     new_access_token = None
-
-#     while new_access_token is None and retry_count < MAX_RETRIES:
-#         params = {
-#             "refresh_token": ZOHO_REFRESH_TOKEN,
-#             "client_id": ZOHO_CLIENT_ID,
-#             "client_secret": ZOHO_CLIENT_SECRET,
-#             "grant_type": "refresh_token",
-#         }
-#         response = requests.post(ACCESS_TOKEN_URL, params=params)
-
-#         if response.status_code != HTTP_OK:
-#             print(f"Unexpected status code on attempt {retry_count + 1}: {response.status_code} - {response.content.decode('utf-8')}")
-#             send_message_to_bot(f"Unexpected status code on attempt {retry_count + 1}: {response.status_code} - {response.content.decode('utf-8')}")
-#             sleep(SLEEP_TIME)
-#             retry_count += 1
-#             continue
-
-#         response_data = response.json()
-#         new_access_token = response_data.get("access_token")
-
-#         # Log the response content if access_token is not found
-#         if new_access_token is None:
-#             print(f"Failed to retrieve access token on attempt {retry_count + 1}. Response content: {response.content.decode('utf-8')}")
-#             send_message_to_bot(f"Failed to retrieve access token on attempt {retry_count + 1}. Response content: {response.content.decode('utf-8')}")
-
-#         # Increase the sleep time after each unsuccessful attempt
-#         sleep(SLEEP_TIME * (retry_count + 1))
-#         retry_count += 1
-
-#     if new_access_token is None:
-#         send_message_to_bot("Failed to retrieve a new access token after maximum retries.")
-#         raise APIException("Failed to retrieve a new access token after maximum retries.")
-
-#     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_access_token)
-#     return new_access_token
-
-
-# def fetch_data_from_api(url, headers, params):
-#     response = requests.get(url, headers=headers, params=params)
-#     if response.status_code == HTTP_OK:
-#         return response.json()
-#     elif response.status_code == HTTP_UNAUTHORIZED:
-#         headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
-#         response = requests.get(url, headers=headers, params=params)
-#         if response.status_code == HTTP_OK:
-#             return response.json()
-#     return None
 import os
 import json
 import requests
@@ -120,10 +26,10 @@ HTTP_UNAUTHORIZED = 401
 LIMIT_ALL = 200
 LIMIT_CURRENT = 200
 MAX_RETRIES = 4
-SLEEP_TIME = 2
+SLEEP_TIME = 3
 
 # Initialize the environment
-load_dotenv()
+load_dotenv(ENV_FILE)
 session = requests.Session()
 
 # Exceptions
@@ -189,6 +95,7 @@ def fetch_data_from_api(url, params=None):
             headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
         elif response.status_code == HTTP_OK:
             return response.json()
+        
 def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
