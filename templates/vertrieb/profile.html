@@ -5,15 +5,7 @@
 {% block content%}
 <div class="content-page">
     <div class="content">
-    {% if form.errors %}
-<ul>
-    {% for field, errors in form.errors.items %}
-        {% for error in errors %}
-        <li><strong>{{ field }}:</strong> {{ error|escape }}</li>
-        {% endfor %}
-    {% endfor %}
-</ul>
-{% endif %}
+
         <!-- Start Content-->
         <div class="container-fluid">
             <!-- start page title -->
@@ -139,7 +131,7 @@
                 </div> <!-- end col-->
                 {% comment %} </div>
                 <div class="row"> {% endcomment %}
-               <div class="col-4">
+               <div class="col-5">
                     <div class="card border-primary border">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Initial Data for ANGEBOT creation</h5>
@@ -284,9 +276,9 @@
 
             </form>
 
+
+
         </div>
-
-
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -354,8 +346,9 @@
                 </div>
             </div>
         </footer>
-    </div>
+    </div> <!-- end col-->
 </div>
+
 {% endblock %}
 {% block extra_js %}
         <!-- Vendor js -->

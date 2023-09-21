@@ -5,9 +5,28 @@
 {% block content %}
 {% load custom_filter %}
 <link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
+            <div id="preloader">
+                <div id="status">
+                    <div class="spinner-border avatar-lg text-primary"><div ></div><div ></div><div ></div></div>
+                </div>
+            </div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let body = document.querySelector('body');
+
+                // This assumes the page is loading. Adjust accordingly based on your needs.
+                body.classList.add('loading');
+
+                // When the page finishes loading, remove the 'loading' class.
+                window.addEventListener('load', function() {
+                    body.classList.remove('loading');
+                });
+            });
+        </script>
 
 <div class="content-page">
     <div class="content">
+
             {% if not vertrieb_angebot.is_locked and vertrieb_angebot.status != "angenommen" %}
         <form id="main-form" method="POST" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
@@ -696,9 +715,71 @@
                                     <div class="card widget-flat">
                                         <div class="card-body">
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
+
+                                                    <script>
+                                                        function showSpinner() {
+                                                            var spinner = document.querySelector('.spinner-border');
+                                                            if (spinner.style.display === 'none' || spinner.style.display === '') {
+                                                                spinner.style.display = 'inline-block';
+                                                            }
+                                                        }
+                                                    </script>
+
                                                     <div class="row m-2">
-                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
+                                                        <button type="submit" form="main-form" class="btn btn-soft-success rounded-pill" onclick=showSpinner()>
+                                                            Speichern
+                                                        </button>
                                                     </div>
+                                                    <div class="d-flex align-items-center">
+                                                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
+                                                            </div>
+
+
+
+
+
+
+
+
+
+{% comment %}                                               
+                                                        <script>
+                                                        $(document).ready(function() {
+
+                                                            function ajaxUpdateForAngebots($button, url) {
+                                                                toggleButtonLoadingState($button, true);
+
+                                                                $.ajax({
+                                                                    method: 'POST',
+                                                                    url: url,
+                                                                    data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                                                                    success: function() {
+                                                                        toggleButtonLoadingState($button, false);
+                                                                    },
+                                                                    error: function() {
+                                                                        toggleButtonLoadingState($button, false);
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            function toggleButtonLoadingState($button, isLoading) {
+                                                                const $spinner = $button.find('.spinner-border');
+                                                                if (isLoading) {
+                                                                    $spinner.show();
+                                                                } else {
+                                                                    $spinner.hide();
+                                                                }
+                                                            }
+
+                                                            $('#save-all-forms').on('click', function() {
+                                                                const $thisButton = $(this);
+                                                                const url = "YOUR_URL_HERE"; // replace with the actual URL
+                                                                ajaxUpdateForAngebots($thisButton, url);
+                                                            });
+
+                                                        });
+                                                        </script> {% endcomment %}
+
                                                 
                                                     
                                                         {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}

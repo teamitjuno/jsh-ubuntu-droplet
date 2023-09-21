@@ -53,9 +53,16 @@ urlpatterns = [
         DeleteAngebot.as_view(),
         name="delete_angebot",
     ),
-    path("user/<int:user_id>/orders/test-delete-selected/", test_delete_selected, name="test_delete_selected"),
-
-    path("user/<int:user_id>/orders/delete-selected/", DeleteSelectedAngebots.as_view(), name="delete_selected_angebots"),
+    path(
+        "user/<int:user_id>/orders/test-delete-selected/",
+        test_delete_selected,
+        name="test_delete_selected",
+    ),
+    path(
+        "user/<int:user_id>/orders/delete-selected/",
+        DeleteSelectedAngebots.as_view(),
+        name="delete_selected_angebots",
+    ),
     path("user/<int:user_id>/upload-avatar/", avatar_upload_form, name="upload_avatar"),
     path(
         "prices/update_solar_module_preise/<int:module_id>/",

@@ -666,7 +666,6 @@ class VertriebAngebotForm(ModelForm):
     )
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
-        
         validators=[validate_solar_module_anzahl],
         widget=forms.NumberInput(
             attrs={
@@ -719,9 +718,12 @@ class VertriebAngebotForm(ModelForm):
         choices=[
             ("20 – 70 – 10 %", "20 – 70 – 10 %"),
             ("10 – 80 – 10 %", "10 – 80 – 10 %"),
+            ("100 – 0 – 0 %", "100 – 0 – 0 %"),
         ],
         initial="20 – 70 – 10 %",
-        widget=forms.Select(attrs={"class": "form-select", "id": "zahlungsbedingungen"}),
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "zahlungsbedingungen"}
+        ),
     )
 
     anzOptimizer = forms.IntegerField(
@@ -915,7 +917,7 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-    
+
         profile = User.objects.get(zoho_id=user.zoho_id)
         self.fields["solar_module"].choices = [
             (module.name, module.name)
@@ -936,8 +938,12 @@ class VertriebAngebotForm(ModelForm):
         name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
-        self.fields["angebot_id_assigned"].widget.attrs.update({"id": "angebot_id_assigned"})
-        self.fields["zahlungsbedingungen"].widget.attrs.update({"id": "zahlungsbedingungen"})
+        self.fields["angebot_id_assigned"].widget.attrs.update(
+            {"id": "angebot_id_assigned"}
+        )
+        self.fields["zahlungsbedingungen"].widget.attrs.update(
+            {"id": "zahlungsbedingungen"}
+        )
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
             {"id": "id_vorname_nachname"}

@@ -167,7 +167,9 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         ("Map", "Map"),
         ("Notizen", "Notizen"),
     ]
-    map_notizen_container_view = models.CharField(choices=MAP_NOTIZEN_CHOICES, default="Map")
+    map_notizen_container_view = models.CharField(
+        choices=MAP_NOTIZEN_CHOICES, default="Map"
+    )
 
     initial_verbrauch = models.FloatField(
         default=15000, validators=[MinValueValidator(0)]  # type: ignore
@@ -188,16 +190,12 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     initial_bis40kWp = models.FloatField(
         default=7.10, validators=[MinValueValidator(0)]  # type: ignore
     )
-    
+
     initial_anz_speicher = models.PositiveIntegerField(default=0)
     initial_wandhalterung_fuer_speicher = models.BooleanField(default=False)
-    
-    initial_ausrichtung = models.CharField(
-        max_length=10, default="Ost/West"
-    )
-    initial_komplex = models.CharField(
-        max_length=30, default="sehr komplex"
-    )
+
+    initial_ausrichtung = models.CharField(max_length=10, default="Ost/West")
+    initial_komplex = models.CharField(max_length=30, default="sehr komplex")
 
     initial_solar_module = models.CharField(
         max_length=100,
@@ -206,9 +204,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     initial_modulanzahl = models.PositiveIntegerField(
         default=0, validators=[MinValueValidator(0)]
     )
-    initial_garantieWR = models.CharField(
-        max_length=10, default="10 Jahre"
-    )
+    initial_garantieWR = models.CharField(max_length=10, default="10 Jahre")
     initial_elwa = models.BooleanField(default=False)
     initial_thor = models.BooleanField(default=False)
     initial_heizstab = models.BooleanField(default=False)
@@ -223,7 +219,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     initial_wallbox_anzahl = models.PositiveIntegerField(default=0)
     intial_kabelanschluss = models.FloatField(
         default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
-    )    
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

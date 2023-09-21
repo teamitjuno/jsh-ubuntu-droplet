@@ -43,13 +43,15 @@
     <!--  Select2 Js -->
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+
     {% endblock %}   
     <body>
-            <!-- Begin page -->
+
+        <!-- Begin page -->
         <div class="wrapper">
-    
-                
+        
+        
                 <!-- ========== Topbar Start ========== -->
                 <div class="navbar-custom">
                     <div class="topbar container-fluid">
@@ -273,6 +275,7 @@
             <!-- ========== Left Sidebar End ========== -->
 
             {% block content %}
+        
                 <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content modal-filled bg-success">
@@ -337,7 +340,8 @@
                     </div><!-- /.modal-dialog -->
                 </div>
             
-        
+                    
+
             {% endblock %}
             
         </div>
@@ -1009,30 +1013,9 @@
             </div>
         </div>
         {% block javascript %}
+        
         {% endblock %}
-        <script>
-                document.addEventListener('DOMContentLoaded', function() {
-            let body = document.querySelector('body');
-            let spinner = document.querySelector('.spinner-border');
-
-            // This assumes the page is loading. Adjust accordingly based on your needs.
-            body.classList.add('loading');
-
-            // Make the spinner follow the cursor
-            document.addEventListener('mousemove', function(event) {
-                if (body.classList.contains('loading')) {
-                    spinner.style.left = (event.clientX - spinner.offsetWidth / 2) + 'px';
-                    spinner.style.top = (event.clientY - spinner.offsetHeight / 2) + 'px';
-                }
-            });
-
-            // When the page finishes loading, you might remove the 'loading' class.
-            // This is just an example, adapt to your actual loading criteria:
-            window.addEventListener('load', function() {
-                body.classList.remove('loading');
-            });
-        });
-        </script>
+        
             <script>
                 function disableFor30Seconds(event) {
                     var loadButton = document.getElementById('loadButton');

@@ -314,10 +314,10 @@ class ViewAdminOrders(AdminRequiredMixin, VertriebCheckMixin, ListView):
             raise PermissionDenied()
         self.user = get_object_or_404(User, pk=kwargs["user_id"])
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_id'] = self.kwargs.get("user_id")
+        context["user_id"] = self.kwargs.get("user_id")
         return context
 
     def get_queryset(self):
@@ -537,13 +537,15 @@ class DeleteAngebot(DeleteView):
     def get_success_url(self):
         user_id = self.kwargs["user_id"]
         return reverse("adminfeautures:user-orders", args=[user_id])
+
     def get_object(self, queryset=None):
         return VertriebAngebot.objects.get(angebot_id=self.kwargs["angebot_id"])
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         return response
-    
+
+
 class DeleteSelectedAngebots(AdminRequiredMixin, View):
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
@@ -558,6 +560,7 @@ class DeleteSelectedAngebots(AdminRequiredMixin, View):
             return HttpResponseBadRequest("Invalid request: {}".format(e))
 
         return JsonResponse({"message": "Selected Angebots deleted successfully!"})
+
 
 def test_delete_selected(request, user_id):
     return HttpResponse(f"Testing delete-selected for User ID: {user_id}")

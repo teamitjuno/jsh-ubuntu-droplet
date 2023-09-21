@@ -17,7 +17,6 @@ class PDF(FPDF):
         self.set_left_margin(12.875)
         self.set_right_margin(12.875)
 
-
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
@@ -701,7 +700,12 @@ class PDF(FPDF):
             # Seite voll
             y = y + 70
             self.set_y(y)
-        if data["optionVorh"] or data["elwa"] or data["thor"] or data["anzOptimierer"] > 0:
+        if (
+            data["optionVorh"]
+            or data["elwa"]
+            or data["thor"]
+            or data["anzOptimierer"] > 0
+        ):
             # Optionales Zubehör zur Anlagenoptimierung
             if y == 235 or y == 220:
                 self.add_page()
@@ -943,7 +947,12 @@ class PDF(FPDF):
         self.add_page()
         y = 30
         y_tmp = 0
-        if not data["optionVorh"] and not data["elwa"] and not data["thor"] and not data["anzOptimierer"] > 0:
+        if (
+            not data["optionVorh"]
+            and not data["elwa"]
+            and not data["thor"]
+            and not data["anzOptimierer"] > 0
+        ):
             self.line(10, y + 7, 86, y + 7)
             # self.line(10, y + 13, 200, y + 13)
             # self.line(10, y + 19, 148, y + 19)
@@ -1257,9 +1266,32 @@ class PDF(FPDF):
         self.set_y(215)
         if data["zahlungs_bedingungen"]:
             if data["zahlungs_bedingungen"] == "20 – 70 – 10 %":
-                self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
-            elif data ["zahlungs_bedingungen"] == "10 – 80 – 10 %":
-                self.multi_cell(0, 6, "10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
+                self.multi_cell(
+                    0,
+                    6,
+                    "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss",
+                    0,
+                    0,
+                    "L",
+                )  # type: ignore
+            elif data["zahlungs_bedingungen"] == "10 – 80 – 10 %":
+                self.multi_cell(
+                    0,
+                    6,
+                    "10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss",
+                    0,
+                    0,
+                    "L",
+                )  # type: ignore
+            elif data["zahlungs_bedingungen"] == "100 – 0 – 0 %":
+                self.multi_cell(
+                    0,
+                    6,
+                    "100% bei Auftragsbestätigung\n0% bei Baubeginn\n0% bei Netzanschluss",
+                    0,
+                    0,
+                    "L",
+                )
         else:
             self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
         # Unterschriten
@@ -1697,16 +1729,16 @@ def createOfferPdf(data, vertrieb_angebot, user):
 #     pdf.page4_durchgestrichen(data, eintrag)
 #     pdf.lastPage(data)
 
-#     # set path of the PDF
-#     user_folder = os.path.join(
-#         settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/"
-#     )
+# # set path of the PDF
+# user_folder = os.path.join(
+#     settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/"
+# )
 
-#     if not os.path.exists(user_folder):
-#         os.makedirs(user_folder)
+# if not os.path.exists(user_folder):
+#     os.makedirs(user_folder)
 
-#     output_file = os.path.join(
-#         user_folder, f"Angebot_{vertrieb_angebot.angebot_id}.pdf"
-#     )
+# output_file = os.path.join(
+#     user_folder, f"Angebot_{vertrieb_angebot.angebot_id}.pdf"
+# )
 
 #     pdf.output(output_file, "F")

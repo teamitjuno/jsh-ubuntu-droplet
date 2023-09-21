@@ -7,7 +7,7 @@ from django.http import (
     HttpResponseNotAllowed,
     JsonResponse,
     StreamingHttpResponse,
-    HttpResponse
+    HttpResponse,
 )
 from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -99,9 +99,9 @@ def delete_user(request, user_id):
 
     return redirect("adminfeautures:user_list")
 
+
 def zoho_callback(request):
-    
-    auth_code = request.GET.get('code', None)
+    auth_code = request.GET.get("code", None)
 
     if not auth_code:
         return HttpResponse("Authorization code not found.", status=400)

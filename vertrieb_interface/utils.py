@@ -6,7 +6,6 @@ from vertrieb_interface.models import VertriebAngebot
 
 def load_vertrieb_angebot(data, user, kurz):
     try:
-        
         with transaction.atomic():
             for item in data:
                 if not VertriebAngebot.objects.filter(zoho_id=item["zoho_id"]).exists():
@@ -23,7 +22,7 @@ def load_vertrieb_angebot(data, user, kurz):
                     #         f"VertriebAngebot with zoho_kundennumer {item['zoho_kundennumer']} already exists, skipping..."
                     #     )
                     #     continue
-                    
+
                     item["user"] = user
                     item["angebot_id"] = generate_angebot_id(
                         item.get("anfrage_vom"), kurz
@@ -53,8 +52,6 @@ def load_vertrieb_angebot(data, user, kurz):
                     except:
                         item["email"] = "keine@email.com"
                         instance = VertriebAngebot(**item)
-
-                    
 
         return "All data has been successfully processed."
 

@@ -13,6 +13,7 @@ from django import forms
 from .models import User
 from django.utils.translation import gettext_lazy as _
 
+
 def validate_two_decimal_places(value):
     decimal_value = decimal.Decimal(value)
     if decimal_value.as_tuple().exponent < -2:  # type: ignore
@@ -120,8 +121,10 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ("15 Jahre", "15 Jahre"),
         ("20 Jahre", "20 Jahre"),
     ]
-    MAP_NOTIZEN_CHOICES = [("Map", "Map"),
-        ("Notizen", "Notizen"),]
+    MAP_NOTIZEN_CHOICES = [
+        ("Map", "Map"),
+        ("Notizen", "Notizen"),
+    ]
 
     map_notizen_container_view = forms.ChoiceField(
         label="Karte oder Notizen anzeigen",
@@ -149,20 +152,26 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    
+
     initial_komplex = forms.ChoiceField(
         initial="sehr komplex",
         label="Komlexität",
         choices=INITIAL_KOMPLEX_CHOICES,
         required=True,
         widget=forms.Select(
-            attrs={"class": "form-select", "id": "id_initial_komplex", "style": "max-width: 300px"}
+            attrs={
+                "class": "form-select",
+                "id": "id_initial_komplex",
+                "style": "max-width: 300px",
+            }
         ),
     )
 
     initial_solar_module = forms.ChoiceField(
         label="Solar Module",
-        widget=forms.Select(attrs={"class": "form-select", "id": "id_initial_solar_module"}),
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "id_initial_solar_module"}
+        ),
     )
     initial_modulanzahl = forms.IntegerField(
         label="Module Anzahl",
@@ -185,7 +194,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             ("20 Jahre", "20 Jahre"),
         ],
         initial="10 Jahre",
-        widget=forms.Select(attrs={"class": "form-select", "id": "id_initial_garantieWR"}),
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "id_initial_garantieWR"}
+        ),
     )
 
     initial_wallboxtyp = forms.ChoiceField(
@@ -264,7 +275,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
     initial_thor = forms.BooleanField(
         label="AC-THOR",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "id_initial_thor"}),
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "id_initial_thor"}
+        ),
     )
     initial_heizstab = forms.BooleanField(
         label="Heizstab für THOR inklusive",
@@ -288,7 +301,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         label="Optimizer Anzahl",
         required=True,
         validators=[validate_integers],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "id_initial_anzOptimizer"}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "id_initial_anzOptimizer"}
+        ),
     )
     initial_verbrauch = forms.FloatField(
         label="Strom Verbrauch [kWh]",
@@ -361,7 +376,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         max_digits=10,
         required=True,
         validators=[validate_two_decimal_places],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "id_initial_bis10kWp"}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "id_initial_bis10kWp"}
+        ),
     )
     initial_bis40kWp = forms.DecimalField(
         label="Einspeisevergütung 10 bis 40 kWp",
@@ -370,8 +387,11 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         max_digits=10,
         required=True,
         validators=[validate_two_decimal_places],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "id_initial_bis40kWp"}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "id_initial_bis40kWp"}
+        ),
     )
+
     class Meta:
         model = User
         fields = [
@@ -405,6 +425,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "pv_rechner_view",
             "anzahl_sol_module_view",
         ]
+
     def __init__(self, *args, user, **kwargs):
         super(InitialAngebotDataViewForm, self).__init__(*args, **kwargs)
 
@@ -416,33 +437,82 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             (module.name, module.name)
             for module in WallBoxPreise.objects.filter(in_stock=True)
         ]
-        self.fields["map_notizen_container_view"].widget.attrs.update({"id": "id_map_notizen_container_view"})
-        self.fields["initial_verbrauch"].widget.attrs.update({"id": "id_initial_verbrauch"})
-        self.fields["initial_grundpreis"].widget.attrs.update({"id": "id_initial_grundpreis"})
-        self.fields["initial_arbeitspreis"].widget.attrs.update({"id": "id_initial_arbeitspreis"})
-        self.fields["initial_prognose"].widget.attrs.update({"id": "id_initial_prognose"})
-        self.fields["initial_zeitraum"].widget.attrs.update({"id": "id_initial_zeitraum"})
-        self.fields["initial_bis10kWp"].widget.attrs.update({"id": "id_initial_bis10kWp"})
-        self.fields["initial_bis40kWp"].widget.attrs.update({"id": "id_initial_bis40kWp"})
-        self.fields["initial_anz_speicher"].widget.attrs.update({"id": "id_initial_anz_speicher"})
-        self.fields["initial_wandhalterung_fuer_speicher"].widget.attrs.update({"id": "id_initial_wandhalterung_fuer_speicher"})
-        self.fields["initial_ausrichtung"].widget.attrs.update({"id": "id_initial_ausrichtung"})
+        self.fields["map_notizen_container_view"].widget.attrs.update(
+            {"id": "id_map_notizen_container_view"}
+        )
+        self.fields["initial_verbrauch"].widget.attrs.update(
+            {"id": "id_initial_verbrauch"}
+        )
+        self.fields["initial_grundpreis"].widget.attrs.update(
+            {"id": "id_initial_grundpreis"}
+        )
+        self.fields["initial_arbeitspreis"].widget.attrs.update(
+            {"id": "id_initial_arbeitspreis"}
+        )
+        self.fields["initial_prognose"].widget.attrs.update(
+            {"id": "id_initial_prognose"}
+        )
+        self.fields["initial_zeitraum"].widget.attrs.update(
+            {"id": "id_initial_zeitraum"}
+        )
+        self.fields["initial_bis10kWp"].widget.attrs.update(
+            {"id": "id_initial_bis10kWp"}
+        )
+        self.fields["initial_bis40kWp"].widget.attrs.update(
+            {"id": "id_initial_bis40kWp"}
+        )
+        self.fields["initial_anz_speicher"].widget.attrs.update(
+            {"id": "id_initial_anz_speicher"}
+        )
+        self.fields["initial_wandhalterung_fuer_speicher"].widget.attrs.update(
+            {"id": "id_initial_wandhalterung_fuer_speicher"}
+        )
+        self.fields["initial_ausrichtung"].widget.attrs.update(
+            {"id": "id_initial_ausrichtung"}
+        )
         self.fields["initial_komplex"].widget.attrs.update({"id": "id_initial_komplex"})
-        self.fields["initial_solar_module"].widget.attrs.update({"id": "id_initial_solar_module"})
-        self.fields["initial_modulanzahl"].widget.attrs.update({"id": "id_initial_modulanzahl"})
-        self.fields["initial_garantieWR"].widget.attrs.update({"id": "id_initial_garantieWR"})
+        self.fields["initial_solar_module"].widget.attrs.update(
+            {"id": "id_initial_solar_module"}
+        )
+        self.fields["initial_modulanzahl"].widget.attrs.update(
+            {"id": "id_initial_modulanzahl"}
+        )
+        self.fields["initial_garantieWR"].widget.attrs.update(
+            {"id": "id_initial_garantieWR"}
+        )
         self.fields["initial_elwa"].widget.attrs.update({"id": "id_initial_elwa"})
         self.fields["initial_thor"].widget.attrs.update({"id": "id_initial_thor"})
-        self.fields["initial_heizstab"].widget.attrs.update({"id": "id_initial_heizstab"})
-        self.fields["initial_notstrom"].widget.attrs.update({"id": "id_initial_notstrom"})
-        self.fields["initial_anzOptimizer"].widget.attrs.update({"id": "id_initial_anzOptimizer"})
-        self.fields["initial_wallboxtyp"].widget.attrs.update({"id": "id_initial_wallboxtyp"})
-        self.fields["initial_wallbox_anzahl"].widget.attrs.update({"id": "id_initial_wallbox_anzahl"})
-        self.fields["intial_kabelanschluss"].widget.attrs.update({"id": "id_intial_kabelanschluss"})
-        self.fields["top_verkaufer_container_view"].widget.attrs.update({"id": "id_top_verkaufer_container_view"})
-        self.fields["profile_container_view"].widget.attrs.update({"id": "id_profile_container_view"})
-        self.fields["activity_container_view"].widget.attrs.update({"id": "id_activity_container_view"})
-        self.fields["angebot_statusubersicht_view"].widget.attrs.update({"id": "id_angebot_statusubersicht_view"})
+        self.fields["initial_heizstab"].widget.attrs.update(
+            {"id": "id_initial_heizstab"}
+        )
+        self.fields["initial_notstrom"].widget.attrs.update(
+            {"id": "id_initial_notstrom"}
+        )
+        self.fields["initial_anzOptimizer"].widget.attrs.update(
+            {"id": "id_initial_anzOptimizer"}
+        )
+        self.fields["initial_wallboxtyp"].widget.attrs.update(
+            {"id": "id_initial_wallboxtyp"}
+        )
+        self.fields["initial_wallbox_anzahl"].widget.attrs.update(
+            {"id": "id_initial_wallbox_anzahl"}
+        )
+        self.fields["intial_kabelanschluss"].widget.attrs.update(
+            {"id": "id_intial_kabelanschluss"}
+        )
+        self.fields["top_verkaufer_container_view"].widget.attrs.update(
+            {"id": "id_top_verkaufer_container_view"}
+        )
+        self.fields["profile_container_view"].widget.attrs.update(
+            {"id": "id_profile_container_view"}
+        )
+        self.fields["activity_container_view"].widget.attrs.update(
+            {"id": "id_activity_container_view"}
+        )
+        self.fields["angebot_statusubersicht_view"].widget.attrs.update(
+            {"id": "id_angebot_statusubersicht_view"}
+        )
         self.fields["pv_rechner_view"].widget.attrs.update({"id": "id_pv_rechner_view"})
-        self.fields["anzahl_sol_module_view"].widget.attrs.update({"id": "id_anzahl_sol_module_view"})
-
+        self.fields["anzahl_sol_module_view"].widget.attrs.update(
+            {"id": "id_anzahl_sol_module_view"}
+        )
