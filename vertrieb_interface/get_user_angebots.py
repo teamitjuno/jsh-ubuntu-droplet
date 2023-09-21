@@ -50,10 +50,7 @@ def log_and_notify(message):
 
 
 def get_headers():
-    return {"Authorization": f"Zoho-oauthtoken {ZOHO_ACCESS_TOKEN}",
-            "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive" }
+    return {"Authorization": f"Zoho-oauthtoken {ZOHO_ACCESS_TOKEN}",}
 
 def refresh_access_token():
     params = {
@@ -178,6 +175,7 @@ def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
     
     headers = get_headers()  # Assume get_headers is a function that returns the correct headers
+    send_message_to_bot(f"headers: {headers}")
 
     response = session.get(url, headers=headers)  # Removed params as they are not needed in this case
     if response.status_code != 200:
