@@ -1235,6 +1235,7 @@ def load_user_angebots(request):
             angebot = vertrieb_angebots_map.get(zoho_id)
             if angebot:
                 angebot.status = status
+                angebot.angebot_id_assigned = True
                 angebots_to_update.append(angebot)
 
         # Bulk update angebot status
