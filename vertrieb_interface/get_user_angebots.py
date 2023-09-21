@@ -95,12 +95,15 @@ def fetch_data_from_api(url, params=None):
             headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
         elif response.status_code == HTTP_OK:
             return response.json()
+        else:
+            log_and_notify(f"Failed to fetch data, status code: {response.status_code}")
+            return None
         
 def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
-
-
+    all_user_angebots_list = []  # Initialize the list before the loop
+    
     log_and_notify(f"Fetching Angebote for user: {user}")
     
     while True:
@@ -111,14 +114,15 @@ def fetch_user_angebote_all(request):
         }
 
         data = fetch_data_from_api(VERTRIEB_URL, params)
-
-        if data:
-            all_user_angebots_list = (process_all_user_data(data))
-            start_index += LIMIT_ALL
+        if data is None:
+            log_and_notify(f"Failed to fetch data for user: {user}")
+            break  # Break the loop
         else:
-            break
+            all_user_angebots_list.extend(process_all_user_data(data))
+            start_index += LIMIT_ALL
 
     return all_user_angebots_list
+
 
 def process_all_user_data(data):
     if not data["data"]:
