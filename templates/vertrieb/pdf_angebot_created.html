@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
-
+{% load custom_filter %}
 {% block content %}            <!-- ============================================================== -->
 <div class="content-page">
     <div class="content">
@@ -28,12 +28,13 @@
                                             <th>Angebot ID</th>
                                             <th>Status</th>
                                             <th>Kunde</th>
+                                            <th>AngebotSumme</th>
                                             <th>Datum</th>
                                             <th>Angebot File</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for angebot, angebot_file in zipped_angebots %}
+                                        {% for angebot, angebot_file, formatted_name in zipped_angebots %}
                                             <tr>
                                                 <td>{% if angebot.angebot_id_assigned %}
                                                     {{ angebot.angebot_id }}
@@ -64,13 +65,14 @@
                                                 </td>
                                                 {% endif %}
                                                 
-
+                                                
                                                 <td>{{ angebot.name }}</td>
+                                                <td>{{ angebot.angebotsumme|format_price }}</td>
                                                 <td>{{ angebot.current_date }}</td>
                                                 <td>
                                                     <a href="{{ angebot_file }}" target="_blank" class="link-info">
                                                         {% if angebot.is_locked %}
-                                                            {{ angebot.name }}_{{ angebot.angebot_id }}.pdf
+                                                            {{ formatted_name }}_{{ angebot.angebot_id }}.pdf
                                                         {% endif %}
                                                     </a>                    
                                                 </td>

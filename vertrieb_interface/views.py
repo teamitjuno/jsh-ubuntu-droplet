@@ -667,7 +667,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
         if zoho_id is not None:
             data = fetch_current_user_angebot(request, zoho_id)
-            pprint(data)
+            
             for item in data:
                 vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
                 vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
@@ -1253,11 +1253,11 @@ def create_angebot_pdf(request, angebot_id):
     data = vertrieb_angebot.data
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     if vertrieb_angebot.angebot_pdf_admin is None:
-        pdf_content = angebot_pdf_creator.createOfferPdf(
-            data,
-            vertrieb_angebot,
-            user,
-        )
+        pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
+        data,
+        vertrieb_angebot,
+        user,
+    )
         vertrieb_angebot.angebot_pdf_admin = pdf_content
         vertrieb_angebot.save()
 
@@ -1268,8 +1268,6 @@ def create_angebot_pdf(request, angebot_id):
         "Content-Disposition"
     ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
     return response
-
-
 @login_required
 def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1285,6 +1283,8 @@ def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot.save()
 
     return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
+
+
 
 
 @login_required
@@ -1568,30 +1568,36 @@ def send_ticket_invoice(request, angebot_id):
             {"status": "failed", "error": "Not a POST request."}, status=400
         )
 
+def filter_user_angebots_by_query(user_angebots, query):
+    """Filter user angebots based on the given query."""
+    return user_angebots.filter(
+        Q(zoho_kundennumer__icontains=query) |
+        Q(angebot_id__icontains=query) |
+        Q(status__icontains=query) |
+        Q(name__icontains=query) |
+        Q(anfrage_vom__icontains=query)
+    )
+
 
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
     user_angebots = VertriebAngebot.objects.filter(user=request.user)
-
     query = request.GET.get("q")
+
     if query:
-        user_angebots = user_angebots.filter(
-            Q(zoho_kundennumer__icontains=query)
-            | Q(angebot_id__icontains=query)
-            | Q(status__icontains=query)
-            | Q(name__icontains=query)
-            | Q(anfrage_vom__icontains=query)
+        user_angebots = filter_user_angebots_by_query(user_angebots, query)
+
+    # Use list comprehension to generate angebots and URLs
+    angebots_and_urls = [
+        (
+            angebot,
+            reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
+            replace_spaces_with_underscores(angebot.name)
         )
-
-    angebots_and_urls = []
-
-    for angebot in user_angebots:
-        if angebot.angebot_pdf is not None:
-            angebot_url = reverse(
-                "vertrieb_interface:serve_pdf", args=[angebot.angebot_id]
-            )
-            angebots_and_urls.append((angebot, angebot_url))
+        for angebot in user_angebots
+        if angebot.angebot_pdf
+    ]
 
     context = {
         "zipped_angebots": angebots_and_urls,
@@ -1599,6 +1605,38 @@ def pdf_angebots_list_view(request):
     }
 
     return render(request, "vertrieb/pdf_angebot_created.html", context)
+# @login_required
+# @user_passes_test(vertrieb_check)
+# def pdf_angebots_list_view(request):
+#     user_angebots = VertriebAngebot.objects.filter(user=request.user)
+
+#     query = request.GET.get("q")
+#     if query:
+#         user_angebots = user_angebots.filter(
+#             Q(zoho_kundennumer__icontains=query)
+#             | Q(angebot_id__icontains=query)
+#             | Q(status__icontains=query)
+#             | Q(name__icontains=query)
+#             | Q(anfrage_vom__icontains=query)
+#         )
+
+#     angebots_and_urls = []
+
+#     for angebot in user_angebots:
+#         name = replace_spaces_with_underscores(angebot.name)
+#         if angebot.angebot_pdf is not None:
+#             angebot_url = reverse(
+#                 "vertrieb_interface:serve_pdf", args=[angebot.angebot_id]
+#             )
+#             angebots_and_urls.append((angebot, angebot_url))
+
+#     context = {
+#         "ang_name": name,
+#         "zipped_angebots": angebots_and_urls,
+#         "angebots": user_angebots,
+#     }
+
+#     return render(request, "vertrieb/pdf_angebot_created.html", context)
 
 
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
@@ -1618,6 +1656,7 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         angebot_id = self.kwargs.get("angebot_id")
         vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
         user = vertrieb_angebot.user  # type: ignore
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
         if self.request.user != user and not self.request.user.is_staff:  # type: ignore
             raise Http404()
@@ -1630,6 +1669,7 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         ]
 
         self.extra_context = {
+            "ang_name": name,
             "user": user,
             "zipped_angebots": zip(user_angebots, angebot_urls),
         }

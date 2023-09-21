@@ -1689,6 +1689,8 @@ unwirksam.""",  # regular_text19
         # Set the font size
         self.set_font_size(font_size)
 
+def replace_spaces_with_underscores(s: str) -> str:
+    return s.replace(" ", "_")
 
 def createOfferPdf(data, vertrieb_angebot, user):
     global title, pages
@@ -1711,6 +1713,7 @@ def createOfferPdf(data, vertrieb_angebot, user):
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
     return pdf_content
+
 
 
 # def createOfferPdf(data, vertrieb_angebot, user):
