@@ -114,14 +114,18 @@ def fetch_user_angebote_all(request):
         }
 
         data = fetch_data_from_api(VERTRIEB_URL, params)
-        if data is None:
+        if data is None or not data.get("data"):
             log_and_notify(f"Failed to fetch data for user: {user}")
-            break  # Break the loop
+            break  # Break the loop when no data is returned or 'data' field is empty
         else:
             all_user_angebots_list.extend(process_all_user_data(data))
             start_index += LIMIT_ALL
+            # Check if the fetched data is less than the limit, indicating that it's the last page
+            if len(data.get("data")) < LIMIT_ALL:
+                break
 
     return all_user_angebots_list
+
 
 
 def process_all_user_data(data):
