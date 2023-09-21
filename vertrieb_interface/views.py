@@ -1214,7 +1214,9 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     try:
-        user = request.user
+        profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+        user = get_object_or_404(User, zoho_id=request.user.zoho_id)
+        kurz = user.kuerzel  # type: ignore
         
         all_user_angebots_list = fetch_user_angebote_all(request)
         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
@@ -1224,11 +1226,9 @@ def load_user_angebots(request):
         user.save()
 
         # Update VertriebAngebot status
+        angebots_to_update = []
         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
         vertrieb_angebots_map = {str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user}
-        
-        angebots_to_update = []
-        angebots_to_unassign = []
         for item in all_user_angebots_list:
             zoho_id = item.get("zoho_id")
             status = item.get("status")
@@ -1236,22 +1236,28 @@ def load_user_angebots(request):
             if angebot:
                 angebot.status = status
                 angebots_to_update.append(angebot)
-            else:
-                angebots_to_unassign.append(angebot)
 
-        # Bulk update angebot status and angebot_id_assigned
+        # Bulk update angebot status
         VertriebAngebot.objects.bulk_update(angebots_to_update, ['status'])
+
+        # Setting angebot_id_assigned to False for angebots which zoho_id was not found
+        angebots_to_unassign = [angebot for angebot in all_vertrieb_angebots_for_user if angebot.zoho_id not in zoho_ids_in_list]
+        for angebot in angebots_to_unassign:
+            angebot.angebot_id_assigned = False
         VertriebAngebot.objects.bulk_update(angebots_to_unassign, ['angebot_id_assigned'])
 
-        load_vertrieb_angebot(all_user_angebots_list, user, user.kuerzel)
-
-        print(f"{user.email}: Aufträge aus JPP aktualisiert")
-        send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
-        
+        load_vertrieb_angebot(all_user_angebots_list, user, kurz)
+        print(
+            f"{user.email}: Aufträge aus JPP aktualisiert"
+        )
+        send_message_to_bot(
+            f"{user.email}: Aufträge aus JPP aktualisiert"
+        )
         return JsonResponse({"status": "success"}, status=200)
-    except Exception as e:
-        print(f"Failed to load user angebots: {e}")
-        return JsonResponse({"status": "failed", "error": str(e)}, status=400)
+    except Exception:
+        return JsonResponse(
+            {"status": "failed", "error": "Not a POST request."}, status=400
+        )
 # @user_passes_test(vertrieb_check)
 # def load_user_angebots(request):
 #     try:
