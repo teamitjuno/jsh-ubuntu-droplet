@@ -97,7 +97,7 @@ def fetch_data_from_api(url, params=None):
             return response.json()
         else:
             log_and_notify(f"Failed to fetch data, status code: {response.status_code}")
-            return None
+            pass
         
 def fetch_user_angebote_all(request):
     user = request.user
