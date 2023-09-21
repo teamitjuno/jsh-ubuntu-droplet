@@ -1214,7 +1214,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     try:
-        user = get_object_or_404(User, zoho_id=request.user.zoho_id)
+        user = request.user
         
         all_user_angebots_list = fetch_user_angebote_all(request)
         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
