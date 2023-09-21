@@ -1222,8 +1222,8 @@ def load_user_angebots(request):
         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
 
         # Save zoho data to the user
-        user.zoho_data_text = json.dumps(all_user_angebots_list)
-        user.save()
+        profile.zoho_data_text = json.dumps(all_user_angebots_list)
+        profile.save()
 
         # Update VertriebAngebot status
         angebots_to_update = []
