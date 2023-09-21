@@ -153,13 +153,13 @@ def refresh_access_token():
 
     for attempt in range(MAX_RETRIES):
         response = requests.post(ACCESS_TOKEN_URL, params=params)
-
+        sleep(1)
         if response.status_code == HTTP_OK:
             data = response.json()
             new_token = data.get("access_token")
             if new_token:
                 set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
-                sleep(1)
+                
                 return new_token
 
         logging.error(
@@ -258,6 +258,7 @@ def fetch_angenommen_status(request, zoho_id):
 
     if data:
         data_dict = data["data"]
+        print(data_dict)
         return data_dict
     else:
         send_message_to_bot(f"Angennomen status handling failed:\n{zoho_id}")
