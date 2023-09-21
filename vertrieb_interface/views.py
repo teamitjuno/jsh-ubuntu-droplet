@@ -30,6 +30,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.formats import date_format
 from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q, Sum, Count
@@ -653,8 +654,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         )
                         if form.is_valid():
                             form.save()
-                else:
-                    pass
+
+                        if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                            f"{user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
+                                )
+                        print(
+                            f"{user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
+                        )
+                        pass
             else:
                 pass
         except VertriebAngebot.DoesNotExist:
@@ -910,13 +918,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 )
 
         elif form.is_valid():
-            print(
-                f"{user.email}: Saving Angebot für ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-            )
-            if TELEGRAM_LOGGING:
-                send_message_to_bot(
-                    f"{user.email}: Saving Angebot für ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-                )
+            
             vertrieb_angebot.angebot_id_assigned = True
 
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
@@ -935,10 +937,12 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.save()
             form.save()  # type:ignore
 
-            print(f"{user.email}: Saving successfull!", vertrieb_angebot.angebot_id)
+            print(
+                f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
+            )
             if TELEGRAM_LOGGING:
                 send_message_to_bot(
-                    f"{user.email}: Saving successfull!  {vertrieb_angebot.angebot_id}"
+                    f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
                 )
             CustomLogEntry.objects.log_action(
                 user_id=vertrieb_angebot.user_id,
@@ -1207,26 +1211,84 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         queryset = queryset.order_by("-zoho_kundennumer_int")
 
         return queryset
-
-
+    
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     try:
-        profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+        
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
-
+        
         all_user_angebots_list = fetch_user_angebote_all(request)
 
-        zoho_data = json.dumps(all_user_angebots_list)
-        profile.zoho_data_text = zoho_data  # type: ignore
-        profile.save()
-        load_vertrieb_angebot(all_user_angebots_list, user, kurz)
+
+        # Save zoho data to the user
+        user.zoho_data_text = json.dumps(all_user_angebots_list)
+        user.save()
+
+        all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
+        vertrieb_angebots_map = {str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user}
+        # Update VertriebAngebot status
+        angebots_to_update = []
+        angebots_to_unassign = []
+        for item in all_user_angebots_list:
+            zoho_id = item.get("zoho_id")
+            status = item.get("status")
+            angebot = vertrieb_angebots_map.get(zoho_id)
+            if angebot:
+                angebot.status = status
+                angebots_to_update.append(angebot)
+            else:
+                angebots_to_unassign.append(angebot)
+
+        # Bulk update angebot status and angebot_id_assigned
+        VertriebAngebot.objects.bulk_update(angebots_to_update, ['status'])
+        VertriebAngebot.objects.bulk_update(angebots_to_unassign, ['angebot_id_assigned'])
+
+        load_vertrieb_angebot(all_user_angebots_list, user, user.kuerzel)
+
+        print(f"{user.email}: Aufträge aus JPP aktualisiert")
+        send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
+        
         return JsonResponse({"status": "success"}, status=200)
-    except Exception:
-        return JsonResponse(
-            {"status": "failed", "error": "Not a POST request."}, status=400
-        )
+    except Exception as e:
+        print(f"Failed to load user angebots: {e}")
+        return JsonResponse({"status": "failed", "error": str(e)}, status=400)
+# @user_passes_test(vertrieb_check)
+# def load_user_angebots(request):
+#     try:
+#         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+#         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
+#         kurz = user.kuerzel  # type: ignore
+#         all_user_angebots_list = fetch_user_angebote_all(request)
+#         zoho_data = json.dumps(all_user_angebots_list)
+#         user.zoho_data_text = zoho_data  # type: ignore
+#         user.save()
+
+#         all_user_angebots_list_parsed = json.loads(user.zoho_data_text)
+#         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list_parsed}
+
+#         for item in all_user_angebots_list:
+#             zoho_id = item.get("zoho_id")
+#             status = item.get("status")
+#             vertrieb_angebots = VertriebAngebot.objects.filter(user=user, zoho_id=int(zoho_id))
+#             for angebot in vertrieb_angebots:
+#                 angebot.status = status
+#                 angebot.save()
+
+#         # Setting angebot_id_assigned to False for angebots which zoho_id was not found in all_user_angebots_list
+#         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
+#         for angebot in all_vertrieb_angebots_for_user:
+#             if angebot.zoho_id not in zoho_ids_in_list:
+#                 angebot.angebot_id_assigned = False
+#                 angebot.save()
+
+#         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
+#         return JsonResponse({"status": "success"}, status=200)
+#     except Exception:
+#         return JsonResponse(
+#             {"status": "failed", "error": "Not a POST request."}, status=400
+#         )
 
 
 def replace_spaces_with_underscores(s: str) -> str:
@@ -1582,7 +1644,7 @@ def filter_user_angebots_by_query(user_angebots, query):
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
-    user_angebots = VertriebAngebot.objects.filter(user=request.user)
+    user_angebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True)
     query = request.GET.get("q")
 
     if query:
