@@ -176,20 +176,19 @@ def process_all_user_data(data):
 
 def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
-    start_index = 1
-    params = {
-        "from": start_index,
-        "limit": LIMIT_CURRENT,
-    }
+    
+    headers = get_headers()  # Assume get_headers is a function that returns the correct headers
 
-    data = fetch_data_from_api(url, params)
-
-    if data:
-        data_dict = data["data"]
-        return data_dict
-    else:
-        send_message_to_bot(f"Angennomen status handling failed:\n{zoho_id}")
+    response = session.get(url, headers=headers)  # Removed params as they are not needed in this case
+    if response.status_code != 200:
+        send_message_to_bot(f"Angenommen status handling failed for zoho_id: {zoho_id}")
         return None
+
+    data = response.json()  # Fixed improper method call
+    data_dict = data.get("data")  # Safely get data from the response
+
+    return data_dict
+
 
 
 def fetch_current_user_angebot(request, zoho_id):
