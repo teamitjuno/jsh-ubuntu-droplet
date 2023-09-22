@@ -1008,7 +1008,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.handle_status_change(angebot_id)
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
@@ -1028,63 +1027,44 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         kwargs["user"] = self.request.user
         return kwargs
 
-    def handle_status_change(self, angebot_id):
-        for angebot in VertriebAngebot.objects.filter(
-            angebot_id=angebot_id, status="bekommen"
-        ):
-            if angebot.status_change_field:
-                if (
-                    timezone.now() - angebot.status_change_field
-                ).total_seconds() >= 14 * 24 * 60 * 60:
-                    angebot.status = "abgelaufen"
-                    angebot.save()
-                    CustomLogEntry.objects.log_action(
-                        user_id=angebot.user_id,
-                        content_type_id=ContentType.objects.get_for_model(angebot).pk,
-                        object_id=angebot.pk,
-                        object_repr=str(angebot),
-                        action_flag=CHANGE,
-                        status=angebot.status,
-                    )
-
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
-        if zoho_id is not None:
-            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-            
-            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
-            user = request.user
-            user_folder = os.path.join(
-                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-            )
-            calc_image = os.path.join(user_folder, "tmp.png")
-            calc_image_suffix = os.path.join(
-                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-            )
-            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-            relative_path_suffix = os.path.relpath(
-                calc_image_suffix, start=settings.MEDIA_ROOT
-            )
-            context = self.get_context_data()
-            countdown = vertrieb_angebot.countdown()
-            context = {
-                "countdown": vertrieb_angebot.countdown(),
-                "user": user,
-                "vertrieb_angebot": vertrieb_angebot,
-                "form": form,
-                "calc_image": relative_path,
-                "calc_image_suffix": relative_path_suffix,
-                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-                "OWNER_ID": settings.OWNER_ID,
-                "STYLE_ID": settings.STYLE_ID,
-                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-            }
 
-            return render(request, self.template_name, context)
+        vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
+        
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+        user = request.user
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        calc_image = os.path.join(user_folder, "tmp.png")
+        calc_image_suffix = os.path.join(
+            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+        )
+        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+        relative_path_suffix = os.path.relpath(
+            calc_image_suffix, start=settings.MEDIA_ROOT
+        )
+        context = self.get_context_data()
+        countdown = vertrieb_angebot.countdown()
+        context = {
+            "countdown": vertrieb_angebot.countdown(),
+            "user": user,
+            "vertrieb_angebot": vertrieb_angebot,
+            "form": form,
+            "calc_image": relative_path,
+            "calc_image_suffix": relative_path_suffix,
+            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+            "OWNER_ID": settings.OWNER_ID,
+            "STYLE_ID": settings.STYLE_ID,
+            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+        }
+
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
@@ -1110,7 +1090,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 return redirect(
                     "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
                 )
-
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
@@ -1118,11 +1097,25 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             name_to_kundennumer = {
                 item["name"]: item["zoho_kundennumer"] for item in data
             }
+            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
             name = form.cleaned_data["name"]
+            zoho_id = form.cleaned_data["zoho_id"]
             kundennumer = name_to_kundennumer[name]
-            vertrieb_angebot.zoho_kundennumer = kundennumer
 
+            zoho_id = name_to_zoho_id[name]
+
+            vertrieb_angebot.zoho_kundennumer = kundennumer
+            vertrieb_angebot.zoho_id = int(zoho_id)
+            vertrieb_angebot.save()
             form.save()  # type:ignore
+
+            print(
+                f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
+            )
+            if TELEGRAM_LOGGING:
+                send_message_to_bot(
+                    f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
+                )
             CustomLogEntry.objects.log_action(
                 user_id=vertrieb_angebot.user_id,
                 content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
@@ -1132,16 +1125,14 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 status=vertrieb_angebot.status,
             )
             return redirect(
-                "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
-            )
-
-        return self.form_invalid(form, vertrieb_angebot)
+                    "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
+                )
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
         context = self.get_context_data()
-        countdown = vertrieb_angebot.countdown()
+
         context["status_change_field"] = vertrieb_angebot.status_change_field
-        context["countdown"] = vertrieb_angebot.countdown()
+        
 
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
@@ -1317,16 +1308,7 @@ def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_")
 
 
-def create_ticket_pdf(request, angebot_id):
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    data = vertrieb_angebot.data
-    pdf_content = ticket_pdf_creator.createTicketPdf(
-        data,
-    )
-    vertrieb_angebot.ticket_pdf = pdf_content
-    vertrieb_angebot.save()
 
-    return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
 # @admin_required
@@ -1405,6 +1387,20 @@ def create_calc_pdf(request, angebot_id):
     pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
 
     return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
+
+@login_required
+def create_ticket_pdf(request, angebot_id):
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+    user = request.user  # Fetching the user from vertrieb_angebot
+    data = vertrieb_angebot.data
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    
+    # Check if the ticket PDF already exists, if not, create it.
+    if vertrieb_angebot.ticket_pdf is None:
+        pdf_content = ticket_pdf_creator.createTicketPdf(data)
+        vertrieb_angebot.ticket_pdf = pdf_content
+        vertrieb_angebot.save()
+    return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
 @login_required
