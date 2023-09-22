@@ -1053,22 +1053,8 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         zoho_id = vertrieb_angebot.zoho_id
         if zoho_id is not None:
-            item = json.loads(vertrieb_angebot.ag_fetched_data)
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-            vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
-            vertrieb_angebot.angebot_bekommen_am = (
-                item.get("angebot_bekommen_am") if item.get("angebot_bekommen_am") else ""
-            )
-            vertrieb_angebot.leadstatus = (
-                item.get("leadstatus") if item.get("leadstatus") else ""
-            )
-            vertrieb_angebot.notizen = item.get("notizen")
-            vertrieb_angebot.email = item.get("email")
-            vertrieb_angebot.postanschrift_latitude = item.get("latitude")
-            vertrieb_angebot.postanschrift_longitude = item.get("longitude")
-            vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
-            vertrieb_angebot.termine_text = item.get("termine_text")
-            vertrieb_angebot.termine_id = item.get("termine_id")
+            
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
