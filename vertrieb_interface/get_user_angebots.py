@@ -29,7 +29,7 @@ MAX_RETRIES = 4
 SLEEP_TIME = 3
 
 # Initialize the environment
-load_dotenv(ENV_FILE)
+load_dotenv()
 session = requests.Session()
 
 # Exceptions
@@ -65,21 +65,22 @@ def refresh_access_token():
         "Connection": "keep-alive" 
     }
 
-    for attempt in range(MAX_RETRIES):
-        response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
-        if response.status_code == HTTP_OK:
-            data = response.json()
-            log_and_notify(f"Refresh response, \n status {response.status_code}")
-            new_token = data.get("access_token")
-            if new_token:
-                set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
-                return new_token
-            else:
-                log_and_notify(f"Token absent in response during attempt {attempt + 1}: {response.text}")
-        else:
-            log_and_notify(f"Token refresh attempt {attempt + 1} failed with status {response.status_code}: {response.text}")
-            sleep(SLEEP_TIME)
     
+    response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
+    if response.status_code == HTTP_OK:
+        data = response.json()
+        log_and_notify(f"Refresh response, \n status {response.status_code}")
+        new_token = data.get("access_token")
+        print(new_token)
+        if new_token:
+            set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
+            return new_token
+        else:
+            log_and_notify(f"Token absent in response during attempt : {response.text}")
+    else:
+        log_and_notify(f"Token refresh attempt failed with status {response.status_code}: {response.text}")
+        sleep(SLEEP_TIME)
+
 
 
 def fetch_data_from_api(url, params=None):
@@ -93,7 +94,6 @@ def fetch_data_from_api(url, params=None):
         elif response.status_code == HTTP_OK:
             return response.json()
         else:
-            log_and_notify(f"Failed to fetch data, status code: {response.status_code}")
             pass
         
 def fetch_user_angebote_all(request):
@@ -175,10 +175,10 @@ def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
     
     headers = get_headers(ZOHO_ACCESS_TOKEN)  # Assume get_headers is a function that returns the correct headers
-    send_message_to_bot(f"headers: {headers}")
+
 
     response = session.get(url, headers=headers)  # Removed params as they are not needed in this case
-    send_message_to_bot(f"headers: {response}")
+
     if response.status_code == HTTP_UNAUTHORIZED:
             headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
     if response.status_code != 200:

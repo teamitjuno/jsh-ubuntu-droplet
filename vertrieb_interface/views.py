@@ -629,7 +629,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     (vertrieb_angebot.vorname_nachname),
                 )
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-
+                send_message_to_bot(f"headers: {fetched_angebote}")
+                print(f"headers: {fetched_angebote}")
                 if fetched_angebote:
                     vertrieb_angebot.notizen = fetched_angebote.get("Notizen")
 
