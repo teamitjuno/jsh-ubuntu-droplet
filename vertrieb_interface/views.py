@@ -1224,7 +1224,6 @@ def load_user_angebots(request):
         for angebot in angebots_to_unassign:
             angebot.angebot_id_assigned = False
         VertriebAngebot.objects.bulk_update(angebots_to_unassign, ['angebot_id_assigned'])
-
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         print(
             f"{user.email}: Aufträge aus JPP aktualisiert"
@@ -1281,7 +1280,6 @@ def replace_spaces_with_underscores(s: str) -> str:
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     data = vertrieb_angebot.data
-
     pdf_content = ticket_pdf_creator.createTicketPdf(
         data,
     )
@@ -1346,8 +1344,6 @@ def create_angebot_pdf_user(request, angebot_id):
     return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
 
 
-
-
 @login_required
 def create_calc_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1399,7 +1395,6 @@ def serve_pdf(request, angebot_id):
     if not vertrieb_angebot.angebot_pdf:
         return StreamingHttpResponse("File not found.", status=404)
 
-    # Create an instance of AsyncFileIter with the file object
     async_iterator = AsyncFileIter(vertrieb_angebot.angebot_pdf)
 
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")

@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import requests
 import logging
 from pprint import pprint
@@ -44,6 +45,43 @@ class UnauthorizedException(APIException):
 class RateLimitExceededException(APIException):
     pass
 
+
+# Store token information in a global variable (or a more persistent storage)
+token_info = {
+    'access_token': None,
+    'expires_at': 0
+}
+
+def refresh_access_token():
+    """
+    Refresh the access token using the refresh token.
+    """
+    global token_info
+    
+    current_time = time.time()
+    if current_time < token_info['expires_at']:
+        return token_info['access_token']
+    
+    token_data = {
+        "refresh_token": ZOHO_REFRESH_TOKEN,
+        "client_id": ZOHO_CLIENT_ID,
+        "client_secret": ZOHO_CLIENT_SECRET,
+        "grant_type": "refresh_token",
+    }
+    try:
+        response = requests.post(ACCESS_TOKEN_URL, data=token_data)
+        response.raise_for_status()
+        
+        token_info['access_token'] = response.json()['access_token']
+        token_info['expires_at'] = current_time + response.json()['expires_in']
+        
+        logging.info('Access token refreshed successfully.')
+        
+        return token_info['access_token']
+    except:
+        logging.error(f"Error refreshing access token")
+
+
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{timestamp} - {message}")
@@ -53,51 +91,59 @@ def log_and_notify(message):
 def get_headers():
     load_dotenv()
     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+    headers = {'Authorization': f'Bearer {access_token}'}
     return {"Authorization": f"Zoho-oauthtoken {access_token}",}
 
-def refresh_access_token():
-    params = {
-        "refresh_token": ZOHO_REFRESH_TOKEN,
-        "client_id": ZOHO_CLIENT_ID,
-        "client_secret": ZOHO_CLIENT_SECRET,
-        "grant_type": "refresh_token",
-    }
-    headers = {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive" 
-    }
+# def refresh_access_token():
+#     params = {
+#         "refresh_token": ZOHO_REFRESH_TOKEN,
+#         "client_id": ZOHO_CLIENT_ID,
+#         "client_secret": ZOHO_CLIENT_SECRET,
+#         "grant_type": "refresh_token",
+#     }
+#     headers = {
+#         "Accept": "*/*",
+#         "Accept-Encoding": "gzip, deflate, br",
+#         "Connection": "keep-alive" 
+#     }
 
-    response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
-    data = response.json()
-    log_and_notify(f"Refresh response, \n status {response.status_code}")
-    new_token = data.get("access_token")
-    set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
-    sleep(0.5)
-    
-    
+#     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
+#     data = response.json()
+#     log_and_notify(f"Refresh response, \n status {response.status_code}")
+#     new_token = data.get("access_token")
+#     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
+#     sleep(0.5)
+# def refresh_access_token():
+#     params = {
+#         "refresh_token": ZOHO_REFRESH_TOKEN,
+#         "client_id": ZOHO_CLIENT_ID,
+#         "client_secret": ZOHO_CLIENT_SECRET,
+#         "grant_type": "refresh_token",
+#     }
+#     headers = {
+#         "Accept": "*/*",
+#         "Accept-Encoding": "gzip, deflate, br",
+#         "Connection": "keep-alive" 
+#     }
+#     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
+#     response.raise_for_status()  # Check for request errors
+#     return response.json()['access_token']
 def fetch_data_from_api(url, params=None):
-    headers = get_headers()
 
-    for attempt in range(MAX_RETRIES):
-        log_and_notify(f"Attempt {attempt + 1} to fetch data from {url} with parameters {params}")
+    access_token = refresh_access_token()
+    headers = {'Authorization': f'Bearer {access_token}'}
+    log_and_notify(f"Attempt to fetch data from {url} with parameters {params}")
+    
+    response = session.get(url, headers=headers, params=params)
+
+    if response.status_code == HTTP_OK:
+        log_and_notify(f"Data successfully fetched from {url}.")
+        return response.json()
+    else:
+        log_and_notify(f"Failed to fetch data, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds.")
+        time.sleep(SLEEP_TIME)
         
-        response = session.get(url, headers=headers, params=params)
-
-        if response.status_code == HTTP_UNAUTHORIZED:
-            log_and_notify("Unauthorized access, refreshing token.")
-            refresh_access_token()
-            access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            response = session.get(url, headers=headers, params=params)
-        elif response.status_code == HTTP_OK:
-            log_and_notify(f"Data successfully fetched from {url}.")
-            return response.json()
-        else:
-            log_and_notify(f"Failed to fetch data, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds.")
-            sleep(SLEEP_TIME)
-            
-    log_and_notify(f"Exceeded maximum retry attempts for {url} with parameters {params}. Failing.")
+    return None
         
 def fetch_user_angebote_all(request):
     user = request.user
@@ -180,30 +226,16 @@ def process_all_user_data(data):
 def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
     
-    headers = get_headers()
+    access_token = refresh_access_token()
+    headers = {'Authorization': f'Bearer {access_token}'}
     
-    for attempt in range(MAX_RETRIES):
-        log_and_notify(f"Attempt {attempt + 1} to fetch angenommen status for zoho_id: {zoho_id}")
 
-        response = session.get(url, headers=headers)
-        
-        if response.status_code == HTTP_UNAUTHORIZED:
-            log_and_notify("Unauthorized access, refreshing token.")
-            refresh_access_token()
-            sleep
-            access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            response = session.get(url, headers=headers)
-        elif response.status_code == HTTP_OK:
-            log_and_notify(f"Angenommen status successfully fetched for zoho_id: {zoho_id}")
-            data = response.json()
-            return data.get("data")
-        else:
-            log_and_notify(f"Failed to fetch angenommen status, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds.")
-            sleep(SLEEP_TIME)
+    log_and_notify(f"Attempt to fetch angenommen status for zoho_id: {zoho_id}")
 
-    log_and_notify(f"Exceeded maximum retry attempts for fetching angenommen status for zoho_id: {zoho_id}. Failing.")
-    return None
+    response = session.get(url, headers=headers)
+    data = response.json()
+    return data.get("data")
+
 
 
 
@@ -277,7 +309,8 @@ def process_current_user_data(data, current_angebot_list):
 def update_status(zoho_id, new_status):
     update_url = f"{VERTRIEB_URL}/{zoho_id}"
 
-    headers = get_headers()
+    access_token = refresh_access_token()
+    headers = {'Authorization': f'Bearer {access_token}'}
 
     current_datetime = datetime.datetime.now()
     bekommen_am = current_datetime.strftime("%d-%b-%Y")
@@ -290,19 +323,9 @@ def update_status(zoho_id, new_status):
         }
     }
 
-    for _ in range(2):  # Two attempts: one with the initial token and another after a refresh
-        response = session.put(update_url, headers=headers, json=payload)
+    response = session.put(update_url, headers=headers, json=payload)
+    return response.json()
         
-        if response.status_code == HTTP_UNAUTHORIZED:
-            refresh_access_token()
-            access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            response = session.put(update_url, headers=headers, json=payload)
-        elif response.status_code == HTTP_OK:
-            return response.json()
-        else:
-            logging.error(f"Error updating status: {response.status_code} - {response.text}")
-            send_message_to_bot(f"Updating status failed:\n{response.status_code} - {response.text}")
 
 
 def return_lower_bull(val):
@@ -311,7 +334,8 @@ def return_lower_bull(val):
 
 def pushAngebot(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
-    headers = get_headers()
+    access_token = refresh_access_token()
+    headers = {'Authorization': f'Bearer {access_token}'}
 
     date_obj_gultig = datetime.datetime.strptime(
         vertrieb_angebot.angebot_gultig, "%d.%m.%Y"
@@ -342,18 +366,17 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
         }
     }
 
-    for _ in range(2):  # Two attempts
-        response = session.post(url, json=dataMap, headers=headers)
 
-        if response.status_code == HTTP_OK:
-            return response
+    response = session.post(url, json=dataMap, headers=headers)
+    
+    return response
 
-        if response.status_code == HTTP_UNAUTHORIZED:
-            refresh_access_token()
-            access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-            headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-            response = session.post(url, json=dataMap, headers=headers)
-        else:
-            send_message_to_bot(
-                f"Pushing data failed: {vertrieb_angebot.angebot_id},\n{response.status_code} - {response.text}"
-            )
+        # if response.status_code == HTTP_UNAUTHORIZED:
+        #     refresh_access_token()
+        #     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+        #     headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
+        #     response = session.post(url, json=dataMap, headers=headers)
+        # else:
+        #     send_message_to_bot(
+        #         f"Pushing data failed: {vertrieb_angebot.angebot_id},\n{response.status_code} - {response.text}"
+        #     )
