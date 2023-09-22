@@ -141,7 +141,7 @@ DEVELOPEMENT_MODE = os.getenv(f"DEVELOPEMENT")
 TELEBOT_TOKEN = os.getenv("TELEBOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-TELEGRAM_LOGGING = False
+TELEGRAM_LOGGING = True
 
 DATABASES = {
     "default": {
