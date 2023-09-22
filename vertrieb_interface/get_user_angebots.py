@@ -33,6 +33,7 @@ SLEEP_TIME = 2
 load_dotenv()
 session = requests.Session()
 
+
 # Exceptions
 class APIException(Exception):
     pass
@@ -47,21 +48,19 @@ class RateLimitExceededException(APIException):
 
 
 # Store token information in a global variable (or a more persistent storage)
-token_info = {
-    'access_token': None,
-    'expires_at': 0
-}
+token_info = {"access_token": None, "expires_at": 0}
+
 
 def refresh_access_token():
     """
     Refresh the access token using the refresh token.
     """
     global token_info
-    
+
     current_time = time.time()
-    if current_time < token_info['expires_at']:
-        return token_info['access_token']
-    
+    if current_time < token_info["expires_at"]:
+        return token_info["access_token"]
+
     token_data = {
         "refresh_token": ZOHO_REFRESH_TOKEN,
         "client_id": ZOHO_CLIENT_ID,
@@ -71,28 +70,22 @@ def refresh_access_token():
     try:
         response = requests.post(ACCESS_TOKEN_URL, data=token_data)
         response.raise_for_status()
-        
-        token_info['access_token'] = response.json()['access_token']
-        token_info['expires_at'] = current_time + response.json()['expires_in']
-        
-        logging.info('Access token refreshed successfully.')
-        
-        return token_info['access_token']
+
+        token_info["access_token"] = response.json()["access_token"]
+        token_info["expires_at"] = current_time + response.json()["expires_in"]
+
+        log_and_notify(f"Access token refreshed successfully. Expires at: {token_info['expires_at']}")
+
+        return token_info["access_token"]
     except:
-        logging.error(f"Error refreshing access token")
+        log_and_notify(f"Error refreshing access token")
 
 
 def log_and_notify(message):
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
     send_message_to_bot(message)
 
-
-def get_headers():
-    load_dotenv()
-    access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-    headers = {'Authorization': f'Bearer {access_token}'}
-    return {"Authorization": f"Zoho-oauthtoken {access_token}",}
 
 # def refresh_access_token():
 #     params = {
@@ -104,8 +97,9 @@ def get_headers():
 #     headers = {
 #         "Accept": "*/*",
 #         "Accept-Encoding": "gzip, deflate, br",
-#         "Connection": "keep-alive" 
+#         "Connection": "keep-alive"
 #     }
+
 
 #     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
 #     data = response.json()
@@ -123,7 +117,7 @@ def get_headers():
 #     headers = {
 #         "Accept": "*/*",
 #         "Accept-Encoding": "gzip, deflate, br",
-#         "Connection": "keep-alive" 
+#         "Connection": "keep-alive"
 #     }
 #     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
 #     response.raise_for_status()  # Check for request errors
@@ -131,27 +125,32 @@ def get_headers():
 def fetch_data_from_api(url, params=None):
 
     access_token = refresh_access_token()
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {"Authorization": f"Bearer {access_token}"}
     log_and_notify(f"Attempt to fetch data from {url} with parameters {params}")
-    
-    response = session.get(url, headers=headers, params=params)
+
+    response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == HTTP_OK:
         log_and_notify(f"Data successfully fetched from {url}.")
         return response.json()
     else:
-        log_and_notify(f"Failed to fetch data, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds.")
+        log_and_notify(
+            f"Failed to fetch data, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds."
+        )
         time.sleep(SLEEP_TIME)
-        
+
     return None
-        
+
+
 def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
     all_user_angebots_list = []
 
-    log_and_notify(f"Start fetching Angebote for user: {user.username}, User ID: {user.zoho_id}")
-    
+    log_and_notify(
+        f"Start fetching Angebote for user: {user.username}, User ID: {user.zoho_id}"
+    )
+
     while True:
         params = {
             "from": start_index,
@@ -160,21 +159,26 @@ def fetch_user_angebote_all(request):
         }
 
         data = fetch_data_from_api(VERTRIEB_URL, params)
-        
+
         if data is None or not data.get("data"):
-            log_and_notify(f"No more data to fetch for user: {user.username}, User ID: {user.zoho_id}. Exiting.")
+            log_and_notify(
+                f"No more data to fetch for user: {user.username}, User ID: {user.zoho_id}. Exiting."
+            )
             break
         else:
             all_user_angebots_list.extend(process_all_user_data(data))
-            log_and_notify(f"Data page {start_index // LIMIT_ALL + 1} fetched successfully. Continuing.")
+            log_and_notify(
+                f"Data page {start_index // LIMIT_ALL + 1} fetched successfully. Continuing."
+            )
             start_index += LIMIT_ALL
             if len(data.get("data")) < LIMIT_ALL:
                 break
 
-    log_and_notify(f"Fetched all available Angebote for user: {user.username}, User ID: {user.zoho_id}")
+    log_and_notify(
+        f"Fetched all available Angebote for user: {user.username}, User ID: {user.zoho_id}"
+    )
 
     return all_user_angebots_list
-
 
 
 def process_all_user_data(data):
@@ -223,66 +227,68 @@ def process_all_user_data(data):
 
     return all_user_angebots_list
 
+
 def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
-    
+
     access_token = refresh_access_token()
-    headers = {'Authorization': f'Bearer {access_token}'}
-    
+    headers = {"Authorization": f"Bearer {access_token}"}
 
-    log_and_notify(f"Attempt to fetch angenommen status for zoho_id: {zoho_id}")
+    log_and_notify(f"Attempt to fetch angenommen status for zoho_id: {zoho_id}\n{headers}")
 
-    response = session.get(url, headers=headers)
+    response = requests.get(url, headers=headers)
     data = response.json()
     data = data.get("data")
-    log_and_notify(f"Attempt to fetch angenommen status {data}")
     return data
 
 
+# def fetch_current_user_angebot(request, zoho_id):
+#     url = f"{VERTRIEB_URL}/{zoho_id}"
 
+#     current_angebot_list = []
 
-def fetch_current_user_angebot(request, zoho_id):
-    url = f"{VERTRIEB_URL}/{zoho_id}"
+#     log_and_notify(f"Start fetching current user Angebot for zoho_id: {zoho_id}")
 
-    current_angebot_list = []
+#     data = fetch_data_from_api(url)
 
-    log_and_notify(f"Start fetching current user Angebot for zoho_id: {zoho_id}")
-    
+#     if data:
+#         data_dict = data.get("data")
+#         if not data_dict:
+#             log_and_notify(
+#                 f"No more data to fetch for current user Angebot for zoho_id: {zoho_id}. Exiting."
+#             )
+#         try:
+#             entry = {
+#                 "ausrichtung": 0
+#                 if data_dict.get("Dachausrichtung") in ["S\u00fcd", "Ost/West"]
+#                 else 1,
+#                 "status": data_dict.get("Status", ""),
+#                 "email": data_dict.get("Email", ""),
+#                 "angebot_bekommen_am": data_dict.get("Angebot_bekommen_am", ""),
+#                 "anfrage_berr": data_dict.get("Anfrage_ber", ""),
+#                 "notizen": data_dict.get("Notizen", ""),
+#                 "leadstatus": data_dict.get("Leadstatus", ""),
+#                 "empfohlen_von": data_dict.get("empfohlen_von", ""),
+#                 "termine_text": data_dict.get("Termine", [{}])[0].get(
+#                     "display_value", "none"
+#                 ),
+#                 "termine_id": data_dict.get("Termine", [{}])[0].get("ID", ""),
+#                 "latitude": data_dict.get("Adresse_PVA", {}).get("latitude", ""),
+#                 "longitude": data_dict.get("Adresse_PVA", {}).get("longitude", ""),
+#             }
+#             current_angebot_list.append(entry)
+#             log_and_notify(
+#                 f"Data page fetched successfully for current user Angebot for zoho_id: {zoho_id}. Continuing."
+#             )
+#         except Exception as e:
+#             log_and_notify(
+#                 f"Error processing data for zoho_id: {zoho_id}. Error: {str(e)}"
+#             )
 
-    data = fetch_data_from_api(url)
-        
-    if data:
-        data_dict = data.get("data")
-        if not data_dict:
-            log_and_notify(f"No more data to fetch for current user Angebot for zoho_id: {zoho_id}. Exiting.")
-        try:
-            entry = {
-                "ausrichtung": 0
-                if data_dict.get("Dachausrichtung") in ["S\u00fcd", "Ost/West"]
-                else 1,
-                "status": data_dict.get("Status", ""),
-                "email": data_dict.get("Email", ""),
-                "angebot_bekommen_am": data_dict.get("Angebot_bekommen_am", ""),
-                "anfrage_berr": data_dict.get("Anfrage_ber", ""),
-                "notizen": data_dict.get("Notizen", ""),
-                "leadstatus": data_dict.get("Leadstatus", ""),
-                "empfohlen_von": data_dict.get("empfohlen_von", ""),
-                "termine_text": data_dict.get("Termine", [{}])[0].get(
-                    "display_value", "none"
-                ),
-                "termine_id": data_dict.get("Termine", [{}])[0].get("ID", ""),
-                "latitude": data_dict.get("Adresse_PVA", {}).get("latitude", ""),
-                "longitude": data_dict.get("Adresse_PVA", {}).get("longitude", ""),
-            }
-            current_angebot_list.append(entry)
-            log_and_notify(f"Data page fetched successfully for current user Angebot for zoho_id: {zoho_id}. Continuing.")
-        except Exception as e:
-            log_and_notify(f"Error processing data for zoho_id: {zoho_id}. Error: {str(e)}")
+#     log_and_notify(f"Fetched all available current user Angebot for zoho_id: {zoho_id}")
 
+#     return current_angebot_list
 
-    log_and_notify(f"Fetched all available current user Angebot for zoho_id: {zoho_id}")
-
-    return current_angebot_list
 
 def process_current_user_data(data, current_angebot_list):
     if not data["data"]:
@@ -312,7 +318,7 @@ def update_status(zoho_id, new_status):
     update_url = f"{VERTRIEB_URL}/{zoho_id}"
 
     access_token = refresh_access_token()
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     current_datetime = datetime.datetime.now()
     bekommen_am = current_datetime.strftime("%d-%b-%Y")
@@ -325,9 +331,8 @@ def update_status(zoho_id, new_status):
         }
     }
 
-    response = session.put(update_url, headers=headers, json=payload)
+    response = requests.put(update_url, headers=headers, json=payload)
     return response.json()
-        
 
 
 def return_lower_bull(val):
@@ -337,7 +342,7 @@ def return_lower_bull(val):
 def pushAngebot(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
     access_token = refresh_access_token()
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     date_obj_gultig = datetime.datetime.strptime(
         vertrieb_angebot.angebot_gultig, "%d.%m.%Y"
@@ -368,17 +373,16 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
         }
     }
 
+    response = requests.post(url, json=dataMap, headers=headers)
 
-    response = session.post(url, json=dataMap, headers=headers)
-    
     return response
 
-        # if response.status_code == HTTP_UNAUTHORIZED:
-        #     refresh_access_token()
-        #     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-        #     headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-        #     response = session.post(url, json=dataMap, headers=headers)
-        # else:
-        #     send_message_to_bot(
-        #         f"Pushing data failed: {vertrieb_angebot.angebot_id},\n{response.status_code} - {response.text}"
-        #     )
+    # if response.status_code == HTTP_UNAUTHORIZED:
+    #     refresh_access_token()
+    #     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
+    #     headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
+    #     response = session.post(url, json=dataMap, headers=headers)
+    # else:
+    #     send_message_to_bot(
+    #         f"Pushing data failed: {vertrieb_angebot.angebot_id},\n{response.status_code} - {response.text}"
+    #     )

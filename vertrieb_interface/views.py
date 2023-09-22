@@ -7,6 +7,7 @@ from time import sleep
 from pprint import pformat, pprint
 from urllib.parse import unquote
 import asyncio
+
 # Django related imports
 from django.urls import reverse
 from django.contrib import messages
@@ -47,7 +48,7 @@ from calculator.forms import CalculatorForm
 from shared.chat_bot import handle_message
 from vertrieb_interface.get_user_angebots import (
     fetch_user_angebote_all,
-    fetch_current_user_angebot,
+    # fetch_current_user_angebot,
     fetch_angenommen_status,
     pushAngebot,
 )
@@ -66,6 +67,7 @@ from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
 
+
 class AsyncBytesIter:
     def __init__(self, byte_data, chunk_size=8192):
         self.byte_data = byte_data
@@ -80,9 +82,10 @@ class AsyncBytesIter:
         if self.index >= len(self.byte_data):
             raise StopAsyncIteration
         # Get the next chunk and update the index
-        chunk = self.byte_data[self.index:self.index + self.chunk_size]
+        chunk = self.byte_data[self.index : self.index + self.chunk_size]
         self.index += self.chunk_size
         return chunk
+
 
 class AsyncFileIter:
     def __init__(self, file, chunk_size=8192):
@@ -99,15 +102,16 @@ class AsyncFileIter:
             if self.index >= len(self.file):
                 raise StopAsyncIteration
             # Get the next chunk and update the index
-            chunk = self.file[self.index:self.index + self.chunk_size]
+            chunk = self.file[self.index : self.index + self.chunk_size]
             self.index += self.chunk_size
         else:
             chunk = await asyncio.to_thread(self.file.read, self.chunk_size)
             # If the chunk is empty, it's the end of the file
             if not chunk:
                 raise StopAsyncIteration
-        
+
         return chunk
+
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -603,6 +607,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
+        self.fetch_angebot_data(request, angebot_id)
         self.handle_status_change(angebot_id)
         self.handle_zoho_status_change(request, angebot_id)
         return super().dispatch(request, *args, **kwargs)
@@ -649,14 +654,53 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         status=angebot.status,
                     )
 
+    def fetch_angebot_data(self, request, angebot_id):
+        fetched_angebote_list = []
+        vertrieb_angebot = VertriebAngebot.objects.get(
+            angebot_id=angebot_id, user=request.user
+        )
+        zoho_id = vertrieb_angebot.zoho_id
+        if zoho_id is not None:
+            item = fetch_angenommen_status(request, zoho_id)
+            fetched_data = {
+                "zoho_id": item.get("ID", ""),
+                "status": item.get("Status", ""),
+                "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
+                "anrede": item.get("Name", {}).get("prefix", ""),
+                "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
+                "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
+                + " "
+                + item.get("Adresse_PVA", {}).get("district_city", ""),
+                "postanschrift_longitude": item.get("Adresse_PVA", {}).get("longitude", ""),
+                "postanschrift_latitude": item.get("Adresse_PVA", {}).get("latitude", ""),
+                "telefon_festnetz": item.get("Telefon_Festnetz", ""),
+                "telefon_mobil": item.get("Telefon_mobil", ""),
+                "zoho_kundennumer": item.get("Kundennummer", ""),
+                "email": item.get("Email", ""),
+                "notizen": item.get("Notizen", ""),
+                "name": item.get("Name", {}).get("last_name", "")
+                + " "
+                + item.get("Name", {}).get("suffix", "")
+                + " "
+                + item.get("Name", {}).get("first_name", ""),
+                "vertriebler_display_value": item.get("Vertriebler", {}).get(
+                    "display_value", ""
+                ),
+                "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
+                "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
+                    "display_value", ""
+                ),
+                "anfrage_vom": item.get("Anfrage_vom", ""),
+            }
+            vertrieb_angebot.ag_fetched_data = json.dumps(fetched_data)
+            vertrieb_angebot.save()
+        else:
+            pass
     def handle_zoho_status_change(self, request, angebot_id):
-        user = request.user
-
+        vertrieb_angebot = VertriebAngebot.objects.get(
+            angebot_id=angebot_id, user=request.user
+        )
         try:
-            vertrieb_angebot = VertriebAngebot.objects.get(
-                angebot_id=angebot_id, user=request.user
-            )
-
             if (
                 vertrieb_angebot.angebot_id_assigned == True
                 and vertrieb_angebot.zoho_id
@@ -664,25 +708,26 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 zoho_id = vertrieb_angebot.zoho_id
                 if TELEGRAM_LOGGING:
                     send_message_to_bot(
-                        f"{user.email}: Handling status change... ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
+                        f"{request.user.email}: Handling status change... ANGEBOT_ZOHO_ID : , {zoho_id}, {vertrieb_angebot.vorname_nachname}"
                     )
                 print(
-                    f"{user.email}: Opened Angebot {vertrieb_angebot.angebot_id} Handling status change... ANGEBOT_ZOHO_ID : ",
-                    (vertrieb_angebot.zoho_id),
+                    f"{request.user.email}: Opened Angebot {vertrieb_angebot.angebot_id} Handling status change... ANGEBOT_ZOHO_ID : ",
+                    (zoho_id),
                     (vertrieb_angebot.vorname_nachname),
                 )
-                fetched_angebote = fetch_angenommen_status(request, zoho_id)
-                if fetched_angebote:
-                    vertrieb_angebot.notizen = fetched_angebote.get("Notizen")
 
-                    if fetched_angebote.get("Status") == "angenommen":
+                if vertrieb_angebot.ag_fetched_data:
+                    fetched_data = json.loads(vertrieb_angebot.ag_fetched_data)
+                    vertrieb_angebot.notizen = fetched_data.get("notizen")
+
+                    if fetched_data.get("Status") == "angenommen":
                         vertrieb_angebot.status = "angenommen"
                         vertrieb_angebot.status_change_field = None
                         vertrieb_angebot.save()
                         print("Angebot saved with status 'angenommen'")
                         # Assuming you want to create a form instance with the fetched data
                         form = self.form_class(
-                            fetched_angebote,
+                            fetched_data,
                             instance=vertrieb_angebot,
                             user=request.user,
                         )
@@ -690,7 +735,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             form.save()
                     else:
                         form = self.form_class(
-                            fetched_angebote,
+                            fetched_data,
                             instance=vertrieb_angebot,
                             user=request.user,
                         )
@@ -699,10 +744,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                         if TELEGRAM_LOGGING:
                             send_message_to_bot(
-                            f"{user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
-                                )
+                                f"{request.user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
+                            )
                         print(
-                            f"{user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
+                            f"{request.user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
                         )
                         pass
             else:
@@ -716,23 +761,22 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         zoho_id = vertrieb_angebot.zoho_id
         if zoho_id is not None:
-            data = fetch_current_user_angebot(request, zoho_id)
-            for item in data:
-                vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-                vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
-                vertrieb_angebot.angebot_bekommen_am = (
-                    item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
-                )
-                vertrieb_angebot.leadstatus = (
-                    item["leadstatus"] if item["leadstatus"] else ""
-                )
-                vertrieb_angebot.notizen = item["notizen"]
-                vertrieb_angebot.email = item["email"]
-                vertrieb_angebot.postanschrift_latitude = item["latitude"]
-                vertrieb_angebot.postanschrift_longitude = item["longitude"]
-                vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
-                vertrieb_angebot.termine_text = item["termine_text"]
-                vertrieb_angebot.termine_id = item["termine_id"]
+            item = json.loads(vertrieb_angebot.ag_fetched_data)
+            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
+            vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
+            vertrieb_angebot.angebot_bekommen_am = (
+                item.get("angebot_bekommen_am") if item.get("angebot_bekommen_am") else ""
+            )
+            vertrieb_angebot.leadstatus = (
+                item.get("leadstatus") if item.get("leadstatus") else ""
+            )
+            vertrieb_angebot.notizen = item.get("notizen")
+            vertrieb_angebot.email = item.get("email")
+            vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
+            vertrieb_angebot.postanschrift_longitude = item.get("postanschrift_longitude")
+            vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
+            vertrieb_angebot.termine_text = item.get("termine_text")
+            vertrieb_angebot.termine_id = item.get("termine_id")
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
@@ -899,7 +943,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 )
 
         elif form.is_valid():
-            
             vertrieb_angebot.angebot_id_assigned = True
 
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
@@ -1009,58 +1052,53 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
-        data = fetch_current_user_angebot(request, zoho_id)
-        for item in data:
+        if zoho_id is not None:
+            item = json.loads(vertrieb_angebot.ag_fetched_data)
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-            vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
-
+            vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
             vertrieb_angebot.angebot_bekommen_am = (
-                item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
+                item.get("angebot_bekommen_am") if item.get("angebot_bekommen_am") else ""
             )
-
-            vertrieb_angebot.verbrauch = item["verbrauch"]
-
             vertrieb_angebot.leadstatus = (
-                item["leadstatus"] if item["leadstatus"] else ""
+                item.get("leadstatus") if item.get("leadstatus") else ""
             )
-            vertrieb_angebot.notizen = item["notizen"]
-            vertrieb_angebot.email = item["email"]
-            vertrieb_angebot.postanschrift_latitude = item["latitude"]
-            vertrieb_angebot.postanschrift_longitude = item["longitude"]
+            vertrieb_angebot.notizen = item.get("notizen")
+            vertrieb_angebot.email = item.get("email")
+            vertrieb_angebot.postanschrift_latitude = item.get("latitude")
+            vertrieb_angebot.postanschrift_longitude = item.get("longitude")
+            vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
+            vertrieb_angebot.termine_text = item.get("termine_text")
+            vertrieb_angebot.termine_id = item.get("termine_id")
+            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+            user = request.user
+            user_folder = os.path.join(
+                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+            )
+            calc_image = os.path.join(user_folder, "tmp.png")
+            calc_image_suffix = os.path.join(
+                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+            )
+            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+            relative_path_suffix = os.path.relpath(
+                calc_image_suffix, start=settings.MEDIA_ROOT
+            )
+            context = self.get_context_data()
+            countdown = vertrieb_angebot.countdown()
+            context = {
+                "countdown": vertrieb_angebot.countdown(),
+                "user": user,
+                "vertrieb_angebot": vertrieb_angebot,
+                "form": form,
+                "calc_image": relative_path,
+                "calc_image_suffix": relative_path_suffix,
+                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+                "OWNER_ID": settings.OWNER_ID,
+                "STYLE_ID": settings.STYLE_ID,
+                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+            }
 
-            vertrieb_angebot.empfohlen_von = item["empfohlen_von"]
-            vertrieb_angebot.termine_text = item["termine_text"]
-            vertrieb_angebot.termine_id = item["termine_id"]
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
-        user = request.user
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(
-            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-        )
-        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(
-            calc_image_suffix, start=settings.MEDIA_ROOT
-        )
-        context = self.get_context_data()
-        countdown = vertrieb_angebot.countdown()
-        context = {
-            "countdown": vertrieb_angebot.countdown(),
-            "user": user,
-            "vertrieb_angebot": vertrieb_angebot,
-            "form": form,
-            "calc_image": relative_path,
-            "calc_image_suffix": relative_path_suffix,
-            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-            "OWNER_ID": settings.OWNER_ID,
-            "STYLE_ID": settings.STYLE_ID,
-            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-        }
-
-        return render(request, self.template_name, context)
+            return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
@@ -1164,7 +1202,15 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         return Q(zoho_kundennumer__regex=r"^\d+$")
 
     def _get_contact_statuses(self):
-        return ["in Kontakt", "Kontaktversuch", "on Hold", "abgelehnt", "abgelaufen", "storniert", "",]
+        return [
+            "in Kontakt",
+            "Kontaktversuch",
+            "on Hold",
+            "abgelehnt",
+            "abgelaufen",
+            "storniert",
+            "",
+        ]
 
     def _get_filtered_and_ordered_queryset(self):
         queryset = self.model.objects.filter(
@@ -1189,13 +1235,15 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         queryset = queryset.order_by("-zoho_kundennumer_int")
 
         return queryset
+
+
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     try:
         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
-        
+
         all_user_angebots_list = fetch_user_angebote_all(request)
         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
 
@@ -1206,7 +1254,9 @@ def load_user_angebots(request):
         # Update VertriebAngebot status
         angebots_to_update = []
         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
-        vertrieb_angebots_map = {str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user}
+        vertrieb_angebots_map = {
+            str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user
+        }
         for item in all_user_angebots_list:
             zoho_id = item.get("zoho_id")
             status = item.get("status")
@@ -1217,25 +1267,29 @@ def load_user_angebots(request):
                 angebots_to_update.append(angebot)
 
         # Bulk update angebot status
-        VertriebAngebot.objects.bulk_update(angebots_to_update, ['status'])
+        VertriebAngebot.objects.bulk_update(angebots_to_update, ["status"])
 
         # Setting angebot_id_assigned to False for angebots which zoho_id was not found
-        angebots_to_unassign = [angebot for angebot in all_vertrieb_angebots_for_user if angebot.zoho_id not in zoho_ids_in_list]
+        angebots_to_unassign = [
+            angebot
+            for angebot in all_vertrieb_angebots_for_user
+            if angebot.zoho_id not in zoho_ids_in_list
+        ]
         for angebot in angebots_to_unassign:
             angebot.angebot_id_assigned = False
-        VertriebAngebot.objects.bulk_update(angebots_to_unassign, ['angebot_id_assigned'])
+        VertriebAngebot.objects.bulk_update(
+            angebots_to_unassign, ["angebot_id_assigned"]
+        )
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
-        print(
-            f"{user.email}: Aufträge aus JPP aktualisiert"
-        )
-        send_message_to_bot(
-            f"{user.email}: Aufträge aus JPP aktualisiert"
-        )
+        print(f"{user.email}: Aufträge aus JPP aktualisiert")
+        send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
         return JsonResponse({"status": "success"}, status=200)
     except Exception:
         return JsonResponse(
             {"status": "failed", "error": "Not a POST request."}, status=400
         )
+
+
 # @user_passes_test(vertrieb_check)
 # def load_user_angebots(request):
 #     try:
@@ -1291,18 +1345,19 @@ def create_ticket_pdf(request, angebot_id):
 
 # @admin_required
 # def create_angebot_pdf(request, angebot_id):
-    # vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    # user = vertrieb_angebot.user
-    # data = vertrieb_angebot.data
-    # name = replace_spaces_with_underscores(vertrieb_angebot.name)
-    #  if vertrieb_angebot.angebot_pdf_admin is None:
-    #     pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
-    #     data,
-    #     vertrieb_angebot,
-    #     user,
-    # )
-    #     vertrieb_angebot.angebot_pdf_admin = pdf_content
-    #     vertrieb_angebot.save()
+# vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+# user = vertrieb_angebot.user
+# data = vertrieb_angebot.data
+# name = replace_spaces_with_underscores(vertrieb_angebot.name)
+#  if vertrieb_angebot.angebot_pdf_admin is None:
+#     pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
+#     data,
+#     vertrieb_angebot,
+#     user,
+# )
+#     vertrieb_angebot.angebot_pdf_admin = pdf_content
+#     vertrieb_angebot.save()
+
 
 #     response = FileResponse(
 #         io.BytesIO(vertrieb_angebot.angebot_pdf_admin), content_type="application/pdf"
@@ -1323,7 +1378,9 @@ def create_angebot_pdf(request, angebot_id):
         vertrieb_angebot.save()
     async_iterator = AsyncBytesIter(vertrieb_angebot.angebot_pdf_admin)
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
-    response["Content-Disposition"] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
+    response[
+        "Content-Disposition"
+    ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
     return response
 
 
@@ -1384,6 +1441,7 @@ def document_ticket_view(request, angebot_id):
     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
     return render(request, "vertrieb/document_ticket_view.html", context)
 
+
 @login_required
 def serve_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
@@ -1391,7 +1449,7 @@ def serve_pdf(request, angebot_id):
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
     sleep(0.5)
-    
+
     if not vertrieb_angebot.angebot_pdf:
         return StreamingHttpResponse("File not found.", status=404)
 
@@ -1401,6 +1459,7 @@ def serve_pdf(request, angebot_id):
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
+
 
 # @login_required
 # def serve_pdf(request, angebot_id):
@@ -1648,21 +1707,24 @@ def send_ticket_invoice(request, angebot_id):
             {"status": "failed", "error": "Not a POST request."}, status=400
         )
 
+
 def filter_user_angebots_by_query(user_angebots, query):
     """Filter user angebots based on the given query."""
     return user_angebots.filter(
-        Q(zoho_kundennumer__icontains=query) |
-        Q(angebot_id__icontains=query) |
-        Q(status__icontains=query) |
-        Q(name__icontains=query) |
-        Q(anfrage_vom__icontains=query)
+        Q(zoho_kundennumer__icontains=query)
+        | Q(angebot_id__icontains=query)
+        | Q(status__icontains=query)
+        | Q(name__icontains=query)
+        | Q(anfrage_vom__icontains=query)
     )
 
 
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
-    user_angebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True, status="bekommen")
+    user_angebots = VertriebAngebot.objects.filter(
+        user=request.user, angebot_id_assigned=True, status="bekommen"
+    )
     query = request.GET.get("q")
     if query:
         user_angebots = filter_user_angebots_by_query(user_angebots, query)
@@ -1670,7 +1732,7 @@ def pdf_angebots_list_view(request):
         (
             angebot,
             reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
-            replace_spaces_with_underscores(angebot.name)
+            replace_spaces_with_underscores(angebot.name),
         )
         for angebot in user_angebots
         if angebot.angebot_pdf

@@ -423,6 +423,7 @@ class VertriebAngebot(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     ag_data = models.TextField(blank=True)
+    ag_fetched_data = models.TextField(blank=True, null=True)
     Rest_liste = models.TextField(blank=True, null=True)
     Arbeits_liste = models.TextField(blank=True, null=True)
     Full_ticket_preis = models.FloatField(default=0.00)
