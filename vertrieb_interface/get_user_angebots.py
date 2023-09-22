@@ -49,7 +49,7 @@ def log_and_notify(message):
     send_message_to_bot(message)
 
 
-def get_headers():
+def get_headers(ZOHO_ACCESS_TOKEN):
     return {"Authorization": f"Zoho-oauthtoken {ZOHO_ACCESS_TOKEN}",}
 
 def refresh_access_token():
@@ -83,7 +83,7 @@ def refresh_access_token():
 
 
 def fetch_data_from_api(url, params=None):
-    headers = get_headers()
+    headers = get_headers(ZOHO_ACCESS_TOKEN)
 
     for _ in range(2):  
         response = session.get(url, headers=headers, params=params)
@@ -174,12 +174,16 @@ def process_all_user_data(data):
 def fetch_angenommen_status(request, zoho_id):
     url = f"{VERTRIEB_URL}/{zoho_id}"
     
-    headers = get_headers()  # Assume get_headers is a function that returns the correct headers
+    headers = get_headers(ZOHO_ACCESS_TOKEN)  # Assume get_headers is a function that returns the correct headers
     send_message_to_bot(f"headers: {headers}")
 
     response = session.get(url, headers=headers)  # Removed params as they are not needed in this case
+    send_message_to_bot(f"headers: {response}")
+    if response.status_code == HTTP_UNAUTHORIZED:
+            headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
     if response.status_code != 200:
-        send_message_to_bot(f"Angenommen status handling failed for zoho_id: {zoho_id}")
+        send_message_to_bot(f"Angenommen status handling failed for zoho_id: {zoho_id}  retrying")
+        headers["Authorization"] = f"Zoho-oauthtoken {refresh_access_token()}"
         return None
 
     data = response.json()  # Fixed improper method call
@@ -263,7 +267,7 @@ def process_current_user_data(data, current_angebot_list):
 def update_status(zoho_id, new_status):
     update_url = f"{VERTRIEB_URL}/{zoho_id}"
 
-    headers = get_headers()
+    headers = get_headers(ZOHO_ACCESS_TOKEN)
 
     current_datetime = datetime.datetime.now()
     bekommen_am = current_datetime.strftime("%d-%b-%Y")
@@ -294,7 +298,7 @@ def return_lower_bull(val):
 
 def pushAngebot(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
-    headers = get_headers()
+    headers = get_headers(ZOHO_ACCESS_TOKEN)
 
     date_obj_gultig = datetime.datetime.strptime(
         vertrieb_angebot.angebot_gultig, "%d.%m.%Y"
