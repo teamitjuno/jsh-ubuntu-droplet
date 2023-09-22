@@ -526,11 +526,11 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
 
             return JsonResponse(data)
         except:
-            self.data = fetch_user_angebote_all(request)
-            zoho_data = json.dumps(self.data)
+            # self.data = fetch_user_angebote_all(request)
+            # zoho_data = json.dumps(self.data)
 
-            profile.zoho_data_text = zoho_data  # type: ignore
-            profile.save()
+            # profile.zoho_data_text = zoho_data  # type: ignore
+            # profile.save()
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
             if data is None:
