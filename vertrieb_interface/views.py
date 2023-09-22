@@ -672,9 +672,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     (vertrieb_angebot.vorname_nachname),
                 )
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-                pformat(fetched_angebote)
-                send_message_to_bot(f"{pformat(fetched_angebote)}")
-                print(f"{pformat(fetched_angebote)}")
                 if fetched_angebote:
                     vertrieb_angebot.notizen = fetched_angebote.get("Notizen")
 
@@ -720,15 +717,12 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
         if zoho_id is not None:
             data = fetch_current_user_angebot(request, zoho_id)
-            
             for item in data:
                 vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
                 vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
-
                 vertrieb_angebot.angebot_bekommen_am = (
                     item["angebot_bekommen_am"] if item["angebot_bekommen_am"] else ""
                 )
-
                 vertrieb_angebot.leadstatus = (
                     item["leadstatus"] if item["leadstatus"] else ""
                 )
@@ -752,7 +746,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             relative_path_suffix = os.path.relpath(
                 calc_image_suffix, start=settings.MEDIA_ROOT
             )
-
             context = self.get_context_data()
             countdown = vertrieb_angebot.countdown()
             context = {
@@ -1016,9 +1009,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
-
         data = fetch_current_user_angebot(request, zoho_id)
-
         for item in data:
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
             vertrieb_angebot.anfrage_ber = item["anfrage_berr"]
@@ -1053,7 +1044,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         relative_path_suffix = os.path.relpath(
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
-
         context = self.get_context_data()
         countdown = vertrieb_angebot.countdown()
         context = {
@@ -1174,7 +1164,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         return Q(zoho_kundennumer__regex=r"^\d+$")
 
     def _get_contact_statuses(self):
-        return ["in Kontakt", "Kontaktversuch"]
+        return ["in Kontakt", "Kontaktversuch", "on Hold", "abgelehnt", "abgelaufen", "storniert", "",]
 
     def _get_filtered_and_ordered_queryset(self):
         queryset = self.model.objects.filter(
@@ -1397,10 +1387,6 @@ def document_ticket_view(request, angebot_id):
     pdf_url = reverse("vertrieb_interface:serve_ticket_pdf", args=[angebot_id])
     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
     return render(request, "vertrieb/document_ticket_view.html", context)
-
-
-
-
 
 @login_required
 def serve_pdf(request, angebot_id):
@@ -1681,13 +1667,10 @@ def filter_user_angebots_by_query(user_angebots, query):
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
-    user_angebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True)
+    user_angebots = VertriebAngebot.objects.filter(user=request.user, angebot_id_assigned=True, status="bekommen")
     query = request.GET.get("q")
-
     if query:
         user_angebots = filter_user_angebots_by_query(user_angebots, query)
-
-    # Use list comprehension to generate angebots and URLs
     angebots_and_urls = [
         (
             angebot,
@@ -1697,13 +1680,13 @@ def pdf_angebots_list_view(request):
         for angebot in user_angebots
         if angebot.angebot_pdf
     ]
-
     context = {
         "zipped_angebots": angebots_and_urls,
         "angebots": user_angebots,
     }
-
     return render(request, "vertrieb/pdf_angebot_created.html", context)
+
+
 # @login_required
 # @user_passes_test(vertrieb_check)
 # def pdf_angebots_list_view(request):
