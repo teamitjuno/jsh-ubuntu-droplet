@@ -45,7 +45,7 @@ class RateLimitExceededException(APIException):
     pass
 
 def log_and_notify(message):
-    logging.error(message)
+    
     send_message_to_bot(message)
 
 
@@ -74,6 +74,7 @@ def refresh_access_token():
         print(new_token)
         if new_token:
             set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
+            print(os.getenv("ZZOHO_ACCESS_TOKEN"))
             return new_token
         else:
             log_and_notify(f"Token absent in response during attempt : {response.text}")

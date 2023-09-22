@@ -6,7 +6,7 @@ import datetime
 from time import sleep
 from pprint import pformat, pprint
 from urllib.parse import unquote
-
+import asyncio
 # Django related imports
 from django.urls import reverse
 from django.contrib import messages
@@ -25,6 +25,7 @@ from django.http import (
     JsonResponse,
     FileResponse,
     HttpResponse,
+    StreamingHttpResponse,
 )
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -65,6 +66,48 @@ from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
 
+class AsyncBytesIter:
+    def __init__(self, byte_data, chunk_size=8192):
+        self.byte_data = byte_data
+        self.chunk_size = chunk_size
+        self.index = 0
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        # If it's the end of the byte_data
+        if self.index >= len(self.byte_data):
+            raise StopAsyncIteration
+        # Get the next chunk and update the index
+        chunk = self.byte_data[self.index:self.index + self.chunk_size]
+        self.index += self.chunk_size
+        return chunk
+
+class AsyncFileIter:
+    def __init__(self, file, chunk_size=8192):
+        self.file = file
+        self.chunk_size = chunk_size
+        self.index = 0
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if isinstance(self.file, memoryview):
+            # If it's the end of the memoryview object
+            if self.index >= len(self.file):
+                raise StopAsyncIteration
+            # Get the next chunk and update the index
+            chunk = self.file[self.index:self.index + self.chunk_size]
+            self.index += self.chunk_size
+        else:
+            chunk = await asyncio.to_thread(self.file.read, self.chunk_size)
+            # If the chunk is empty, it's the end of the file
+            if not chunk:
+                raise StopAsyncIteration
+        
+        return chunk
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -629,8 +672,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     (vertrieb_angebot.vorname_nachname),
                 )
                 fetched_angebote = fetch_angenommen_status(request, zoho_id)
-                send_message_to_bot(f"headers: {fetched_angebote}")
-                print(f"headers: {fetched_angebote}")
+                pformat(fetched_angebote)
+                send_message_to_bot(f"{pformat(fetched_angebote)}")
+                print(f"{pformat(fetched_angebote)}")
                 if fetched_angebote:
                     vertrieb_angebot.notizen = fetched_angebote.get("Notizen")
 
@@ -1257,6 +1301,28 @@ def create_ticket_pdf(request, angebot_id):
     return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
+# @admin_required
+# def create_angebot_pdf(request, angebot_id):
+    # vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+    # user = vertrieb_angebot.user
+    # data = vertrieb_angebot.data
+    # name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    #  if vertrieb_angebot.angebot_pdf_admin is None:
+    #     pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
+    #     data,
+    #     vertrieb_angebot,
+    #     user,
+    # )
+    #     vertrieb_angebot.angebot_pdf_admin = pdf_content
+    #     vertrieb_angebot.save()
+
+#     response = FileResponse(
+#         io.BytesIO(vertrieb_angebot.angebot_pdf_admin), content_type="application/pdf"
+#     )
+#     response[
+#         "Content-Disposition"
+#     ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
+#     return response
 @admin_required
 def create_angebot_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1264,21 +1330,15 @@ def create_angebot_pdf(request, angebot_id):
     data = vertrieb_angebot.data
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     if vertrieb_angebot.angebot_pdf_admin is None:
-        pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
-        data,
-        vertrieb_angebot,
-        user,
-    )
+        pdf_content = angebot_pdf_creator.createOfferPdf(data, vertrieb_angebot, user)
         vertrieb_angebot.angebot_pdf_admin = pdf_content
         vertrieb_angebot.save()
-
-    response = FileResponse(
-        io.BytesIO(vertrieb_angebot.angebot_pdf_admin), content_type="application/pdf"
-    )
-    response[
-        "Content-Disposition"
-    ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
+    async_iterator = AsyncBytesIter(vertrieb_angebot.angebot_pdf_admin)
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
     return response
+
+
 @login_required
 def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1339,6 +1399,9 @@ def document_ticket_view(request, angebot_id):
     return render(request, "vertrieb/document_ticket_view.html", context)
 
 
+
+
+
 @login_required
 def serve_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
@@ -1346,16 +1409,35 @@ def serve_pdf(request, angebot_id):
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
     filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
     sleep(0.5)
-    # Check if the file exists and is not None
+    
     if not vertrieb_angebot.angebot_pdf:
-        return HttpResponse("File not found.", status=404)
+        return StreamingHttpResponse("File not found.", status=404)
 
-    response = FileResponse(
-        vertrieb_angebot.angebot_pdf, content_type="application/pdf"
-    )
+    # Create an instance of AsyncFileIter with the file object
+    async_iterator = AsyncFileIter(vertrieb_angebot.angebot_pdf)
+
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
+
+# @login_required
+# def serve_pdf(request, angebot_id):
+#     decoded_angebot_id = unquote(angebot_id)
+#     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
+#     name = replace_spaces_with_underscores(vertrieb_angebot.name)
+#     filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
+#     sleep(0.5)
+#     # Check if the file exists and is not None
+#     if not vertrieb_angebot.angebot_pdf:
+#         return StreamingHttpResponse("File not found.", status=404)
+
+#     response = FileResponse(
+#         vertrieb_angebot.angebot_pdf, content_type="application/pdf"
+#     )
+#     response["Content-Disposition"] = f"inline; filename={filename}"
+
+#     return response
 
 
 @login_required
@@ -1366,9 +1448,12 @@ def serve_calc_pdf(request, angebot_id):
     filename = f"Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf"
     sleep(0.5)
     if not vertrieb_angebot.calc_pdf:
-        return HttpResponse("File not found.", status=404)
+        return StreamingHttpResponse("File not found.", status=404)
 
-    response = FileResponse(vertrieb_angebot.calc_pdf, content_type="application/pdf")
+    # Create an instance of AsyncFileIter with the file object
+    async_iterator = AsyncFileIter(vertrieb_angebot.calc_pdf)
+
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
@@ -1382,9 +1467,12 @@ def serve_ticket_pdf(request, angebot_id):
     filename = f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf"
     sleep(0.5)
     if not vertrieb_angebot.ticket_pdf:
-        return HttpResponse("File not found.", status=404)
+        return StreamingHttpResponse("File not found.", status=404)
 
-    response = FileResponse(vertrieb_angebot.ticket_pdf, content_type="application/pdf")
+    # Create an instance of AsyncFileIter with the file object
+    async_iterator = AsyncFileIter(vertrieb_angebot.ticket_pdf)
+
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
