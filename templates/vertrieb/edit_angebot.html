@@ -1665,7 +1665,9 @@
                                                         {% endif %}
                                                     <div class="col-sm-6 m-1">
                                                         <a hidden href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</a>
+                                                        {% if not vertrieb_angebot.status == "angenommen" %}
                                                         <button type="submit" name="zahlungs" form="main-form" class="btn btn-soft-success rounded-pill">Angebot PDF erstellen</button>
+                                                        {% endif %}
                                                     </div>    
                                                     {% comment %} <div class="col-sm-4 m-1">
                                                         <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="btn btn-soft-info rounded-pill">PDF Files Liste</a>
