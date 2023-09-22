@@ -234,7 +234,9 @@ def fetch_angenommen_status(request, zoho_id):
 
     response = session.get(url, headers=headers)
     data = response.json()
-    return data.get("data")
+    data = data.get("data")
+    log_and_notify(f"Attempt to fetch angenommen status {data}")
+    return data
 
 
 
