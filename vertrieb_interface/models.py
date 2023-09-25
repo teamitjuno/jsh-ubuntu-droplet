@@ -951,13 +951,12 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def restenergie(self):
         rest = 0
-        try:
-            if float(self.verbrauch):
-                rest += float(self.verbrauch) - float(self.nutz_energie)
-        except:
-            self.verbrauch = 15000.0
+        
+        if float(self.verbrauch):
             rest += float(self.verbrauch) - float(self.nutz_energie)
-        return rest
+            return rest
+        else:
+            return 0
 
     @property
     def rest_strom_preis(self):
@@ -979,7 +978,8 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def einsp_pro_jahr(self):
         if self.modulsumme_kWp <= 10:
-            return float(self.bis10kWp) * 0.01 * self.einsp_energie
+            # return float(self.bis10kWp) * 0.01 * self.einsp_energie 
+            return float(self.bis10kWp) * 0.01 * (10 / self.modulsumme_kWp)
         else:
             klZehn = float(self.bis10kWp) * 0.01 * (10 / self.modulsumme_kWp)
             grZehn = (
