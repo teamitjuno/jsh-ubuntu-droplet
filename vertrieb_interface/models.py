@@ -977,7 +977,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def einsp_pro_jahr(self):
-        if self.modulsumme_kWp <= 10:
+        if self.modulsumme_kWp <= 10 and self.modulsumme_kWp != 0:
             # return float(self.bis10kWp) * 0.01 * self.einsp_energie 
             return float(self.bis10kWp) * 0.01 * (10 / self.modulsumme_kWp)
         else:
