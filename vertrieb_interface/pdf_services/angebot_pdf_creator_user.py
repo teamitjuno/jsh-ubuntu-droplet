@@ -957,7 +957,7 @@ class PDF(FPDF):
                 self.cell(0, 6, "inklusive", 0, 0, "R")
                 y += 15
             else:
-                y_tmp += 15
+                y += 15
         
         # Seite voll
         y = y + 60
