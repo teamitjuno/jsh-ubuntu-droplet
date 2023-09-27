@@ -86,7 +86,7 @@ CSRF_TRUSTED_ORIGINS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    # "config.malformed.MalformedRequestMiddleware"
+    "authentication.middleware.LogIPMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -192,22 +192,20 @@ MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": ".debug.log",
-#         },
-#     },
-#     "root": {
-#         "handlers": ["file"],
-#         "level": "DEBUG",
-#     },
-# }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'juno.dyntcb.de'
