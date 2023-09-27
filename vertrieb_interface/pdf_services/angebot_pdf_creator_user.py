@@ -938,7 +938,27 @@ class PDF(FPDF):
             self.set_y(y + 40)
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
-
+            if data["anzWandhalterungSpeicher"] > 0:
+                # self.line(10, y + 3, 200, y + 3)
+                # self.line(25, y + 7.5, 83, y + 7.5)
+                # Tabelle Eintrag Optimierer
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y+60)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
+                self.set_y(y + 60)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, str(data["anzWandhalterungSpeicher"]), 0, 0, "L")  # type: ignore
+                self.set_y(y + 60)
+                self.set_x(170)
+                self.cell(0, 6, "inklusive", 0, 0, "R")
+                y += 15
+            else:
+                y_tmp += 15
+        
         # Seite voll
         y = y + 60
         self.set_y(y)
@@ -963,26 +983,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 11)
         self.multi_cell(0, 6, "Optionales Zubehör beschreibt Hardware, die zur Erfüllung der Grundfunktion einer Photovoltaikanlage nicht benötigt werden. Das optionales Zubehör kann die Effizienz und/oder Funktionsvielfalt erhöhen bzw. erweitern.", 0, 0, "L")  # type: ignore
         y += 25
-        if data["anzWandhalterungSpeicher"] > 0:
-            # self.line(10, y + 3, 200, y + 3)
-            # self.line(25, y + 7.5, 83, y + 7.5)
-            # Tabelle Eintrag Optimierer
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
-            self.set_y(y + 0)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, str(data["anzWandhalterungSpeicher"]), 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(0, 6, "inklusive", 0, 0, "R")
-            y += 15
-        else:
-            y_tmp += 15
+        
         if data["elwa"] == True:
             # Tabelle Eintrag Elwa
             self.set_font("JUNO Solar Lt", "", 11)
