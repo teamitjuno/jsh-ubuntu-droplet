@@ -74,6 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         ("phone"), max_length=15, unique=True, null=True, blank=True
     )
     avatar = models.ImageField(upload_to="assets/images/users/", null=True, blank=True)
+    user_certifikate = models.ImageField(upload_to="assets/images/users/certifikates/", null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     beruf = models.CharField(
         max_length=30,

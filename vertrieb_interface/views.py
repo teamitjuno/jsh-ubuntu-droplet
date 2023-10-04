@@ -671,8 +671,12 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
                 + " "
                 + item.get("Adresse_PVA", {}).get("district_city", ""),
-                "postanschrift_longitude": item.get("Adresse_PVA", {}).get("longitude", ""),
-                "postanschrift_latitude": item.get("Adresse_PVA", {}).get("latitude", ""),
+                "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
+                    "longitude", ""
+                ),
+                "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
+                    "latitude", ""
+                ),
                 "telefon_festnetz": item.get("Telefon_Festnetz", ""),
                 "telefon_mobil": item.get("Telefon_mobil", ""),
                 "zoho_kundennumer": item.get("Kundennummer", ""),
@@ -696,6 +700,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.save()
         else:
             pass
+
     def handle_zoho_status_change(self, request, angebot_id):
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
@@ -765,7 +770,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
             vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
             vertrieb_angebot.angebot_bekommen_am = (
-                item.get("angebot_bekommen_am") if item.get("angebot_bekommen_am") else ""
+                item.get("angebot_bekommen_am")
+                if item.get("angebot_bekommen_am")
+                else ""
             )
             vertrieb_angebot.leadstatus = (
                 item.get("leadstatus") if item.get("leadstatus") else ""
@@ -773,7 +780,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.notizen = item.get("notizen")
             vertrieb_angebot.email = item.get("email")
             vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
-            vertrieb_angebot.postanschrift_longitude = item.get("postanschrift_longitude")
+            vertrieb_angebot.postanschrift_longitude = item.get(
+                "postanschrift_longitude"
+            )
             vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
             vertrieb_angebot.termine_text = item.get("termine_text")
             vertrieb_angebot.termine_id = item.get("termine_id")
@@ -1034,7 +1043,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
 
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-        
+
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
         user_folder = os.path.join(
@@ -1125,14 +1134,13 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 status=vertrieb_angebot.status,
             )
             return redirect(
-                    "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
-                )
+                "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
+            )
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
         context = self.get_context_data()
 
         context["status_change_field"] = vertrieb_angebot.status_change_field
-        
 
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
@@ -1308,9 +1316,6 @@ def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_")
 
 
-
-
-
 # @admin_required
 # def create_angebot_pdf(request, angebot_id):
 # vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1357,10 +1362,12 @@ def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = request.user
     data = vertrieb_angebot.data
+    certifikate = user.user_certifikate
 
     pdf_content = angebot_pdf_creator_user.createOfferPdf(
         data,
         vertrieb_angebot,
+        certifikate,
         user,
     )
     vertrieb_angebot.angebot_pdf = pdf_content
@@ -1388,13 +1395,14 @@ def create_calc_pdf(request, angebot_id):
 
     return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
 
+
 @login_required
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = request.user  # Fetching the user from vertrieb_angebot
     data = vertrieb_angebot.data
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
-    
+
     # Check if the ticket PDF already exists, if not, create it.
     if vertrieb_angebot.ticket_pdf is None:
         pdf_content = ticket_pdf_creator.createTicketPdf(data)

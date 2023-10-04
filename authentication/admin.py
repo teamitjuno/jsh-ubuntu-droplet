@@ -85,6 +85,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
             {
                 "fields": (
                     "avatar",
+                    "user_certifikate",
                     "beruf",
                     "is_staff",
                     "users_aufschlag",

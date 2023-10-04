@@ -43,7 +43,7 @@
                     </div>
                     {% endif %}
                     <div class="row">
-                        <div class="col-7">
+                        <div class="col-12">
                             <div class="page-title-box">
                                 {% comment %} {% if user.role.name == "admin" %}
                                 <h4 class="page-title">Angebotstool 2.0 : {{ user.role.name }}</h4>
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xxl-12">
+                        <div class="col-xl-12">
                             <div class="card">
                                 <div class="card-body">
                                         <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
@@ -203,7 +203,7 @@
                                         <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row"> 
-                                                    <div class="col-lg-5">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module Details</div>
                                                             <div class="card-body">
@@ -285,7 +285,7 @@
 
                                                     
                                                     </div>
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
@@ -726,7 +726,8 @@
                                                     </script>
 
                                                     <div class="row m-2">
-                                                        <button type="submit" form="main-form" class="btn btn-soft-success rounded-pill" onclick=showSpinner()>
+                                                        
+                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill" onclick=showSpinner()>
                                                             Speichern
                                                         </button>
                                                     </div>
@@ -784,8 +785,7 @@
                                                     
                                                         {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
-                                                                
-                                                    
+                                                
                                                     <div class="row m-2">
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
                                                     </div>

@@ -1689,13 +1689,25 @@ unwirksam.""",  # regular_text19
 
         # Set the font size
         self.set_font_size(font_size)
-
+    
+    def page6(self, certifikate, eintrag):
+        self.is_last_page = True
+        if certifikate:
+            self.add_page()
+            self.image(
+                certifikate.path,
+                x=5,
+                y=10,
+                w=198,
+            )
+        else:
+            pass
 
 def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_")
 
 
-def createOfferPdf(data, vertrieb_angebot, user):
+def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     global title, pages
     title1 = f"{vertrieb_angebot.angebot_id}"
 
@@ -1712,6 +1724,7 @@ def createOfferPdf(data, vertrieb_angebot, user):
     pdf.page4_durchgestrichen(data, eintrag)
     pdf.lastPage(data, eintrag)
     pdf.page5(eintrag)
+    pdf.page6(certifikate, eintrag)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

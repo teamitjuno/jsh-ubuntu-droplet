@@ -102,6 +102,11 @@ class AvatarUploadForm(forms.ModelForm):
         model = User
         fields = ["avatar"]
 
+class CertifikateUploadForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["user_certifikate"]
+
 
 class InitialAngebotDataViewForm(forms.ModelForm):
     INITIAL_AUSRICHTUNG_CHOICES = (
