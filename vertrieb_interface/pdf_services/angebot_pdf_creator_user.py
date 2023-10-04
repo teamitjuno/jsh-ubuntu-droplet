@@ -1723,8 +1723,9 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     eintrag = pdf.page3(data, eintrag)
     pdf.page4_durchgestrichen(data, eintrag)
     pdf.lastPage(data, eintrag)
-    pdf.page5(eintrag)
     pdf.page6(certifikate, eintrag)
+    pdf.page5(eintrag)
+    
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
