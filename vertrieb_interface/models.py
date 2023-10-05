@@ -3,6 +3,7 @@ import re, os
 import requests
 from math import ceil
 from datetime import timedelta
+from django.core.exceptions import ValidationError
 import datetime
 from django.db import models
 from django.utils import timezone
@@ -30,6 +31,15 @@ from config.settings import GOOGLE_MAPS_API_KEY
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
 User = get_user_model()
+
+
+def validate_range(value):
+    if not isinstance(value, int):
+        if value < 0 or value > 6:
+            raise ValidationError(
+                ("Ungültige Eingabe: %(value)s. Der gültige Bereich ist 0-6."),
+                params={"value": value},
+            )
 
 
 def extract_modulleistungWp(model_name):
@@ -283,8 +293,21 @@ class VertriebAngebot(TimeStampMixin):
     bis40kWp = models.FloatField(
         default=7.10, validators=[MinValueValidator(0)]  # type: ignore
     )
+    hersteller = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    wechselrichter_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    speicher_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    gesamtkapazitat = models.PositiveIntegerField(default=0)
     speicher = models.BooleanField(default=False)
-    anz_speicher = models.PositiveIntegerField(default=0)
+    anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
     anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
     wallbox = models.BooleanField(default=False)
@@ -378,18 +401,6 @@ class VertriebAngebot(TimeStampMixin):
     optimizer_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
-    # wandhalterung_ticket_preis = models.FloatField(
-    #     default=0.00, validators=[MinValueValidator(0)]
-    # ),
-    # elwa_ticket_preis = models.FloatField(
-    #     default=0.00, validators=[MinValueValidator(0)]
-    # ),
-    # thor_ticket_preis = models.FloatField(
-    #     default=0.00, validators=[MinValueValidator(0)]
-    # ),
-    # heizstab_ticket_preis = models.FloatField(
-    #     default=0.00, validators=[MinValueValidator(0)]
-    # ),
     zahlungsbedingungen = models.CharField(
         max_length=25,
         blank=True,
@@ -472,6 +483,7 @@ class VertriebAngebot(TimeStampMixin):
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
+        self.gesamtkapazitat = self.gesamtkapazitat_rechnung
 
         super().save(*args, **kwargs)
 
@@ -938,6 +950,10 @@ class VertriebAngebot(TimeStampMixin):
         return 1.075  # This is arbitrary; modify as needed
 
     @property
+    def gesamtkapazitat_rechnung(self):
+        return self.anz_speicher * 5000
+
+    @property
     def nutz_energie(self):
         nutzEnergie = float(self.verbrauch)
         if self.erzeugte_energie < nutzEnergie:
@@ -951,7 +967,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def restenergie(self):
         rest = 0
-        
+
         if float(self.verbrauch):
             rest += float(self.verbrauch) - float(self.nutz_energie)
             return rest
@@ -978,7 +994,7 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def einsp_pro_jahr(self):
         if self.modulsumme_kWp <= 10:
-            return float(self.bis10kWp) * 0.01 * self.einsp_energie 
+            return float(self.bis10kWp) * 0.01 * self.einsp_energie
             # return float(self.bis10kWp) * 0.01 * (10 / self.modulsumme_kWp)
         else:
             klZehn = float(self.bis10kWp) * 0.01 * (10 / self.modulsumme_kWp)
@@ -1358,6 +1374,7 @@ class VertriebAngebot(TimeStampMixin):
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
             ),
             "debug": False,
+            "hersteller": self.hersteller,
             "version": 1.0,
             "modulTicket": int(self.modul_anzahl_ticket),
             "optimizerTicket": int(self.optimizer_ticket),

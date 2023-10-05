@@ -191,9 +191,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
-        self.cell(
-            0, 5, "Wechselrichter Huawei SUN2000 Modell nach Auslegung", 0, 0, "L"
-        )
+        if data["hersteller"] == "Viessmann":
+            self.cell(0, 5, "Viessmann Vitocharge VX3", 0, 0, "L")
+        else:
+            self.cell(
+                0, 5, "Wechselrichter Huawei SUN2000 Modell nach Auslegung", 0, 0, "L"
+            )
         self.set_y(205)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
@@ -556,13 +559,16 @@ class PDF(FPDF):
         self.set_y(60)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
-        self.multi_cell(
-            0,
-            5,
-            "mittels Huawei FusionSolar App\nkompatibel mit Android und iOS",
-            0,
-            "L",
-        )
+        if not data["hersteller"]:
+            self.multi_cell(
+                0,
+                5,
+                "mittels Huawei FusionSolar App\nkompatibel mit Android und iOS",
+                0,
+                "L",
+            )
+        else:
+            pass
         self.set_y(55)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
@@ -685,7 +691,10 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Batteriespeicher Huawei LUNA 2000", 0, 0, "L")
+            if data["hersteller"] == "Viessmann":
+                self.cell(0, 6, "Vitocharge VX3 PV-Stromspeicher", 0, 0, "L")
+            else:
+                self.cell(0, 6, "Batteriespeicher Huawei LUNA 2000", 0, 0, "L")
             self.set_y(y + 45)
             self.set_x(25)
             # self.set_font('JUNO Solar Lt', '', 10)
@@ -821,17 +830,30 @@ class PDF(FPDF):
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
-                self.cell(0, 6, "Huawei Ersatzstromversorgung", 0, 0, "L")
+                if data["hersteller"] == "Viessmann":
+                    self.cell(0, 6, "Viessmann VX3", 0, 0, "L")
+                else:
+                    self.cell(0, 6, "Huawei Ersatzstromversorgung", 0, 0, "L")
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(
-                    0,
-                    5,
-                    "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung",
-                    0,
-                    "L",
-                )
+                if data["hersteller"] == "Viessmann":
+                    self.multi_cell(
+                        0,
+                        5,
+                        "Viessmann VX3 Backup-Box 3-phasig Typ A",
+                        0,
+                        "L",
+                    )
+                else:
+                    self.multi_cell(
+                        0,
+                        5,
+                        "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung",
+                        0,
+                        "L",
+                    )
+
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -913,7 +935,10 @@ class PDF(FPDF):
             self.set_y(y + 30)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "DTSU666-H 250A/50mA", 0, "L")
+            if data["hersteller"] == "Viessmann":
+                self.multi_cell(0, 5, "DTSU666-H 250A/50mA", 0, "L")
+            else:
+                self.multi_cell(0, 5, "DTSU666-H 250A/50mA", 0, "L")
             self.set_y(y + 25)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
@@ -926,7 +951,10 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Batteriespeicher Huawei LUNA 2000", 0, 0, "L")
+            if data["hersteller"] == "Viessmann":
+                self.cell(0, 6, "Vitocharge VX3 PV-Stromspeicher", 0, 0, "L")
+            else:
+                self.cell(0, 6, "Batteriespeicher Huawei LUNA 2000", 0, 0, "L")
             self.set_y(y + 45)
             self.set_x(25)
             # self.set_font('JUNO Solar Lt', '', 10)
@@ -943,7 +971,7 @@ class PDF(FPDF):
                 # self.line(25, y + 7.5, 83, y + 7.5)
                 # Tabelle Eintrag Optimierer
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.set_y(y+60)
+                self.set_y(y + 60)
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
@@ -958,7 +986,7 @@ class PDF(FPDF):
                 y += 15
             else:
                 y += 15
-        
+
         # Seite voll
         y = y + 60
         self.set_y(y)
@@ -983,7 +1011,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 11)
         self.multi_cell(0, 6, "Optionales Zubehör beschreibt Hardware, die zur Erfüllung der Grundfunktion einer Photovoltaikanlage nicht benötigt werden. Das optionales Zubehör kann die Effizienz und/oder Funktionsvielfalt erhöhen bzw. erweitern.", 0, 0, "L")  # type: ignore
         y += 25
-        
+
         if data["elwa"] == True:
             # Tabelle Eintrag Elwa
             self.set_font("JUNO Solar Lt", "", 11)
@@ -1050,7 +1078,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y += 20
+                y += 25
             else:
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
@@ -1079,17 +1107,29 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Huawei Backup-Box B1", 0, 0, "L")
+            if data["hersteller"] == "Viessmann":
+                self.cell(0, 6, "Viessmann VX3 Backup-Box", 0, 0, "L")
+            else:
+                self.cell(0, 6, "Huawei Backup-Box B1", 0, 0, "L")
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(
-                0,
-                5,
-                "Huawei Ersatzstromversorgung zur einphasigen Ersatzstromversorgung",
-                0,
-                "L",
-            )
+            if data["hersteller"] == "Viessmann":
+                self.multi_cell(
+                    0,
+                    5,
+                    "Viessmann VX3 Backup-Box 3-phasig Typ A",
+                    0,
+                    "L",
+                )
+            else:
+                self.multi_cell(
+                    0,
+                    5,
+                    "Huawei Ersatzstromversorgung zur einphasigen Ersatzstromversorgung",
+                    0,
+                    "L",
+                )
             self.set_y(y)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
@@ -1135,7 +1175,10 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
-            self.cell(0, 6, "Huawei SUN2000-450W-P2 Moduloptimierer", 0, 0, "L")
+            if data["hersteller"] == "Viessmann":
+                self.cell(0, 6, "Tigo Optimierer TS4-A-O", 0, 0, "L")
+            else:
+                self.cell(0, 6, "Huawei SUN2000-450W-P2 Moduloptimierer", 0, 0, "L")
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
@@ -1156,7 +1199,7 @@ class PDF(FPDF):
             y += 15
         else:
             y_tmp += 15
-        y += 15
+        y += 5
         y += y_tmp
         # Ladestation für E-Fahrzeug (Wallbox)
         self.line(10, y, 200, y)
@@ -1689,7 +1732,7 @@ unwirksam.""",  # regular_text19
 
         # Set the font size
         self.set_font_size(font_size)
-    
+
     def page6(self, certifikate, eintrag):
         self.is_last_page = True
         if certifikate:
@@ -1702,6 +1745,7 @@ unwirksam.""",  # regular_text19
             )
         else:
             pass
+
 
 def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_")
@@ -1725,7 +1769,6 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     pdf.lastPage(data, eintrag)
     pdf.page6(certifikate, eintrag)
     pdf.page5(eintrag)
-    
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

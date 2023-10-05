@@ -508,7 +508,7 @@ class VertriebAngebotForm(ModelForm):
     )
 
     anz_speicher = forms.IntegerField(
-        label="Anzahl Speichermodule (kann sein 0)",
+        label="Anzahl Speichermodule",
         required=False,
         initial=0,
         validators=[validate_range],
@@ -517,10 +517,74 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Anzahl (kann sein 0 und <=6 )",
                 "id": "anz_speicher",
-                "style": "max-width: 100px",
             }
         ),
     )
+
+    HERSTELLER_CHOICES = [
+        ("----", "----"),
+        ("Huawei", "Huawei"),
+        ("Viessmann", "Viessmann"),
+        # Add other hersteller as needed
+    ]
+
+    WALLBOXTYP_CHOICES = [
+        ("----", "----"),
+        ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
+        ("Viessmann Charging Station", "Viessmann Charging Station"),
+        # Add other hersteller as needed
+    ]
+
+    # Populating choices for 'wechselrichter_model'
+    WECHSELRICHTER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("SUN 2000", "SUN 2000"),
+        ("Vitocharge VX3", "Vitocharge VX3"),
+    ]
+
+    # Populating choices for 'speicher_model'
+    SPEICHER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("LUNA 2000", "LUNA 2000"),
+        ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
+    ]
+
+    hersteller = forms.ChoiceField(
+        label="Hersteller",
+        choices=HERSTELLER_CHOICES,
+        initial="----",
+        widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
+    )
+
+    wechselrichter_model = forms.ChoiceField(
+        label="Wechselrichter",
+        choices=WECHSELRICHTER_MODEL_CHOICES,
+        initial="----",
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "wechselrichter_model"}
+        ),
+    )
+
+    speicher_model = forms.ChoiceField(
+        label="Batteriespeicher",
+        choices=SPEICHER_MODEL_CHOICES,
+        initial="----",
+        widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
+    )
+
+    gesamtkapazitat = forms.IntegerField(
+        initial=0,
+        label="Gesamtkapazitat",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "gesamtkapazitat",
+                "readonly": "readonly",
+            }
+        ),
+    )
+
     speicher = forms.BooleanField(
         label="Speichermodule inkl.",
         required=False,
@@ -542,7 +606,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     anz_wandhalterung_fuer_speicher = forms.IntegerField(
-        label="Anzahl Wandhalterung (kann sein 0)",
+        label="Anzahl Wandhalterung",
         required=False,
         initial=0,
         validators=[validate_integers],
@@ -625,6 +689,8 @@ class VertriebAngebotForm(ModelForm):
     )
     wallboxtyp = forms.ChoiceField(
         required=False,
+        initial="----",
+        choices=WALLBOXTYP_CHOICES,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -881,6 +947,10 @@ class VertriebAngebotForm(ModelForm):
             "zeitraum",
             "bis10kWp",
             "bis40kWp",
+            "hersteller",
+            "gesamtkapazitat",
+            "wechselrichter_model",
+            "speicher_model",
             "speicher",
             "anz_speicher",
             "wandhalterung_fuer_speicher",
@@ -927,10 +997,7 @@ class VertriebAngebotForm(ModelForm):
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
         ]
-        self.fields["wallboxtyp"].choices = [
-            (module.name, module.name)
-            for module in WallBoxPreise.objects.filter(in_stock=True)
-        ]
+
         data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
         name_list = [(item["name"], item["name"]) for item in data]
         name_list = sorted(name_list, key=lambda x: x[0])
@@ -1033,7 +1100,20 @@ class VertriebAngebotForm(ModelForm):
         cleaned_data = super().clean()
 
         modulanzahl = cleaned_data.get("modulanzahl")
+        hersteller = cleaned_data.get("hersteller")
         anzOptimizer = cleaned_data.get("anzOptimizer")
+
+        if hersteller == "Viessmann" and modulanzahl > 28:
+            raise forms.ValidationError(
+                {
+                    "modulanzahl": "Die Anzahl der Module kann nicht mehr als 28 sein, wenn der Hersteller Viessmann ist."
+                }
+            )
+
+        if hersteller == "----":
+            raise forms.ValidationError(
+                {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+            )
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:

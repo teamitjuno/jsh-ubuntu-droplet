@@ -440,37 +440,37 @@ def chat_bot(request):
         return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
-# @user_passes_test(vertrieb_check)
-# def create_angebot(request):
-#     form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
-#     if TELEGRAM_LOGGING:
-#         send_message_to_bot(f"{request.user}, Neue Angebot created")
-#     print(request.user, "Neue Angebot created")
-#     if form_angebot.is_valid():
-#         vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
-#         vertrieb_angebot.user = request.user
+@user_passes_test(vertrieb_check)
+def create_angebot(request):
+    form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
+    if TELEGRAM_LOGGING:
+        send_message_to_bot(f"{request.user}, Neue Angebot created")
+    print(request.user, "Neue Angebot created")
+    if form_angebot.is_valid():
+        vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
+        vertrieb_angebot.user = request.user
 
-#         vertrieb_angebot.save()
+        vertrieb_angebot.save()
 
-#         return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
+        return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
 
-#     if request.POST and "create_blank_angebot" in request.POST:
-#         blank_angebot = VertriebAngebot(user=request.user)
-#         blank_angebot.created_at = timezone.now()
-#         blank_angebot.current_date = datetime.datetime.now()
+    if request.POST and "create_blank_angebot" in request.POST:
+        blank_angebot = VertriebAngebot(user=request.user)
+        blank_angebot.created_at = timezone.now()
+        blank_angebot.current_date = datetime.datetime.now()
 
-#         blank_angebot.save()
-#         return HttpResponseRedirect(
-#             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
-#         )
+        blank_angebot.save()
+        return HttpResponseRedirect(
+            reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
+        )
 
-#     if not form_angebot.is_valid():
-#         if TELEGRAM_LOGGING:
-#             send_message_to_bot(form_angebot.errors)
-#         print(form_angebot.errors)
-#         return page_not_found(request, Exception())
+    if not form_angebot.is_valid():
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(form_angebot.errors)
+        print(form_angebot.errors)
+        return page_not_found(request, Exception())
 
-#     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
+    return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
 
 
 @user_passes_test(vertrieb_check)

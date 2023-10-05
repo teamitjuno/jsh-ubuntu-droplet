@@ -102,6 +102,7 @@ class AvatarUploadForm(forms.ModelForm):
         model = User
         fields = ["avatar"]
 
+
 class CertifikateUploadForm(forms.ModelForm):
     class Meta:
         model = User

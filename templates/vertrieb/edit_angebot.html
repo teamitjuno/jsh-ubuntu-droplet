@@ -202,10 +202,65 @@
                                             <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM -->
                                         <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
-                                                <div class="row"> 
-                                                    <div class="col-lg-4">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module Details</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>{{ form.hersteller.label_tag }}</th>
+                                                                        <td>{{ form.hersteller }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wechselrichter_model.label_tag }}</th>
+                                                                        <td>
+                                                                            {{ form.wechselrichter_model }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.speicher_model.label_tag }}</th>
+                                                                        <td>{{ form.speicher_model }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anz_speicher.label_tag }}</th>
+                                                                        <td>{{ form.anz_speicher }}</td>
+                                                                        
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.gesamtkapazitat.label_tag }}kWh</th>
+                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }}"></td>
+                                                                        
+                                                                        
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Preis Netto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Preis Brutto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% else %}
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="col-lg-3">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
@@ -267,32 +322,16 @@
                                                             </div>
                                                         </div>
                                                         
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-
-                                                    
+                                                        
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
                                                                         
-                                                                        {% include 'vertrieb/extra/speicher_content.html' %}
+                                                                        
                                                                         {% include 'vertrieb/extra/wand_content.html' %}
                                                                         {% include 'vertrieb/extra/elwa_2_content.html' %}
                                                                         {% include 'vertrieb/extra/thor_2_content.html' %}
@@ -304,9 +343,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
@@ -345,16 +384,7 @@
                                                             </div>
                                                         </div>
                                                         
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">AngebotSumme rechnen</div>
-                                                            <div class="card-body">
-                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
-                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
-                                                                {% else %}
-                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
+                                                        
                                                     
                                                     </div>
                                                 </div>
@@ -877,7 +907,106 @@
                     </div><!-- End ROW -->
                 </div> 
         </form>
-    
+        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            toggleAnzWandhalterung($('#hersteller').val());
+            // Calculate initial gesamtkapazitat
+            calculateGesamtkapazitat();
+            // Re-calculate gesamtkapazitat on anz_speicher change
+            $('#anz_speicher').change(calculateGesamtkapazitat);
+            
+            $("#hersteller").change(function() {
+                toggleAnzWandhalterung($(this).val());
+                var hersteller = $(this).val();
+                
+                if(hersteller == "Viessmann") {
+                    var wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
+                    var speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
+                    var wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
+                } else if(hersteller == "Huawei") {
+                    var wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+                    var speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+                    var wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
+                } else {
+                    var wechselrichterOptions = '<option value="">-----</option>';
+                    var speicherOptions = '<option value="">-----</option>';
+                    var wallboxtypOptions = '<option value="">-----</option>';
+                }
+                
+                $("#wechselrichter_model").html(wechselrichterOptions);
+                $("#speicher_model").html(speicherOptions);
+                
+            });
+        });
+            function toggleAnzWandhalterung(value) {
+            if (value === 'Viessmann') {
+                $('#anz_wandhalterung_row').hide();
+            } else {
+                $('#anz_wandhalterung_row').show();
+            }
+            }
+            function calculateGesamtkapazitat() {
+                var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
+                $('#gesamtkapazitat').val(anz_speicher * 5000);
+            }
+        
+        </script> {% endcomment %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            toggleAnzWandhalterung($('#hersteller').val());
+            calculateGesamtkapazitat();
+            $('#anz_speicher').change(calculateGesamtkapazitat);
+
+            $("#hersteller").change(function() {
+                toggleAnzWandhalterung($(this).val());
+                
+                var hersteller = $(this).val();
+                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
+                
+                if(hersteller == "Viessmann") {
+                    limitModulanzahl(28);
+                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
+                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
+                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
+                } else if(hersteller == "Huawei") {
+                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
+                } else {
+                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
+                }
+
+                $("#wechselrichter_model").html(wechselrichterOptions);
+                $("#speicher_model").html(speicherOptions);
+                $("#wallboxtyp").html(wallboxtypOptions);
+            });
+        });
+
+        function toggleAnzWandhalterung(value) {
+            if (value === 'Viessmann') {
+                $('#anz_wandhalterung_row').hide();
+            } else {
+                $('#anz_wandhalterung_row').show();
+            }
+        }
+
+        function calculateGesamtkapazitat() {
+            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
+            $('#gesamtkapazitat').val(anz_speicher * 5000);
+        }
+
+        function limitModulanzahl(maxValue) {
+                $('#modulanzahl').change(function() {
+                    var value = parseInt($(this).val());
+                    if (value > maxValue) {
+                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
+                        $(this).val(maxValue);
+                    }
+                });
+            }
+        </script>
 
 
     <!--- #############################################################################################-->
@@ -1064,8 +1193,63 @@
                                                 <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOOOOOOOOOOOOODULE -->
                                         <div class="tab-pane" id="module" role="tabpanel">
                                             <div class="card-body">
-                                                <div class="row"> 
-                                                    <div class="col-lg-4">
+                                                <div class="row">
+                                                <div class="col-lg-3">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>{{ form.hersteller.label_tag }}</th>
+                                                                        <td>{{ form.hersteller }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wechselrichter_model.label_tag }}</th>
+                                                                        <td>
+                                                                            {{ form.wechselrichter_model }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.speicher_model.label_tag }}</th>
+                                                                        <td>{{ form.speicher_model }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anz_speicher.label_tag }}</th>
+                                                                        <td>{{ form.anz_speicher }}</td>
+                                                                        
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.gesamtkapazitat.label_tag }}kWh</th>
+                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }}"></td>
+                                                                        
+                                                                        
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Preis Netto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Preis Brutto</th>
+                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% else %}
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>  
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module Details</div>
                                                             <div class="card-body">
@@ -1179,13 +1363,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Auftrag details</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
-                                                                        {% include 'vertrieb/extra/speicher_content_readonly.html' %}    
+                                                                        
                                                                         {% include 'vertrieb/extra/wand_content_readonly.html' %}
                                                                         {% include 'vertrieb/extra/elwa_2_content_readonly.html' %}
                                                                         {% include 'vertrieb/extra/thor_2_content_readonly.html' %}    
@@ -1199,7 +1383,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
                                                             <div class="card-body">
@@ -1242,23 +1426,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row"> 
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Monatge)</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme }} €</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
                                                     {% if user.role.name == "admin" %}
                                                         <div class="col-lg-3">
                                                             <div class="card mb-3">
@@ -1701,6 +1869,61 @@
                 </div><!-- End ROW -->
             </div> 
         </form>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            toggleAnzWandhalterung($('#hersteller').val());
+            calculateGesamtkapazitat();
+            $('#anz_speicher').change(calculateGesamtkapazitat);
+
+            $("#hersteller").change(function() {
+                toggleAnzWandhalterung($(this).val());
+                
+                var hersteller = $(this).val();
+                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
+                
+                if(hersteller == "Viessmann") {
+                    limitModulanzahl(28);
+                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
+                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
+                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
+                } else if(hersteller == "Huawei") {
+                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
+                } else {
+                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
+                }
+
+                $("#wechselrichter_model").html(wechselrichterOptions);
+                $("#speicher_model").html(speicherOptions);
+                $("#wallboxtyp").html(wallboxtypOptions);
+            });
+        });
+
+        function toggleAnzWandhalterung(value) {
+            if (value === 'Viessmann') {
+                $('#anz_wandhalterung_row').hide();
+            } else {
+                $('#anz_wandhalterung_row').show();
+            }
+        }
+
+        function calculateGesamtkapazitat() {
+            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
+            $('#gesamtkapazitat').val(anz_speicher * 5000);
+        }
+
+        function limitModulanzahl(maxValue) {
+                $('#modulanzahl').change(function() {
+                    var value = parseInt($(this).val());
+                    if (value > maxValue) {
+                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
+                        $(this).val(maxValue);
+                    }
+                });
+            }
+        </script>
         {% endif %}
         <footer class="footer">
                 <div class="container-fluid">
