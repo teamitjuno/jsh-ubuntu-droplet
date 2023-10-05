@@ -137,6 +137,30 @@
 
 {% endblock %}
 {% block javascript %}
+<script>
+$(document).ready(function() {
+    // Function to handle tab actions
+    function handleTabs() {
+        // Get the previously active tab from local storage
+        var activeTab = localStorage.getItem('activeTab');
+
+        // If there's an active tab stored, activate it and then remove it from local storage
+        if (activeTab) {
+            $('[href="' + activeTab + '"]').tab('show');
+            localStorage.removeItem('activeTab');  // Deleting the activeTab item from local storage
+        }
+
+        // When any tab is clicked, save it to the local storage
+        $('.nav-tabs a').on('click', function() {
+            var tabId = $(this).attr('href');
+            localStorage.setItem('activeTab', tabId);
+        });
+    }
+
+    // Call the handleTabs function
+    handleTabs();
+});
+</script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         const chatForm = document.getElementById("chat-form");

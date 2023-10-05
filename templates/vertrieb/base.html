@@ -213,7 +213,7 @@
                                             <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="create_blank_angebot" value="1">
-                                                <a href="#" onclick="document.getElementById('create-angebot-form').submit();">Neues Angebot erstellen</a>
+                                                <a href="#" onclick="document.getElementById('create-angebot-form').submit(); ">Neues Angebot erstellen</a>
                                             </form>
                                         </li>
                                         <li>
@@ -1013,6 +1013,9 @@
             </div>
         </div>
         {% block javascript %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
             <script>
                 function disableFor30Seconds(event) {
                     var loadButton = document.getElementById('loadButton');

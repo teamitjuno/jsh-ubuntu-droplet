@@ -66,7 +66,7 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item" role="presentation">
-                                                <a href="#module" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
+                                                <a href="#module" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
@@ -859,10 +859,10 @@
                                                                                         type: "POST",
                                                                                         url: $("#main-form").attr('action'),
                                                                                         data: $("#main-form").serialize(),
-                                                                                        success: function(data){
+                                                                                        // success: function(data){
                                                                                             // Once the form is successfully saved, redirect to generate the PDF
-                                                                                            window.location.href = "{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}";
-                                                                                        },
+                                                                                        //    window.location.href = "{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}";
+                                                                                        //},
                                                                                         error: function(err){
                                                                                             // Handle any errors accordingly
                                                                                             console.error("Error saving form:", err);
@@ -1998,23 +1998,49 @@
 {% endblock %}    
 {% block javascript %}
 <script src="{% static 'assets/vendor/select2/js/select2.min.js' %}"></script>
-{% comment %} <script>
+<script>
 $(document).ready(function() {
-    // Get the previously active tab from local storage
-    var activeTab = localStorage.getItem('activeTab');
+    // Function to handle tab actions
+    function handleTabs() {
+        // Get the previously active tab from local storage
+        var activeTab = localStorage.getItem('activeTab');
 
-    // If there's an active tab stored, activate it
-    if (activeTab) {
-        $('[href="' + activeTab + '"]').tab('show');
+        // If there's an active tab stored, activate it
+        if (activeTab) {
+            $('[href="' + activeTab + '"]').tab('show');
+        }
+
+        // When any tab is clicked, save it to the local storage
+        $('.nav-tabs a').on('click', function() {
+            var tabId = $(this).attr('href');
+            localStorage.setItem('activeTab', tabId);
+        });
     }
 
-    // When any tab is clicked, save it to the local storage
-    $('.nav-tabs a').on('click', function() {
-        var tabId = $(this).attr('href');
-        localStorage.setItem('activeTab', tabId);
+    // Check if the page is visible
+    function isPageVisible() {
+        return document.visibilityState === 'visible';
+    }
+
+    // Handle page visibility change
+    document.addEventListener('visibilitychange', function() {
+        if (isPageVisible()) {
+            // If page is visible, handle tabs
+            handleTabs();
+        } else {
+            // If page is not visible, unbind click event to stop saving tab state
+            $('.nav-tabs a').off('click');
+        }
     });
+
+    // Initial tab handling
+    if (isPageVisible()) {
+        handleTabs();
+    }
 });
-</script> {% endcomment %}
+</script> 
+
+
 
 <script>
   function getCookie(name) {

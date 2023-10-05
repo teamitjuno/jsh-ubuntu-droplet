@@ -1697,16 +1697,16 @@ def send_ticket_invoice(request, angebot_id):
             {"status": "failed", "error": "Not a POST request."}, status=400
         )
 
-
 def filter_user_angebots_by_query(user_angebots, query):
     """Filter user angebots based on the given query."""
-    return user_angebots.filter(
+    query_conditions = (
         Q(zoho_kundennumer__icontains=query)
         | Q(angebot_id__icontains=query)
         | Q(status__icontains=query)
         | Q(name__icontains=query)
         | Q(anfrage_vom__icontains=query)
     )
+    return user_angebots.filter(query_conditions)
 
 
 @login_required
@@ -1718,7 +1718,19 @@ def pdf_angebots_list_view(request):
     query = request.GET.get("q")
     if query:
         user_angebots = filter_user_angebots_by_query(user_angebots, query)
-    angebots_and_urls = [
+    
+    angebots_and_urls = get_angebots_and_urls(user_angebots)
+    
+    context = {
+        "zipped_angebots": angebots_and_urls,
+        "angebots": user_angebots,
+    }
+    return render(request, "vertrieb/pdf_angebot_created.html", context)
+
+
+def get_angebots_and_urls(user_angebots):
+    """Generate a list of tuples containing angebot, URL, and name with underscores."""
+    return [
         (
             angebot,
             reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
@@ -1727,11 +1739,6 @@ def pdf_angebots_list_view(request):
         for angebot in user_angebots
         if angebot.angebot_pdf
     ]
-    context = {
-        "zipped_angebots": angebots_and_urls,
-        "angebots": user_angebots,
-    }
-    return render(request, "vertrieb/pdf_angebot_created.html", context)
 
 
 # @login_required
