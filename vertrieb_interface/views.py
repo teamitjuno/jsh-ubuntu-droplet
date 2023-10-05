@@ -1251,6 +1251,9 @@ def load_user_angebots(request):
                 angebot.angebot_id_assigned = True
                 angebots_to_update.append(angebot)
 
+        # Filter out angebots with the status 'bekommen' before bulk updating
+        angebots_to_update = [a for a in angebots_to_update if a.status != 'bekommen']
+
         # Bulk update angebot status
         VertriebAngebot.objects.bulk_update(angebots_to_update, ["status"])
 
