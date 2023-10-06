@@ -9,15 +9,12 @@ from dotenv import load_dotenv, set_key
 import datetime
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
-    ENV_FILE,
-    ZOHO_ACCESS_TOKEN,
     ZOHO_CLIENT_ID,
     ZOHO_CLIENT_SECRET,
     ZOHO_REFRESH_TOKEN,
     ACCESS_TOKEN_URL,
 )
 
-# Constants
 BASE_URL = (
     "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report"
 )
@@ -29,12 +26,10 @@ LIMIT_CURRENT = 200
 MAX_RETRIES = 2
 SLEEP_TIME = 2
 
-# Initialize the environment
 load_dotenv()
 session = requests.Session()
 
 
-# Exceptions
 class APIException(Exception):
     pass
 
@@ -47,7 +42,6 @@ class RateLimitExceededException(APIException):
     pass
 
 
-# Store token information in a global variable (or a more persistent storage)
 token_info = {"access_token": None, "expires_at": 0}
 
 
@@ -74,7 +68,9 @@ def refresh_access_token():
         token_info["access_token"] = response.json()["access_token"]
         token_info["expires_at"] = current_time + response.json()["expires_in"]
 
-        log_and_notify(f"Access token refreshed successfully. Expires at: {token_info['expires_at']}")
+        log_and_notify(
+            f"Access token refreshed successfully. Expires at: {token_info['expires_at']}"
+        )
 
         return token_info["access_token"]
     except:
@@ -87,51 +83,15 @@ def log_and_notify(message):
     send_message_to_bot(message)
 
 
-# def refresh_access_token():
-#     params = {
-#         "refresh_token": ZOHO_REFRESH_TOKEN,
-#         "client_id": ZOHO_CLIENT_ID,
-#         "client_secret": ZOHO_CLIENT_SECRET,
-#         "grant_type": "refresh_token",
-#     }
-#     headers = {
-#         "Accept": "*/*",
-#         "Accept-Encoding": "gzip, deflate, br",
-#         "Connection": "keep-alive"
-#     }
-
-
-#     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
-#     data = response.json()
-#     log_and_notify(f"Refresh response, \n status {response.status_code}")
-#     new_token = data.get("access_token")
-#     set_key(ENV_FILE, "ZOHO_ACCESS_TOKEN", new_token)
-#     sleep(0.5)
-# def refresh_access_token():
-#     params = {
-#         "refresh_token": ZOHO_REFRESH_TOKEN,
-#         "client_id": ZOHO_CLIENT_ID,
-#         "client_secret": ZOHO_CLIENT_SECRET,
-#         "grant_type": "refresh_token",
-#     }
-#     headers = {
-#         "Accept": "*/*",
-#         "Accept-Encoding": "gzip, deflate, br",
-#         "Connection": "keep-alive"
-#     }
-#     response = session.post(ACCESS_TOKEN_URL, params=params, headers=headers)
-#     response.raise_for_status()  # Check for request errors
-#     return response.json()['access_token']
 def fetch_data_from_api(url, params=None):
-
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
-    log_and_notify(f"Attempt to fetch data from {url} with parameters {params}")
+    # log_and_notify(f"Attempt to fetch data with parameters {params}")
 
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == HTTP_OK:
-        log_and_notify(f"Data successfully fetched from {url}.")
+        log_and_notify(f"Data successfully fetched.")
         return response.json()
     else:
         log_and_notify(
@@ -229,65 +189,20 @@ def process_all_user_data(data):
 
 
 def fetch_angenommen_status(request, zoho_id):
+    user = request.user
     url = f"{VERTRIEB_URL}/{zoho_id}"
 
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    log_and_notify(f"Attempt to fetch angenommen status for zoho_id: {zoho_id}\n{headers}")
+    # log_and_notify(
+    #     f"{user.email} Attempt to fetch angenommen status for zoho_id: {zoho_id}"
+    # )
 
     response = requests.get(url, headers=headers)
     data = response.json()
     data = data.get("data")
     return data
-
-
-# def fetch_current_user_angebot(request, zoho_id):
-#     url = f"{VERTRIEB_URL}/{zoho_id}"
-
-#     current_angebot_list = []
-
-#     log_and_notify(f"Start fetching current user Angebot for zoho_id: {zoho_id}")
-
-#     data = fetch_data_from_api(url)
-
-#     if data:
-#         data_dict = data.get("data")
-#         if not data_dict:
-#             log_and_notify(
-#                 f"No more data to fetch for current user Angebot for zoho_id: {zoho_id}. Exiting."
-#             )
-#         try:
-#             entry = {
-#                 "ausrichtung": 0
-#                 if data_dict.get("Dachausrichtung") in ["S\u00fcd", "Ost/West"]
-#                 else 1,
-#                 "status": data_dict.get("Status", ""),
-#                 "email": data_dict.get("Email", ""),
-#                 "angebot_bekommen_am": data_dict.get("Angebot_bekommen_am", ""),
-#                 "anfrage_berr": data_dict.get("Anfrage_ber", ""),
-#                 "notizen": data_dict.get("Notizen", ""),
-#                 "leadstatus": data_dict.get("Leadstatus", ""),
-#                 "empfohlen_von": data_dict.get("empfohlen_von", ""),
-#                 "termine_text": data_dict.get("Termine", [{}])[0].get(
-#                     "display_value", "none"
-#                 ),
-#                 "termine_id": data_dict.get("Termine", [{}])[0].get("ID", ""),
-#                 "latitude": data_dict.get("Adresse_PVA", {}).get("latitude", ""),
-#                 "longitude": data_dict.get("Adresse_PVA", {}).get("longitude", ""),
-#             }
-#             current_angebot_list.append(entry)
-#             log_and_notify(
-#                 f"Data page fetched successfully for current user Angebot for zoho_id: {zoho_id}. Continuing."
-#             )
-#         except Exception as e:
-#             log_and_notify(
-#                 f"Error processing data for zoho_id: {zoho_id}. Error: {str(e)}"
-#             )
-
-#     log_and_notify(f"Fetched all available current user Angebot for zoho_id: {zoho_id}")
-
-#     return current_angebot_list
 
 
 def process_current_user_data(data, current_angebot_list):
@@ -323,7 +238,6 @@ def update_status(zoho_id, new_status):
     current_datetime = datetime.datetime.now()
     bekommen_am = current_datetime.strftime("%d-%b-%Y")
 
-    # Payload structured for ZOHOCreator updates (assuming it uses a 'data' key)
     payload = {
         "data": {
             "Status": new_status,
@@ -376,13 +290,3 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     response = requests.post(url, json=dataMap, headers=headers)
 
     return response
-
-    # if response.status_code == HTTP_UNAUTHORIZED:
-    #     refresh_access_token()
-    #     access_token = os.getenv("ZOHO_ACCESS_TOKEN")
-    #     headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
-    #     response = session.post(url, json=dataMap, headers=headers)
-    # else:
-    #     send_message_to_bot(
-    #         f"Pushing data failed: {vertrieb_angebot.angebot_id},\n{response.status_code} - {response.text}"
-    #     )

@@ -278,7 +278,7 @@ def home(request):
 
     statuses = [
         "angenommen",
-        "bekommen",
+        "bekommen", 
         "in Kontakt",
         "Kontaktversuch",
         "abgelehnt",
@@ -713,23 +713,29 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 zoho_id = vertrieb_angebot.zoho_id
                 if TELEGRAM_LOGGING:
                     send_message_to_bot(
-                        f"{request.user.email}: Handling status change... ANGEBOT_ZOHO_ID : , {zoho_id}, {vertrieb_angebot.vorname_nachname}"
+                        f"{request.user.email}: Handling status change from ZOHO... {vertrieb_angebot.vorname_nachname}"
                     )
-                print(
-                    f"{request.user.email}: Opened Angebot {vertrieb_angebot.angebot_id} Handling status change... ANGEBOT_ZOHO_ID : ",
-                    (zoho_id),
-                    (vertrieb_angebot.vorname_nachname),
-                )
 
                 if vertrieb_angebot.ag_fetched_data:
                     fetched_data = json.loads(vertrieb_angebot.ag_fetched_data)
                     vertrieb_angebot.notizen = fetched_data.get("notizen")
 
-                    if fetched_data.get("Status") == "angenommen":
+                    status = fetched_data.get("status")
+                    if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                                f"{request.user.email}: {status}"
+                            )
+
+                    if fetched_data.get("status") == "angenommen":
                         vertrieb_angebot.status = "angenommen"
+                        vertrieb_angebot.angebot_id_assigned = True
                         vertrieb_angebot.status_change_field = None
                         vertrieb_angebot.save()
-                        print("Angebot saved with status 'angenommen'")
+                        if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                                f"{request.user.email}: Angebot saved with status {vertrieb_angebot.status}"
+                            )
+                        
                         # Assuming you want to create a form instance with the fetched data
                         form = self.form_class(
                             fetched_data,
@@ -749,11 +755,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                         if TELEGRAM_LOGGING:
                             send_message_to_bot(
-                                f"{request.user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
+                                f"{request.user.email}: IF {status}, Status not changed"
                             )
-                        print(
-                            f"{request.user.email}: status: {vertrieb_angebot.status}, DO NOTHING"
-                        )
                         pass
             else:
                 pass
@@ -882,16 +885,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 instance = form.instance
                 instance.save()
 
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(
-                        f"{user.email}: Angebot, {vertrieb_angebot.zoho_id}, {vertrieb_angebot.angebot_id}"
-                    )
-                print(
-                    "Angebot",
-                    (vertrieb_angebot.zoho_id),
-                    "assigned with ID ",
-                    (vertrieb_angebot.angebot_id),
-                )
+
 
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
@@ -914,7 +908,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             if TELEGRAM_LOGGING:
                 send_message_to_bot(
-                    f"{user.email}: Creating PDF für ANGEBOT_ZOHO_ID :  , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
+                    f"{user.email}: Attempt to create PDF für ANGEBOT_ZOHO_ID :  , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
                 )
             if form.is_valid():
                 data = json.loads(user.zoho_data_text or '[["test", "test"]]')
@@ -925,31 +919,64 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 name = form.cleaned_data["name"]
                 zoho_id = form.cleaned_data["zoho_id"]
                 kundennumer = name_to_kundennumer[name]
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(f"Kundennummer: {kundennumer}")
-                print("Kundennummer:", kundennumer)
+
+                
                 zoho_id = name_to_zoho_id[name]
+                
 
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
-                form.instance.status = "bekommen"
-                vertrieb_angebot.angebot_id_assigned = True
-                print("Changing status to ", vertrieb_angebot.status)
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(
-                        f"Changing status to : {vertrieb_angebot.status}"
-                    )
-                pushAngebot(vertrieb_angebot, user_zoho_id)
-                print("Pushing data to Zoho was successfull!")
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(f"Pushing data to Zoho was successfull!")
-                form.save()  # type:ignore
+                form.save()
+                self.fetch_angebot_data(request, vertrieb_angebot.angebot_id)
 
-                return redirect(
-                    "vertrieb_interface:create_angebot_pdf_user",
-                    vertrieb_angebot.angebot_id,
-                )
+                if vertrieb_angebot.ag_fetched_data:
+                    fetched_data = json.loads(vertrieb_angebot.ag_fetched_data)
+                    vertrieb_angebot.notizen = fetched_data.get("notizen")
+
+                    status = fetched_data.get("status")
+                    if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                                f"{request.user.email}: Preliminary checking ZOHO status: {status}"
+                            )
+
+                    if fetched_data.get("status") != "angenommen":
+                    
+                        form.instance.status = "bekommen"
+                        form.save()
+                        print("Changing status to ", vertrieb_angebot.status)
+                        if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                                f"{user.email} Changing status to : {vertrieb_angebot.status}"
+                            )
+                        pushAngebot(vertrieb_angebot, user_zoho_id)
+                        
+                        if TELEGRAM_LOGGING:
+                            send_message_to_bot(f"{user.email} Pushing data to Zoho was successfull!")
+                        return redirect(
+                            "vertrieb_interface:create_angebot_pdf_user",
+                            vertrieb_angebot.angebot_id,
+                            )
+                # vertrieb_angebot.angebot_id_assigned = True
+                    elif fetched_data.get("status") == "angenommen":
+                        form.instance.status = "angenommen"
+                        form.save()
+                        return redirect(
+                            "vertrieb_interface:edit_angebot",
+                            vertrieb_angebot.angebot_id,
+                        )
+                    else:
+                        status = fetched_data.get("status")
+                        if TELEGRAM_LOGGING:
+                            send_message_to_bot(
+                                f"{user.email}Changing status to : {vertrieb_angebot.status}"
+                            )
+                        form.instance.status = f"{status}"
+                        form.save()
+                        return redirect(
+                            "vertrieb_interface:edit_angebot",
+                            vertrieb_angebot.angebot_id,
+                        )
 
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
