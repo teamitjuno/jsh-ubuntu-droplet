@@ -524,7 +524,7 @@ class VertriebAngebotForm(ModelForm):
     HERSTELLER_CHOICES = [
         ("----", "----"),
         ("Huawei", "Huawei"),
-        ("Viessmann", "Viessmann"),
+        # ("Viessmann", "Viessmann"),
         # Add other hersteller as needed
     ]
 
@@ -552,7 +552,7 @@ class VertriebAngebotForm(ModelForm):
     hersteller = forms.ChoiceField(
         label="Hersteller",
         choices=HERSTELLER_CHOICES,
-        initial="----",
+        initial="Huawei",
         widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
     )
 
