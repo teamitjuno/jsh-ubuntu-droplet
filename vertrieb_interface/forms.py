@@ -524,7 +524,7 @@ class VertriebAngebotForm(ModelForm):
     HERSTELLER_CHOICES = [
         ("----", "----"),
         ("Huawei", "Huawei"),
-        # ("Viessmann", "Viessmann"),
+        ("Viessmann", "Viessmann"),
         # Add other hersteller as needed
     ]
 
