@@ -185,9 +185,6 @@ def validate_empty(value):
 
 
 class VertriebAngebotForm(ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #     super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-    #     self.fields['status'].choices = filter_hidden_choices(ANGEBOT_STATUS_CHOICES)
 
     is_locked = forms.BooleanField(
         required=False,
@@ -524,25 +521,25 @@ class VertriebAngebotForm(ModelForm):
     HERSTELLER_CHOICES = [
         ("----", "----"),
         ("Huawei", "Huawei"),
-        ("Viessmann", "Viessmann"),
-        # Add other hersteller as needed
+        # ("Viessmann", "Viessmann"),
+
     ]
 
     WALLBOXTYP_CHOICES = [
         ("----", "----"),
         ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
         ("Viessmann Charging Station", "Viessmann Charging Station"),
-        # Add other hersteller as needed
+
     ]
 
-    # Populating choices for 'wechselrichter_model'
+
     WECHSELRICHTER_MODEL_CHOICES = [
         ("----", "----"),
         ("SUN 2000", "SUN 2000"),
         ("Vitocharge VX3", "Vitocharge VX3"),
     ]
 
-    # Populating choices for 'speicher_model'
+
     SPEICHER_MODEL_CHOICES = [
         ("----", "----"),
         ("LUNA 2000", "LUNA 2000"),
