@@ -24,15 +24,12 @@ from django.http import (
     HttpResponseRedirect,
     Http404,
     JsonResponse,
-    FileResponse,
-    HttpResponse,
     StreamingHttpResponse,
 )
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.formats import date_format
 from django.core.exceptions import PermissionDenied
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models.functions import Cast
 from django.db.models import IntegerField, Q, Sum, Count
@@ -48,7 +45,6 @@ from calculator.forms import CalculatorForm
 from shared.chat_bot import handle_message
 from vertrieb_interface.get_user_angebots import (
     fetch_user_angebote_all,
-    # fetch_current_user_angebot,
     fetch_angenommen_status,
     pushAngebot,
 )
@@ -926,6 +922,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.angebot_id_assigned = True
                 vertrieb_angebot.save()
                 form.save()
                 self.fetch_angebot_data(request, vertrieb_angebot.angebot_id)
@@ -941,7 +938,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             )
 
                     if fetched_data.get("status") != "angenommen":
-                    
+                        
                         form.instance.status = "bekommen"
                         form.save()
                         print("Changing status to ", vertrieb_angebot.status)
