@@ -102,6 +102,7 @@ pytelegrambotapi = "*"
 httplib2 = "*"
 simplejson = "*"
 networkx = "*"
+channels = "*"
 
 [dev-packages]
 
