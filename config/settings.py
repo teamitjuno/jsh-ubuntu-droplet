@@ -20,6 +20,7 @@ ALLOWED_HOSTS = [
     "www.jsh-home.app",
     "https://jsh-home.app",
     "http://46.101.104.229:8000",
+    "http://138.68.100.101:8000",
 ]
 LOGIN_URL = "/login"
 
@@ -77,11 +78,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "http://46.101.104.229:8000",
+    "http://138.68.100.101:8000",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "http://46.101.104.229:8000",
+    "http://138.68.100.101:8000"
 ]
 
 MIDDLEWARE = [
