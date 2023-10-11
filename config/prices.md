@@ -140,11 +140,15 @@ OptionalAccessoriesPreise.objects.create(name='erzeugung_ost_west', price=880.00
 OptionalAccessoriesPreise.objects.create(name='wandhalterung_fuer_speicher', price=120.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import SolarModulePreise
+SolarModulePreise.objects.create(name='Phono Solar PS430M8GFH-18/VSH', price=530.00, actual_price=0.00,old_price=0.00)
 SolarModulePreise.objects.create(name='Phono Solar PS420M7GFH-18/VNH', price=530.00, actual_price=0.00,old_price=0.00)
 SolarModulePreise.objects.create(name='Jinko Solar Tiger Neo N-type JKM420N-54HL4-B', price=516.00, actual_price=0.00,old_price=0.00)
 SolarModulePreise.objects.create(name='Jinko Solar Tiger Neo N-type JKM425N-54HL4-B', price=516.00, actual_price=0.00,old_price=0.00)
 
 from prices.models import WallBoxPreise
+
+WallBoxPreise.objects.create(name='Huawei FusionCharge AC', price=1900.00, actual_price=0.00,old_price=0.00)
+WallBoxPreise.objects.create(name='Viessmann Charging Station', price=1900.00, actual_price=0.00,old_price=0.00)
 WallBoxPreise.objects.create(name='Pulsar Plus', price=1600.00, actual_price=0.00,old_price=0.00)
 WallBoxPreise.objects.create(name='Pulsar Plus inkl. Power Boost', price=2000.00, actual_price=0.00,old_price=0.00)
 WallBoxPreise.objects.create(name='Commander 2', price=1900.00, actual_price=0.00,old_price=0.00)

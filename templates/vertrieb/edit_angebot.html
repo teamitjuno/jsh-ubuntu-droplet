@@ -28,11 +28,6 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                {% comment %} {% if user.role.name == "admin" %}
-                                <h4 class="page-title">Angebotstool 2.0 : {{ user.role.name }}</h4>
-                                {% else %}
-                                <h4 class="page-title">Angebotstool 2.0</h4>
-                                {% endif %} {% endcomment %}
                                 <div class="page-title-right"></div>
                             </div>
                         </div>
@@ -152,37 +147,7 @@
                                                            {% endif %}
                                                 </div><!-- End of row -->
                                             </div>
-
                                         </div>
-                                        {% comment %} <div class="tab-pane" id="wallbox" role="tabpanel">
-                                            <div class="card-body">
-                                                <div class="row"> 
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wallbox Details</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
-                                                                        <td>{{ form.wallboxtyp }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
-                                                                        <td>{{ form.wallbox_anzahl }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.kabelanschluss.label_tag }}</th>
-                                                                        <td>{{ form.kabelanschluss }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> {% endcomment %}
-                            
-                                            <!-- MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM -->
                                         <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
@@ -304,8 +269,6 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        
-                                                        
                                                     </div>
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
@@ -313,14 +276,11 @@
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tbody>
-                                                                        
-                                                                        
                                                                         {% include 'vertrieb/extra/wand_content.html' %}
                                                                         {% include 'vertrieb/extra/elwa_2_content.html' %}
                                                                         {% include 'vertrieb/extra/thor_2_content.html' %}
                                                                         {% include 'vertrieb/extra/wallbox_content.html' %}
                                                                         {% include 'vertrieb/extra/komplex_content.html' %}
-                                                                        
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -366,14 +326,9 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        
-                                                        
-                                                    
                                                     </div>
                                                 </div>
                                                 <div class="row"> 
-                                                    
-                                                    
                                                     {% if user.role.name == "admin" %}
                                                     <div class="col-lg-3">
                                                         <div class="card mb-3">
@@ -420,11 +375,9 @@
                                                         </div>
                                                     </div>
                                                     {% endif %}
-                                                    
                                                 </div> 
                                             </div>
                                         </div>
-                                            <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
                                         {% if vertrieb_angebot.status == "angenommen" %}
                                         <div hidden class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
@@ -509,13 +462,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% endif %}
-                                        <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
-                        
+                                        {% endif %}                        
                                         <div class="tab-pane" id="kalkulationen" role="presentation">                       
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <!-- Column 1 -->
+
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
@@ -554,7 +505,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!-- Column 2 -->
+
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation Info</div>
@@ -659,9 +610,9 @@
                                                 {% endif %}    
                                                     <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
                                             </p>
-                                        </div> <!-- end card-body-->
-                                    </div> <!-- end card-->
-                                </div> <!-- end col-->
+                                        </div> 
+                                    </div> 
+                                </div> 
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
@@ -680,10 +631,10 @@
                                             {% endif %}
                                                 <span class="text-nowrap">Termin</span>
                                             </p>
-                                        </div> <!-- end card-body-->
-                                    </div> <!-- end card-->
-                                </div> <!-- end col-->
-                            </div> <!-- end row -->
+                                        </div> 
+                                    </div> 
+                                </div> 
+                            </div> 
                             <div class="row">
                                 <div hidden class="col-sm-6">
                                     <div class="card widget-flat">
@@ -711,9 +662,9 @@
                                                     <span class="text-nowrap">Änderungsdatum</span>
                                             </p>
                                             {% endif %}
-                                        </div> <!-- end card-body-->
-                                    </div> <!-- end card-->
-                                </div> <!-- end col-->
+                                        </div> 
+                                    </div> 
+                                </div> 
 
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
@@ -738,63 +689,11 @@
                                                     <div class="d-flex align-items-center">
                                                             <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
                                                             </div>
-
-
-
-
-
-
-
-
-
-{% comment %}                                               
-                                                        <script>
-                                                        $(document).ready(function() {
-
-                                                            function ajaxUpdateForAngebots($button, url) {
-                                                                toggleButtonLoadingState($button, true);
-
-                                                                $.ajax({
-                                                                    method: 'POST',
-                                                                    url: url,
-                                                                    data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-                                                                    success: function() {
-                                                                        toggleButtonLoadingState($button, false);
-                                                                    },
-                                                                    error: function() {
-                                                                        toggleButtonLoadingState($button, false);
-                                                                    }
-                                                                });
-                                                            }
-
-                                                            function toggleButtonLoadingState($button, isLoading) {
-                                                                const $spinner = $button.find('.spinner-border');
-                                                                if (isLoading) {
-                                                                    $spinner.show();
-                                                                } else {
-                                                                    $spinner.hide();
-                                                                }
-                                                            }
-
-                                                            $('#save-all-forms').on('click', function() {
-                                                                const $thisButton = $(this);
-                                                                const url = "YOUR_URL_HERE"; // replace with the actual URL
-                                                                ajaxUpdateForAngebots($thisButton, url);
-                                                            });
-
-                                                        });
-                                                        </script> {% endcomment %}
-
-                                                
-                                                    
-                                                        {% comment %} <button type="submit" form="main-form" id="save-all-forms" class="btn btn-danger opacity-25 rounded-pill" disabled>Speichern</button> {% endcomment %}
                                                         <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill">Speichern</button>
                                                 
                                                     <div class="row m-2">
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
                                                     </div>
-
-                                                    
                                                     <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
                                                             <div class="modal-content">
@@ -846,15 +745,11 @@
                                                                             </script>
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
                                                                             <button type="submit" form="main-form" name="bekommen_zu_machen" id="continueButtonn" onclick=saveFormAndGeneratePDF() class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-                                                                            
                                                                     </div>
                                                                 </div>
                                                             </div><!-- /.modal-content -->
                                                         </div><!-- /.modal-dialog -->
                                                     </div>
-
-
-                                            
                                         </div>
                                     </div>
                                 </div>
@@ -878,54 +773,10 @@
                             </div>
                         </div>
                         </div>
-                    </div><!-- End ROW -->
+                    </div>
                 </div> 
         </form>
-        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-        $(document).ready(function() {
-            toggleAnzWandhalterung($('#hersteller').val());
-            // Calculate initial gesamtkapazitat
-            calculateGesamtkapazitat();
-            // Re-calculate gesamtkapazitat on anz_speicher change
-            $('#anz_speicher').change(calculateGesamtkapazitat);
-            
-            $("#hersteller").change(function() {
-                toggleAnzWandhalterung($(this).val());
-                var hersteller = $(this).val();
-                
-                if(hersteller == "Viessmann") {
-                    var wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                    var speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                    var wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                } else if(hersteller == "Huawei") {
-                    var wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                    var speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                    var wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                } else {
-                    var wechselrichterOptions = '<option value="">-----</option>';
-                    var speicherOptions = '<option value="">-----</option>';
-                    var wallboxtypOptions = '<option value="">-----</option>';
-                }
-                
-                $("#wechselrichter_model").html(wechselrichterOptions);
-                $("#speicher_model").html(speicherOptions);
-                
-            });
-        });
-            function toggleAnzWandhalterung(value) {
-            if (value === 'Viessmann') {
-                $('#anz_wandhalterung_row').hide();
-            } else {
-                $('#anz_wandhalterung_row').show();
-            }
-            }
-            function calculateGesamtkapazitat() {
-                var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-                $('#gesamtkapazitat').val(anz_speicher * 5000);
-            }
         
-        </script> {% endcomment %}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
         $(document).ready(function() {
@@ -1448,19 +1299,9 @@
                                                             </div>
                                                         </div> 
                                                     {% endif %}
-                                                    {% comment %} <div class="col-lg-2">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Angebotsumme rechnen</div>
-                                                            <div class="card-body">
-                                                                <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Angebotsumme rechnen</button>
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div> {% endcomment %}
                                                 </div>
                                             </div>
                                         </div>
-                                                <!-- TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT -->
                                     {% if vertrieb_angebot.status == "angenommen" %}
                                     <div hidden class="tab-pane" id="ticket" role="presentation">
                                         <div class="card-body">
@@ -1655,14 +1496,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        {% comment %} <div class="col-lg-2">
-                                                            <div class="card mb-3">
-                                                                <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Kalkulation rechnen</div>
-                                                                <div class="card-body">
-                                                                    <button type="submit" form="main-form" id="save-all-forms2" class="btn btn-soft-primary rounded-pill">Kalkulation rechnen</button>
-                                                                </div>
-                                                            </div>
-                                                        </div> {% endcomment %}
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -2224,10 +2057,10 @@ $(document).ready(function() {
 <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
 <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
         <!-- Chart.js-->
-        <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
+<script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
 
         <!-- Chart.js Line Demo js -->
-        <script src="{% static 'assets/js/pages/demo.chartjs-line.js' %}"></script>  
+<script src="{% static 'assets/js/pages/demo.chartjs-line.js' %}"></script>  
 
 <!-- Apex Chart Area Demo js -->
 <script src="https://apexcharts.com/samples/assets/stock-prices.js"></script>
@@ -2241,10 +2074,10 @@ $(document).ready(function() {
         <!-- Apex Charts js -->
 <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>                                       
     <!-- Vector Map js -->
-    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
 
     <!-- App js -->
-    <script src="{% static 'assets/js/app.min.js' %}"></script>
+<script src="{% static 'assets/js/app.min.js' %}"></script>
 {% endblock %}
  

@@ -190,18 +190,7 @@ class UserForm(forms.ModelForm):
         ),
     )
 
-    # imei = forms.CharField(
-    #     label="IMEI",
-    #     required=False,
-    #     initial=1234456789,
-    #     widget=forms.NumberInput(
-    #         attrs={
-    #             "class": "form-control",
-    #             "placeholder": "IMEI",
-    #             "id": "imei",
-    #         }
-    #     ),
-    # )
+
 
     anbieter = forms.CharField(
         label="Anbieter",

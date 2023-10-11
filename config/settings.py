@@ -59,6 +59,7 @@ SERVICE_APPS = [
     "crispy_forms",
     "shared",
     "storages",
+    "channels",
     "corsheaders",
     "templatetags.custom_filters",
     "vertrieb_interface.templatetags.custom_filter",
@@ -192,18 +193,17 @@ MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
     },
 }
 

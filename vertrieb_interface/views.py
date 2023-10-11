@@ -47,6 +47,7 @@ from vertrieb_interface.get_user_angebots import (
     fetch_user_angebote_all,
     fetch_angenommen_status,
     pushAngebot,
+    extract_values,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
@@ -724,7 +725,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     if fetched_data.get("status") == "angenommen":
                         vertrieb_angebot.status = "angenommen"
-                        vertrieb_angebot.angebot_id_assigned = True
+                        vertrieb_angebot.angebot_id_assigned = False
                         vertrieb_angebot.status_change_field = None
                         vertrieb_angebot.save()
                         if TELEGRAM_LOGGING:
@@ -764,6 +765,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
+
         if zoho_id is not None:
             item = json.loads(vertrieb_angebot.ag_fetched_data)
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
@@ -1067,7 +1069,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         zoho_id = vertrieb_angebot.zoho_id
 
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-
+        
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
         user_folder = os.path.join(
@@ -1082,9 +1084,9 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
         context = self.get_context_data()
-        countdown = vertrieb_angebot.countdown()
+    
         context = {
-            "countdown": vertrieb_angebot.countdown(),
+            
             "user": user,
             "vertrieb_angebot": vertrieb_angebot,
             "form": form,
@@ -1106,24 +1108,8 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         user = request.user
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
 
-        if "change_status_button" in request.POST:
-            if form.is_valid():
-                form.instance.status = "angenommen"  # type:ignore
-                form.save()  # type:ignore
-                CustomLogEntry.objects.log_action(
-                    user_id=vertrieb_angebot.user_id,
-                    content_type_id=ContentType.objects.get_for_model(
-                        vertrieb_angebot
-                    ).pk,
-                    object_id=vertrieb_angebot.pk,
-                    object_repr=str(vertrieb_angebot),
-                    action_flag=CHANGE,
-                    status=vertrieb_angebot.status,
-                )
-                return redirect(
-                    "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
-                )
-        elif form.is_valid():
+
+        if form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
@@ -1142,24 +1128,10 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.save()
             form.save()  # type:ignore
 
-            print(
-                f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-            )
-            if TELEGRAM_LOGGING:
-                send_message_to_bot(
-                    f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-                )
-            CustomLogEntry.objects.log_action(
-                user_id=vertrieb_angebot.user_id,
-                content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
-                object_id=vertrieb_angebot.pk,
-                object_repr=str(vertrieb_angebot),
-                action_flag=CHANGE,
-                status=vertrieb_angebot.status,
-            )
             return redirect(
                 "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
             )
+        return self.form_invalid(form, vertrieb_angebot)
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
         context = self.get_context_data()
@@ -1248,6 +1220,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
+    existing_angebot_ids, not_existing_angebot_ids = extract_values(request)
     try:
         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
@@ -1259,13 +1232,12 @@ def load_user_angebots(request):
         # Save zoho data to the user
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
-
-        # Update VertriebAngebot status
         angebots_to_update = []
         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
         vertrieb_angebots_map = {
             str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user
         }
+        
         for item in all_user_angebots_list:
             zoho_id = item.get("zoho_id")
             status = item.get("status")
@@ -1287,11 +1259,21 @@ def load_user_angebots(request):
             for angebot in all_vertrieb_angebots_for_user
             if angebot.zoho_id not in zoho_ids_in_list
         ]
-        for angebot in angebots_to_unassign:
-            angebot.angebot_id_assigned = False
-        VertriebAngebot.objects.bulk_update(
-            angebots_to_unassign, ["angebot_id_assigned"]
-        )
+        print(existing_angebot_ids)
+
+        print(angebots_to_unassign)
+
+        filtered_result = [
+            angebot
+            for angebot in angebots_to_unassign
+            if str(angebot.zoho_id) in existing_angebot_ids  # Ensuring we are comparing strings with strings
+        ]
+
+        print(filtered_result)
+        send_message_to_bot(f"ANGEBOT_IDs :  {existing_angebot_ids}")
+        send_message_to_bot(f"{filtered_result}")
+        
+
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         print(f"{user.email}: Aufträge aus JPP aktualisiert")
         send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")

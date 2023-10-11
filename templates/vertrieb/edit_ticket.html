@@ -247,6 +247,9 @@
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
+                                                                    <td> {{ form.hersteller }} </td>
+                                                                    <td> {{ form.wechselrichter_model }} </td>
+                                                                    <td> {{ form.speicher_model }} </td>
                                                                         <th>{{ form.solar_module.label_tag }}</th>
                                                                         {% if user.role.name == "admin" %}
                                                                             <td> {{ form.solar_module }} </td>

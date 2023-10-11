@@ -2,9 +2,6 @@ import os
 import json
 import time
 import requests
-import logging
-from pprint import pprint
-from time import sleep
 from dotenv import load_dotenv, set_key
 import datetime
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
@@ -19,6 +16,8 @@ BASE_URL = (
     "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report"
 )
 VERTRIEB_URL = f"{BASE_URL}/Privatkunden1"
+ANGEBOTE_URL = f"{BASE_URL}/Angebote"
+PROVISIONE_URL = f"{BASE_URL}/Provision_alle_PVA"
 HTTP_OK = 200
 HTTP_UNAUTHORIZED = 401
 LIMIT_ALL = 200
@@ -290,3 +289,52 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     response = requests.post(url, json=dataMap, headers=headers)
 
     return response
+
+
+def fetch_angebote_all():    
+    all_provisione_list = []
+    data = fetch_data_from_api(ANGEBOTE_URL)
+    all_provisione_list.extend(data)
+    return data
+
+def fetch_provisione_all():
+    all_provisione_list = []
+    data = fetch_data_from_api(PROVISIONE_URL)
+    all_provisione_list.extend(data)
+    return data
+
+def extract_values(request):
+    user = request.user
+    input_json = fetch_angebote_all()
+    parsed_data = input_json
+    target_vertriebler_id = f"{user.zoho_id}"
+
+    # Filter the data
+    filtered_angebote_data = [
+        item for item in parsed_data['data']
+        if item['Vertriebler_ID']['ID'] == target_vertriebler_id
+    ]
+    
+    input_json = fetch_provisione_all()
+    parsed_data = input_json
+    filtered_provisione_data = [
+        item for item in parsed_data['data']
+        if item['Vertriebler']['ID'] == target_vertriebler_id
+    ]
+    angebotsumme_list = [item['Rechnungsh_he_netto_laut_Angebot'] for item in filtered_provisione_data]
+
+    filtered_existing_angebote_result_data = [item for item in filtered_angebote_data if item["Angebotssumme"] in angebotsumme_list]
+    existing_angebot_ids = [item['Angebot_ID'] for item in filtered_existing_angebote_result_data]
+
+    filtered_not_existing_angebote_result_data = [
+    item for item in filtered_angebote_data
+    if item["Angebotssumme"] not in angebotsumme_list
+    ]
+
+    # Find not existing angebot ids
+    not_existing_angebot_ids = [
+        item['Angebot_ID'] for item in filtered_not_existing_angebote_result_data
+    ]
+
+
+    return existing_angebot_ids, not_existing_angebot_ids

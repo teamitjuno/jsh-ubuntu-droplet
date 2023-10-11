@@ -29,7 +29,6 @@
                                             <th>Kunde</th>
                                             <th>Angebot ID</th>
                                             <th>Angebot Status</th>
-                                            <th>Bekommen am:</th>
                                             <th>Datum</th>
                                             
                                             <th>Link</th>
@@ -74,11 +73,6 @@
                                                 </td>
                                                 {% endif %}
                                             
-                                            <td>
-                                                {% if vertrieb_angebot.status == "bekommen" %} 
-                                                {{ vertrieb_angebot.status_change_date }}
-                                                {% endif %}
-                                            </td>
                                             <td>{{ vertrieb_angebot.anfrage_vom }}</td>
                                             
                                             <td>
