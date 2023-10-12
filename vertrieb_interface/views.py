@@ -1541,9 +1541,8 @@ def serve_dokumentation(request):
 
 @login_required
 def documentation_view(request):
-    pdf_url = reverse("vertrieb_interface:serve_dokumentation")
-    context = {"pdf_url": pdf_url}
-    return render(request, "vertrieb/documentation_view.html", context)
+    
+    return render(request, "vertrieb/documentation_view.html")
 
 
 @login_required

@@ -20,7 +20,7 @@
                         <!-- start page title -->
                         <div class="row">
                             <div class="col-12">
-                                {% comment %} <div class="page-title-box">
+                                <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
                                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
@@ -29,26 +29,113 @@
                                     </div>
                                     <h4 class="page-title">Dokumentation</h4>
                                     
-                                </div> {% endcomment %}
+                                </div> 
                             </div>
                         </div>
                         <!-- end page title -->
 
                         <div class="row">
-                            <div class="col-12">
-                                <div class="card border-info border">
+                            <div class="col-md-12 mb-3">
+                                <!-- Portlet card -->
+                                <div class="card mb-md-0 mb-3">
                                     <div class="card-body">
-
-                                        <iframe src="{{ pdf_url }}" width='100%' height="900px">
-                                            <!-- Display a message for browsers that do not support iframes -->
-                                            Your browser does not support iframes.
-                                        </iframe>
-
-
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card -->
-                            </div> <!-- end col-->
+                                        <div class="card-widgets">
+                                            <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                            <a data-bs-toggle="collapse" href="#cardCollpase1" role="button" aria-expanded="false" aria-controls="cardCollpase1"><i class="mdi mdi-minus"></i></a>
+                                            <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                                        </div>
+                                        <h5 class="card-title mb-2">1. Beim Starten des Verkaufstools muss die Schaltfläche "aus JPP Einträge aktualisieren" angeklickt werden. Diese ist dafür da, den aktuellen Datenbestand aus dem Zoho zu laden. Falls Interessenten nicht im Verkaufstool zu finden sind, dann müssen Bestandsdaten synchronisiert werden.</h5>
+                                        <div id="cardCollpase1" class="collapse pt-3 show">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-1.png" %}" alt="Card image cap">
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
                         </div>
+
+                        <div class="row">                                
+                            <div class="col-md-12 mb-3">
+                                <!-- Portlet card -->
+                                <div class="card mb-md-0 mb-3">
+                                    <div class="card-body">
+                                        <div class="card-widgets">
+                                            <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                            <a data-bs-toggle="collapse" href="#cardCollpase2" role="button" aria-expanded="false" aria-controls="cardCollpase2"><i class="mdi mdi-minus"></i></a>
+                                            <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                                        </div>
+                                        <h5 class="card-title mb-2">2. Im Feld "Interessent" kann der Interessent ausgewählt werden. Dies spart Tipparbeit und vermeidet Eingabefehler. Datenfelder, die nicht vorausgefühlt und wichtig sind, bitte ausfüllen und später im Zoho nachtragen. Eine automatische Synchronisation in Richtung Zoho ist geplant. Zum Schluss klicken Sie bitte auf "Speichern".</h5>
+                                                        
+                                        <div id="cardCollpase2" class="collapse pt-3 show">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-4.png" %}" alt="Card image cap">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-3.png" %}" alt="Card image cap">
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>
+
+                        <div class="row">              
+                            <div class="col-md-12 mb-3">
+                                <!-- Portlet card -->
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <div class="card-widgets">
+                                            <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                            <a data-bs-toggle="collapse" href="#cardCollpase3" role="button" aria-expanded="false" aria-controls="cardCollpase3"><i class="mdi mdi-minus"></i></a>
+                                            <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                                        </div>
+                                        <h5 class="card-title mb-2">3. Gespeicherte Angebote findet man im Menüpunkt "Alle Angebote". Diese können weiter bearbeitet werden.</h5>
+                                                        
+                                        <div id="cardCollpase3" class="collapse pt-3 show">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-7.png" %}" alt="Card image cap">
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                        <div class="row">              
+                            <div class="col-md-12 mb-3">
+                                <!-- Portlet card -->
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <div class="card-widgets">
+                                            <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                            <a data-bs-toggle="collapse" href="#cardCollpase4" role="button" aria-expanded="false" aria-controls="cardCollpase4"><i class="mdi mdi-minus"></i></a>
+                                            <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                                        </div>
+                                        <h5 class="card-title mb-2">4. Der Knopf "PDF Angebot erstellen" sperrt das aktuelle Angebot und erstellt ein Angebotsdokument im PDF-Format für den Interessenten. Zusätzlich wird im ZOHO der Angebotsstatus auf "bekommen" gesetzt. </h5>
+                                        <h5 class="card-title mb-2">Das Angebot wurde in diesem Schritt zum Menüpunkt "PDF-Dokumente" verschoben.</h5>
+                                                        
+                                        <div id="cardCollpase4" class="collapse pt-3 show">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-10.png" %}" alt="Card image cap">
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>
+
+                        <div class="row">              
+                            <div class="col-md-12 mb-3">
+                                <!-- Portlet card -->
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <div class="card-widgets">
+                                            <a href="javascript:;" data-bs-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                                            <a data-bs-toggle="collapse" href="#cardCollpase5" role="button" aria-expanded="false" aria-controls="cardCollpase5"><i class="mdi mdi-minus"></i></a>
+                                            <a href="#" data-bs-toggle="remove"><i class="mdi mdi-close"></i></a>
+                                        </div>
+                                        <h5 class="card-title mb-2">5. Wenn der Interessent das Angebot annimmt und somit zum Kunde wird muss im Zoho eine PVA angelegt werden. Dazu bitte die entsprechenden Felder ausfüllen und besonders auf den exakten Angebotswert achten." gesetzt. </h5>
+                                        <h5 class="card-title mb-2">Wenn dies erfolgt ist, bitte im Verkaufstool die Schaltfläche "aus JPP Einträge aktualisieren" benutzen um den aktuellen Datenbestand zu laden.</h5>
+                                        <h5 class="card-title mb-2">Danach ist es möglich, zum Angebot einen Nachkauf zu erstellen. Das angenommene Angebot wurde dafür zum Menüpunkt "Ticket erstellen" verschoben.</h5>
+                                                        
+                                        <div id="cardCollpase5" class="collapse pt-3 show">
+                                            <img class="card-img-top mb-md-3" src="{% static "img/dok-pic-9.png" %}" alt="Card image cap">
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>                      
                         <!-- end row -->
                         
                     </div> <!-- container -->
