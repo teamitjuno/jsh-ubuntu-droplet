@@ -25,6 +25,7 @@ from django.http import (
     Http404,
     JsonResponse,
     StreamingHttpResponse,
+    HttpResponse
 )
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -63,7 +64,7 @@ from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
-
+from django.http import FileResponse
 
 class AsyncBytesIter:
     def __init__(self, byte_data, chunk_size=8192):
@@ -1218,6 +1219,24 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         return queryset
 
 
+def set_angebot_id_assigned_false_for_user(request):
+    user = request.user
+    # First, filter the instances of this user with status "angenommen"
+    angenommen_angebots = VertriebAngebot.objects.filter(user=user, status="angenommen")
+
+    for angebot in angenommen_angebots:
+        # Now, check for other instances with the same zoho_kundennumer but different status
+        other_angebots = VertriebAngebot.objects.filter(
+            user=user, 
+            zoho_kundennumer=angebot.zoho_kundennumer
+        ).exclude(status="angenommen")
+
+        for other_angebot in other_angebots:
+            # Set the angebot_id_assigned field to False for these instances
+            other_angebot.angebot_id_assigned = False
+            other_angebot.save()
+
+
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     existing_angebot_ids, not_existing_angebot_ids = extract_values(request)
@@ -1259,9 +1278,6 @@ def load_user_angebots(request):
             for angebot in all_vertrieb_angebots_for_user
             if angebot.zoho_id not in zoho_ids_in_list
         ]
-        print(existing_angebot_ids)
-
-        print(angebots_to_unassign)
 
         filtered_result = [
             angebot
@@ -1269,10 +1285,7 @@ def load_user_angebots(request):
             if str(angebot.zoho_id) in existing_angebot_ids  # Ensuring we are comparing strings with strings
         ]
 
-        print(filtered_result)
-        send_message_to_bot(f"ANGEBOT_IDs :  {existing_angebot_ids}")
-        send_message_to_bot(f"{filtered_result}")
-        
+        set_angebot_id_assigned_false_for_user(request)
 
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         print(f"{user.email}: Aufträge aus JPP aktualisiert")
@@ -1441,6 +1454,7 @@ def document_ticket_view(request, angebot_id):
     return render(request, "vertrieb/document_ticket_view.html", context)
 
 
+
 @login_required
 def serve_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
@@ -1515,6 +1529,21 @@ def serve_ticket_pdf(request, angebot_id):
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
+
+
+@login_required
+def serve_dokumentation(request):
+    filename = os.path.join(settings.STATIC_ROOT, "dokumentation_angebotstool.pdf")
+    try:
+        return FileResponse(open(filename, 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        return HttpResponse("File not found.", status=404)
+
+@login_required
+def documentation_view(request):
+    pdf_url = reverse("vertrieb_interface:serve_dokumentation")
+    context = {"pdf_url": pdf_url}
+    return render(request, "vertrieb/documentation_view.html", context)
 
 
 @login_required

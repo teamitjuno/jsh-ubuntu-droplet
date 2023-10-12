@@ -1,0 +1,86 @@
+{% extends 'vertrieb/base.html'%}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+            <div class="content-page">
+
+  
+
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                {% comment %} <div class="page-title-box">
+                                    <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                                            <li class="breadcrumb-item active">Dokumentation</li>
+                                        </ol>
+                                    </div>
+                                    <h4 class="page-title">Dokumentation</h4>
+                                    
+                                </div> {% endcomment %}
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card border-info border">
+                                    <div class="card-body">
+
+                                        <iframe src="{{ pdf_url }}" width='100%' height="580px">
+                                            <!-- Display a message for browsers that do not support iframes -->
+                                            Your browser does not support iframes.
+                                        </iframe>
+
+
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card -->
+                            </div> <!-- end col-->
+                        </div>
+                        <!-- end row -->
+                        
+                    </div> <!-- container -->
+
+                </div> <!-- content -->
+
+                <!-- Footer Start -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-end footer-links d-none d-md-block">
+                                    <a href="javascript: void(0);">Info</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- end Footer -->
+
+            </div>
+                        <!-- end row -->
+{% endblock %}
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+{% block extrajs %}
+
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}
