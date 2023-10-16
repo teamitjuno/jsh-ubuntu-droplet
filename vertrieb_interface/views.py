@@ -1285,7 +1285,7 @@ def load_user_angebots(request):
             if str(angebot.zoho_id) in existing_angebot_ids  # Ensuring we are comparing strings with strings
         ]
 
-        set_angebot_id_assigned_false_for_user(request)
+        
 
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         print(f"{user.email}: Aufträge aus JPP aktualisiert")
