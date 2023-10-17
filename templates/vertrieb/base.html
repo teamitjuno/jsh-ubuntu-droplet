@@ -23,10 +23,10 @@
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         
         <!-- App css -->
-        <link href="{% static 'assets/css/app-saas.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <!-- Icons css -->
-        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+       
     <link href="{% static 'assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css' %}" rel="stylesheet" type="text/css" />
@@ -108,6 +108,7 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
                             </li> 
+                            
     
     
                             <li class="d-none d-md-inline-block">
@@ -1015,8 +1016,37 @@
                 </div>
             </div>
         </div>
+                <script>
+                window.addEventListener('DOMContentLoaded', function() {
+
+                const modeToggle = document.getElementById('light-dark-mode');
+                const htmlElement = document.documentElement;
+
+                // Check for stored theme preference and apply if present
+                if (localStorage.getItem('theme-mode') === 'dark') {
+                    htmlElement.setAttribute('data-bs-theme', 'dark');
+                    modeToggle.querySelector('i').classList.replace('ri-moon-line', 'ri-sun-line');
+                }
+
+                modeToggle.addEventListener('click', function() {
+                    if (htmlElement.getAttribute('data-bs-theme') === 'dark') {
+                        htmlElement.setAttribute('data-bs-theme', 'light');
+                        localStorage.setItem('theme-mode', 'light');
+                        modeToggle.querySelector('i').classList.replace('ri-sun-line', 'ri-moon-line');
+                    } else {
+                        htmlElement.setAttribute('data-bs-theme', 'dark');
+                        localStorage.setItem('theme-mode', 'dark');
+                        modeToggle.querySelector('i').classList.replace('ri-moon-line', 'ri-sun-line');
+                    }
+                });
+            });
+
+                            </script>
+
         {% block javascript %}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        
 
 
             <script>
