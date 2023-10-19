@@ -34,9 +34,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "angebot_id",
-        "zoho_id",
         "status_change_date",
-        "zoho_kundennumer",
         "solar_module_angebot_price",
         "batteriespeicher_angebot_price",
         "wallbox_angebot_price",
