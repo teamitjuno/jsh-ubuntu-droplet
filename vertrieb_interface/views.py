@@ -1426,10 +1426,10 @@ def create_ticket_pdf(request, angebot_id):
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     # Check if the ticket PDF already exists, if not, create it.
-    if vertrieb_angebot.ticket_pdf is None:
-        pdf_content = ticket_pdf_creator.createTicketPdf(data)
-        vertrieb_angebot.ticket_pdf = pdf_content
-        vertrieb_angebot.save()
+    
+    pdf_content = ticket_pdf_creator.createTicketPdf(data)
+    vertrieb_angebot.ticket_pdf = pdf_content
+    vertrieb_angebot.save()
     return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
