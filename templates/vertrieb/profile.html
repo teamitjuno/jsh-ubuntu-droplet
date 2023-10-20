@@ -9,7 +9,7 @@
         <!-- Start Content-->
         <div class="container-fluid">
             <!-- start page title -->
-            <div class="row" style="flex-wrap: nowrap; flex-direction: row;">
+            <div class="row">
                 <div class="col-6">
                     <div class="page-title-box">
                         <div class="page-title-right">
@@ -18,9 +18,10 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
             <form method="post">
                 {% csrf_token %}
-            <div class="row">
                 <div class="col-3">
                     <div class="card bg-gradient border-success border">
                         <div class="card-body profile-user-box">
@@ -34,7 +35,6 @@
                                                 {% else %}
                                                 <img src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
                                                 {% endif %}
-                                                
                                             </div>
                                         </div>
                                         <div class="col">
@@ -271,6 +271,7 @@
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
+                </div>
             </div>
             
 
