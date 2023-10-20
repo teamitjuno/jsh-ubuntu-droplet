@@ -1396,7 +1396,7 @@ class VertriebAngebot(TimeStampMixin):
             "thorTicketpreis": self.thor_ticket_preis,
             "heizstabTicketpreis": self.heizstab_ticket_preis,
             "wandhalterungTicketPreis": self.wandhalterung_ticket_preis,
-            "ticketPreis": round(self.full_ticket_preis, 2),
+            "ticketPreis": round(self.Full_ticket_preis, 2),
             "stromverbrauch": self.verbrauch,
             "grundpreis": self.grundpreis,
             "arbeitspreis": self.arbeitspreis,

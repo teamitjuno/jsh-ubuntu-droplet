@@ -101,6 +101,9 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             "Speicher und Wallbox Felder",
             {
                 "fields": (
+                    "hersteller",
+                    "wechselrichter_model",
+                    "speicher_model",
                     "anz_speicher",
                     "wallboxtyp",
                     "wallbox_anzahl",

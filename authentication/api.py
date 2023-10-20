@@ -6,6 +6,13 @@ from authentication.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
+from vertrieb_interface.telegram_logs_sender import send_message_to_bot
+import datetime
+
+def log_and_notify(message):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"{timestamp} - {message}")
+    send_message_to_bot(message)
 
 
 def handler500(request):
@@ -50,9 +57,9 @@ class LoginView(APIView):
         user = authenticate(request, username=email, password=password)
 
         if not user:
-            print("Authentication failed for email:", email)
+            log_and_notify(f"Authentication failed for email:, {email}")
         else:
-            print("User authenticated:", user, user.beruf, user.kuerzel, user.is_staff)
+            log_and_notify(f"User authenticated:, {user}, {user.beruf}, {user.kuerzel}")
 
         if user is not None and user.beruf == "Elektriker" and user.kuerzel == "TW":  # type: ignore
             login(request, user)
