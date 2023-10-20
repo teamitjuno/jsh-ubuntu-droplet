@@ -5,6 +5,8 @@
 {% block content%}
 <div class="content-page">
     <div class="content">
+    <form method="post">
+        {% csrf_token %}
 
         <!-- Start Content-->
         <div class="container-fluid">
@@ -20,8 +22,7 @@
             </div>
 
             <div class="row">
-            <form method="post">
-                {% csrf_token %}
+
                 <div class="col-3">
                     <div class="card bg-gradient border-success border">
                         <div class="card-body profile-user-box">
@@ -60,6 +61,8 @@
                         </div> <!-- end card-body/ profile-user-box-->
                     </div><!--end profile/ card -->
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-3">
                     <div class="card border-info border">
                         <div class="card-body">
@@ -88,6 +91,8 @@
                         </div>
                     </div>
                 </div> <!-- end col-->
+            </div>
+            <div class="row">
                 <div class="col-4">
                     <div class="card border-primary border">
                         <div class="card-body">
@@ -131,8 +136,10 @@
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
+            </div>
                 {% comment %} </div>
                 <div class="row"> {% endcomment %}
+            <div class="row">
                <div class="col-5">
                     <div class="card border-primary border">
                         <div class="card-body">
@@ -273,13 +280,7 @@
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
-                </div>
             </div>
-            
-            </form>
-
-
-
         </div>
         <footer class="footer">
             <div class="container-fluid">
@@ -348,6 +349,7 @@
                 </div>
             </div>
         </footer>
+    </form>
     </div> <!-- end col-->
 </div>
 
