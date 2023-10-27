@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import VertriebAngebot
-
+from django.contrib import admin
+from .models import VertriebAngebot
 
 class VertriebAngebotAdmin(admin.ModelAdmin):
     list_display = (
@@ -8,6 +9,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "user",
         "status",
         "zoho_id",
+        "angebot_zoho_id",
         "angebot_id_assigned",
         "zoho_kundennumer",
         "name",
@@ -20,6 +22,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "angebot_id",
         "name",
         "zoho_id",
+        "angebot_zoho_id",
         "zoho_kundennumer",
         "user__username",  # Search User model's username field
         "angebotsumme",
@@ -29,6 +32,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "user",
         "status",
         "is_locked",
+        "zoho_kundennumer",
         "angebot_id_assigned",
     )
 
@@ -51,9 +55,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "angebot_id",
-                    "zoho_id",
-                    "status",
-                    "status_change_date",
                     "user",
                     "is_locked",
                     "angebot_id_assigned",
@@ -64,10 +65,24 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Kunde Informationen",
+            "ZOHO Informationen",
             {
                 "fields": (
                     "zoho_kundennumer",
+                    "zoho_id",
+                    "angebot_zoho_id",
+                    "status",
+                    "status_change_date",
+                    
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Kunde Informationen",
+            {
+                "fields": (
+                    
                     "anrede",
                     "name",
                     "email",
@@ -113,7 +128,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Anlage Details",
+            "Module & Zubehör'",
             {
                 "fields": (
                     "solar_module",
@@ -166,7 +181,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
     )
-
+    ordering = ('-current_date',)
+    
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, **kwargs)
         if db_field.name == "is_locked":

@@ -143,6 +143,9 @@ def get_recent_activities(user):
             status = (
                 vertrieb_angebot.status if vertrieb_angebot else "noch nicht zugeordnet"
             )
+            kundenname = (
+                vertrieb_angebot.vorname_nachname if vertrieb_angebot else "keine"
+            )
             activity = {
                 "action_time": entry.action_time,
                 "module": entry.content_type.model_class()._meta.verbose_name_plural,
@@ -187,6 +190,7 @@ def get_recent_activities(user):
                 if entry.action_flag == CHANGE
                 else "mdi-delete bg-danger-lighten text-danger",
                 "status": status,
+                "kundenname": kundenname,
             }
             if not any(
                 a["action_time"] == activity["action_time"]
@@ -225,6 +229,10 @@ def get_icon_based_on_status(entry, status):
 @user_passes_test(vertrieb_check)
 def home(request):
     user = request.user
+    if TELEGRAM_LOGGING:
+            send_message_to_bot(
+                f"{user.email}: Now is on the homepage..."
+            )
     year, month = now.year, now.month
 
     users = (
@@ -506,7 +514,7 @@ def create_angebot(request):
 
     if TELEGRAM_LOGGING:
         send_message_to_bot(f"{request.user}, Neue Angebot created")
-    print(request.user, "Neue Angebot created")
+    
 
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
@@ -552,7 +560,7 @@ def create_angebot(request):
     if not form_angebot.is_valid():
         if TELEGRAM_LOGGING:
             send_message_to_bot(form_angebot.errors)
-        print(form_angebot.errors)
+        
         return page_not_found(request, Exception())
 
     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
@@ -642,7 +650,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 ).total_seconds() >= 14 * 24 * 60 * 60:
                     angebot.status = "abgelaufen"
                     angebot.save()
-                    print("Angebot saved with status 'abgelaufen'")
+                    
                     CustomLogEntry.objects.log_action(
                         user_id=angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(angebot).pk,
@@ -884,8 +892,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 instance = form.instance
                 instance.save()
 
-
-
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
@@ -936,28 +942,34 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     status = fetched_data.get("status")
                     if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{request.user.email}: Preliminary checking ZOHO status: {status}"
-                            )
+                        send_message_to_bot(
+                            f"{request.user.email}: Preliminary checking ZOHO status: {status}"
+                        )
 
                     if fetched_data.get("status") != "angenommen":
                         
                         form.instance.status = "bekommen"
                         form.save()
-                        print("Changing status to ", vertrieb_angebot.status)
+                       
                         if TELEGRAM_LOGGING:
                             send_message_to_bot(
                                 f"{user.email} Changing status to : {vertrieb_angebot.status}"
                             )
-                        pushAngebot(vertrieb_angebot, user_zoho_id)
+                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
+                        response_data = response.json()
+                        new_record_id = response_data['data']['ID']
+                        vertrieb_angebot.angebot_zoho_id = new_record_id
+                        vertrieb_angebot.save()
                         
                         if TELEGRAM_LOGGING:
-                            send_message_to_bot(f"{user.email} Pushing data to Zoho was successfull!")
+                            send_message_to_bot(f"{user.email} Saved {vertrieb_angebot.angebot_id} == {vertrieb_angebot.angebot_zoho_id}\n Kundennumer: {vertrieb_angebot.zoho_kundennumer} ; {vertrieb_angebot.vorname_nachname}")
                         return redirect(
                             "vertrieb_interface:create_angebot_pdf_user",
                             vertrieb_angebot.angebot_id,
                             )
-                # vertrieb_angebot.angebot_id_assigned = True
+                    
+                    # vertrieb_angebot.angebot_id_assigned = True
+
                     elif fetched_data.get("status") == "angenommen":
                         form.instance.status = "angenommen"
                         form.save()
@@ -997,9 +1009,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.save()
             form.save()  # type:ignore
 
-            print(
-                f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-            )
+            
             if TELEGRAM_LOGGING:
                 send_message_to_bot(
                     f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
@@ -1015,10 +1025,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             return redirect(
                 "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
             )
-
-        send_message_to_bot(
-            f"{user.email}: Saving unsuccessfull! Form not valid, {vertrieb_angebot.angebot_id}"
-        )
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(
+                f"{user.email}: Saving unsuccessfull! Form not valid, {vertrieb_angebot.angebot_id}"
+            )
         return self.form_invalid(form, vertrieb_angebot)
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
@@ -1064,6 +1074,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         return kwargs
 
     def get(self, request, angebot_id, *args, **kwargs):
+
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
@@ -1073,6 +1084,10 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(
+                f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
+            )
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -1195,12 +1210,16 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         ]
 
     def _get_filtered_and_ordered_queryset(self):
+
         queryset = self.model.objects.filter(
             user=self.request.user,
             angebot_id_assigned=True,
             status__in=self._get_contact_statuses(),
         ).filter(self.zoho_kundennumer_is_numeric())
-
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(
+                f"{self.request.user.email}: Now is on ViewOrders..."
+            )
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
@@ -1288,8 +1307,8 @@ def load_user_angebots(request):
         
 
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
-        print(f"{user.email}: Aufträge aus JPP aktualisiert")
-        send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
         return JsonResponse({"status": "success"}, status=200)
     except Exception:
         return JsonResponse(

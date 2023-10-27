@@ -111,11 +111,11 @@ class CustomLogEntry(LogEntry):
             return f"Ein neues Angebot erstellt"
         elif self.is_change():
             if self.get_vertrieb_angebot() is not None:
-                return f"Der Angebot aktualisiert -  {self.change_message}"
+                return f"Das Angebot aktualisiert -  {self.change_message}"
             else:
-                return f"Der Angebot aktualisiert"
+                return f"Das Angebot aktualisiert"
         elif self.is_deletion():
-            return f"Der Angebot aktualisiert"
+            return f"Das Angebot aktualisiert"
         else:
             return "LogEntry Object"
 
@@ -204,6 +204,8 @@ class VertriebAngebot(TimeStampMixin):
 
     #   ZOHO FIELDS
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
+    angebot_zoho_id = models.CharField(max_length=255, blank=True, null=True)
+    angebot_id_assigned = models.BooleanField(default=False)
     status = models.CharField(
         choices=ANGEBOT_STATUS_CHOICES,
         default="in Kontakt",
@@ -274,6 +276,13 @@ class VertriebAngebot(TimeStampMixin):
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
     anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
+    zahlungsbedingungen = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+    )
+
+    # Kalkulations
     verbrauch = models.FloatField(
         default=15000, validators=[MinValueValidator(0)]  # type: ignore
     )
@@ -293,6 +302,29 @@ class VertriebAngebot(TimeStampMixin):
     bis40kWp = models.FloatField(
         default=7.10, validators=[MinValueValidator(0)]  # type: ignore
     )
+
+    benotigte_restenergie = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+
+    nutzbare_nutzenergie = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    erzeugte_energie_pro_jahr = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    einspreisevergütung_gesamt = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    abzug_vergutung = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    Ersparnis = models.FloatField(default=0.00)
+    kosten_fur_restenergie = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    Rest_liste = models.TextField(blank=True, null=True)
+    Arbeits_liste = models.TextField(blank=True, null=True)
+
+    # Module & Zubehör
     hersteller = models.CharField(
         max_length=100,
         default="----",
@@ -363,6 +395,8 @@ class VertriebAngebot(TimeStampMixin):
     )
     hub_included = models.BooleanField(default=False)
 
+    # Ticket:    
+
     module_ticket = models.CharField(
         max_length=100,
         blank=True,
@@ -379,10 +413,9 @@ class VertriebAngebot(TimeStampMixin):
     eddi_ticket = models.IntegerField(default=0)
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    angebot_id_assigned = models.BooleanField(default=False)
-
     total_anzahl = models.IntegerField(blank=True, null=True)
 
+    # Result Prices :
     solar_module_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
@@ -401,43 +434,20 @@ class VertriebAngebot(TimeStampMixin):
     optimizer_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
-    zahlungsbedingungen = models.CharField(
-        max_length=25,
-        blank=True,
-        null=True,
-    )
+
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    Full_ticket_preis = models.FloatField(default=0.00)
 
+    # Files and other fields:
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
     angebot_pdf_admin = models.BinaryField(blank=True, null=True)
     calc_pdf = models.BinaryField(blank=True, null=True)
     calc_graph_img = models.ImageField(null=True, blank=True)
     ticket_pdf = models.BinaryField(blank=True, null=True)
-    benotigte_restenergie = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-
-    nutzbare_nutzenergie = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    erzeugte_energie_pro_jahr = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    einspreisevergütung_gesamt = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    abzug_vergutung = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    Ersparnis = models.FloatField(default=0.00)
-    kosten_fur_restenergie = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
     ag_data = models.TextField(blank=True)
     ag_fetched_data = models.TextField(blank=True, null=True)
-    Rest_liste = models.TextField(blank=True, null=True)
-    Arbeits_liste = models.TextField(blank=True, null=True)
-    Full_ticket_preis = models.FloatField(default=0.00)
     countdown_on = models.BooleanField(default=False)
 
     def get_optional_accessory_price(self, name):

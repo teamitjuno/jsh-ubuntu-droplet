@@ -288,6 +288,11 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
     response = requests.post(url, json=dataMap, headers=headers)
 
+    response_data = response.json()
+    new_record_id = response_data['data']['ID']
+    log_and_notify(f"New record ID: {new_record_id}")
+
+
     return response
 
 

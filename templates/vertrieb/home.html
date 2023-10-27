@@ -447,6 +447,7 @@
                                             <div class="timeline-item-info"> 
                                                 <a href="{% url 'vertrieb_interface:edit_angebot' activity.object.repr %}" class="{{ activity.action.class }} fw-bold mb-1 d-block">{{ activity.action.message }}</a>
                                                 <p class="{{ activity.object.class }}">{{ activity.object.repr }}</p>
+                                                <small>Kundenname: {{ activity.kundenname }}</small><br>
                                                 <small>Angebotstatus: {{ activity.status }}</small>
                                                 <p class="mb-0 pb-2">
                                                     <small class="text-muted">{{ activity.action_time }}</small>
