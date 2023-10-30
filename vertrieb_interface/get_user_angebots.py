@@ -277,36 +277,60 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "SolarModule_Leistung": str(vertrieb_angebot.modulleistungWp),
             "SolarModule_Menge": str(vertrieb_angebot.modulanzahl),
             "GarantieWR": str(vertrieb_angebot.garantieWR),
-            "Eddi": "false",
+            "Wechselrichter": str(vertrieb_angebot.wechselrichter_model),
+            "Speicher_Typ": str(vertrieb_angebot.speicher_model),
+            "Wandhalterung_Anzahl": int(
+                vertrieb_angebot.anz_wandhalterung_fuer_speicher
+            ),
             "Notstrom": return_lower_bull(vertrieb_angebot.notstrom),
             "Optimierer_Menge": str(vertrieb_angebot.anzOptimizer),
             "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
             "AC_THOR": return_lower_bull(vertrieb_angebot.thor),
+            "AC_THOR_Heizstab": vertrieb_angebot.heizstab,
+            "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
         }
     }
-
     response = requests.post(url, json=dataMap, headers=headers)
-
     response_data = response.json()
-    new_record_id = response_data['data']['ID']
+    new_record_id = response_data["data"]["ID"]
     log_and_notify(f"New record ID: {new_record_id}")
-
 
     return response
 
 
-def fetch_angebote_all():    
+import requests
+
+
+def delete_redundant_angebot(angebot_zoho_id):
+    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Angebote/{angebot_zoho_id}"
+    access_token = refresh_access_token()
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = requests.delete(url, headers=headers)
+    if not response:
+        log_and_notify(
+            f"Failed to delete record with ID {angebot_zoho_id}. Response: {response.text}"
+        )
+        pass
+    else:
+        log_and_notify(f"Record with ID {angebot_zoho_id} deleted successfully")
+        pass
+
+
+def fetch_angebote_all():
     all_provisione_list = []
     data = fetch_data_from_api(ANGEBOTE_URL)
     all_provisione_list.extend(data)
     return data
+
 
 def fetch_provisione_all():
     all_provisione_list = []
     data = fetch_data_from_api(PROVISIONE_URL)
     all_provisione_list.extend(data)
     return data
+
 
 def extract_values(request):
     user = request.user
@@ -316,30 +340,32 @@ def extract_values(request):
 
     # Filter the data
     filtered_angebote_data = [
-        item for item in parsed_data['data']
-        if item['Vertriebler_ID']['ID'] == target_vertriebler_id
+        item
+        for item in parsed_data["data"]
+        if item["Vertriebler_ID"]["ID"] == target_vertriebler_id
     ]
-    
+
     input_json = fetch_provisione_all()
     parsed_data = input_json
     filtered_provisione_data = [
-        item for item in parsed_data['data']
-        if item['Vertriebler']['ID'] == target_vertriebler_id
+        item
+        for item in parsed_data["data"]
+        if item["Vertriebler"]["ID"] == target_vertriebler_id
     ]
-    angebotsumme_list = [item['Rechnungsh_he_netto_laut_Angebot'] for item in filtered_provisione_data]
-
-    filtered_existing_angebote_result_data = [item for item in filtered_angebote_data if item["Angebotssumme"] in angebotsumme_list]
-    existing_angebot_ids = [item['Angebot_ID'] for item in filtered_existing_angebote_result_data]
-
-    filtered_not_existing_angebote_result_data = [
-    item for item in filtered_angebote_data
-    if item["Angebotssumme"] not in angebotsumme_list
+    angebotsumme_list = [
+        item["Rechnungsh_he_netto_laut_Angebot"] for item in filtered_provisione_data
     ]
 
-    # Find not existing angebot ids
-    not_existing_angebot_ids = [
-        item['Angebot_ID'] for item in filtered_not_existing_angebote_result_data
+    filtered_existing_angebote_result_data = [
+        item
+        for item in filtered_angebote_data
+        if item["Angebotssumme"] in angebotsumme_list
+    ]
+    existing_angebot_ids = [
+        item["Angebot_ID"] for item in filtered_existing_angebote_result_data
     ]
 
+    log_and_notify(f"{angebotsumme_list}")
+    log_and_notify(f"{existing_angebot_ids}")
 
-    return existing_angebot_ids, not_existing_angebot_ids
+    return existing_angebot_ids

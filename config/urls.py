@@ -27,7 +27,10 @@ def include_with_namespace(pattern_prefix, app_name):
 # Admin and Special Pages Paths
 urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
-    path("adminfeautures/", include_with_namespace("adminfeautures.urls", "adminfeautures")),
+    path(
+        "adminfeautures/",
+        include_with_namespace("adminfeautures.urls", "adminfeautures"),
+    ),
     path("update_vertrieblers/", update_vertrieblers, name="update_vertrieblers"),
     path("update_elektrikers/", update_elektrikers, name="update_elektrikers"),
     path("admin/schema/", protected_schema_view, name="schema_view"),
@@ -37,16 +40,33 @@ urlpatterns = [
 urlpatterns += [
     path("", include("authentication.urls", namespace="authentication")),
     path("", include("vertrieb_interface.urls", namespace="vertrieb_interface")),
-    path("proj/", include("projektant_interface.urls", namespace="projektant_interface")),
+    path(
+        "proj/", include("projektant_interface.urls", namespace="projektant_interface")
+    ),
     path("elektriker_interface/", include("invoices.urls", namespace="invoices")),
-    path("elektriker_kalender/", include("elektriker_kalender.urls", namespace="elektriker_kalender")),
+    path(
+        "elektriker_kalender/",
+        include("elektriker_kalender.urls", namespace="elektriker_kalender"),
+    ),
 ]
 
 # Error Handling Paths
 error_handling_patterns = [
-    re_path(r"^400/$", default_views.bad_request, kwargs={"exception": Exception("Bad Request!")}),
-    re_path(r"^403/$", default_views.permission_denied, kwargs={"exception": Exception("Permission Denied")}),
-    re_path(r"^404/$", default_views.page_not_found, kwargs={"exception": Exception("Page not Found")}),
+    re_path(
+        r"^400/$",
+        default_views.bad_request,
+        kwargs={"exception": Exception("Bad Request!")},
+    ),
+    re_path(
+        r"^403/$",
+        default_views.permission_denied,
+        kwargs={"exception": Exception("Permission Denied")},
+    ),
+    re_path(
+        r"^404/$",
+        default_views.page_not_found,
+        kwargs={"exception": Exception("Page not Found")},
+    ),
     re_path(r"^500/$", default_views.server_error),
 ]
 

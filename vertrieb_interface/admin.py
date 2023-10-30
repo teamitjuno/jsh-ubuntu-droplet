@@ -3,6 +3,7 @@ from .models import VertriebAngebot
 from django.contrib import admin
 from .models import VertriebAngebot
 
+
 class VertriebAngebotAdmin(admin.ModelAdmin):
     list_display = (
         "angebot_id",
@@ -73,7 +74,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "angebot_zoho_id",
                     "status",
                     "status_change_date",
-                    
                 ),
                 "classes": ("collapse",),
             },
@@ -82,7 +82,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             "Kunde Informationen",
             {
                 "fields": (
-                    
                     "anrede",
                     "name",
                     "email",
@@ -181,8 +180,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
     )
-    ordering = ('-current_date',)
-    
+    ordering = ("-current_date",)
+
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, **kwargs)
         if db_field.name == "is_locked":

@@ -30,9 +30,21 @@ update_patterns = [
 
 # URL patterns handling various HTTP error statuses
 error_handling_patterns = [
-    re_path(r"^400/$", default_views.bad_request, kwargs={"exception": Exception("Bad Request!")}),
-    re_path(r"^403/$", default_views.permission_denied, kwargs={"exception": Exception("Permission Denied")}),
-    re_path(r"^404/$", default_views.page_not_found, kwargs={"exception": Exception("Page not Found")}),
+    re_path(
+        r"^400/$",
+        default_views.bad_request,
+        kwargs={"exception": Exception("Bad Request!")},
+    ),
+    re_path(
+        r"^403/$",
+        default_views.permission_denied,
+        kwargs={"exception": Exception("Permission Denied")},
+    ),
+    re_path(
+        r"^404/$",
+        default_views.page_not_found,
+        kwargs={"exception": Exception("Page not Found")},
+    ),
     re_path(r"^500/$", default_views.server_error),
 ]
 

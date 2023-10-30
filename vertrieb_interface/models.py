@@ -395,7 +395,7 @@ class VertriebAngebot(TimeStampMixin):
     )
     hub_included = models.BooleanField(default=False)
 
-    # Ticket:    
+    # Ticket:
 
     module_ticket = models.CharField(
         max_length=100,

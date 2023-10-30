@@ -199,9 +199,9 @@
                                                                     </tr>
                                                                 </table>
                                                                 {% if vertrieb_angebot.angebot_id_assigned == False %}
-                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
                                                                 {% else %}
-                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">AngebotSumme rechnen</button>
+                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
@@ -293,18 +293,18 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>kosten für Restenegie</th>
+                                                                        <th>kosten für Restenegie [€]</th>
                                                                         <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
@@ -312,11 +312,11 @@
                                                                         <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage</th>
+                                                                        <th>Stromkosten ohne PV-Anlage [€]</th>
                                                                         <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Preis abzgl Vergütung und inkl. Restrom</th>
+                                                                        <th>Preis abzgl Vergütung und inkl. Restrom [€]</th>
                                                                         <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
@@ -1718,7 +1718,7 @@
 
         function calculateGesamtkapazitat() {
             var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-            $('#gesamtkapazitat').val(anz_speicher * 5000);
+            $('#gesamtkapazitat').val(anz_speicher * 5);
         }
 
         function limitModulanzahl(maxValue) {

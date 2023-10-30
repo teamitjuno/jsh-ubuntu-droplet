@@ -190,8 +190,6 @@ class UserForm(forms.ModelForm):
         ),
     )
 
-
-
     anbieter = forms.CharField(
         label="Anbieter",
         required=False,

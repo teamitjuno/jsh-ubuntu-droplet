@@ -185,7 +185,6 @@ def validate_empty(value):
 
 
 class VertriebAngebotForm(ModelForm):
-
     is_locked = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
@@ -338,7 +337,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     email = forms.CharField(
-        label="Email",
+        label="E-mail",
         max_length=100,
         required=False,
         widget=forms.TextInput(
@@ -522,23 +521,19 @@ class VertriebAngebotForm(ModelForm):
         ("----", "----"),
         ("Huawei", "Huawei"),
         ("Viessmann", "Viessmann"),
-
     ]
 
     WALLBOXTYP_CHOICES = [
         ("----", "----"),
         ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
         ("Viessmann Charging Station", "Viessmann Charging Station"),
-
     ]
-
 
     WECHSELRICHTER_MODEL_CHOICES = [
         ("----", "----"),
         ("SUN 2000", "SUN 2000"),
         ("Vitocharge VX3", "Vitocharge VX3"),
     ]
-
 
     SPEICHER_MODEL_CHOICES = [
         ("----", "----"),

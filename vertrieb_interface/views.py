@@ -25,7 +25,7 @@ from django.http import (
     Http404,
     JsonResponse,
     StreamingHttpResponse,
-    HttpResponse
+    HttpResponse,
 )
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -49,6 +49,7 @@ from vertrieb_interface.get_user_angebots import (
     fetch_angenommen_status,
     pushAngebot,
     extract_values,
+    delete_redundant_angebot,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
@@ -65,6 +66,7 @@ from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
 from django.http import FileResponse
+
 
 class AsyncBytesIter:
     def __init__(self, byte_data, chunk_size=8192):
@@ -229,10 +231,9 @@ def get_icon_based_on_status(entry, status):
 @user_passes_test(vertrieb_check)
 def home(request):
     user = request.user
+    load_user_angebots(request)
     if TELEGRAM_LOGGING:
-            send_message_to_bot(
-                f"{user.email}: Now is on the homepage..."
-            )
+        send_message_to_bot(f"{user.email}: Now is on the homepage...")
     year, month = now.year, now.month
 
     users = (
@@ -284,7 +285,7 @@ def home(request):
 
     statuses = [
         "angenommen",
-        "bekommen", 
+        "bekommen",
         "in Kontakt",
         "Kontaktversuch",
         "abgelehnt",
@@ -514,7 +515,6 @@ def create_angebot(request):
 
     if TELEGRAM_LOGGING:
         send_message_to_bot(f"{request.user}, Neue Angebot created")
-    
 
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
@@ -560,7 +560,7 @@ def create_angebot(request):
     if not form_angebot.is_valid():
         if TELEGRAM_LOGGING:
             send_message_to_bot(form_angebot.errors)
-        
+
         return page_not_found(request, Exception())
 
     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
@@ -650,7 +650,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 ).total_seconds() >= 14 * 24 * 60 * 60:
                     angebot.status = "abgelaufen"
                     angebot.save()
-                    
+
                     CustomLogEntry.objects.log_action(
                         user_id=angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(angebot).pk,
@@ -728,9 +728,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     status = fetched_data.get("status")
                     if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{request.user.email}: {status}"
-                            )
+                        send_message_to_bot(f"{request.user.email}: {status}")
 
                     if fetched_data.get("status") == "angenommen":
                         vertrieb_angebot.status = "angenommen"
@@ -741,7 +739,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             send_message_to_bot(
                                 f"{request.user.email}: Angebot saved with status {vertrieb_angebot.status}"
                             )
-                        
+
                         # Assuming you want to create a form instance with the fetched data
                         form = self.form_class(
                             fetched_data,
@@ -925,9 +923,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 zoho_id = form.cleaned_data["zoho_id"]
                 kundennumer = name_to_kundennumer[name]
 
-                
                 zoho_id = name_to_zoho_id[name]
-                
 
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
@@ -947,27 +943,28 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         )
 
                     if fetched_data.get("status") != "angenommen":
-                        
                         form.instance.status = "bekommen"
                         form.save()
-                       
+
                         if TELEGRAM_LOGGING:
                             send_message_to_bot(
                                 f"{user.email} Changing status to : {vertrieb_angebot.status}"
                             )
                         response = pushAngebot(vertrieb_angebot, user_zoho_id)
                         response_data = response.json()
-                        new_record_id = response_data['data']['ID']
+                        new_record_id = response_data["data"]["ID"]
                         vertrieb_angebot.angebot_zoho_id = new_record_id
                         vertrieb_angebot.save()
-                        
+
                         if TELEGRAM_LOGGING:
-                            send_message_to_bot(f"{user.email} Saved {vertrieb_angebot.angebot_id} == {vertrieb_angebot.angebot_zoho_id}\n Kundennumer: {vertrieb_angebot.zoho_kundennumer} ; {vertrieb_angebot.vorname_nachname}")
+                            send_message_to_bot(
+                                f"{user.email} Saved {vertrieb_angebot.angebot_id} == {vertrieb_angebot.angebot_zoho_id}\n Kundennumer: {vertrieb_angebot.zoho_kundennumer} ; {vertrieb_angebot.vorname_nachname}"
+                            )
                         return redirect(
                             "vertrieb_interface:create_angebot_pdf_user",
                             vertrieb_angebot.angebot_id,
-                            )
-                    
+                        )
+
                     # vertrieb_angebot.angebot_id_assigned = True
 
                     elif fetched_data.get("status") == "angenommen":
@@ -1009,7 +1006,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.save()
             form.save()  # type:ignore
 
-            
             if TELEGRAM_LOGGING:
                 send_message_to_bot(
                     f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
@@ -1074,14 +1070,13 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         return kwargs
 
     def get(self, request, angebot_id, *args, **kwargs):
-
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
 
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-        
+
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
         if TELEGRAM_LOGGING:
@@ -1100,9 +1095,8 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             calc_image_suffix, start=settings.MEDIA_ROOT
         )
         context = self.get_context_data()
-    
+
         context = {
-            
             "user": user,
             "vertrieb_angebot": vertrieb_angebot,
             "form": form,
@@ -1123,7 +1117,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         user = request.user
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
-
 
         if form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
@@ -1210,16 +1203,13 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
         ]
 
     def _get_filtered_and_ordered_queryset(self):
-
         queryset = self.model.objects.filter(
             user=self.request.user,
             angebot_id_assigned=True,
             status__in=self._get_contact_statuses(),
         ).filter(self.zoho_kundennumer_is_numeric())
         if TELEGRAM_LOGGING:
-            send_message_to_bot(
-                f"{self.request.user.email}: Now is on ViewOrders..."
-            )
+            send_message_to_bot(f"{self.request.user.email}: Now is on ViewOrders...")
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
@@ -1240,73 +1230,70 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
 def set_angebot_id_assigned_false_for_user(request):
     user = request.user
-    # First, filter the instances of this user with status "angenommen"
     angenommen_angebots = VertriebAngebot.objects.filter(user=user, status="angenommen")
 
     for angebot in angenommen_angebots:
-        # Now, check for other instances with the same zoho_kundennumer but different status
         other_angebots = VertriebAngebot.objects.filter(
-            user=user, 
-            zoho_kundennumer=angebot.zoho_kundennumer
+            user=user, zoho_kundennumer=angebot.zoho_kundennumer
         ).exclude(status="angenommen")
 
         for other_angebot in other_angebots:
-            # Set the angebot_id_assigned field to False for these instances
             other_angebot.angebot_id_assigned = False
             other_angebot.save()
 
 
+def process_vertrieb_angebot(request):
+    user = request.user
+    bek_ang_list = []
+    angenommen_angebote = VertriebAngebot.objects.filter(user=user, status="angenommen")
+    for angebot in angenommen_angebote:
+        zoho_kundennumer = angebot.zoho_kundennumer
+        bekommen_angebote = VertriebAngebot.objects.filter(
+            zoho_kundennumer=zoho_kundennumer, status="bekommen"
+        )
+        bek_ang_list.append(bekommen_angebote)
+
+    print("BEKOMMEN ANGEBOTE", bek_ang_list)
+    for queryset in bek_ang_list:
+        for bekommen_angebot in queryset:
+            angebot_zoho_id = bekommen_angebot.angebot_zoho_id
+
+            if angebot_zoho_id is not None:
+                send_message_to_bot(f"{bekommen_angebot.angebot_zoho_id}")
+                delete_redundant_angebot(angebot_zoho_id)
+                bekommen_angebot.angebot_id_assigned = False
+                bekommen_angebot.save()
+            else:
+                pass
+
+
+def update_status_to_angenommen(angebot_ids):
+    # Filter VertriebAngebot instances with the given list of angebot_id values
+    angebote = VertriebAngebot.objects.filter(angebot_id__in=angebot_ids)
+
+    # Update status to 'angenommen' for the filtered instances
+    angebote.update(status="angenommen")
+
+    # Optionally, you can return the count of updated instances
+    return angebote.count()
+
+
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
-    existing_angebot_ids, not_existing_angebot_ids = extract_values(request)
+    existing_angebot_ids = extract_values(request)
     try:
         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
 
         all_user_angebots_list = fetch_user_angebote_all(request)
-        zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list}
-
-        # Save zoho data to the user
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
-        angebots_to_update = []
-        all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
-        vertrieb_angebots_map = {
-            str(angebot.zoho_id): angebot for angebot in all_vertrieb_angebots_for_user
-        }
-        
-        for item in all_user_angebots_list:
-            zoho_id = item.get("zoho_id")
-            status = item.get("status")
-            angebot = vertrieb_angebots_map.get(zoho_id)
-            if angebot:
-                angebot.status = status
-                angebot.angebot_id_assigned = True
-                angebots_to_update.append(angebot)
-
-        # Filter out angebots with the status 'bekommen' before bulk updating
-        angebots_to_update = [a for a in angebots_to_update if a.status != 'bekommen']
-
-        # Bulk update angebot status
-        VertriebAngebot.objects.bulk_update(angebots_to_update, ["status"])
-
-        # Setting angebot_id_assigned to False for angebots which zoho_id was not found
-        angebots_to_unassign = [
-            angebot
-            for angebot in all_vertrieb_angebots_for_user
-            if angebot.zoho_id not in zoho_ids_in_list
-        ]
-
-        filtered_result = [
-            angebot
-            for angebot in angebots_to_unassign
-            if str(angebot.zoho_id) in existing_angebot_ids  # Ensuring we are comparing strings with strings
-        ]
-
-        
 
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
+        update_status_to_angenommen(existing_angebot_ids)
+        process_vertrieb_angebot(request)
+
         if TELEGRAM_LOGGING:
             send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
         return JsonResponse({"status": "success"}, status=200)
@@ -1445,7 +1432,7 @@ def create_ticket_pdf(request, angebot_id):
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     # Check if the ticket PDF already exists, if not, create it.
-    
+
     pdf_content = ticket_pdf_creator.createTicketPdf(data)
     vertrieb_angebot.ticket_pdf = pdf_content
     vertrieb_angebot.save()
@@ -1471,7 +1458,6 @@ def document_ticket_view(request, angebot_id):
     pdf_url = reverse("vertrieb_interface:serve_ticket_pdf", args=[angebot_id])
     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
     return render(request, "vertrieb/document_ticket_view.html", context)
-
 
 
 @login_required
@@ -1554,13 +1540,13 @@ def serve_ticket_pdf(request, angebot_id):
 def serve_dokumentation(request):
     filename = os.path.join(settings.STATIC_ROOT, "dokumentation_angebotstool.pdf")
     try:
-        return FileResponse(open(filename, 'rb'), content_type='application/pdf')
+        return FileResponse(open(filename, "rb"), content_type="application/pdf")
     except FileNotFoundError:
         return HttpResponse("File not found.", status=404)
 
+
 @login_required
 def documentation_view(request):
-    
     return render(request, "vertrieb/documentation_view.html")
 
 
@@ -1753,6 +1739,7 @@ def send_ticket_invoice(request, angebot_id):
             {"status": "failed", "error": "Not a POST request."}, status=400
         )
 
+
 def filter_user_angebots_by_query(user_angebots, query):
     """Filter user angebots based on the given query."""
     query_conditions = (
@@ -1774,9 +1761,9 @@ def pdf_angebots_list_view(request):
     query = request.GET.get("q")
     if query:
         user_angebots = filter_user_angebots_by_query(user_angebots, query)
-    
+
     angebots_and_urls = get_angebots_and_urls(user_angebots)
-    
+
     context = {
         "zipped_angebots": angebots_and_urls,
         "angebots": user_angebots,

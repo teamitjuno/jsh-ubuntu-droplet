@@ -6,10 +6,12 @@ import logging
 
 openai.api_key = OPENAI_API_KEY
 
+
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
     send_message_to_bot(message)
+
 
 start_chat_log = [
     {

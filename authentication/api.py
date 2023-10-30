@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 import datetime
 
+
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
