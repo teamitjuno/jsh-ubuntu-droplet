@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 {% block content %}
 {% load custom_filter %}
-<link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
+
 
 
 <div class="content-page">
@@ -89,7 +89,6 @@
                                                                             <td>{{ form.zoho_id }}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            
                                                                             <th>{{ form.name.label_tag }}</th>
                                                                             <td>{{ form.name }}</td>
                                                                         </tr>
@@ -2068,8 +2067,49 @@ $(document).ready(function() {
 <script src="https://apexcharts.com/samples/assets/github-data.js"></script>
 <script src="https://apexcharts.com/samples/assets/irregular-data-series.js"></script>
 <script src="{% static 'assets/js/pages/demo.apex-area.js' %}"></script>  
-<script src="{% static 'assets/js/vendor.min.js' %}"></script>
-<script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+
+
+
+<script src="{% static 'assets/vendor/dropzone/min/dropzone.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/jquery-mask-plugin/jquery.mask.min.js' %}"></script>
+
+    <!-- Daterangepicker Plugin js -->
+    <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+
+    <!-- Bootstrap Datepicker Plugin js -->
+    <script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+
+    <!-- Bootstrap Timepicker Plugin js -->
+    <script src="{% static 'assets/vendor/bootstrap-timepicker/js/bootstrap-timepicker.min.js' %}"></script>
+
+    <!-- Bootstrap Touchspin Plugin js -->
+    <script src="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
+
+    <!-- Bootstrap Maxlength Plugin js -->
+    <script src="{% static 'assets/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js' %}"></script>
+
+    <!-- Typehead Plugin js -->
+    <script src="{% static 'assets/vendor/handlebars/handlebars.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/typeahead.js/typeahead.bundle.min.js' %}"></script>
+
+    <!-- Flatpickr Timepicker Plugin js -->
+    <script src="{% static 'assets/vendor/flatpickr/flatpickr.min.js' %}"></script>
+
+    <!-- Demo js -->
+    <script src="{% static 'assets/js/pages/demo.typehead.js' %}"></script>
+    <script src="{% static 'assets/js/pages/demo.timepicker.js' %}"></script>
+
+    <!-- Init js -->
+    <script src="{% static 'assets/js/ui/component.fileupload.js' %}"></script>  
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+    <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'assets/vendor/select2/js/select2.min.js' %}"></script>
+    
 
         <!-- Apex Charts js -->
 <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>                                       
