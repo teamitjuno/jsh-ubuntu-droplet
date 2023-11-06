@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, re_path
 from vertrieb_interface import views
+from vertrieb_interface.views import DocumentView
 from django.views import defaults as default_views
 from adminfeautures.views import UpdateAdminAngebot
 
@@ -108,7 +109,7 @@ vertrieb_patterns = [
         views.serve_ticket_pdf,
         name="serve_ticket_pdf",
     ),
-    path("document/<str:angebot_id>/", views.document_view, name="document_view"),
+    path("document/<str:angebot_id>/", DocumentView.as_view(), name="document_view"),
     path(
         "document_calc/<str:angebot_id>/",
         views.document_calc_view,

@@ -68,7 +68,7 @@
                         <div class="card-body">
                         
                             <p class="card-text">Unter dem Menüpunkt „Hilfe“ in der Navigationsleiste findest du weitere Ein Chat-Assistent mit künstlicher Intelligenz, dem Sie alle Ihre Fragen zu Solarmodulen, elektrischen Geräten und Solarenergie im Allgemeinen stellen können.</p>
-                            <p class="card-text text-success">Jetzt wurde die Daten automatisch aktualisiert wann Sie die Seite "Home" öfnen</p>
+                            <p class="card-text text-success">Die Daten werden Automatisch aktualisiert wenn Sie die Seite „JSH-Home“ öffnen</p>
                             <div style="display: flex; gap: 15px;">
                                 <a hidden href="javascript:void(0);" id="load-user-angebots-button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#info-alert-modal">
                                     Aus JPP Einträge Aktualisieren
@@ -174,7 +174,7 @@
                                 <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="create_blank_angebot" value="1">
-                                    <button type="submit" class="btn btn-outline-info rounded-pill">Neue Angebot erstellen</button>
+                                    <button type="submit" class="btn btn-outline-info rounded-pill">Neues Angebot erstellen</button>
                                 </form>
                             </div>
                             <p></p>                     
@@ -384,7 +384,7 @@
                                 </tbody>
                             </table>
                             <div class="card-footer">
-                                <button type="button" class="btn btn-outline-warning m-1 rounded-pill" onclick="resetForm()">zurücksetzen</button>
+                                <button type="button" class="btn btn-outline-warning m-1 rounded-pill" onclick="resetForm()">Zurücksetzen</button>
                                 <script>
                                     function resetForm() {
                                         let resettableFields = document.querySelectorAll("[data-resettable=true]");
@@ -398,7 +398,7 @@
                                         document.getElementById("calculator_form").submit();
                                     }
                                 </script>
-                                <button type="submit" class="btn btn-outline-info m-1 rounded-pill">zusammenfassen</button>
+                                <button type="submit" class="btn btn-outline-info m-1 rounded-pill">Rechnen</button>
                             </div>
                         </form>
                     </div>

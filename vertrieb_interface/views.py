@@ -27,6 +27,7 @@ from django.http import (
     StreamingHttpResponse,
     HttpResponse,
 )
+from django.views.generic import DetailView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.formats import date_format
@@ -53,7 +54,7 @@ from vertrieb_interface.get_user_angebots import (
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
-from vertrieb_interface.forms import VertriebAngebotForm
+from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm
 from vertrieb_interface.utils import load_vertrieb_angebot
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
@@ -1439,11 +1440,191 @@ def create_ticket_pdf(request, angebot_id):
     return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
-@login_required
-def document_view(request, angebot_id):
-    pdf_url = reverse("vertrieb_interface:serve_pdf", args=[angebot_id])
-    context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
-    return render(request, "vertrieb/document_view.html", context)
+# @login_required
+# def document_view(request, angebot_id):
+#     form = VertriebAngebotEmailForm
+#     pdf_url = reverse("vertrieb_interface:serve_pdf", args=[angebot_id])
+#     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
+#     return render(request, "vertrieb/document_view.html", context)
+# class DocumentView(LoginRequiredMixin, DetailView):
+#     model = VertriebAngebot
+#     template_name = 'vertrieb/document_view.html'
+#     context_object_name = 'vertrieb_angebot'
+#     pk_url_kwarg = 'angebot_id'
+#     form_class = VertriebAngebotEmailForm
+
+#     def dispatch(self, request, *args, **kwargs):
+#         angebot_id = kwargs.get("angebot_id")
+#         if not request.user.is_authenticated:
+#             raise PermissionDenied()
+#         return super().dispatch(request, *args, **kwargs)
+
+#     def get_object(self):
+#         return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         vertrieb_angebot = self.get_object()
+#         angebot_id = self.kwargs.get('angebot_id')
+#         pdf_url = reverse('vertrieb_interface:serve_pdf', args=[angebot_id])
+#         context['pdf_url'] = pdf_url
+#         context['angebot_id'] = angebot_id
+#         context['form'] = self.form_class(instance=vertrieb_angebot, user=self.request.user)
+#         return context
+
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         user = request.user
+#         angebot_id = self.kwargs.get("angebot_id")
+#         instance = VertriebAngebot.objects.get(angebot_id=angebot_id)
+#         form = self.form_class(request.POST, instance=instance, user=user)
+#         if form.is_valid():
+#             print("Form is valid")
+#             form.save()
+#             print("Form saved")
+
+#             email_address = request.POST.get('email')
+#             email_content = request.POST.get('text_for_email')
+#             vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+
+#             pdf = vertrieb_angebot.angebot_pdf
+#             subject = f"Angebot Photovoltaikanlage {angebot_id}"
+#             # geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
+#             body = email_content
+#             name = replace_spaces_with_underscores(vertrieb_angebot.name)
+#             print(f"Subject: {subject}")
+#             print(f"Body: {body}")
+#             print(f"From: {user.smtp_username}")
+#             print(f"To: si@juno-solar.com")
+
+
+#             connection = get_connection(
+#             backend=EMAIL_BACKEND,
+#             host=user.smtp_server,
+#             port=user.smtp_port,
+#             username=user.smtp_username,
+#             password=user.smtp_password,
+#             use_tsl=True,
+#             fail_silently=False,
+#         )
+#             email = EmailMultiAlternatives(
+#                 subject,
+#                 body,
+#                 user.smtp_username,
+#                 [f"{email_address}"],
+#                 connection=connection,
+#             )
+#             file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore
+#             email.attach(
+#                 f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+#             )
+
+#             try:
+#                 email.send()
+#                 print("Email sent successfully")
+#                 messages.success(request, "Email sent successfully")
+#             except Exception as e:
+#                 print(f"Failed to send email: {str(e)}")
+#                 messages.error(request, f"Failed to send email: {str(e)}")
+#             return redirect(
+#                         "vertrieb_interface:document_view",
+#                         angebot_id,
+#                     )
+#         else:
+#             print("Not a POST request")
+#             return self.form_invalid(form, instance)
+
+
+#     def form_invalid(self, form, *args, **kwargs):
+#         context = self.get_context_data()
+#         context["form"] = form
+#         return render(self.request, self.template_name, context)
+class DocumentView(LoginRequiredMixin, DetailView):
+    model = VertriebAngebot
+    template_name = "vertrieb/document_view.html"
+    context_object_name = "vertrieb_angebot"
+    pk_url_kwarg = "angebot_id"
+    form_class = VertriebAngebotEmailForm
+
+    def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vertrieb_angebot = self.get_object()
+        angebot_id = self.kwargs.get("angebot_id")
+        pdf_url = reverse("vertrieb_interface:serve_pdf", args=[angebot_id])
+        context["pdf_url"] = pdf_url
+        context["angebot_id"] = angebot_id
+        context["form"] = self.form_class(
+            instance=vertrieb_angebot, user=self.request.user
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(
+            request.POST, instance=self.get_object(), user=request.user
+        )
+        if form.is_valid():
+            form.save()
+            if self._send_email(request, form.instance):
+                messages.success(request, "Email sent successfully")
+                return redirect(
+                    "vertrieb_interface:document_view", form.instance.angebot_id
+                )
+        return self.form_invalid(form)
+
+    def _send_email(self, request, vertrieb_angebot):
+        email_address = request.POST.get("email")
+        email_content = request.POST.get("text_for_email")
+        subject = f"Angebot Photovoltaikanlage {vertrieb_angebot.angebot_id}"
+
+        user = request.user
+        body = f"{email_content}\n\n{user.smtp_body}"
+        user_email = user.email
+
+        try:
+            connection = get_connection(
+                backend=EMAIL_BACKEND,
+                host=user.smtp_server,
+                port=user.smtp_port,
+                username=user.smtp_username,
+                password=user.smtp_password,
+                use_tls=True,
+                fail_silently=False,
+            )
+            email = EmailMultiAlternatives(
+                subject,
+                body,
+                user.smtp_username,
+                [email_address, user_email],
+                connection=connection,
+            )
+            file_data = (
+                vertrieb_angebot.angebot_pdf.tobytes()
+            )  # Make sure this is the correct way to get PDF data
+            name = replace_spaces_with_underscores(vertrieb_angebot.name)
+            email.attach(
+                f"{name}_{vertrieb_angebot.angebot_id}.pdf",
+                file_data,
+                "application/pdf",
+            )
+            email.send()
+            return True
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+            return False
+
+    def form_invalid(self, form):
+        return render(
+            self.request, self.template_name, self.get_context_data(form=form)
+        )
 
 
 @login_required
@@ -1593,13 +1774,21 @@ def send_support_message(request):
 def send_invoice(request, angebot_id):
     if request.method == "POST":
         user = request.user
+        data = json.loads(request.body)
+        empfanger_email = data.get("email")
 
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+        text_for_email = data.get("text_for_email")
         pdf = vertrieb_angebot.angebot_pdf
         subject = f"Angebot Photovoltaikanlage {angebot_id}"
-        geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
-        body = geerter + user.smtp_body
+        # geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
+        body = text_for_email
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
+        print(f"Subject: {subject}")
+        print(f"Body: {body}")
+        print(f"From: {user.smtp_username}")
+        print(f"To: si@juno-solar.com")
+        print(empfanger_email)
 
         connection = get_connection(
             backend=EMAIL_BACKEND,
@@ -1614,7 +1803,7 @@ def send_invoice(request, angebot_id):
             subject,
             body,
             user.smtp_username,
-            [f"{vertrieb_angebot.email}"],
+            [f"{empfanger_email}"],
             connection=connection,
         )
         file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore
@@ -1624,14 +1813,14 @@ def send_invoice(request, angebot_id):
 
         try:
             email.send()
+            print("Email sent successfully")
             messages.success(request, "Email sent successfully")
-
         except Exception as e:
+            print(f"Failed to send email: {str(e)}")
             messages.error(request, f"Failed to send email: {str(e)}")
-
         return JsonResponse({"status": "success"}, status=200)
-
     else:
+        print("Not a POST request")
         return JsonResponse(
             {"status": "failed", "error": "Not a POST request."}, status=400
         )

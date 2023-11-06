@@ -219,6 +219,7 @@ class VertriebAngebot(TimeStampMixin):
     telefon_mobil = models.CharField(max_length=255, blank=True, null=True)
     zoho_kundennumer = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
+    text_for_email = models.TextField(blank=True, null=True)
     name_display_value = models.CharField(max_length=255, blank=True, null=True)
     vertriebler_display_value = models.CharField(max_length=255, blank=True, null=True)
     vertriebler_id = models.CharField(max_length=255, blank=True, null=True)
@@ -636,7 +637,10 @@ class VertriebAngebot(TimeStampMixin):
         if len(parts) == 2:
             return f"{parts[1]} {parts[0]}"
         elif len(parts) == 3:
-            return f"{parts[2]} {parts[1]} {parts[0].lower()}"
+            if parts[0] == "Dr.":
+                return f"{parts[0]} {parts[2]} {parts[1]}"
+            else:
+                return f"{parts[2]} {parts[1]} {parts[0].lower()}"
         else:
             return self.name
 

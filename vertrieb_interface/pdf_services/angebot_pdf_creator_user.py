@@ -14,7 +14,7 @@ class PDF(FPDF):
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
         self.title1 = title1
-        self.set_left_margin(12.875)
+        self.set_left_margin(18.875)
         self.set_right_margin(12.875)
 
     def header(self):
@@ -113,6 +113,8 @@ class PDF(FPDF):
         self.set_x(0)
         self.set_y(80)
         self.cell(0, 6, "ANGEBOT", 0, 0, "L")
+        self.set_x(135)
+        self.cell(0, 6, f"{self.title1}", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_x(0)
         self.set_y(90)

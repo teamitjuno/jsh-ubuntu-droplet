@@ -90,6 +90,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "ort",
                     "anlagenstandort",
                     "notizen",
+                    "text_for_email",
                 ),
                 "classes": ("collapse",),
             },
