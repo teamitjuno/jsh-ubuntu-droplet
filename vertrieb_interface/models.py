@@ -1383,7 +1383,7 @@ class VertriebAngebot(TimeStampMixin):
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "eddiPreis": self.get_optional_accessory_price("eddi"),
             "zahlungs_bedingungen": self.zahlungsbedingungen,
-            "angebotssumme": self.angebots_summe,
+            "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
             ),
