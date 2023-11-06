@@ -1,5 +1,7 @@
 from django.http import HttpResponseNotFound
 import logging
+from django.shortcuts import redirect
+from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger(__name__)
 
@@ -23,3 +25,15 @@ class LogIPMiddleware:
         else:
             ip = request.META.get("REMOTE_ADDR")
         return ip
+
+
+
+class LoginRedirectMiddleware(MiddlewareMixin):
+    def __call__(self, request):
+        # Get the current path
+        current_path = request.get_full_path()
+        # Check if it is login without next parameter
+        if current_path == '/login' and 'next=' not in request.GET:
+            return redirect(f'{current_path}/?next=/')
+        # Otherwise, just call the next middleware in the chain
+        return self.get_response(request)

@@ -8,7 +8,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 import datetime
-
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -49,6 +50,12 @@ class ElektrikerCheckMixin(UserPassesTestMixin):
 @method_decorator(csrf_protect, name="dispatch")
 class LoginView(APIView):
     def get(self, request):
+        # Check if 'next' parameter is present in the URL
+        next_page = request.GET.get('next', '/')
+        if not next_page:
+            # If 'next' is not present, redirect to the login URL with 'next' parameter
+            return HttpResponseRedirect(f"{reverse('login')}?next=/")
+        # If 'next' is present, render the login page normally
         return render(request, "pages-login.html")
 
     def post(self, request):

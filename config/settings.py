@@ -81,6 +81,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://46.101.104.229:8000",
     "http://138.68.100.101:8000",
     "https://138.68.100.101",
+    "https://138.68.100.101/login/",
+    "http://138.68.100.101/login/",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
@@ -88,12 +90,15 @@ CSRF_TRUSTED_ORIGINS = [
     "http://46.101.104.229:8000",
     "http://138.68.100.101:8000",
     "https://138.68.100.101",
+    "https://138.68.100.101/login/",
+    "http://138.68.100.101/login/",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "authentication.middleware.LogIPMiddleware",
+    "authentication.middleware.LoginRedirectMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
