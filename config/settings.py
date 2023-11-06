@@ -83,6 +83,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://138.68.100.101",
     "https://138.68.100.101/login/",
     "http://138.68.100.101/login/",
+    "https://138.68.100.101/logout/",
+    "http://138.68.100.101/logout/",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
@@ -92,6 +94,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://138.68.100.101",
     "https://138.68.100.101/login/",
     "http://138.68.100.101/login/",
+    "https://138.68.100.101/logout/",
+    "http://138.68.100.101/logout/",
+
 ]
 
 MIDDLEWARE = [
