@@ -28,12 +28,12 @@
                                             <th>Kundennumer</th>
                                             <th>Kunde</th>
                                             <th>Angebot ID</th>
-                                            <th>Angebot Status</th>
+                                            <th>Status</th>
                                             <th>Datum</th>
                                             
                                             <th>Link</th>
                                             <th>Angebot PDF</th>
-                                            <th>Ticket PDF</th>
+                                            
                                             <th>Kalkulation PDF</th>
                                             <th>Bearbeitbar</th>
                                             
@@ -84,11 +84,7 @@
                                                 {% endif %}
                                             </td>
                                             
-                                            <td> 
-                                                {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status == "angenommen" %}
-                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
-                                                {% endif %}
-                                            </td>
+                                            
                                             <td>
                                                 {% if vertrieb_angebot.angebot_id_assigned %}
                                                 <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>

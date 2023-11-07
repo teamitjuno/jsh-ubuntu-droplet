@@ -185,8 +185,8 @@
                     <!-- Brand Logo Light -->
                     <a href="{% url 'vertrieb_interface:home' %}" class="logo logo-light">
                         
-                        <span class="logo-lg">
-                            <img src="{% static 'img/apple-icon3.png' %}" width="25%" height="120px" alt="logo">
+                        <span class="logo m-1">
+                            <img src="{% static 'img/junosolar_logo4-inverse-white.png' %}" width="70%" height="55px" alt="logo">
                         </span>
                         <span class="logo-sm">
                             <img src="{% static 'assets/images/logo-sm.png' %}" alt="small logo">
@@ -195,8 +195,8 @@
     
                     <!-- Brand Logo Dark -->
                     <a href="{% url 'vertrieb_interface:home' %}" class="logo logo-dark">
-                        <span class="logo-lg">
-                            <img src="{% static 'img/apple-icon3.png' %}" width="25%"  alt="dark logo">
+                        <span class="logo m-1">
+                            <img src="{% static 'img/junosolar_logo4-inverse-white.png' %}" width="70%" height="55px" alt="dark logo">
                         </span>
                         <span class="logo-sm">
                             <img src="{% static 'assets/images/logo-dark-sm.png' %}" alt="small logo">
@@ -221,7 +221,7 @@
                             <li class="side-nav-title">Navigation</li>
                                 <li class="side-nav-item">
                                     <ul class="side-nav-link">               
-                                        <a href="{% url 'vertrieb_interface:home' %}"><i class="uil-chart-pie-alt"></i></a>
+                                        <a href="{% url 'vertrieb_interface:home' %}"><i class="ri-home-8-line"></i></a>
                                         <span href="{% url 'vertrieb_interface:home' %}"><a href="{% url 'vertrieb_interface:home' %}">Home</a></span>
                                     </ul>    
                                 </li>
@@ -230,32 +230,32 @@
                                     <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="create_blank_angebot" value="1">
-                                        <a href="#"><i class="ri-article-fill"></i></a>
+                                        <a href="#"><i class=" ri-file-edit-line"></i></a>
                                         <span href="#"><a href="#" onclick="document.getElementById('create-angebot-form').submit(); ">Neues Angebot erstellen</a></span>
                                     </form>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="#"><i class="uil-chart-pie-alt"></i></a>
+                                    <a href="{% url 'vertrieb_interface:ticket_creation' %}"><i class="uil-file-plus-alt"></i></a>
                                     <span href="{% url 'vertrieb_interface:ticket_creation' %}"><a href="{% url 'vertrieb_interface:ticket_creation' %}">Ticket erstellen</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:view_orders' %}"><i class="uil-chart-pie-alt"></i></a>
+                                    <a href="{% url 'vertrieb_interface:view_orders' %}"><i class="uil-list-ul"></i></a>
                                     <span href="{% url 'vertrieb_interface:view_orders' %}"><a href="{% url 'vertrieb_interface:view_orders' %}">Alle Angebote</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><i class="uil-chart-pie-alt"></i></a>
+                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><i class="ri-file-pdf-fill"></i></a>
                                     <span href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}">PDF Dokumente</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">
-                                    <i class="ri-question-answer-fill"></i>
+                                    <i class=" ri-questionnaire-line"></i>
                                     <span> Hilfe</span>
                                 </a>
                                 <div class="collapse" id="sidebarEcommerce">
