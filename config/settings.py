@@ -15,13 +15,10 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = [
-    "*",
     "jsh-home.app",
     "www.jsh-home.app",
-    "https://jsh-home.app",
-    "http://46.101.104.229:8000",
-    "http://138.68.100.101:8000",
-    "https://138.68.100.101",
+    "46.101.104.229",
+    "138.68.100.101",
 ]
 LOGIN_URL = "/login"
 
@@ -78,24 +75,14 @@ AUTH_USER_MODEL = "authentication.User"
 CORS_ALLOWED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
-    "http://46.101.104.229:8000",
-    "http://138.68.100.101:8000",
     "https://138.68.100.101",
-    "https://138.68.100.101/login/",
-    "http://138.68.100.101/login/",
-    "https://138.68.100.101/logout/",
-    "http://138.68.100.101/logout/",
+
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
-    "http://46.101.104.229:8000",
-    "http://138.68.100.101:8000",
     "https://138.68.100.101",
-    "https://138.68.100.101/login/",
-    "http://138.68.100.101/login/",
-    "https://138.68.100.101/logout/",
-    "http://138.68.100.101/logout/",
+
 
 ]
 

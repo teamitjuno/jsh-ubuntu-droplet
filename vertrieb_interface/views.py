@@ -1405,6 +1405,9 @@ def create_angebot_pdf_user(request, angebot_id):
     return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
 
 
+
+
+
 @login_required
 def create_calc_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)

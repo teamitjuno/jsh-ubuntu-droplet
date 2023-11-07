@@ -194,7 +194,16 @@ STORNIERUNGSGRUND_CHOICES = (
     ("Kunde möchte PVA nur mieten", "Der Kunde möchte die PVA-Anlage nur mieten"),
     ("Kunde war nicht erreichbar", "Der Kunde war nicht erreichbar"),
 )
+TEXT_FOR_EMAIL = '''
+                Sehr geehrter Interessent,
 
+                anbei wie besprochen das Angebot im Anhang als PDF-Dokument.
+
+                Bei Fragen stehen wir Ihnen gern jederzeit zur Verfügung!
+                
+
+                Wir wünschen Ihnen einen schönen Tag und würden uns über eine positive Rückmeldung freuen
+                '''
 
 class VertriebAngebot(TimeStampMixin):
     angebot_id = models.CharField(max_length=255, unique=True, primary_key=True)
@@ -219,7 +228,7 @@ class VertriebAngebot(TimeStampMixin):
     telefon_mobil = models.CharField(max_length=255, blank=True, null=True)
     zoho_kundennumer = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
-    text_for_email = models.TextField(blank=True, null=True)
+    text_for_email = models.TextField(blank=True, null=True, default=TEXT_FOR_EMAIL)
     name_display_value = models.CharField(max_length=255, blank=True, null=True)
     vertriebler_display_value = models.CharField(max_length=255, blank=True, null=True)
     vertriebler_id = models.CharField(max_length=255, blank=True, null=True)
