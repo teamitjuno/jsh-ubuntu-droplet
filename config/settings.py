@@ -19,6 +19,7 @@ ALLOWED_HOSTS = [
     "www.jsh-home.app",
     "46.101.104.229",
     "138.68.100.101",
+    "127.0.0.1",
 ]
 LOGIN_URL = "/login"
 
