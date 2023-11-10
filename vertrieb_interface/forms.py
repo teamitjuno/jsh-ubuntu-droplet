@@ -346,12 +346,14 @@ class VertriebAngebotForm(ModelForm):
     name = forms.ChoiceField(
         choices=[],
         label="Interessent",
+        
         required=True,
         widget=forms.Select(
             attrs={
                 "class": "form-control select2",
                 "data-toggle": "select2",
                 "id": "id_name",
+                
                 "style": "max-width: 300px",
             }
         ),
@@ -1036,8 +1038,24 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
+        default_choice = [('', '--------')]
+        
+        try:
+            profile = User.objects.get(zoho_id=user.zoho_id)
+            data = json.loads(profile.zoho_data_text or '[]')
+            if data:
+                name_list = [(item["name"], item["name"]) for item in data]
+                name_list = sorted(name_list, key=lambda x: x[0])
+                self.fields["name"].choices = default_choice + name_list
+                name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
+            else:
+                # Set initial value to "-----" if there is no data
+                self.fields["name"].initial = "-----"
+        except User.DoesNotExist:
+            # Handle case where the user does not exist
+            self.fields["name"].initial = "-----"
 
-        profile = User.objects.get(zoho_id=user.zoho_id)
+        # profile = User.objects.get(zoho_id=user.zoho_id)
         self.fields["solar_module"].choices = [
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
@@ -1047,11 +1065,11 @@ class VertriebAngebotForm(ModelForm):
             for module in SolarModulePreise.objects.filter(in_stock=True)
         ]
 
-        data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
-        name_list = [(item["name"], item["name"]) for item in data]
-        name_list = sorted(name_list, key=lambda x: x[0])
-        self.fields["name"].choices = name_list
-        name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
+        # data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
+        # name_list = [(item["name"], item["name"]) for item in data]
+        # name_list = sorted(name_list, key=lambda x: x[0])
+        # self.fields["name"].choices = name_list
+        # name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
         self.fields["angebot_id_assigned"].widget.attrs.update(

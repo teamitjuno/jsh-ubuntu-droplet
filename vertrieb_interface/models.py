@@ -280,7 +280,7 @@ class VertriebAngebot(TimeStampMixin):
     )
 
     anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
-    name = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100, blank=True, default="------")
     vorname_nachname = models.CharField(max_length=100, blank=True, null=True)
     firma = models.CharField(max_length=100, blank=True)
     strasse = models.CharField(max_length=100, blank=True)

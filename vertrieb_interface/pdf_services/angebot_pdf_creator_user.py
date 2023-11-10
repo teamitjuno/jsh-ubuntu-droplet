@@ -65,7 +65,7 @@ class PDF(FPDF):
             # Position at 1.5 cm from bottom
             self.set_y(-25)
             self.set_x(25)
-            self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignore
+            self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignorehttp://127.0.0.1:8000/vertrieb/home/
             self.set_y(-25)
             self.set_x(85)
             centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
@@ -722,7 +722,7 @@ class PDF(FPDF):
                 self.add_page()
                 y = 30
             else:
-                self.line(10, y, 200, y)
+                self.line(50, y, 250, y)
             self.set_y(y + 5)
             self.set_font("JUNO Solar Lt", "B", 12)
             self.cell(0, 6, "Optionales Zubehör zur Anlagenoptimierung", 0, 0, "L")
@@ -918,7 +918,7 @@ class PDF(FPDF):
         )
 
         if not data["batterieVorh"]:
-            self.line(10, y + 7, 51, y + 7)
+            self.line(18, y + 7, 59, y + 7)
             # self.line(10, y + 13, 200, y + 13)
             # self.line(10, y + 19, 92, y + 19)
             # self.line(10, y + 28, 200, y + 28)
@@ -1003,7 +1003,7 @@ class PDF(FPDF):
             and not data["thor"]
             and not data["anzOptimierer"] > 0
         ):
-            self.line(10, y + 7, 86, y + 7)
+            self.line(18, y + 7, 94, y + 7)
             # self.line(10, y + 13, 200, y + 13)
             # self.line(10, y + 19, 148, y + 19)
         self.set_y(y + 4)
@@ -1213,7 +1213,7 @@ class PDF(FPDF):
         self.multi_cell(0, 6, "Mit einer Wallbox können Sie die Energie Ihrer Photovoltaikanlage zum Laden Ihres Elektrofahrzeugs nutzen. Eine intelligente Steuerung (opt. Zubehör) kann den Ladestrom kontinuierlich der aktuellen Energieerzeugung anpassen.", 0, 0, "L")  # type: ignore
         # self.set_font('JUNO Solar Lt', '', 10)
         if not data["wallboxVorh"]:
-            self.line(10, y + 7, 73, y + 7)
+            self.line(18, y + 7, 80, y + 7)
             # self.line(10, y + 13, 200, y + 13)
             # self.line(10, y + 19, 165, y + 19)
             # self.line(10, y + 28, 200, y + 28)
