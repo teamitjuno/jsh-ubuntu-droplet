@@ -150,6 +150,7 @@ ACCESSORY_NAME = "leistungsmodul"
 BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
 DEFAULT_BATT_USAGE = 0.3
 ANGEBOT_STATUS_CHOICES = [
+    ("", ""),
     ("angenommen", "angenommen"),
     ("bekommen", "bekommen"),
     ("in Kontakt", "in Kontakt"),
@@ -217,7 +218,7 @@ class VertriebAngebot(TimeStampMixin):
     angebot_id_assigned = models.BooleanField(default=False)
     status = models.CharField(
         choices=ANGEBOT_STATUS_CHOICES,
-        default="in Kontakt",
+        default="",
         max_length=255,
         blank=True,
         null=True,

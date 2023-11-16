@@ -285,6 +285,7 @@ def home(request):
     )
 
     statuses = [
+        "",
         "angenommen",
         "bekommen",
         "in Kontakt",
@@ -324,6 +325,7 @@ def home(request):
     abgelaufen_count = vertriebangebots.filter(status="abgelaufen").count()
     on_hold_count = vertriebangebots.filter(status="on Hold").count()
     storniert_count = vertriebangebots.filter(status="storniert").count()
+    lee_count = vertriebangebots.filter(status="").count()
 
     calculator_instance = Calculator.objects.first()
     if not calculator_instance:
@@ -355,6 +357,7 @@ def home(request):
         "abgelaufen": abgelaufen_count,
         "on Hold": on_hold_count,
         "storniert": storniert_count,
+        "lee" : lee_count,
         "remaining_stock": remaining_stock,
         "solar_module_ticket_stats": solar_module_ticket_stats,
         "all_vertrieb_angebots": all_vertrieb_angebots,
@@ -1278,6 +1281,27 @@ def update_status_to_angenommen(angebot_ids):
     # Optionally, you can return the count of updated instances
     return angebote.count()
 
+def update_vertrieb_angebot_assignment(user):
+
+
+    user_data = json.loads(user.zoho_data_text)
+    # Extract zoho_id values from user_data
+    if user_data != []:
+        user_zoho_ids = {item['zoho_id'] for item in user_data}
+
+        # Filter vertrieb_angebot instances that need to be updated
+        vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
+            user=user, 
+            angebot_id_assigned=True
+        ).exclude(
+            zoho_id__in=user_zoho_ids
+        )
+
+        # Bulk update angebot_id_assigned to False
+        vertrieb_angebots_to_update.update(angebot_id_assigned=False)
+    else:
+        pass
+
 
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
@@ -1291,9 +1315,11 @@ def load_user_angebots(request):
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
 
+        update_vertrieb_angebot_assignment(user)
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
+        
 
         if TELEGRAM_LOGGING:
             send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")

@@ -241,10 +241,21 @@
                                             </ul>
                                         </div>
                                     </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0">
+                                            <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-secondary-lighten text-secondary"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h5 class="fw-semibold mt-0 mb-1">leerer Status</h5>
+                                            <ul class="list-inline mb-0 text-muted">
+                                                <li class="list-inline-item"><b>{{ lee }}</b> leerer</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 order-1 order-md-2">
                                     <div class="mb-3 mb-md-0">
-                                        <div id="project-overview-chart" class="apex-charts" data-colors="#0acf97,#ff679b,#ffbc00,#727cf5"></div>
+                                        <div id="project-overview-chart" class="apex-charts" data-colors="#0acf97,#ff679b,#ffbc00,#727cf5,#212730"></div>
                                     </div>
                                 </div>
                                 
@@ -663,7 +674,7 @@ $(document).ready(function() {
          })
      }(window.jQuery);
      
-     var colors = ["#727cf5", "#fa5c7c", "#ffbc00", "#0acf97"],
+     var colors = ["#727cf5", "#fa5c7c", "#ffbc00", "#0acf97", "#212730"];
 
         dataColors = $("#project-overview-chart").data("colors"),
     total = {{ current_user_vertriebangebots }},
@@ -671,16 +682,18 @@ $(document).ready(function() {
         Math.round({{ angenommen }} * 1000 / total) / 10, 
         Math.round({{ abgelehnt }} * 1000 / total) / 10, 
         Math.round({{ bekommen }} * 1000 / total) / 10, 
-        Math.round(({{ in_Kontakt }} + {{ Kontaktversuch }}) * 1000 / total) / 10
+        Math.round(({{ in_Kontakt }} + {{ Kontaktversuch }}) * 1000 / total) / 10,
+        Math.round({{ lee }} * 1000 / total) / 10,
+
     ],
     options = {
         chart: {
-            height: 328,
+            height: 388,
             type: "radialBar"
         },
         colors: dataColors ? dataColors.split(",") : colors,
         series: series,
-        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch"],
+        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch", "leerer Status"],
         plotOptions: {
             radialBar: {
                 track: {

@@ -55,20 +55,20 @@
                                                 <td class="link-warning">
                                                     {{ vertrieb_angebot.status }}
                                                 </td>
-                                                {% elif vertrieb_angebot.status == "angenommen" %}
+                                            {% elif vertrieb_angebot.status == "angenommen" %}
                                                 <td class="link-success">
                                                     {{ vertrieb_angebot.status }}
                                                 </td>
-                                                {% elif vertrieb_angebot.status == "abgelaufen" or vertrieb_angebot.status == "abgelehnt" %}
+                                            {% elif vertrieb_angebot.status == "abgelaufen" or vertrieb_angebot.status == "abgelehnt" %}
                                                 <td class="link-danger">
                                                     {{ vertrieb_angebot.status }}
                                                 </td>
-                                                {% elif vertrieb_angebot.status == "in Kontakt" or vertrieb_angebot.status == "Kontaktversuch" %}
+                                            {% elif vertrieb_angebot.status == "in Kontakt" or vertrieb_angebot.status == "Kontaktversuch" %}
                                                 <td class="link-primary">
-                                                    
+                                                    {{ vertrieb_angebot.status }}
                                                 </td>
                                                 {% else %}
-                                                <td>
+                                                <td class="link-secondary">
                                                     {{ vertrieb_angebot.status }}
                                                 </td>
                                                 {% endif %}

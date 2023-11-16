@@ -44,6 +44,7 @@ def filter_hidden_choices(choices):
 
 
 ANGEBOT_STATUS_CHOICES = [
+    ("", ""),
     ("angenommen", "angenommen"),
     ("bekommen", "bekommen"),
     ("in Kontakt", "in Kontakt"),
@@ -138,7 +139,7 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if value < 6 and value != 0 or value > 70:
+    if value < 6 and value != 0 or value > 69:
         raise ValidationError(
             (
                 "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 70 liegen."
@@ -359,7 +360,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     vorname_nachname = forms.CharField(
-        label="Vor-, Nachname",
+        label="Nach-, Vorname",
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -1043,6 +1044,10 @@ class VertriebAngebotForm(ModelForm):
         try:
             profile = User.objects.get(zoho_id=user.zoho_id)
             data = json.loads(profile.zoho_data_text or '[]')
+
+            # Filter out records with status "abgelehnt" or "storniert"
+            data = [item for item in data if item["status"] not in ["abgelehnt", "storniert"]]
+
             if data:
                 name_list = [(item["name"], item["name"]) for item in data]
                 name_list = sorted(name_list, key=lambda x: x[0])
@@ -1229,6 +1234,19 @@ class VertriebAngebotForm(ModelForm):
                     },
                 ),
             )
+        optimizer_ticket = cleaned_data.get("optimizer_ticket")
+        if optimizer_ticket is not None and modul_anzahl_ticket is not None:
+            if optimizer_ticket > modul_anzahl_ticket or (modul_anzahl_ticket - optimizer_ticket) < 0:
+                self.add_error(
+                    "modul_anzahl_ticket",
+                    ValidationError(
+                        ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
+                        params={
+                            "modul_anzahl_ticket": optimizer_ticket,
+                        },
+                    ),
+                )
+
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
 
