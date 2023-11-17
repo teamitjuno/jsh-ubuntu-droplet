@@ -1101,7 +1101,7 @@ class VertriebAngebotForm(ModelForm):
             data = json.loads(profile.zoho_data_text or '[]')
 
             # Filter out records with status "abgelehnt" or "storniert"
-            data = [item for item in data if item["status"] not in ["abgelehnt", "storniert"]]
+            data = [item for item in data if item["status"] not in ["abgelehnt", "storniert", "angenommen"]]
 
             if data:
                 name_list = [(item["name"], item["name"]) for item in data]
