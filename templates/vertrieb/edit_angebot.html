@@ -685,6 +685,16 @@
                                                         <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill" onclick="setAction('save')">
                                                             Speichern
                                                         </button>
+                                                        <script>
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                var pdfButton = document.getElementById('save-all-forms');
+
+                                                                pdfButton.addEventListener('click', function() {
+                                                                    this.disabled = true; // Disable the button
+                                                                    this.classList.add('disabled'); // Optional: Add a class to change the appearance
+                                                                });
+                                                            });
+                                                        </script>
                                                     </div>
                                                     <div class="d-flex align-items-center">
                                                             <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
@@ -693,7 +703,17 @@
 
                                                 
                                                     <div class="row m-2">
-                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
+                                                        <button type="button" id="pdf_erstellen" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
+                                                        <script>
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                var pdfButton = document.getElementById('pdf_erstellen');
+
+                                                                pdfButton.addEventListener('click', function() {
+                                                                    this.disabled = true; // Disable the button
+                                                                    this.classList.add('disabled'); // Optional: Add a class to change the appearance
+                                                                });
+                                                            });
+                                                        </script>
                                                     </div>
                                                     <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
@@ -1680,6 +1700,8 @@
                 </div><!-- End ROW -->
             </div> 
         </form>
+            
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
         $(document).ready(function() {

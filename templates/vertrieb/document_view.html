@@ -4,6 +4,18 @@
 {% load widget_tweaks %}
 {% block content %}
 <div class="content-page">
+<script>
+window.onload = function() {
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                $('#success-alert-modal').modal('show');
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+};
+</script>
+
     <div class="content">
         <div class="container-fluid">
             <div class="row">
@@ -34,9 +46,24 @@
                                 <h4 class="header-title">Empfänger</h4>
                                 {{ form.email }}
                                 <p class="text-muted font-14">eine Kopie wird auch an Ihre E-Mail Adresse geschickt</p>
+                                
                                 <div class="d-print-none mt-4">
                                     <div class="text-end">
-                                        <button type="submit" class="btn btn-info">Email schicken</button>
+                                        <button type="submit" id="email_send" class="btn btn-info">Email schicken</button>
+                                        <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content modal-filled bg-success">
+                                                    <div class="modal-body p-4">
+                                                        <div class="text-center">
+                                                            <i class="ri-check-line h1"></i>
+                                                            <h4 class="mt-2">Gut gemacht!</h4>
+                                                            <p class="mt-3">Das PDF-Angebot wurde erfolgreich versendet!</p>
+                                                            <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal-dialog -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -313,7 +340,17 @@
             </div>
                                                 {% endcomment %}
 
-
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var loginForm = document.getElementById('updateForm');
+                    loginForm.addEventListener('submit', function() {
+                        // Disable the button
+                        document.getElementById('email_send').disabled = true;
+                        // Optional: Add a class to change the appearance of the button
+                        document.getElementById('email_send').classList.add('disabled');
+                    });
+                });
+            </script>
 
 {% endblock %}
 
