@@ -995,21 +995,30 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
+            # Existing code to process data and set various attributes
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
+            name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
             name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
             name = form.cleaned_data["name"]
-            zoho_id = form.cleaned_data["zoho_id"]
             kundennumer = name_to_kundennumer[name]
-
             zoho_id = name_to_zoho_id[name]
 
             vertrieb_angebot.zoho_kundennumer = kundennumer
             vertrieb_angebot.zoho_id = int(zoho_id)
+
+            # New logic for setting status
+            name_to_status = {item["name"]: item["status"] for item in data}
+            status = name_to_status[name]
+
+            if status == "in Kontakt":
+                vertrieb_angebot.status = "in Kontakt"
+            elif status == "Kontaktversuch":
+                vertrieb_angebot.status = "Kontaktversuch"
+            
+            # Save the changes
             vertrieb_angebot.save()
             form.save()  # type:ignore
+
 
             if TELEGRAM_LOGGING:
                 send_message_to_bot(
