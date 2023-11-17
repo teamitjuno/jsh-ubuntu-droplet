@@ -201,7 +201,7 @@ class VertriebAngebotEmailForm(ModelForm):
     text_for_email = forms.CharField(
         label="Text for email",
         initial="""
-        Sehr geehrter Interessent,
+            Sehr geehrter Interessent,
 
             anbei wie besprochen das Angebot im Anhang als PDF-Dokument.
 
@@ -223,17 +223,72 @@ class VertriebAngebotEmailForm(ModelForm):
             }
         ),
     )
+    datenblatter_solar_module = forms.BooleanField(
+        label="Datenblatter Solar Module",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_solar_module",
+            }
+        ),
+    )
+    datenblatter_speichermodule = forms.BooleanField(
+        label="Datenblatter Speichermodule",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_speichermodule",
+            }
+        ),
+    )
+    datenblatter_wechselrichter = forms.BooleanField(
+        label="Datenblatter Wechselrichter",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_wechselrichter",
+            }
+        ),
+    )
+    datenblatter_wallbox = forms.BooleanField(
+        label="Datenblatter Wallbox",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_wallbox",
+            }
+        ),
+    )
+    datenblatter_backup_box = forms.BooleanField(
+        label="Datenblatter Backup Box",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_backup_box",
+            }
+        ),
+    )
 
     class Meta:
         model = VertriebAngebot
-        fields = ["email", "text_for_email"]
+        fields = ["email", "text_for_email", "datenblatter_solar_module", "datenblatter_speichermodule", "datenblatter_wechselrichter", "datenblatter_wallbox", "datenblatter_backup_box"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super(VertriebAngebotEmailForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields["email"].initial = self.instance.email
-            self.fields["text_for_email"].initial = "Sehr geehrter "
+            self.fields["text_for_email"].initial = self.instance.text_for_email
+            self.fields["datenblatter_solar_module"].initial = self.instance.datenblatter_solar_module
+            self.fields["datenblatter_speichermodule"].initial = self.instance.datenblatter_speichermodule
+            self.fields["datenblatter_wechselrichter"].initial = self.instance.datenblatter_wechselrichter
+            self.fields["datenblatter_wallbox"].initial = self.instance.datenblatter_wallbox
+            self.fields["datenblatter_backup_box"].initial = self.instance.datenblatter_backup_box
 
     def save(self, commit=True):
         form = super(VertriebAngebotEmailForm, self).save(commit=False)
@@ -1170,6 +1225,9 @@ class VertriebAngebotForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        action = self.data.get('action')
+        if action == 'save':
+            return cleaned_data
 
         modulanzahl = cleaned_data.get("modulanzahl")
         hersteller = cleaned_data.get("hersteller")

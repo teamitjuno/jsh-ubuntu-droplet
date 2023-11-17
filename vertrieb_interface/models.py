@@ -451,6 +451,11 @@ class VertriebAngebot(TimeStampMixin):
     Full_ticket_preis = models.FloatField(default=0.00)
 
     # Files and other fields:
+    datenblatter_solar_module = models.BooleanField(default=False)
+    datenblatter_speichermodule = models.BooleanField(default=False)
+    datenblatter_wechselrichter = models.BooleanField(default=False)
+    datenblatter_wallbox = models.BooleanField(default=False)
+    datenblatter_backup_box = models.BooleanField(default=False)
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
     angebot_pdf_admin = models.BinaryField(blank=True, null=True)

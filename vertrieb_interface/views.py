@@ -43,6 +43,7 @@ from config import settings
 from config.settings import EMAIL_BACKEND, TELEGRAM_LOGGING
 from prices.models import SolarModulePreise
 from calculator.models import Calculator
+from datenblatter.models import Datenblatter
 from calculator.forms import CalculatorForm
 from shared.chat_bot import handle_message
 from vertrieb_interface.get_user_angebots import (
@@ -1121,8 +1122,30 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         user = request.user
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+        if "pdf_erstellen" in request.POST:
+            if form.is_valid():
+                vertrieb_angebot.angebot_id_assigned = True
 
-        if form.is_valid():
+                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                name_to_kundennumer = {
+                    item["name"]: item["zoho_kundennumer"] for item in data
+                }
+                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                name = form.cleaned_data["name"]
+                zoho_id = form.cleaned_data["zoho_id"]
+                kundennumer = name_to_kundennumer[name]
+
+                zoho_id = name_to_zoho_id[name]
+
+                vertrieb_angebot.zoho_kundennumer = kundennumer
+                vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.save()
+                form.save()  # type:ignore
+
+                return redirect(
+                    "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
+                )
+        elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
 
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
@@ -1143,6 +1166,144 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
             return redirect(
                 "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
+            )
+        return self.form_invalid(form, vertrieb_angebot)
+
+    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
+        context = self.get_context_data()
+
+        context["status_change_field"] = vertrieb_angebot.status_change_field
+
+        context["vertrieb_angebot"] = vertrieb_angebot
+        context["form"] = form
+
+        return render(self.request, self.template_name, context)
+
+    def load_data_from_zoho_to_angebot_id(self, request):
+        pass
+
+
+class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
+    model = VertriebAngebot
+    form_class = VertriebAngebotForm
+    template_name = "vertrieb/edit_calc.html"
+    context_object_name = "vertrieb_angebot"
+
+    def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vertrieb_angebot = self.get_object()
+
+        context["form"] = self.form_class(  # type: ignore
+            instance=vertrieb_angebot, user=self.request.user  # type: ignore
+        )
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get(self, request, angebot_id, *args, **kwargs):
+        vertrieb_angebot = VertriebAngebot.objects.get(
+            angebot_id=angebot_id, user=request.user
+        )
+        zoho_id = vertrieb_angebot.zoho_id
+
+        vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
+
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+        user = request.user
+        if TELEGRAM_LOGGING:
+            send_message_to_bot(
+                f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
+            )
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        calc_image = os.path.join(user_folder, "tmp.png")
+        calc_image_suffix = os.path.join(
+            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+        )
+        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+        relative_path_suffix = os.path.relpath(
+            calc_image_suffix, start=settings.MEDIA_ROOT
+        )
+        context = self.get_context_data()
+
+        context = {
+            "user": user,
+            "vertrieb_angebot": vertrieb_angebot,
+            "form": form,
+            "calc_image": relative_path,
+            "calc_image_suffix": relative_path_suffix,
+            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+            "OWNER_ID": settings.OWNER_ID,
+            "STYLE_ID": settings.STYLE_ID,
+            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        vertrieb_angebot = get_object_or_404(
+            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
+        )
+        user = request.user
+        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+        if "pdf_erstellen" in request.POST:
+            if form.is_valid():
+                vertrieb_angebot.angebot_id_assigned = True
+
+                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                name_to_kundennumer = {
+                    item["name"]: item["zoho_kundennumer"] for item in data
+                }
+                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                name = form.cleaned_data["name"]
+                zoho_id = form.cleaned_data["zoho_id"]
+                kundennumer = name_to_kundennumer[name]
+
+                zoho_id = name_to_zoho_id[name]
+
+                vertrieb_angebot.zoho_kundennumer = kundennumer
+                vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.save()
+                form.save()  # type:ignore
+
+                return redirect(
+                    "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
+                )
+        elif form.is_valid():
+            vertrieb_angebot.angebot_id_assigned = True
+
+            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            name_to_kundennumer = {
+                item["name"]: item["zoho_kundennumer"] for item in data
+            }
+            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+            name = form.cleaned_data["name"]
+            zoho_id = form.cleaned_data["zoho_id"]
+            kundennumer = name_to_kundennumer[name]
+
+            zoho_id = name_to_zoho_id[name]
+
+            vertrieb_angebot.zoho_kundennumer = kundennumer
+            vertrieb_angebot.zoho_id = int(zoho_id)
+            vertrieb_angebot.save()
+            form.save()  # type:ignore
+
+            return redirect(
+                "vertrieb_interface:edit_calc", vertrieb_angebot.angebot_id
             )
         return self.form_invalid(form, vertrieb_angebot)
 
@@ -1581,8 +1742,11 @@ class DocumentView(LoginRequiredMixin, DetailView):
             raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
 
-    def get_object(self):
-        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
+    def get_object(self, queryset=None):
+        angebot_id = self.kwargs.get(self.pk_url_kwarg)
+        self.object = get_object_or_404(self.model, angebot_id=angebot_id)
+        return self.object
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1602,19 +1766,20 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
         if form.is_valid():
             form.save()
-            if self._send_email(request, form.instance):
+            if self._send_email(form.instance):
                 messages.success(request, "Email sent successfully")
                 return redirect(
                     "vertrieb_interface:document_view", form.instance.angebot_id
                 )
         return self.form_invalid(form)
 
-    def _send_email(self, request, vertrieb_angebot):
-        email_address = request.POST.get("email")
-        email_content = request.POST.get("text_for_email")
+    def _send_email(self, vertrieb_angebot):
+        datenblatter = get_object_or_404(Datenblatter)
+        email_address = self.request.POST.get("email")
+        email_content = self.request.POST.get("text_for_email")
         subject = f"Angebot Photovoltaikanlage {vertrieb_angebot.angebot_id}"
 
-        user = request.user
+        user = self.request.user
         body = f"{email_content}\n\n{user.smtp_body}"
         user_email = user.email
 
@@ -1629,31 +1794,41 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 fail_silently=False,
             )
             email = EmailMultiAlternatives(
-                subject,
-                body,
-                user.smtp_username,
-                [email_address, user_email],
-                connection=connection,
+                subject, body, user.smtp_username, [email_address, user_email], connection=connection
             )
-            file_data = (
-                vertrieb_angebot.angebot_pdf.tobytes()
-            )  # Make sure this is the correct way to get PDF data
-            name = replace_spaces_with_underscores(vertrieb_angebot.name)
-            email.attach(
-                f"{name}_{vertrieb_angebot.angebot_id}.pdf",
-                file_data,
-                "application/pdf",
-            )
+            self._attach_files(email, vertrieb_angebot, datenblatter)
             email.send()
             return True
         except Exception as e:
-            messages.error(request, f"Failed to send email: {str(e)}")
+            messages.error(self.request, f"Failed to send email: {str(e)}")
             return False
 
+    def _attach_files(self, email, vertrieb_angebot, datenblatter):
+        file_data = vertrieb_angebot.angebot_pdf.tobytes()  # Ensure this is the correct way to get PDF data
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
+        email.attach(f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf")
+
+        if vertrieb_angebot.datenblatter_solar_module:
+            self._attach_datenblatter(email, datenblatter, ['solar_module_1', 'solar_module_2', 'solar_module_3'])
+        if vertrieb_angebot.datenblatter_speichermodule:
+            self._attach_datenblatter(email, datenblatter, ['speicher_module'])
+        if vertrieb_angebot.datenblatter_wechselrichter:
+            self._attach_datenblatter(email, datenblatter, ['wechselrichter'])
+        if vertrieb_angebot.datenblatter_wallbox:
+            self._attach_datenblatter(email, datenblatter, ['wall_box'])
+        if vertrieb_angebot.datenblatter_backup_box:
+            self._attach_datenblatter(email, datenblatter, ['backup_box'])
+
+    def _attach_datenblatter(self, email, datenblatter, fields):
+        for field in fields:
+            datenblatt = getattr(datenblatter, field, None)
+            if datenblatt:
+                with datenblatt.open('rb') as file:
+                    file_data = file.read()
+                email.attach(f"{field}.pdf", file_data, "application/pdf")
     def form_invalid(self, form):
-        return render(
-            self.request, self.template_name, self.get_context_data(form=form)
-        )
+        return render(self.request, self.template_name, self.get_context_data(form=form))
+
 
 
 @login_required

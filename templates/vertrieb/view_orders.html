@@ -32,9 +32,9 @@
                                             <th>Datum</th>
                                             
                                             <th>Link</th>
-                                            <th>Angebot PDF</th>
                                             
-                                            <th>Kalkulation PDF</th>
+                                            
+                                            <th>Kalkulation</th>
                                             <th>Bearbeitbar</th>
                                             
                                         </tr>
@@ -78,16 +78,10 @@
                                             <td>
                                                 <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Öffnen</a>
                                             </td>
-                                            <td>
-                                                {% if vertrieb_angebot.is_locked %}
-                                                <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
-                                                {% endif %}
-                                            </td>
-                                            
                                             
                                             <td>
                                                 {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">erstellen</a>
+                                                <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
                                                 {% endif %}
                                             </td>
                                             

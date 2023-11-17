@@ -39,6 +39,7 @@ PROJECT_APPS = [
     "adminfeautures",
     "projektant_interface",
     "calculator",
+    "datenblatter",
 ]
 
 

@@ -56,6 +56,11 @@ vertrieb_patterns = [
         name="edit_ticket",
     ),
     path(
+        "vertrieb/edit_calc/<str:angebot_id>/",
+        views.KalkulationEditView.as_view(),
+        name="edit_calc",
+    ),
+    path(
         "vertrieb/update_admin_angebot/<str:angebot_id>/",
         UpdateAdminAngebot.as_view(),
         name="update_admin_angebot",

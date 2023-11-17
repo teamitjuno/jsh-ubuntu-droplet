@@ -20,22 +20,17 @@
                     </div>
                 </div>
             </div>
+            <form id="updateForm" method="POST" action="{% url 'vertrieb_interface:document_view' angebot_id=angebot_id %}" enctype="multipart/form-data">
             <div class="row">
-                <div class="col-6">
-                    <div class="card border-info">
-                        <div class="card-body">
-                            <iframe src="{{ pdf_url }}" width='100%' height="900px">Your browser does not support iframes.</iframe>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <form id="updateForm" method="POST" action="{% url 'vertrieb_interface:document_view' angebot_id=angebot_id %}" enctype="multipart/form-data">
+                <div class="col-9">
+                    
                         {% csrf_token %}
-                        <div class="card border-info">
+                        <div class="card border-info border">
                             <div class="card-body">
                                 <h4 class="header-title">E-mail</h4>
                                 <p class="text-muted font-14">Hier kannst du eine E-mail schicken. Pdf dokument wurde automatisch zu deinem Text hinzufügt</p>
                                 {{ form.text_for_email }}
+                                <p></p>
                                 <h4 class="header-title">Empfänger</h4>
                                 {{ form.email }}
                                 <p class="text-muted font-14">eine Kopie wird auch an Ihre E-Mail Adresse geschickt</p>
@@ -46,16 +41,119 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
-                    {% if messages %}
+                    
+
+                </div>
+                <div class="col-md-6 col-xxl-3">
+                    <div class="card border-info border">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="header-title mb-0">Datenblätter an die Mail mit anhängen</h4>
+                        </div>
+
+                        <div class="card-body py-0 mb-2">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-sm rounded">
+                                        <span class="avatar-title bg-transparent border border-light text-success rounded">
+                                            <i class="ri-file-pdf-line"></i>
+                                             
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <a href="javascript:void(0);" class="h4 my-0 fw-semibold text-secondary-lighten">Datenblätter Solar Module </a>
+                                </div>
+                                <a href="javascript:void(0);" class="font-16 text-muted"><input type="checkbox" class="custom-control-input" id="datenblatter_solar_module" {% if form.datenblatter_solar_module.value %}checked{% endif %} data-switch="success" name="{{ form.datenblatter_solar_module.html_name }}" />
+                                    <label class="custom-control-label" for="datenblatter_solar_module" data-on-label="Ja" data-off-label="Nein"></label></a>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-sm rounded">
+                                        <span class="avatar-title bg-transparent border border-light text-success rounded">
+                                            <i class="ri-file-pdf-line"></i>
+                                             
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <a href="javascript:void(0);" class="h4 my-0 fw-semibold text-secondary-lighten">Datenblätter Speichermodule </a>
+                                </div>
+                                <a href="javascript:void(0);" class="font-16 text-muted"><input type="checkbox" class="custom-control-input" id="datenblatter_speichermodule" {% if form.datenblatter_speichermodule.value %}checked{% endif %} data-switch="success" name="{{ form.datenblatter_speichermodule.html_name }}" />
+                                    <label class="custom-control-label" for="datenblatter_speichermodule" data-on-label="Ja" data-off-label="Nein"></label></a>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-sm rounded">
+                                        <span class="avatar-title bg-transparent border border-light text-success rounded">
+                                            <i class="ri-file-pdf-line"></i>
+                                             
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <a href="javascript:void(0);" class="h4 my-0 fw-semibold text-secondary-lighten">Datenblätter Wechselrichter </a>
+                                </div>
+                                <a href="javascript:void(0);" class="font-16 text-muted"><input type="checkbox" class="custom-control-input" id="datenblatter_wechselrichter" {% if form.datenblatter_wechselrichter.value %}checked{% endif %} data-switch="success" name="{{ form.datenblatter_wechselrichter.html_name }}" />
+                                    <label class="custom-control-label" for="datenblatter_wechselrichter" data-on-label="Ja" data-off-label="Nein"></label></a>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-sm rounded">
+                                        <span class="avatar-title bg-transparent border border-light text-success rounded">
+                                            <i class="ri-file-pdf-line"></i>
+                                             
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <a href="javascript:void(0);" class="h4 my-0 fw-semibold text-secondary-lighten">Datenblätter Wallbox </a>
+                                </div>
+                                <a href="javascript:void(0);" class="font-16 text-muted"> <input type="checkbox" class="custom-control-input" id="datenblatter_wallbox" {% if form.datenblatter_wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.datenblatter_wallbox.html_name }}" />
+                                    <label class="custom-control-label" for="datenblatter_wallbox" data-on-label="Ja" data-off-label="Nein"></label></a>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-sm rounded">
+                                        <span class="avatar-title bg-transparent border border-light text-success rounded">
+                                            <i class="ri-file-pdf-line"></i>
+                                             
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <a href="javascript:void(0);" class="h4 my-0 fw-semibold text-secondary-lighten">Datenblätter Backup Box </a>
+                                </div>
+                                <a href="javascript:void(0);" class="font-16 text-muted"><input type="checkbox" class="custom-control-input" id="datenblatter_backup_box" {% if form.datenblatter_backup_box.value %}checked{% endif %} data-switch="success" name="{{ form.datenblatter_backup_box.html_name }}" />
+                                    <label class="custom-control-label" for="datenblatter_backup_box" data-on-label="Ja" data-off-label="Nein"></label></a>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div>
+                                {% if messages %}
                     <ul>
                         {% for message in messages %}
                         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
                         {% endfor %}
                     </ul>
                     {% endif %}
+            </form>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-info border">
+                        <div class="card-body">
+                            <iframe src="{{ pdf_url }}" width='100%' height="900px">Your browser does not support iframes.</iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
         <footer class="footer">
             <div class="container-fluid">
