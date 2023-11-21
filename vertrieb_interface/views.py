@@ -1824,7 +1824,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 self._attach_datenblatter(email, datenblatter, ['solar_module_1',])
             if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)":
                 self._attach_datenblatter(email, datenblatter, ['solar_module_2',])
-            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH":
+            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH" or "Phono Solar PS430M8GFH-18/VNH":
                 self._attach_datenblatter(email, datenblatter, ['solar_module_3'])
         
         if vertrieb_angebot.datenblatter_speichermodule:
