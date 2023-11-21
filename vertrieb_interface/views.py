@@ -1773,7 +1773,9 @@ class DocumentView(LoginRequiredMixin, DetailView):
         form = self.form_class(
             request.POST, instance=self.get_object(), user=request.user
         )
+
         if form.is_valid():
+
             form.save()
             if self._send_email(form.instance):
                 messages.success(request, "Email sent successfully")
@@ -1818,13 +1820,22 @@ class DocumentView(LoginRequiredMixin, DetailView):
         email.attach(f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf")
 
         if vertrieb_angebot.datenblatter_solar_module:
-            self._attach_datenblatter(email, datenblatter, ['solar_module_1', 'solar_module_2', 'solar_module_3'])
+            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B":
+                self._attach_datenblatter(email, datenblatter, ['solar_module_1',])
+            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)":
+                self._attach_datenblatter(email, datenblatter, ['solar_module_2',])
+            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH":
+                self._attach_datenblatter(email, datenblatter, ['solar_module_3'])
+        
         if vertrieb_angebot.datenblatter_speichermodule:
             self._attach_datenblatter(email, datenblatter, ['speicher_module'])
+        
         if vertrieb_angebot.datenblatter_wechselrichter:
             self._attach_datenblatter(email, datenblatter, ['wechselrichter'])
+
         if vertrieb_angebot.datenblatter_wallbox:
             self._attach_datenblatter(email, datenblatter, ['wall_box'])
+
         if vertrieb_angebot.datenblatter_backup_box:
             self._attach_datenblatter(email, datenblatter, ['backup_box'])
 
@@ -1871,26 +1882,6 @@ def serve_pdf(request, angebot_id):
     response["Content-Disposition"] = f"inline; filename={filename}"
 
     return response
-
-
-# @login_required
-# def serve_pdf(request, angebot_id):
-#     decoded_angebot_id = unquote(angebot_id)
-#     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-#     name = replace_spaces_with_underscores(vertrieb_angebot.name)
-#     filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
-#     sleep(0.5)
-#     # Check if the file exists and is not None
-#     if not vertrieb_angebot.angebot_pdf:
-#         return StreamingHttpResponse("File not found.", status=404)
-
-#     response = FileResponse(
-#         vertrieb_angebot.angebot_pdf, content_type="application/pdf"
-#     )
-#     response["Content-Disposition"] = f"inline; filename={filename}"
-
-#     return response
-
 
 @login_required
 def serve_calc_pdf(request, angebot_id):

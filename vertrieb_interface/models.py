@@ -510,7 +510,16 @@ class VertriebAngebot(TimeStampMixin):
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
         self.gesamtkapazitat = self.gesamtkapazitat_rechnung
-
+        if self.solar_module:
+            self.datenblatter_solar_module = True
+        if self.speicher_model == "LUNA 2000" and self.anz_speicher !=0:
+            self.datenblatter_speichermodule = True
+        if self.wechselrichter_model == "SUN 2000" and self.anz_speicher !=0:
+            self.datenblatter_wechselrichter = True
+        if self.wallboxtyp == "Huawei FusionCharge AC" and self.wallbox_anzahl !=0:
+            self.datenblatter_wallbox = True
+        if self.notstrom == True:
+            self.datenblatter_backup_box = True
         super().save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(
