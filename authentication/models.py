@@ -5,7 +5,7 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator
 from django.utils import timezone
-from authentication.constants import DEFAULT_ROLES
+from .constants import DEFAULT_ROLES
 from django.contrib.auth.models import Permission
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import (
@@ -170,10 +170,11 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         ("Map", "Map"),
         ("Notizen", "Notizen"),
     ]
+    is_home_page = models.BooleanField(default=True)
     map_notizen_container_view = models.CharField(
         choices=MAP_NOTIZEN_CHOICES, default="Map"
     )
-
+    initial_text_for_email = models.TextField(blank=True, null=True)
     initial_verbrauch = models.FloatField(
         default=15000, validators=[MinValueValidator(0)]  # type: ignore
     )
@@ -220,7 +221,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         null=True,
     )
     initial_wallbox_anzahl = models.PositiveIntegerField(default=0)
-    intial_kabelanschluss = models.FloatField(
+    initial_kabelanschluss = models.FloatField(
         default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
 

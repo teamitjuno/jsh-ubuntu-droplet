@@ -151,6 +151,15 @@
                                             <td>{{ form.map_notizen_container_view }}</td>
                                         </tr>
                                         <tr>
+                                            <th>{{ form.is_home_page.label_tag }}</th>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="is_home_page" {% if form.is_home_page.value %}checked{% endif %} data-switch="success" name="{{ form.is_home_page.html_name }}" />
+                                                    <label class="custom-control-label" for="is_home_page" data-on-label="Ja" data-off-label="Nein"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>{{ form.initial_solar_module.label_tag }}</th>
                                             <td>{{ form.initial_solar_module }}</td>
                                         </tr>
@@ -269,6 +278,11 @@
                                             <th>{{ form.initial_bis40kWp.label_tag }}</th>
                                             <td>{{ form.initial_bis40kWp }}</td>
                                         </tr>
+                                        <tr>
+                                            <th>{{ form.initial_text_for_email.label_tag }}</th>
+                                            <td>{{ form.initial_text_for_email }}</td>
+                                        </tr>
+
                                     </tbody>
                                 </table>
 

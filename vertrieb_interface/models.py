@@ -16,7 +16,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 
-from authentication.models import User
 from shared.models import TimeStampMixin
 from prices.models import (
     ModuleGarantiePreise,
@@ -26,6 +25,7 @@ from prices.models import (
     SolarModulePreise,
     WallBoxPreise,
 )
+from django.utils.translation import gettext_lazy as _
 from config.settings import GOOGLE_MAPS_API_KEY
 
 now = timezone.now()
@@ -195,7 +195,7 @@ STORNIERUNGSGRUND_CHOICES = (
     ("Kunde möchte PVA nur mieten", "Der Kunde möchte die PVA-Anlage nur mieten"),
     ("Kunde war nicht erreichbar", "Der Kunde war nicht erreichbar"),
 )
-TEXT_FOR_EMAIL = '''
+TEXT_FOR_EMAIL = """
                 Sehr geehrter Interessent,
 
                 anbei wie besprochen das Angebot im Anhang als PDF-Dokument.
@@ -204,7 +204,8 @@ TEXT_FOR_EMAIL = '''
                 
 
                 Wir wünschen Ihnen einen schönen Tag und würden uns über eine positive Rückmeldung freuen
-                '''
+                """
+
 
 class VertriebAngebot(TimeStampMixin):
     angebot_id = models.CharField(max_length=255, unique=True, primary_key=True)
@@ -459,12 +460,14 @@ class VertriebAngebot(TimeStampMixin):
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
     angebot_pdf_admin = models.BinaryField(blank=True, null=True)
+    angebot_and_calc_pdf = models.BinaryField(blank=True, null=True)
     calc_pdf = models.BinaryField(blank=True, null=True)
     calc_graph_img = models.ImageField(null=True, blank=True)
     ticket_pdf = models.BinaryField(blank=True, null=True)
     ag_data = models.TextField(blank=True)
     ag_fetched_data = models.TextField(blank=True, null=True)
     countdown_on = models.BooleanField(default=False)
+
 
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
@@ -476,7 +479,7 @@ class VertriebAngebot(TimeStampMixin):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not self.angebot_id:
             self.angebot_id = self.generate_angebot_id()
             action_flag = ADDITION
         else:
@@ -512,15 +515,15 @@ class VertriebAngebot(TimeStampMixin):
         self.gesamtkapazitat = self.gesamtkapazitat_rechnung
         if self.solar_module:
             self.datenblatter_solar_module = True
-        if self.speicher_model == "LUNA 2000" and self.anz_speicher !=0:
+        if self.speicher_model == "LUNA 2000" and self.anz_speicher != 0:
             self.datenblatter_speichermodule = True
-        if self.wechselrichter_model == "SUN 2000" and self.anz_speicher !=0:
+        if self.wechselrichter_model == "SUN 2000" and self.anz_speicher != 0:
             self.datenblatter_wechselrichter = True
-        if self.wallboxtyp == "Huawei FusionCharge AC" and self.wallbox_anzahl !=0:
+        if self.wallboxtyp == "Huawei FusionCharge AC" and self.wallbox_anzahl != 0:
             self.datenblatter_wallbox = True
         if self.notstrom == True:
             self.datenblatter_backup_box = True
-        super().save(*args, **kwargs)
+        super(VertriebAngebot, self).save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(
             user_id=self.user_id,
@@ -534,10 +537,15 @@ class VertriebAngebot(TimeStampMixin):
         return f"{self.angebot_id}"
 
     def generate_angebot_id(self):
-        user = User.objects.get(id=self.user.pk)
-        kurz = user.kuerzel  # type: ignore
-        current_datetime = datetime.datetime.now()
-        return f"AN-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+        if self.user_id:
+            user = User.objects.get(id=self.user.pk)
+            kurz = user.kuerzel  # Assuming 'kuerzel' is an attribute of User
+            current_datetime = datetime.datetime.now()
+            return f"AN-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+        else:
+            # Return a default ID
+            current_datetime = datetime.datetime.now()
+            return f"AN-DEFAULT{current_datetime.strftime('%d%m%Y-%H%M%S')}"
 
     def get_absolute_url(self):
         return reverse("edit_angebot", args=[str(self.angebot_id)])

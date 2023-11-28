@@ -55,6 +55,7 @@ DJANGO_APPS = [
 
 SERVICE_APPS = [
     "rest_framework",
+    # 'debug_toolbar',
     "rest_framework.authtoken",
     "widget_tweaks",
     "schema_graph",
@@ -79,17 +80,15 @@ CORS_ALLOWED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
-
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
-
-
 ]
 
 MIDDLEWARE = [
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "authentication.middleware.LogIPMiddleware",
@@ -101,7 +100,16 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
+# INTERNAL_IPS = [
+#     # ... your IP addresses ...
+#     '127.0.0.1',
+#     '172.17.0.1',
+#     # If using Docker, you might need to add '172.17.0.1' or similar.
+# ]
+# if DEBUG:
+#     import socket  # only if you haven't already imported this
+#     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+#     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 ROOT_URLCONF = "config.urls"
 
@@ -175,7 +183,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # Internationalization
-LANGUAGE_CODE = "de-de"
+LANGUAGE_CODE = "en-en"
 TIME_ZONE = "Europe/Berlin"
 USE_I18N = True
 USE_L10N = True
@@ -185,7 +193,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATIC = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [

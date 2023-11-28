@@ -52,22 +52,31 @@ from vertrieb_interface.get_user_angebots import (
     pushAngebot,
     extract_values,
     delete_redundant_angebot,
+    log_and_notify,
 )
 from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
-from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm
+from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm, VertriebAngebotEmptyForm
 from vertrieb_interface.utils import load_vertrieb_angebot
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator,
     angebot_pdf_creator_user,
     calc_pdf_creator,
     ticket_pdf_creator,
+    angebot_plus_calc_pdf,
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from .models import VertriebAngebot
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
 from django.http import FileResponse
+
+
+def generate_angebot_id(request):
+    user = User.objects.get(id=request.user.pk)
+    kurz = user.kuerzel 
+    current_datetime = datetime.datetime.now()
+    return f"AN-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
 
 
 class AsyncBytesIter:
@@ -234,8 +243,8 @@ def get_icon_based_on_status(entry, status):
 def home(request):
     user = request.user
     load_user_angebots(request)
-    if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{user.email}: Now is on the homepage...")
+    # if TELEGRAM_LOGGING:
+    #     send_message_to_bot(f"{user.email}: Now is on the homepage...")
     year, month = now.year, now.month
 
     users = (
@@ -358,7 +367,7 @@ def home(request):
         "abgelaufen": abgelaufen_count,
         "on Hold": on_hold_count,
         "storniert": storniert_count,
-        "lee" : lee_count,
+        "lee": lee_count,
         "remaining_stock": remaining_stock,
         "solar_module_ticket_stats": solar_module_ticket_stats,
         "all_vertrieb_angebots": all_vertrieb_angebots,
@@ -452,38 +461,122 @@ def chat_bot(request):
         return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
+
+
 @user_passes_test(vertrieb_check)
-def create_angebot(request):
-    form_angebot = VertriebAngebotForm(request.POST or None, user=request.user)
-    if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{request.user}, Neue Angebot created")
-    print(request.user, "Neue Angebot created")
+def user_redirect_view(request):
+    if request.user.is_authenticated:
+        if request.user.is_home_page:
+            return redirect('vertrieb_interface:intermediate_view')
+        else:
+            return redirect("vertrieb_interface:home")
+    else:
+        return redirect('authentication:login')
+    
+
+def intermediate_view(request):
+    angebot_id = generate_angebot_id(request=request)  # Or however you obtain the angebot_id
+
+    context = {
+        'angebot_id': angebot_id,
+    }
+    return render(request, 'vertrieb/intermediate_template.html', context)
+
+
+@user_passes_test(vertrieb_check)
+def create_angebot_redirect(request):
+    if request.method != 'POST':
+        return page_not_found(request, Exception("POST request required"))
+
+    user = request.user
+    angebot_id = request.POST.get('angebot_id')
+    initial_data = {
+        "verbrauch": user.initial_verbrauch,
+        "grundpreis": user.initial_grundpreis,
+        "arbeitspreis": user.initial_arbeitspreis,
+        "prognose": user.initial_prognose,
+        "zeitraum": user.initial_zeitraum,
+        "bis10kWp": user.initial_bis10kWp,
+        "bis40kWp": user.initial_bis40kWp,
+        "anz_speicher": user.initial_anz_speicher,
+        "wandhalterung_fuer_speicher": user.initial_wandhalterung_fuer_speicher,
+        "ausrichtung": user.initial_ausrichtung,
+        "komplex": user.initial_komplex,
+        "solar_module": user.initial_solar_module,
+        "modulanzahl": user.initial_modulanzahl,
+        "garantieWR": user.initial_garantieWR,
+        "elwa": user.initial_elwa,
+        "thor": user.initial_thor,
+        "heizstab": user.initial_heizstab,
+        "notstrom": user.initial_notstrom,
+        "anzOptimizer": user.initial_anzOptimizer,
+        "wallboxtyp": user.initial_wallboxtyp,
+        "wallbox_anzahl": user.initial_wallbox_anzahl,
+        "kabelanschluss": user.initial_kabelanschluss,
+        "text_for_email": user.initial_text_for_email,
+        "map_notizen_container_view": user.map_notizen_container_view,
+    }
+
+    # Initialize form with POST data
+    form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
     if form_angebot.is_valid():
-        vertrieb_angebot = form_angebot.save(commit=False, user=request.user)
-        vertrieb_angebot.user = request.user
+        vertrieb_angebot = form_angebot.save(commit=False)
+        vertrieb_angebot.created_at = timezone.now()
+        vertrieb_angebot.current_date = datetime.datetime.now()
+        
+        # Set attributes from user's initial data
+        initial_attrs = [
+            "verbrauch", "grundpreis", "arbeitspreis", "prognose", "zeitraum",
+            "bis10kWp", "bis40kWp", "anz_speicher", "wandhalterung_fuer_speicher",
+            "ausrichtung", "komplex", "solar_module", "modulanzahl", "garantieWR",
+            "elwa", "thor", "heizstab", "notstrom", "anzOptimizer", "wallboxtyp",
+            "wallbox_anzahl", "kabelanschluss", "text_for_email"        ]
+        for attr in initial_attrs:
+            setattr(vertrieb_angebot, attr, getattr(user, 'initial_' + attr))
 
-        vertrieb_angebot.save()
-
-        return redirect("vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id)
-
+        vertrieb_angebot.save(user)
+        return redirect("vertrieb_interface:edit_angebot", angebot_id)
     if request.POST and "create_blank_angebot" in request.POST:
-        blank_angebot = VertriebAngebot(user=request.user)
+        blank_angebot = VertriebAngebot(user=user)
         blank_angebot.created_at = timezone.now()
         blank_angebot.current_date = datetime.datetime.now()
-
+        blank_angebot.verbrauch = user.initial_verbrauch
+        blank_angebot.grundpreis = user.initial_grundpreis
+        blank_angebot.arbeitspreis = user.initial_arbeitspreis
+        blank_angebot.prognose = user.initial_prognose
+        blank_angebot.zeitraum = user.initial_zeitraum
+        blank_angebot.bis10kWp = user.initial_bis10kWp
+        blank_angebot.bis40kWp = user.initial_bis40kWp
+        blank_angebot.anz_speicher = user.initial_anz_speicher
+        blank_angebot.wandhalterung_fuer_speicher = (
+            user.initial_wandhalterung_fuer_speicher
+        )
+        blank_angebot.ausrichtung = user.initial_ausrichtung
+        blank_angebot.komplex = user.initial_komplex
+        blank_angebot.solar_module = user.initial_solar_module
+        blank_angebot.modulanzahl = user.initial_modulanzahl
+        blank_angebot.garantieWR = user.initial_garantieWR
+        blank_angebot.elwa = user.initial_elwa
+        blank_angebot.thor = user.initial_thor
+        blank_angebot.heizstab = user.initial_heizstab
+        blank_angebot.notstrom = user.initial_notstrom
+        blank_angebot.anzOptimizer = user.initial_anzOptimizer
+        blank_angebot.wallboxtyp = user.initial_wallboxtyp
+        blank_angebot.wallbox_anzahl = user.initial_wallbox_anzahl
+        blank_angebot.kabelanschluss = (
+            user.intial_kabelanschluss
+        )
+        blank_angebot.text_for_email = user.initial_text_for_email
         blank_angebot.save()
         return HttpResponseRedirect(
             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
         )
-
-    if not form_angebot.is_valid():
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(form_angebot.errors)
+    
+    else:
         print(form_angebot.errors)
+
         return page_not_found(request, Exception())
-
-    return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
-
+    
 
 @user_passes_test(vertrieb_check)
 def create_angebot(request):
@@ -512,7 +605,7 @@ def create_angebot(request):
         "anzOptimizer": user.initial_anzOptimizer,
         "wallboxtyp": user.initial_wallboxtyp,
         "wallbox_anzahl": user.initial_wallbox_anzahl,
-        "kabelanschluss": user.intial_kabelanschluss,
+        "kabelanschluss": user.initial_kabelanschluss,
         "map_notizen_container_view": user.map_notizen_container_view,
     }
 
@@ -555,8 +648,9 @@ def create_angebot(request):
         blank_angebot.wallboxtyp = user.initial_wallboxtyp
         blank_angebot.wallbox_anzahl = user.initial_wallbox_anzahl
         blank_angebot.kabelanschluss = (
-            user.intial_kabelanschluss
-        )  # fixed typo from 'intial' to 'initial'
+            user.initial_kabelanschluss
+        ) 
+        blank_angebot.text_for_email = user.initial_text_for_email
         blank_angebot.save()
         return HttpResponseRedirect(
             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
@@ -613,6 +707,26 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     form_class = VertriebAngebotForm
     template_name = "vertrieb/edit_angebot.html"
     context_object_name = "vertrieb_angebot"
+    def _log_and_notify_attempt(self, user, action_type):
+        if TELEGRAM_LOGGING:
+            try:
+                log_and_notify(f"{user.email}: Attempt to {action_type}")
+            except Exception:
+                pass
+
+    def _log_and_notify_success(self, user):
+        if TELEGRAM_LOGGING:
+            try:
+                log_and_notify(f"{user.email} Successful!")
+            except Exception:
+                pass
+
+    def _log_and_notify_error(self, user, form):
+        if TELEGRAM_LOGGING:
+            try:
+                log_and_notify(f"{user.email} Error: {form.errors}")
+            except Exception:
+                pass
 
     def dispatch(self, request, *args, **kwargs):
         angebot_id = kwargs.get("angebot_id")
@@ -620,7 +734,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             raise PermissionDenied()
         self.fetch_angebot_data(request, angebot_id)
         self.handle_status_change(angebot_id)
-        self.handle_zoho_status_change(request, angebot_id)
+    
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
@@ -712,65 +826,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         else:
             pass
 
-    def handle_zoho_status_change(self, request, angebot_id):
-        vertrieb_angebot = VertriebAngebot.objects.get(
-            angebot_id=angebot_id, user=request.user
-        )
-        try:
-            if (
-                vertrieb_angebot.angebot_id_assigned == True
-                and vertrieb_angebot.zoho_id
-            ):
-                zoho_id = vertrieb_angebot.zoho_id
-                if TELEGRAM_LOGGING:
-                    send_message_to_bot(
-                        f"{request.user.email}: Handling status change from ZOHO... {vertrieb_angebot.vorname_nachname}"
-                    )
-
-                if vertrieb_angebot.ag_fetched_data:
-                    fetched_data = json.loads(vertrieb_angebot.ag_fetched_data)
-                    vertrieb_angebot.notizen = fetched_data.get("notizen")
-
-                    status = fetched_data.get("status")
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{request.user.email}: {status}")
-
-                    if fetched_data.get("status") == "angenommen":
-                        vertrieb_angebot.status = "angenommen"
-                        vertrieb_angebot.angebot_id_assigned = False
-                        vertrieb_angebot.status_change_field = None
-                        vertrieb_angebot.save()
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{request.user.email}: Angebot saved with status {vertrieb_angebot.status}"
-                            )
-
-                        # Assuming you want to create a form instance with the fetched data
-                        form = self.form_class(
-                            fetched_data,
-                            instance=vertrieb_angebot,
-                            user=request.user,
-                        )
-                        if form.is_valid():
-                            form.save()
-                    else:
-                        form = self.form_class(
-                            fetched_data,
-                            instance=vertrieb_angebot,
-                            user=request.user,
-                        )
-                        if form.is_valid():
-                            form.save()
-
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{request.user.email}: IF {status}, Status not changed"
-                            )
-                        pass
-            else:
-                pass
-        except VertriebAngebot.DoesNotExist:
-            pass
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
@@ -869,179 +924,137 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         user = request.user
         user_zoho_id = user.zoho_id
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+        data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+        name_to_kundennumer = {
+        item["name"]: item["zoho_kundennumer"] for item in data
+        }
+        name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+        
 
-        if "change_status_button" in request.POST:
-            if form.is_valid():
-                form.instance.status = "angenommen"  # type:ignore
-                form.save()  # type:ignore
+        if request.method == 'POST':
+            action_type = request.POST.get('action_type')
+            if action_type == 'switch_to_bekommen':
+                self._log_and_notify_attempt(user, action_type)
+
+                if form.is_valid():
+                    vertrieb_angebot.angebot_id_assigned = True
+                    vertrieb_angebot.save()
+                    form.instance.status = "bekommen"
+                    form.save()   
+                    response = pushAngebot(vertrieb_angebot, user_zoho_id)
+                    response_data = response.json()
+                    new_record_id = response_data["data"]["ID"]
+                    vertrieb_angebot.angebot_zoho_id = new_record_id
+                    vertrieb_angebot.save()
+
+                    self._log_and_notify_success(user)
+                    return redirect(
+                        "vertrieb_interface:create_angebot_pdf_user",
+                        vertrieb_angebot.angebot_id,
+                    )
+            elif action_type == 'switch_to_bekommen_pdf_plus_kalk':
+                self._log_and_notify_attempt(user, action_type)
+
+                if form.is_valid():
+                    
+                    vertrieb_angebot.angebot_id_assigned = True
+                    vertrieb_angebot.save()
+                    form.instance.status = "bekommen"
+                    form.save()   
+                    response = pushAngebot(vertrieb_angebot, user_zoho_id)
+                    response_data = response.json()
+                    new_record_id = response_data["data"]["ID"]
+                    vertrieb_angebot.angebot_zoho_id = new_record_id
+                    vertrieb_angebot.save()
+                    self._log_and_notify_success(user)
+                    return redirect(
+                        "vertrieb_interface:create_angebot_and_calc_pdf",
+                        vertrieb_angebot.angebot_id,
+                    )
+            elif action_type == "zahlungs":
+                self._log_and_notify_attempt(user, action_type)
+                if form.is_valid():
+                    instance = form.instance
+                    instance.zahlungsbedingungen = form.cleaned_data["zahlungsbedingungen"]
+                    instance.save(update_fields=["zahlungsbedingungen"])
+                    self._log_and_notify_success(user)
+                    return redirect(
+                        "vertrieb_interface:create_angebot_pdf_user",
+                        vertrieb_angebot.angebot_id,
+                    )  
+            elif action_type=="kalkulation_erstellen":
+                self._log_and_notify_attempt(user, action_type)
+                if form.is_valid():
+                    instance = form.instance
+                    instance.save()
+                    self._log_and_notify_success(user)
+                    return redirect(
+                        "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
+                    )
+            elif action_type == "angebotsumme_rechnen":
+                self._log_and_notify_attempt(user, action_type)
+                if form.is_valid():
+                    instance = form.instance
+                    if vertrieb_angebot.angebot_id_assigned == False:
+                        instance.angebot_id_assigned == False
+                        instance.save()
+                        self._log_and_notify_success(user)
+                        return redirect(
+                            "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                        )
+                    else:
+                        instance.save()
+                        self._log_and_notify_success(user)
+                        return redirect(
+                            "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                        )
+            elif form.is_valid():
+                if TELEGRAM_LOGGING:
+                    try:
+                        log_and_notify(f"{user.email}: Attempt to Speichern")
+                    except:
+                        pass
+                name = form.cleaned_data["name"]
+                kundennumer = name_to_kundennumer[name]
+                zoho_id = name_to_zoho_id[name]
+                vertrieb_angebot.zoho_kundennumer = kundennumer
+                vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.angebot_id_assigned = True
+                name_to_status = {item["name"]: item["status"] for item in data}
+                status = name_to_status[name]
+
+                if status == "in Kontakt":
+                    vertrieb_angebot.status = "in Kontakt"
+                elif status == "Kontaktversuch":
+                    vertrieb_angebot.status = "Kontaktversuch"
+                elif status == "":
+                    vertrieb_angebot.status = ""
+
+                # Save the changes
+                vertrieb_angebot.save()
+                instance = form.instance
+                instance.zahlungsbedingungen = form.cleaned_data["vorname_nachname"]
+                instance.save(update_fields=["vorname_nachname"])
+                
+                instance.save()  # type:ignore
+
                 CustomLogEntry.objects.log_action(
                     user_id=vertrieb_angebot.user_id,
-                    content_type_id=ContentType.objects.get_for_model(
-                        vertrieb_angebot
-                    ).pk,
+                    content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
                     object_id=vertrieb_angebot.pk,
                     object_repr=str(vertrieb_angebot),
                     action_flag=CHANGE,
                     status=vertrieb_angebot.status,
                 )
+                self._log_and_notify_success(user)
                 return redirect(
                     "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                 )
-        if "angebotsumme_rechnen" in request.POST:
-            # print(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : ", (vertrieb_angebot.zoho_id), (vertrieb_angebot.vorname_nachname))
-            # if TELEGRAM_LOGGING:
-            #     send_message_to_bot(f"{user.email}: Angebotsumme rechnen für ANGEBOT_ZOHO_ID : , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}")
-            if form.is_valid():
-                instance = form.instance
-                instance.save()
-
-                return redirect(
-                    "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
-                )
-        if "zahlungs" in request.POST:
-            if form.is_valid():
-                instance = form.instance
-                instance.zahlungsbedingungen = form.cleaned_data["zahlungsbedingungen"]
-                instance.save(update_fields=["zahlungsbedingungen"])
-                return redirect(
-                    "vertrieb_interface:create_angebot_pdf_user",
-                    vertrieb_angebot.angebot_id,
-                )
-
-        if "bekommen_zu_machen" in request.POST:
-            print(
-                f"{user.email}: Creating PDF für ANGEBOT_ZOHO_ID : ",
-                (vertrieb_angebot.zoho_id),
-                (vertrieb_angebot.vorname_nachname),
-            )
-            if TELEGRAM_LOGGING:
-                send_message_to_bot(
-                    f"{user.email}: Attempt to create PDF für ANGEBOT_ZOHO_ID :  , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-                )
-            if form.is_valid():
-                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
-                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-                name = form.cleaned_data["name"]
-                zoho_id = form.cleaned_data["zoho_id"]
-                kundennumer = name_to_kundennumer[name]
-
-                zoho_id = name_to_zoho_id[name]
-
-                vertrieb_angebot.zoho_kundennumer = kundennumer
-                vertrieb_angebot.zoho_id = int(zoho_id)
-                vertrieb_angebot.angebot_id_assigned = True
-                vertrieb_angebot.save()
-                form.save()
-                self.fetch_angebot_data(request, vertrieb_angebot.angebot_id)
-
-                if vertrieb_angebot.ag_fetched_data:
-                    fetched_data = json.loads(vertrieb_angebot.ag_fetched_data)
-                    vertrieb_angebot.notizen = fetched_data.get("notizen")
-
-                    status = fetched_data.get("status")
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot(
-                            f"{request.user.email}: Preliminary checking ZOHO status: {status}"
-                        )
-
-                    if fetched_data.get("status") != "angenommen":
-                        form.instance.status = "bekommen"
-                        form.save()
-
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{user.email} Changing status to : {vertrieb_angebot.status}"
-                            )
-                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
-                        response_data = response.json()
-                        new_record_id = response_data["data"]["ID"]
-                        vertrieb_angebot.angebot_zoho_id = new_record_id
-                        vertrieb_angebot.save()
-
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{user.email} Saved {vertrieb_angebot.angebot_id} == {vertrieb_angebot.angebot_zoho_id}\n Kundennumer: {vertrieb_angebot.zoho_kundennumer} ; {vertrieb_angebot.vorname_nachname}"
-                            )
-                        return redirect(
-                            "vertrieb_interface:create_angebot_pdf_user",
-                            vertrieb_angebot.angebot_id,
-                        )
-
-                    # vertrieb_angebot.angebot_id_assigned = True
-
-                    elif fetched_data.get("status") == "angenommen":
-                        form.instance.status = "angenommen"
-                        form.save()
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
-                    else:
-                        status = fetched_data.get("status")
-                        if TELEGRAM_LOGGING:
-                            send_message_to_bot(
-                                f"{user.email}Changing status to : {vertrieb_angebot.status}"
-                            )
-                        form.instance.status = f"{status}"
-                        form.save()
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
-
-        elif form.is_valid():
-            vertrieb_angebot.angebot_id_assigned = True
-
-            # Existing code to process data and set various attributes
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
-            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            name = form.cleaned_data["name"]
-            kundennumer = name_to_kundennumer[name]
-            zoho_id = name_to_zoho_id[name]
-
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.zoho_id = int(zoho_id)
-
-            # New logic for setting status
-            name_to_status = {item["name"]: item["status"] for item in data}
-            status = name_to_status[name]
-
-            if status == "in Kontakt":
-                vertrieb_angebot.status = "in Kontakt"
-            elif status == "Kontaktversuch":
-                vertrieb_angebot.status = "Kontaktversuch"
-            
-            # Save the changes
-            vertrieb_angebot.save()
-            form.save()  # type:ignore
-
-
-            if TELEGRAM_LOGGING:
-                send_message_to_bot(
-                    f"{user.email}: Speichern Angebot: , {vertrieb_angebot.zoho_id}, {vertrieb_angebot.vorname_nachname}"
-                )
-            CustomLogEntry.objects.log_action(
-                user_id=vertrieb_angebot.user_id,
-                content_type_id=ContentType.objects.get_for_model(vertrieb_angebot).pk,
-                object_id=vertrieb_angebot.pk,
-                object_repr=str(vertrieb_angebot),
-                action_flag=CHANGE,
-                status=vertrieb_angebot.status,
-            )
-            return redirect(
-                "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
-            )
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(
-                f"{user.email}: Saving unsuccessfull! Form not valid, {vertrieb_angebot.angebot_id}"
-            )
-        return self.form_invalid(form, vertrieb_angebot)
-
+            self._log_and_notify_error(user, form)
+            return self.form_invalid(form, vertrieb_angebot)
+    
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
+        
         context = self.get_context_data()
         countdown = vertrieb_angebot.countdown()
         context["status_change_field"] = vertrieb_angebot.status_change_field
@@ -1149,6 +1162,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
+                form.vor
                 form.save()  # type:ignore
 
                 return redirect(
@@ -1311,9 +1325,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
             vertrieb_angebot.save()
             form.save()  # type:ignore
 
-            return redirect(
-                "vertrieb_interface:edit_calc", vertrieb_angebot.angebot_id
-            )
+            return redirect("vertrieb_interface:edit_calc", vertrieb_angebot.angebot_id)
         return self.form_invalid(form, vertrieb_angebot)
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
@@ -1451,21 +1463,17 @@ def update_status_to_angenommen(angebot_ids):
     # Optionally, you can return the count of updated instances
     return angebote.count()
 
+
 def update_vertrieb_angebot_assignment(user):
-
-
     user_data = json.loads(user.zoho_data_text)
     # Extract zoho_id values from user_data
     if user_data != []:
-        user_zoho_ids = {item['zoho_id'] for item in user_data}
+        user_zoho_ids = {item["zoho_id"] for item in user_data}
 
         # Filter vertrieb_angebot instances that need to be updated
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-            user=user, 
-            angebot_id_assigned=True
-        ).exclude(
-            zoho_id__in=user_zoho_ids
-        )
+            user=user, angebot_id_assigned=True
+        ).exclude(zoho_id__in=user_zoho_ids)
 
         # Bulk update angebot_id_assigned to False
         vertrieb_angebots_to_update.update(angebot_id_assigned=False)
@@ -1489,7 +1497,6 @@ def load_user_angebots(request):
         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
-        
 
         if TELEGRAM_LOGGING:
             send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
@@ -1600,8 +1607,23 @@ def create_angebot_pdf_user(request, angebot_id):
 
     return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
 
+@login_required
+def create_angebot_and_calc_pdf(request, angebot_id):
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+    user = request.user
+    data = vertrieb_angebot.data
+    certifikate = user.user_certifikate
 
+    pdf_content = angebot_plus_calc_pdf.createOfferPdf(
+        data,
+        vertrieb_angebot,
+        certifikate,
+        user,
+    )
+    vertrieb_angebot.angebot_and_calc_pdf = pdf_content
+    vertrieb_angebot.save()
 
+    return redirect("vertrieb_interface:document_and_calc_view", angebot_id=angebot_id)
 
 
 @login_required
@@ -1756,7 +1778,6 @@ class DocumentView(LoginRequiredMixin, DetailView):
         self.object = get_object_or_404(self.model, angebot_id=angebot_id)
         return self.object
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
@@ -1775,7 +1796,6 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
 
         if form.is_valid():
-
             form.save()
             if self._send_email(form.instance):
                 messages.success(request, "Email sent successfully")
@@ -1805,7 +1825,11 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 fail_silently=False,
             )
             email = EmailMultiAlternatives(
-                subject, body, user.smtp_username, [email_address, user_email], connection=connection
+                subject,
+                body,
+                user.smtp_username,
+                [email_address, user_email],
+                connection=connection,
             )
             self._attach_files(email, vertrieb_angebot, datenblatter)
             email.send()
@@ -1815,41 +1839,208 @@ class DocumentView(LoginRequiredMixin, DetailView):
             return False
 
     def _attach_files(self, email, vertrieb_angebot, datenblatter):
-        file_data = vertrieb_angebot.angebot_pdf.tobytes()  # Ensure this is the correct way to get PDF data
+        file_data = (
+            vertrieb_angebot.angebot_pdf.tobytes()
+        )  # Ensure this is the correct way to get PDF data
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
-        email.attach(f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf")
+        email.attach(
+            f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+        )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B":
-                self._attach_datenblatter(email, datenblatter, ['solar_module_1',])
-            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)":
-                self._attach_datenblatter(email, datenblatter, ['solar_module_2',])
-            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH" or "Phono Solar PS430M8GFH-18/VNH":
-                self._attach_datenblatter(email, datenblatter, ['solar_module_3'])
-        
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_1",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_2",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
+                or "Phono Solar PS430M8GFH-18/VNH"
+            ):
+                self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
+
         if vertrieb_angebot.datenblatter_speichermodule:
-            self._attach_datenblatter(email, datenblatter, ['speicher_module'])
-        
+            self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+
         if vertrieb_angebot.datenblatter_wechselrichter:
-            self._attach_datenblatter(email, datenblatter, ['wechselrichter'])
+            self._attach_datenblatter(email, datenblatter, ["wechselrichter"])
 
         if vertrieb_angebot.datenblatter_wallbox:
-            self._attach_datenblatter(email, datenblatter, ['wall_box'])
+            self._attach_datenblatter(email, datenblatter, ["wall_box"])
 
         if vertrieb_angebot.datenblatter_backup_box:
-            self._attach_datenblatter(email, datenblatter, ['backup_box'])
+            self._attach_datenblatter(email, datenblatter, ["backup_box"])
 
     def _attach_datenblatter(self, email, datenblatter, fields):
         for field in fields:
             datenblatt = getattr(datenblatter, field, None)
             if datenblatt:
-                with datenblatt.open('rb') as file:
+                with datenblatt.open("rb") as file:
                     file_data = file.read()
                 email.attach(f"{field}.pdf", file_data, "application/pdf")
+
     def form_invalid(self, form):
-        return render(self.request, self.template_name, self.get_context_data(form=form))
+        return render(
+            self.request, self.template_name, self.get_context_data(form=form)
+        )
 
+class DocumentAndCalcView(LoginRequiredMixin, DetailView):
+    model = VertriebAngebot
+    template_name = "vertrieb/document_and_calc_view.html"
+    context_object_name = "vertrieb_angebot"
+    pk_url_kwarg = "angebot_id"
+    form_class = VertriebAngebotEmailForm
 
+    def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        angebot_id = self.kwargs.get(self.pk_url_kwarg)
+        self.object = get_object_or_404(self.model, angebot_id=angebot_id)
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vertrieb_angebot = self.get_object()
+        angebot_id = self.kwargs.get("angebot_id")
+        pdf_url = reverse("vertrieb_interface:serve_angebot_and_calc_pdf", args=[angebot_id])
+        context["pdf_url"] = pdf_url
+        context["angebot_id"] = angebot_id
+        context["form"] = self.form_class(
+            instance=vertrieb_angebot, user=self.request.user
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(
+            request.POST, instance=self.get_object(), user=request.user
+        )
+
+        if form.is_valid():
+            form.save()
+            if self._send_email(form.instance):
+                messages.success(request, "Email sent successfully")
+                return redirect(
+                    "vertrieb_interface:document_and_calc_view", form.instance.angebot_id
+                )
+        return self.form_invalid(form)
+
+    def _send_email(self, vertrieb_angebot):
+        datenblatter = get_object_or_404(Datenblatter)
+        email_address = self.request.POST.get("email")
+        email_content = self.request.POST.get("text_for_email")
+        subject = f"Angebot Photovoltaikanlage {vertrieb_angebot.angebot_id}"
+
+        user = self.request.user
+        body = f"{email_content}\n\n{user.smtp_body}"
+        user_email = user.email
+
+        try:
+            connection = get_connection(
+                backend=EMAIL_BACKEND,
+                host=user.smtp_server,
+                port=user.smtp_port,
+                username=user.smtp_username,
+                password=user.smtp_password,
+                use_tls=True,
+                fail_silently=False,
+            )
+            email = EmailMultiAlternatives(
+                subject,
+                body,
+                user.smtp_username,
+                [email_address, user_email],
+                connection=connection,
+            )
+            self._attach_files(email, vertrieb_angebot, datenblatter)
+            email.send()
+            return True
+        except Exception as e:
+            messages.error(self.request, f"Failed to send email: {str(e)}")
+            return False
+
+    def _attach_files(self, email, vertrieb_angebot, datenblatter):
+        file_data = (
+            vertrieb_angebot.angebot_and_calc_pdf.tobytes()
+        )  # Ensure this is the correct way to get PDF data
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
+        email.attach(
+            f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+        )
+
+        if vertrieb_angebot.datenblatter_solar_module:
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_1",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_2",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
+                or "Phono Solar PS430M8GFH-18/VNH"
+            ):
+                self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
+
+        if vertrieb_angebot.datenblatter_speichermodule:
+            self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+
+        if vertrieb_angebot.datenblatter_wechselrichter:
+            self._attach_datenblatter(email, datenblatter, ["wechselrichter"])
+
+        if vertrieb_angebot.datenblatter_wallbox:
+            self._attach_datenblatter(email, datenblatter, ["wall_box"])
+
+        if vertrieb_angebot.datenblatter_backup_box:
+            self._attach_datenblatter(email, datenblatter, ["backup_box"])
+
+    def _attach_datenblatter(self, email, datenblatter, fields):
+        for field in fields:
+            datenblatt = getattr(datenblatter, field, None)
+            if datenblatt:
+                with datenblatt.open("rb") as file:
+                    file_data = file.read()
+                email.attach(f"{field}.pdf", file_data, "application/pdf")
+
+    def form_invalid(self, form):
+        return render(
+            self.request, self.template_name, self.get_context_data(form=form)
+        )
 
 @login_required
 def document_calc_view(request, angebot_id):
@@ -1877,6 +2068,24 @@ def serve_pdf(request, angebot_id):
         return StreamingHttpResponse("File not found.", status=404)
 
     async_iterator = AsyncFileIter(vertrieb_angebot.angebot_pdf)
+
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename={filename}"
+
+    return response
+
+@login_required
+def serve_angebot_and_calc_pdf(request, angebot_id):
+    decoded_angebot_id = unquote(angebot_id)
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
+    name = replace_spaces_with_underscores(vertrieb_angebot.name)
+    filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
+    sleep(0.5)
+
+    if not vertrieb_angebot.angebot_and_calc_pdf:
+        return StreamingHttpResponse("File not found.", status=404)
+
+    async_iterator = AsyncFileIter(vertrieb_angebot.angebot_and_calc_pdf)
 
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"

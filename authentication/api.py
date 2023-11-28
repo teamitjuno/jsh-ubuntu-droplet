@@ -11,6 +11,7 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
@@ -51,7 +52,7 @@ class ElektrikerCheckMixin(UserPassesTestMixin):
 class LoginView(APIView):
     def get(self, request):
         # Check if 'next' parameter is present in the URL
-        next_page = request.GET.get('next', '/')
+        next_page = request.GET.get("next", "/")
         if not next_page:
             # If 'next' is not present, redirect to the login URL with 'next' parameter
             return HttpResponseRedirect(f"{reverse('login')}?next=/")
@@ -78,7 +79,7 @@ class LoginView(APIView):
             return redirect("invoices:home")
         elif user is not None and user.beruf == "Vertrieb":  # type: ignore
             login(request, user)
-            return redirect("vertrieb_interface:home")
+            return redirect("vertrieb_interface:user_redirect")
         elif user is not None and user.beruf == "Projektant":  # type: ignore
             login(request, user)
             return redirect("projektant_interface:home")

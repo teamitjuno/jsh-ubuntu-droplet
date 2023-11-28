@@ -124,6 +124,7 @@ regex = "==2023.8.8"
 scipy = "==1.11.2"
 traits = "==6.3.2"
 tzlocal = "==5.0.1"
+django-debug-toolbar = "*"
 
 [dev-packages]
 

@@ -13,6 +13,10 @@ pages = "2"
 
 
 class PDF(FPDF):
+    def __init__(self, *args, **kwargs):
+        super(PDF, self).__init__(*args, **kwargs)
+        self.set_left_margin(18.875)
+        self.set_right_margin(12.875)
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)
@@ -91,7 +95,7 @@ class PDF(FPDF):
         )
         # Ausgangsdaten
         y += 35
-        self.line(11, y + 5, 37, y + 5)
+        self.line(18, y + 5, 48, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(0, 6, "Ausgangsdaten", 0, 0, "L")
@@ -151,7 +155,7 @@ class PDF(FPDF):
         self.cell(0, 5, f"{data['ausrichtung']}", 0, 0, "R")
         # Einspeisevergütung
         y += 10
-        self.line(11, y + 5, 43, y + 5)
+        self.line(18, y + 5, 52, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(0, 6, "Einspeisevergütung", 0, 0, "L")
@@ -172,7 +176,7 @@ class PDF(FPDF):
         self.set_fill_color(240)
         # Kostenkalkulation ohne Photovoltaikanlage anhand der Ausgangsdaten
         y = 35
-        self.line(11, y + 5, 129, y + 5)
+        self.line(18, y + 5, 136, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(
@@ -234,7 +238,7 @@ class PDF(FPDF):
         self.line(170, y + 36, 200, y + 36)
         # Kostenkalkulation mit Photovoltaikanlage anhand der Ausgangsdaten
         y += 40
-        self.line(11, y + 5, 129, y + 5)
+        self.line(18, y + 5, 135, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(

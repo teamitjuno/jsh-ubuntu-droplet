@@ -1,0 +1,38 @@
+{% extends 'vertrieb/base.html'%}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- Pre-loader -->
+                            <div id="preloader">
+                    <div id="status">
+                        <div class="bouncing-loader"><div ></div><div ></div><div ></div></div>
+                    </div>
+                </div>
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+                <!-- start page title -->
+            <div class="row">
+                <div hidden class="col-12">
+                                <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="create_blank_angebot" value="1">
+                                    <button type="submit" class="btn btn-outline-info rounded-pill">Neues Angebot erstellen</button>
+                                </form>
+
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+    <script>
+        window.onload = function() {
+            document.getElementById('create-angebot-form').submit();
+        };
+    </script>
+        <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+{% endblock %}

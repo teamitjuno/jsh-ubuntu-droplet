@@ -10,6 +10,7 @@ from authentication.views import (
     protected_schema_view,
 )
 
+from vertrieb_interface.views import user_redirect_view
 
 def include_with_namespace(pattern_prefix, app_name):
     """Include patterns with namespace.
@@ -40,6 +41,7 @@ urlpatterns = [
 urlpatterns += [
     path("", include("authentication.urls", namespace="authentication")),
     path("", include("vertrieb_interface.urls", namespace="vertrieb_interface")),
+    
     path(
         "proj/", include("projektant_interface.urls", namespace="projektant_interface")
     ),
@@ -48,6 +50,7 @@ urlpatterns += [
         "elektriker_kalender/",
         include("elektriker_kalender.urls", namespace="elektriker_kalender"),
     ),
+    # path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 # Error Handling Paths

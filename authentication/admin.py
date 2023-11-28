@@ -11,6 +11,25 @@ from django.core.exceptions import ValidationError
 import base64, binascii
 
 
+class CustomUserChangeForm(forms.ModelForm):
+    delete_avatar = forms.BooleanField(required=False)
+    delete_user_certifikate = forms.BooleanField(required=False)
+
+    class Meta:
+        model = User
+        fields = "__all__"
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.cleaned_data.get("delete_avatar"):
+            instance.avatar.delete(save=False)
+        if self.cleaned_data.get("delete_user_certifikate"):
+            instance.user_certifikate.delete(save=False)
+        if commit:
+            instance.save()
+        return instance
+
+
 class Base64Field(forms.Field):
     def clean(self, value):
         value = super().clean(value)
@@ -38,6 +57,7 @@ class ReadOnlyFieldsMixin:
 
 
 class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
+    form = CustomUserChangeForm
     actions = [update_users]
     search_fields = ["username", "first_name", "last_name", "email"]
     list_display = [
@@ -85,7 +105,9 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
             {
                 "fields": (
                     "avatar",
+                    "delete_avatar",
                     "user_certifikate",
+                    "delete_user_certifikate",
                     "beruf",
                     "is_staff",
                     "users_aufschlag",
@@ -167,6 +189,14 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
     formfield_overrides = {
         models.ImageField: {"widget": FileInput},
     }
+
+    def save_model(self, request, obj, form, change):
+        if form.cleaned_data.get("delete_avatar"):
+            obj.avatar.delete(save=False)
+        elif form.cleaned_data.get("delete_user_certifikate"):
+            obj.user_certifikate.delete(save=False)
+
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(User)

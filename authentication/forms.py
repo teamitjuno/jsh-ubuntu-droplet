@@ -145,6 +145,27 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
+    is_home_page = forms.BooleanField(
+        label="Start Seite ist 'Angebot Erstellung'",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "id_is_home_page",
+            }
+        ),
+    )
+    initial_text_for_email = forms.CharField(
+        label="Default Email-Text",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 16,
+                "class": "form-control",
+                "id": "id_initial_text_for_email",
+            }
+        ),
+    )
     initial_ausrichtung = forms.ChoiceField(
         label="Ausrichtung PV-Anlage",
         initial="Sud",
@@ -255,7 +276,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    intial_kabelanschluss = forms.FloatField(
+    initial_kabelanschluss = forms.FloatField(
         initial=10.0,
         label="Kabelanschlusslänge [m]",
         required=False,
@@ -401,6 +422,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
+            "is_home_page",
             "map_notizen_container_view",
             "initial_verbrauch",
             "initial_grundpreis",
@@ -423,7 +445,8 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "initial_anzOptimizer",
             "initial_wallboxtyp",
             "initial_wallbox_anzahl",
-            "intial_kabelanschluss",
+            "initial_kabelanschluss",
+            "initial_text_for_email",
             "top_verkaufer_container_view",
             "profile_container_view",
             "activity_container_view",
@@ -445,6 +468,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ]
         self.fields["map_notizen_container_view"].widget.attrs.update(
             {"id": "id_map_notizen_container_view"}
+        )
+        self.fields["is_home_page"].widget.attrs.update(
+            {"id": "id_is_home_page"}
         )
         self.fields["initial_verbrauch"].widget.attrs.update(
             {"id": "id_initial_verbrauch"}
@@ -503,8 +529,11 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         self.fields["initial_wallbox_anzahl"].widget.attrs.update(
             {"id": "id_initial_wallbox_anzahl"}
         )
-        self.fields["intial_kabelanschluss"].widget.attrs.update(
-            {"id": "id_intial_kabelanschluss"}
+        self.fields["initial_kabelanschluss"].widget.attrs.update(
+            {"id": "id_initial_kabelanschluss"}
+        )
+        self.fields["initial_text_for_email"].widget.attrs.update(
+            {"id": "id_initial_text_for_email"}
         )
         self.fields["top_verkaufer_container_view"].widget.attrs.update(
             {"id": "id_top_verkaufer_container_view"}

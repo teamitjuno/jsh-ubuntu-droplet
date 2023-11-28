@@ -11,7 +11,7 @@ from vertrieb_interface.get_user_angebots import update_status
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot
-
+import datetime
 now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
@@ -276,7 +276,15 @@ class VertriebAngebotEmailForm(ModelForm):
 
     class Meta:
         model = VertriebAngebot
-        fields = ["email", "text_for_email", "datenblatter_solar_module", "datenblatter_speichermodule", "datenblatter_wechselrichter", "datenblatter_wallbox", "datenblatter_backup_box"]
+        fields = [
+            "email",
+            "text_for_email",
+            "datenblatter_solar_module",
+            "datenblatter_speichermodule",
+            "datenblatter_wechselrichter",
+            "datenblatter_wallbox",
+            "datenblatter_backup_box",
+        ]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -284,11 +292,21 @@ class VertriebAngebotEmailForm(ModelForm):
         if self.instance and self.instance.pk:
             self.fields["email"].initial = self.instance.email
             self.fields["text_for_email"].initial = self.instance.text_for_email
-            self.fields["datenblatter_solar_module"].initial = self.instance.datenblatter_solar_module
-            self.fields["datenblatter_speichermodule"].initial = self.instance.datenblatter_speichermodule
-            self.fields["datenblatter_wechselrichter"].initial = self.instance.datenblatter_wechselrichter
-            self.fields["datenblatter_wallbox"].initial = self.instance.datenblatter_wallbox
-            self.fields["datenblatter_backup_box"].initial = self.instance.datenblatter_backup_box
+            self.fields[
+                "datenblatter_solar_module"
+            ].initial = self.instance.datenblatter_solar_module
+            self.fields[
+                "datenblatter_speichermodule"
+            ].initial = self.instance.datenblatter_speichermodule
+            self.fields[
+                "datenblatter_wechselrichter"
+            ].initial = self.instance.datenblatter_wechselrichter
+            self.fields[
+                "datenblatter_wallbox"
+            ].initial = self.instance.datenblatter_wallbox
+            self.fields[
+                "datenblatter_backup_box"
+            ].initial = self.instance.datenblatter_backup_box
 
     def save(self, commit=True):
         form = super(VertriebAngebotEmailForm, self).save(commit=False)
@@ -296,8 +314,30 @@ class VertriebAngebotEmailForm(ModelForm):
             form.save()
         return form
 
+class VertriebAngebotEmptyForm(ModelForm):
+    class Meta:
+        model = VertriebAngebot
+        fields = [
+            'verbrauch', 'grundpreis', 'arbeitspreis', 'prognose', 'zeitraum',
+            'bis10kWp', 'bis40kWp', 'anz_speicher', 'wandhalterung_fuer_speicher',
+            'ausrichtung', 'komplex', 'solar_module', 'modulanzahl', 'garantieWR',
+            'elwa', 'thor', 'heizstab', 'notstrom', 'anzOptimizer', 'wallboxtyp',
+            'wallbox_anzahl', 'kabelanschluss'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        vertrieb_angebot = super().save(commit=False)
+        if commit:
+            vertrieb_angebot.save()
+        return vertrieb_angebot
+
 
 class VertriebAngebotForm(ModelForm):
+    
     is_locked = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
@@ -390,7 +430,7 @@ class VertriebAngebotForm(ModelForm):
     anrede = forms.ChoiceField(
         label="Anrede",
         choices=ANREDE_CHOICES,
-        required=False,
+        required=True,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -402,21 +442,19 @@ class VertriebAngebotForm(ModelForm):
     name = forms.ChoiceField(
         choices=[],
         label="Interessent",
-        
         required=True,
         widget=forms.Select(
             attrs={
                 "class": "form-control select2",
                 "data-toggle": "select2",
                 "id": "id_name",
-                
                 "style": "max-width: 300px",
             }
         ),
     )
     vorname_nachname = forms.CharField(
         label="Nach-, Vorname",
-        required=False,
+        required=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -454,7 +492,7 @@ class VertriebAngebotForm(ModelForm):
     email = forms.CharField(
         label="E-mail",
         max_length=100,
-        required=False,
+        required=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -480,7 +518,7 @@ class VertriebAngebotForm(ModelForm):
     strasse = forms.CharField(
         label="Straße & Hausnummer",
         max_length=100,
-        required=False,
+        required=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -493,7 +531,7 @@ class VertriebAngebotForm(ModelForm):
     ort = forms.CharField(
         label="PLZ & Ort",
         max_length=100,
-        required=False,
+        required=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -658,6 +696,7 @@ class VertriebAngebotForm(ModelForm):
 
     hersteller = forms.ChoiceField(
         label="Hersteller",
+        required=True,
         choices=HERSTELLER_CHOICES,
         initial="Huawei",
         widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
@@ -666,6 +705,7 @@ class VertriebAngebotForm(ModelForm):
     wechselrichter_model = forms.ChoiceField(
         label="Wechselrichter",
         choices=WECHSELRICHTER_MODEL_CHOICES,
+        required=True,
         initial="----",
         widget=forms.Select(
             attrs={"class": "form-select", "id": "wechselrichter_model"}
@@ -675,6 +715,7 @@ class VertriebAngebotForm(ModelForm):
     speicher_model = forms.ChoiceField(
         label="Batteriespeicher",
         choices=SPEICHER_MODEL_CHOICES,
+        required=True,
         initial="----",
         widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
     )
@@ -893,6 +934,7 @@ class VertriebAngebotForm(ModelForm):
             ("10 – 80 – 10 %", "10 – 80 – 10 %"),
             ("100 – 0 – 0 %", "100 – 0 – 0 %"),
         ],
+        required=False,
         initial="20 – 70 – 10 %",
         widget=forms.Select(
             attrs={"class": "form-select", "id": "zahlungsbedingungen"}
@@ -1021,6 +1063,7 @@ class VertriebAngebotForm(ModelForm):
     class Meta:
         model = VertriebAngebot
         fields = [
+            
             "is_locked",
             "angebot_id_assigned",
             "status",
@@ -1094,20 +1137,26 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-        default_choice = [('', '--------')]
-        
+
+        default_choice = [("", "--------")]
         try:
             profile = User.objects.get(zoho_id=user.zoho_id)
-            data = json.loads(profile.zoho_data_text or '[]')
+            data = json.loads(profile.zoho_data_text or "[]")
 
             # Filter out records with status "abgelehnt" or "storniert"
-            data = [item for item in data if item["status"] not in ["abgelehnt", "storniert", "angenommen"]]
+            data = [
+                item
+                for item in data
+                if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
+            ]
 
             if data:
                 name_list = [(item["name"], item["name"]) for item in data]
                 name_list = sorted(name_list, key=lambda x: x[0])
                 self.fields["name"].choices = default_choice + name_list
-                name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
+                name_to_kundennumer = {
+                    item["name"]: item["zoho_kundennumer"] for item in data
+                }
             else:
                 # Set initial value to "-----" if there is no data
                 self.fields["name"].initial = "-----"
@@ -1124,12 +1173,6 @@ class VertriebAngebotForm(ModelForm):
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
         ]
-
-        # data = json.loads(profile.zoho_data_text or '[["test", "test"]]')  # type: ignore
-        # name_list = [(item["name"], item["name"]) for item in data]
-        # name_list = sorted(name_list, key=lambda x: x[0])
-        # self.fields["name"].choices = name_list
-        # name_to_kundennumer = {item["name"]: item["zoho_kundennumer"] for item in data}
 
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
         self.fields["angebot_id_assigned"].widget.attrs.update(
@@ -1164,23 +1207,11 @@ class VertriebAngebotForm(ModelForm):
             {"id": "indiv_price_included-checkbox"}
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
-
-        # for field in self.fields:
-        #     if self.initial.get(field):
-        #         self.fields[field].widget.attrs.update(
-        #             {"placeholder": self.initial[field]}
-        #         )
-        # if not user.role.name == "admin":
-        #     # Remove the 'angenommen' and 'abgelaufen' choices
-        #     self.fields["status"].choices = [
-        #         choice
-        #         for choice in self.fields["status"].choices
-        #         if choice[0] not in ["angenommen", "abgelaufen"]
-        #     ]
+        self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
-
+        
         # Check if status is 'bekommen'
 
         if form.status == "bekommen":
@@ -1214,24 +1245,32 @@ class VertriebAngebotForm(ModelForm):
 
             form.save()
         else:
+
             form.status_change_date = None
             form.status_change_field = None
             form.save()
 
         if commit:
+
             form.save()
 
         return form
 
     def clean(self):
         cleaned_data = super().clean()
-        action = self.data.get('action')
-        if action == 'save':
+        action = self.data.get("action")
+        if action == "save":
             return cleaned_data
 
+        interessent = cleaned_data.get("name")
         modulanzahl = cleaned_data.get("modulanzahl")
         hersteller = cleaned_data.get("hersteller")
         anzOptimizer = cleaned_data.get("anzOptimizer")
+
+        if interessent == "----":
+            raise forms.ValidationError(
+                {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+            ) 
 
         if hersteller == "Viessmann" and modulanzahl > 28:
             raise forms.ValidationError(
@@ -1294,7 +1333,10 @@ class VertriebAngebotForm(ModelForm):
             )
         optimizer_ticket = cleaned_data.get("optimizer_ticket")
         if optimizer_ticket is not None and modul_anzahl_ticket is not None:
-            if optimizer_ticket > modul_anzahl_ticket or (modul_anzahl_ticket - optimizer_ticket) < 0:
+            if (
+                optimizer_ticket > modul_anzahl_ticket
+                or (modul_anzahl_ticket - optimizer_ticket) < 0
+            ):
                 self.add_error(
                     "modul_anzahl_ticket",
                     ValidationError(
@@ -1317,8 +1359,8 @@ class VertriebAngebotForm(ModelForm):
                             "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
                         ),
                         params={
-                            "wallbox": anzOptimizer,
-                            "wallbox_anzahl": modulanzahl,
+                            "wallbox": wallbox,
+                            "wallbox_anzahl": wallbox_anzahl,
                         },
                     ),
                 )

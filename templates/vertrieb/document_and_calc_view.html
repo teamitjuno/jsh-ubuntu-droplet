@@ -4,17 +4,7 @@
 {% load widget_tweaks %}
 {% block content %}
 <div class="content-page">
-<script>
-window.onload = function() {
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                $('#success-alert-modal').modal('show');
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-};
-</script>
+
 
     <div class="content">
         <div class="container-fluid">
@@ -32,7 +22,7 @@ window.onload = function() {
                     </div>
                 </div>
             </div>
-            <form id="updateForm" method="POST" action="{% url 'vertrieb_interface:document_view' angebot_id=angebot_id %}" enctype="multipart/form-data">
+            <form id="updateForm" method="POST" action="{% url 'vertrieb_interface:document_and_calc_view' angebot_id=angebot_id %}" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-9">
                     
@@ -235,7 +225,7 @@ window.onload = function() {
 
 
         
- 
+
         
             <!-- ============================================================== -->
             <!-- End Page content -->

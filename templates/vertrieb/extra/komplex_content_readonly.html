@@ -1,0 +1,11 @@
+{% block content %}
+<table class="table table-sm table-hover">
+<tr>
+    <th>{{ form.komplex.label_tag }}</th>
+    <td id="komplex" name="komplex">
+        <input type="text" class="form-control" name="{{ form.komplex.name }}" value="{{ form.komplex.value }}" readonly>
+    </td>
+</tr>
+
+</table>
+{% endblock %}
