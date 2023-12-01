@@ -6,12 +6,14 @@ from django.forms import ModelForm
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.contrib.auth import get_user_model
 from vertrieb_interface.get_user_angebots import update_status
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from .models import VertriebAngebot
 import datetime
+import re
 now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
@@ -102,9 +104,33 @@ STORNIERUNGSGRUND_CHOICES = (
 )
 
 
+def validate_german_mobile_number(value):
+    if not re.match(r'^\+49(1[5-7][0-9])\d{7,8}$', value):
+        raise ValidationError("Enter a valid German mobile number starting with +49.")
+    
+def validate_german_landline_number(value):
+    if not re.match(r'^\+49\(\d{2,5}\)\d{3,}$', value):
+        raise ValidationError("Enter a valid German landline number starting with +49.")
+
+def validate_name_format(value):
+    # Regular expression for 'Last_Name First_Name'
+    # Expecting each to start with a capital letter followed by lowercase letters
+    if not re.match(r'^[A-Z][a-z]+ [A-Z][a-z]+$', value):
+        raise ValidationError("Name must be in 'Last_Name First_Name' format, with each name starting with a capital letter.")
+
 def validate_two_decimal_places(value):
-    decimal_value = decimal.Decimal(value)
-    if decimal_value.as_tuple().exponent < -2:  # type: ignore
+    # Check if the value is an instance of a valid number type
+    if not isinstance(value, (int, float, decimal.Decimal)):
+        raise ValidationError("Ungültige Eingabe: Der Wert muss eine Zahl sein.")
+
+    try:
+        decimal_value = decimal.Decimal(value)
+    except decimal.InvalidOperation:
+        raise ValidationError(
+            "Ungültige Eingabe: Der Wert ist keine gültige Dezimalzahl."
+        )
+
+    if decimal_value.as_tuple().exponent < -2:
         raise ValidationError(
             "Achten Sie darauf, dass dieser Wert nicht mehr als zwei Dezimalstellen hat."
         )
@@ -139,17 +165,15 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if value < 6 and value != 0 or value > 69:
+    if not isinstance(value, int) or not (value == 0 or 6 <= value <= 69):
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 70 liegen."
-            ),
+            "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte entweder 0 oder zwischen 6 und 69 liegen.",
             params={"value": value},
         )
 
 
 def validate_solar_module_ticket_anzahl(value):
-    if value > 4:
+    if not isinstance(value, int) or value > 4:
         raise ValidationError(
             (
                 "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
@@ -159,7 +183,7 @@ def validate_solar_module_ticket_anzahl(value):
 
 
 def validate_optimizer_ticket_anzahl(value):
-    if value > 4:
+    if not isinstance(value, int) or value > 4:
         raise ValidationError(
             (
                 "Ungültige Eingabe: %(value)s. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
@@ -169,12 +193,12 @@ def validate_optimizer_ticket_anzahl(value):
 
 
 def validate_range(value):
-    if not isinstance(value, int):
-        if value < 0 or value > 6:
-            raise ValidationError(
-                ("Ungültige Eingabe: %(value)s. Der gültige Bereich ist 0-6."),
-                params={"value": value},
-            )
+    # Check if value is an integer and within the specified range
+    if not isinstance(value, int) or not 0 <= value <= 6:
+        raise ValidationError(
+            "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
+            params={"value": value},
+        )
 
 
 def validate_empty(value):
@@ -190,6 +214,7 @@ class VertriebAngebotEmailForm(ModelForm):
         label="E-mail",
         max_length=100,
         required=False,
+        validators=[validate_email],
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -314,19 +339,36 @@ class VertriebAngebotEmailForm(ModelForm):
             form.save()
         return form
 
+
 class VertriebAngebotEmptyForm(ModelForm):
     class Meta:
         model = VertriebAngebot
         fields = [
-            'verbrauch', 'grundpreis', 'arbeitspreis', 'prognose', 'zeitraum',
-            'bis10kWp', 'bis40kWp', 'anz_speicher', 'wandhalterung_fuer_speicher',
-            'ausrichtung', 'komplex', 'solar_module', 'modulanzahl', 'garantieWR',
-            'elwa', 'thor', 'heizstab', 'notstrom', 'anzOptimizer', 'wallboxtyp',
-            'wallbox_anzahl', 'kabelanschluss'
+            "verbrauch",
+            "grundpreis",
+            "arbeitspreis",
+            "prognose",
+            "zeitraum",
+            "bis10kWp",
+            "bis40kWp",
+            "anz_speicher",
+            "wandhalterung_fuer_speicher",
+            "ausrichtung",
+            "komplex",
+            "solar_module",
+            "modulanzahl",
+            "garantieWR",
+            "elwa",
+            "thor",
+            "heizstab",
+            "notstrom",
+            "anzOptimizer",
+            "wallboxtyp",
+            "wallbox_anzahl",
+            "kabelanschluss",
         ]
 
     def __init__(self, *args, **kwargs):
-        
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
@@ -337,7 +379,6 @@ class VertriebAngebotEmptyForm(ModelForm):
 
 
 class VertriebAngebotForm(ModelForm):
-    
     is_locked = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
@@ -430,7 +471,7 @@ class VertriebAngebotForm(ModelForm):
     anrede = forms.ChoiceField(
         label="Anrede",
         choices=ANREDE_CHOICES,
-        required=True,
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -442,7 +483,7 @@ class VertriebAngebotForm(ModelForm):
     name = forms.ChoiceField(
         choices=[],
         label="Interessent",
-        required=True,
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-control select2",
@@ -454,7 +495,8 @@ class VertriebAngebotForm(ModelForm):
     )
     vorname_nachname = forms.CharField(
         label="Nach-, Vorname",
-        required=True,
+        required=False,
+        validators=[validate_name_format],
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -467,6 +509,7 @@ class VertriebAngebotForm(ModelForm):
         label="Telefon Mobil",
         max_length=100,
         required=False,
+        validators=[validate_german_mobile_number],
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -480,6 +523,7 @@ class VertriebAngebotForm(ModelForm):
         label="Telefon Festnetz",
         max_length=100,
         required=False,
+        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -492,7 +536,7 @@ class VertriebAngebotForm(ModelForm):
     email = forms.CharField(
         label="E-mail",
         max_length=100,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -518,7 +562,7 @@ class VertriebAngebotForm(ModelForm):
     strasse = forms.CharField(
         label="Straße & Hausnummer",
         max_length=100,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -531,7 +575,7 @@ class VertriebAngebotForm(ModelForm):
     ort = forms.CharField(
         label="PLZ & Ort",
         max_length=100,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -588,6 +632,7 @@ class VertriebAngebotForm(ModelForm):
     grundpreis = forms.FloatField(
         label="Strom Grundpreis [€/Monat]",
         initial=11.4,
+        validators=[validate_floats],
         required=True,
         widget=forms.NumberInput(
             attrs={
@@ -1063,7 +1108,6 @@ class VertriebAngebotForm(ModelForm):
     class Meta:
         model = VertriebAngebot
         fields = [
-            
             "is_locked",
             "angebot_id_assigned",
             "status",
@@ -1072,7 +1116,6 @@ class VertriebAngebotForm(ModelForm):
             "telefon_festnetz",
             "telefon_mobil",
             "email",
-            "name",
             "vertriebler_display_value",
             "adresse_pva_display_value",
             "postanschrift_latitude",
@@ -1211,7 +1254,7 @@ class VertriebAngebotForm(ModelForm):
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
-        
+
         # Check if status is 'bekommen'
 
         if form.status == "bekommen":
@@ -1245,44 +1288,29 @@ class VertriebAngebotForm(ModelForm):
 
             form.save()
         else:
-
             form.status_change_date = None
             form.status_change_field = None
             form.save()
 
         if commit:
-
             form.save()
 
         return form
 
     def clean(self):
         cleaned_data = super().clean()
-        action = self.data.get("action")
-        if action == "save":
+        action = self.data.get("action_type")
+
+        if action == "angebotsumme_rechnen":
             return cleaned_data
 
         interessent = cleaned_data.get("name")
         modulanzahl = cleaned_data.get("modulanzahl")
-        hersteller = cleaned_data.get("hersteller")
+
         anzOptimizer = cleaned_data.get("anzOptimizer")
 
-        if interessent == "----":
-            raise forms.ValidationError(
-                {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
-            ) 
-
-        if hersteller == "Viessmann" and modulanzahl > 28:
-            raise forms.ValidationError(
-                {
-                    "modulanzahl": "Die Anzahl der Module kann nicht mehr als 28 sein, wenn der Hersteller Viessmann ist."
-                }
-            )
-
-        if hersteller == "----":
-            raise forms.ValidationError(
-                {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
-            )
+        if action == "save":
+            return cleaned_data
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1304,6 +1332,56 @@ class VertriebAngebotForm(ModelForm):
                 ("Dieses Feld ist erforderlich"),
                 params={"anrede": anrede},
             )
+            # Validation for 'name'
+        name = cleaned_data.get("name")
+        if name is None or interessent == "----":
+            raise forms.ValidationError(
+                {"hersteller": "Sie haben keinen Interessent ausgewählt"}
+            )
+
+        if action == "save":
+            return cleaned_data
+        if name == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"name": name},
+            )
+
+        # Validation for 'vorname_nachname'
+        vorname_nachname = cleaned_data.get("vorname_nachname")
+        if vorname_nachname is None or vorname_nachname == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"vorname_nachname": vorname_nachname},
+            )
+
+        # Validation for 'strasse'
+        strasse = cleaned_data.get("strasse")
+        if strasse is None or strasse == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"strasse": strasse},
+            )
+
+        # Validation for 'ort'
+        ort = cleaned_data.get("ort")
+        if ort is None or ort == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"ort": ort},
+            )
+
+        email = self.cleaned_data.get("email")
+
+        # Check if the email is empty
+        if not email:
+            raise ValidationError("Dieses Feld ist erforderlich")
+        if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
+
         speicher = cleaned_data.get("speicher")
         anz_speicher = cleaned_data.get("anz_speicher")
         if speicher == True and anz_speicher is not None:
@@ -1365,6 +1443,29 @@ class VertriebAngebotForm(ModelForm):
                     ),
                 )
 
+        if action == "save":
+            return cleaned_data
+
+        else:
+            hersteller = cleaned_data.get("hersteller")
+            if interessent == "----":
+                raise forms.ValidationError(
+                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+                )
+
+            if hersteller == "Viessmann" and modulanzahl > 28:
+                raise forms.ValidationError(
+                    {
+                        "modulanzahl": "Die Anzahl der Module kann nicht mehr als 28 sein, wenn der Hersteller Viessmann ist."
+                    }
+                )
+
+            if hersteller == "----":
+                raise forms.ValidationError(
+                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+                )
+            return cleaned_data
+
     def clean_phone(self):
         telefon_mobil = self.cleaned_data["phone"]
         if len(telefon_mobil) != 11:
@@ -1372,6 +1473,142 @@ class VertriebAngebotForm(ModelForm):
                 "Länge der Telefonnummer muss + und 10 Ziffern sein"
             )
         return telefon_mobil
+
+
+class VertriebAngebotRechnerForm(VertriebAngebotForm):
+    name = forms.ChoiceField(
+        choices=[],
+        label="Interessent",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "data-toggle": "select2",
+                "id": "id_name",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    vorname_nachname = forms.CharField(
+        label="Nach-, Vorname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname_nachname",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    telefon_mobil = forms.CharField(
+        label="Telefon Mobil",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Telefon Mobil",
+                "id": "id_telefon_mobil",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    telefon_festnetz = forms.CharField(
+        label="Telefon Festnetz",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Telefon Festnetz",
+                "id": "id_telefon_festnetz",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    email = forms.CharField(
+        label="E-mail",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email",
+                "id": "id_email",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    firma = forms.CharField(
+        label="Firma (optional)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Firma",
+                "id": "firma",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    strasse = forms.CharField(
+        label="Straße & Hausnummer",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Straße & Hausnummer",
+                "id": "id_strasse",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    ort = forms.CharField(
+        label="PLZ & Ort",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "PLZ & Ort",
+                "id": "id_ort",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(VertriebAngebotRechnerForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        action = self.data.get("action")
+
+        # Bypass all further validations if the action is "angebotsumme_rechnen"
+        if action == "angebotsumme_rechnen":
+            return cleaned_data
+
+        # Rest of your validation logic
+        interessent = cleaned_data.get("name")
+        modulanzahl = cleaned_data.get("modulanzahl")
+        hersteller = cleaned_data.get("hersteller")
+
+        if interessent == "----":
+            # Add validation error or pass
+            pass
+
+        if hersteller == "----":
+            # Add validation error or pass
+            pass
+
+        anrede = cleaned_data.get("anrede")
+        if anrede is None or anrede == "":
+            # Add validation error or pass
+            pass
+
+        return cleaned_data
 
 
 class VertriebAngebotUpdateKalkulationForm(forms.ModelForm):

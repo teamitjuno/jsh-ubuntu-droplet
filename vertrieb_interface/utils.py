@@ -2,6 +2,7 @@ import random
 from django.db import transaction
 from datetime import datetime
 from vertrieb_interface.models import VertriebAngebot
+import json
 
 
 def load_vertrieb_angebot(data, user, kurz):

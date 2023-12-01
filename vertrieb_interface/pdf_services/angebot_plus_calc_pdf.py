@@ -1752,7 +1752,7 @@ unwirksam.""",  # regular_text19
 
     def page7(self, data):
         self.add_page()
-        y=25
+        y = 25
         self.set_font("JUNO Solar Lt", "B", 17)
         self.set_x(0)
         self.set_y(y)
@@ -1911,12 +1911,11 @@ unwirksam.""",  # regular_text19
         )
         self.line(175, y + 35, 197, y + 35)
         self.line(175, y + 36, 197, y + 36)
-        
 
     def page8(self, data, user_folder, vertrieb_angebot):
         self.add_page()
         self.set_fill_color(240)
-        y=20
+        y = 20
         # Kostenkalkulation mit Photovoltaikanlage anhand der Ausgangsdaten
 
         self.line(18, y + 5, 146, y + 5)

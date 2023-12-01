@@ -11,7 +11,7 @@ app_name = "vertrieb_interface"
 # Vertrieb URLs
 vertrieb_patterns = [
     path("vertrieb/home/", views.home, name="home"),
-    path('vertrieb/user_redirect', views.user_redirect_view, name='user_redirect'),
+    path("vertrieb/user_redirect", views.user_redirect_view, name="user_redirect"),
     path(
         "vertrieb/home/reset_calculator/",
         views.reset_calculator,
@@ -26,7 +26,11 @@ vertrieb_patterns = [
         name="vertrieb_autofield",
     ),
     path("vertrieb/create_angebot/", views.create_angebot, name="create_angebot"),
-    path("vertrieb/create_angebot_redirect/", views.create_angebot_redirect, name="create_angebot_redirect"),
+    path(
+        "vertrieb/create_angebot_redirect/",
+        views.create_angebot_redirect,
+        name="create_angebot_redirect",
+    ),
     path("vertrieb/help/", views.help, name="help"),
     path("vertrieb/chat_bot/", views.chat_bot, name="chat_bot"),
     path(
@@ -117,7 +121,9 @@ vertrieb_patterns = [
         "serve_calc_pdf/<str:angebot_id>/", views.serve_calc_pdf, name="serve_calc_pdf"
     ),
     path(
-        "serve_angebot_and_calc_pdf/<str:angebot_id>/", views.serve_angebot_and_calc_pdf, name="serve_angebot_and_calc_pdf"
+        "serve_angebot_and_calc_pdf/<str:angebot_id>/",
+        views.serve_angebot_and_calc_pdf,
+        name="serve_angebot_and_calc_pdf",
     ),
     path(
         "serve_ticket_pdf/<str:angebot_id>/",
@@ -158,7 +164,7 @@ vertrieb_patterns = [
         views.send_ticket_invoice,
         name="send_ticket_invoice",
     ),
-    path('vertrieb/intermediate/', views.intermediate_view, name='intermediate_view'),
+    path("vertrieb/intermediate/", views.intermediate_view, name="intermediate_view"),
 ]
 
 # Error Handlers

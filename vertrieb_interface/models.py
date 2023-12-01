@@ -468,7 +468,6 @@ class VertriebAngebot(TimeStampMixin):
     ag_fetched_data = models.TextField(blank=True, null=True)
     countdown_on = models.BooleanField(default=False)
 
-
     def get_optional_accessory_price(self, name):
         return float(OptionalAccessoriesPreise.objects.get(name=name).price)
 

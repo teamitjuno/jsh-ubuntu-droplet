@@ -17,6 +17,7 @@ class PDF(FPDF):
         super(PDF, self).__init__(*args, **kwargs)
         self.set_left_margin(18.875)
         self.set_right_margin(12.875)
+
     def header(self):
         font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
         self.add_font("JUNO Solar Lt", "", font_path, uni=True)

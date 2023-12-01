@@ -1,9 +1,9 @@
-import os
-import json
 import time
 import requests
 from dotenv import load_dotenv, set_key
 import datetime
+import requests
+
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
     ZOHO_CLIENT_ID,
@@ -67,10 +67,6 @@ def refresh_access_token():
         token_info["access_token"] = response.json()["access_token"]
         token_info["expires_at"] = current_time + response.json()["expires_in"]
 
-        log_and_notify(
-            f"Access token refreshed successfully. Expires at: {token_info['expires_at']}"
-        )
-
         return token_info["access_token"]
     except:
         log_and_notify(f"Error refreshing access token")
@@ -79,14 +75,13 @@ def refresh_access_token():
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
-    send_message_to_bot(message)
+    timelaps = (f"{timestamp} - {message}")
+    send_message_to_bot('\n' + '### ' + f'{timelaps}' + ' ###')
 
 
 def fetch_data_from_api(url, params=None):
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
-    # log_and_notify(f"Attempt to fetch data with parameters {params}")
-
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == HTTP_OK:
@@ -171,7 +166,7 @@ def process_all_user_data(data):
                     "name": item.get("Name", {}).get("last_name", "")
                     + " "
                     + item.get("Name", {}).get("suffix", "")
-                    + " "
+                    + ""
                     + item.get("Name", {}).get("first_name", ""),
                     "vertriebler_display_value": item.get("Vertriebler", {}).get(
                         "display_value", ""
@@ -193,10 +188,6 @@ def fetch_angenommen_status(request, zoho_id):
 
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
-
-    # log_and_notify(
-    #     f"{user.email} Attempt to fetch angenommen status for zoho_id: {zoho_id}"
-    # )
 
     response = requests.get(url, headers=headers)
     data = response.json()
@@ -247,6 +238,58 @@ def update_status(zoho_id, new_status):
     response = requests.put(update_url, headers=headers, json=payload)
     return response.json()
 
+
+def put_form_data_to_zoho_jpp(form):
+    # Extract data from form
+    form_data = {field: form.cleaned_data.get(field) for field in form.fields}
+
+    zoho_id = form_data.get('zoho_id')
+    vorname_nachname = form_data.get('vorname_nachname')
+
+    if not zoho_id:
+        raise ValueError("Zoho ID and new status are required")
+
+    update_url = f"{VERTRIEB_URL}/{zoho_id}"
+    
+    access_token = refresh_access_token()
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
+    name_parts = vorname_nachname.split()
+    anrede = form_data.get('anrede')
+    last_name = name_parts[0]
+    first_name = name_parts[1] if len(name_parts) > 1 else ''
+    middle_name = ' '.join(name_parts[2:-1]) if len(name_parts) > 3 else ''
+
+    
+    log_and_notify(first_name)
+    log_and_notify(middle_name)
+    log_and_notify(last_name)
+    # Constructing the payload for the API
+    payload = {
+        "data": {
+            "Email": form_data.get('email'),
+            "Telefon_Festnetz": form_data.get('telefon_festnetz'),
+            "Telefon_mobil": form_data.get('telefon_mobil'),
+            "Name": {
+                "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                "prefix": anrede,
+                "suffix": middle_name.strip(),
+                "last_name": last_name,
+                "first_name": first_name,
+            },
+            "Adresse_PVA": {
+                "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+                "district_city1": form_data.get('ort').split(' ')[1],
+                "address_line_11": form_data.get('strasse'),
+                "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+            },
+        }
+    }
+
+    log_and_notify(payload)
+    response = requests.put(update_url, headers=headers, json=payload)
+    return response.json()
 
 def return_lower_bull(val):
     return "true" if val else "false"

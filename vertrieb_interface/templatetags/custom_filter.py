@@ -37,3 +37,13 @@ def format_price(value):
     except ValueError:
         # If conversion to float fails, return original value
         return value
+
+
+@register.simple_tag
+def format_errors(form):
+    formatted_errors = []
+    for field, errors in form.errors.items():
+        for error in errors:
+            field_label = form.fields[field].label or field
+            formatted_errors.append(f"{field_label}: {error}")
+    return ", ".join(formatted_errors)

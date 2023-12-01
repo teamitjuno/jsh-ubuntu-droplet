@@ -13,18 +13,28 @@
             {% if not vertrieb_angebot.is_locked and vertrieb_angebot.status != "angenommen" %}
         <form class="needs-validation" novalidate id="main-form" method="POST" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
-                <div class="container-fluid">     
-                    {% if form.errors %}
-                    <div class="alert alert-danger">Bitte korrigieren Sie die folgenden Fehler:
-                        <ul>
-                            {% for field in form %}
-                                {% if field.errors %}
-                                    <li>{{ field.label }} - {{ field.errors.0 }} - {{ field.value }}</li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
+                <div class="container-fluid">
+                {% if form.errors %}
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card m-3">
+                                <div class="card-body border-primary border">     
+                                    <div class="alert alert-danger">Bitte beachten Sie, dass die folgenden Felder für die PDF-Erstellung erforderlich sind::
+                                        <ul>
+                                            {% for field in form %}
+                                                {% if field.errors %}
+                                                    <li>{{ field.label }} - {{ field.errors.0 }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endif %} 
+
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
@@ -209,18 +219,17 @@
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                 </table>
-                                                                {% if vertrieb_angebot.angebot_id_assigned == False %}
-                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
-                                                                {% else %}
-                                                                <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
-                                                                {% endif %}
+                                                               
+                                                                <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
+                                                                
+
                                                             </div>
                                                         </div>
                                                     </div> 
@@ -706,15 +715,13 @@
 
                                                     <div class="row m-2">
                                                         
-                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-soft-success rounded-pill" onclick="setAction('save')">
-                                                            Speichern
-                                                        </button>
+                                                        <button type="submit" onclick=submitFormWithAction('save') class="btn btn-soft-success rounded-pill">Speichern</button>
 
                                                     </div>
                                                     <div class="d-flex align-items-center">
                                                             <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
                                                             </div>
-                                                        <button hidden type="submit" onclick=submitFormWithAction('speichern') id="save-all-forms" class="btn btn-soft-success rounded-pill" >Speichern</button>
+                                                        <button hidden type="submit" onclick=submitFormWithAction('save') id="save-all-forms" class="btn btn-soft-success rounded-pill" >Speichern</button>
 
                                                 
                                                     <div class="row m-2">

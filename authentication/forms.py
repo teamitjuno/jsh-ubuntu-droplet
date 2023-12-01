@@ -469,9 +469,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         self.fields["map_notizen_container_view"].widget.attrs.update(
             {"id": "id_map_notizen_container_view"}
         )
-        self.fields["is_home_page"].widget.attrs.update(
-            {"id": "id_is_home_page"}
-        )
+        self.fields["is_home_page"].widget.attrs.update({"id": "id_is_home_page"})
         self.fields["initial_verbrauch"].widget.attrs.update(
             {"id": "id_initial_verbrauch"}
         )
