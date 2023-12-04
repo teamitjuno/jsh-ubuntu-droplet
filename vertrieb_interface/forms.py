@@ -106,17 +106,17 @@ STORNIERUNGSGRUND_CHOICES = (
 
 def validate_german_mobile_number(value):
     if not re.match(r'^\+49(1[5-7][0-9])\d{7,8}$', value):
-        raise ValidationError("Enter a valid German mobile number starting with +49.")
+        raise ValidationError("Geben Sie eine gültige deutsche Handynummer ein, die mit +49 beginnt.")
     
 def validate_german_landline_number(value):
     if not re.match(r'^\+49\(\d{2,5}\)\d{3,}$', value):
-        raise ValidationError("Enter a valid German landline number starting with +49.")
+        raise ValidationError("Geben Sie eine gültige deutsche Festnetznummer ein, die mit +49 beginnt.")
 
 def validate_name_format(value):
     # Regular expression for 'Last_Name First_Name'
     # Expecting each to start with a capital letter followed by lowercase letters
     if not re.match(r'^[A-Z][a-z]+ [A-Z][a-z]+$', value):
-        raise ValidationError("Name must be in 'Last_Name First_Name' format, with each name starting with a capital letter.")
+        raise ValidationError("Format 'Nachname Vorname', wobei jeder Name mit einem Großbuchstaben beginnt")
 
 def validate_two_decimal_places(value):
     # Check if the value is an instance of a valid number type
@@ -1306,8 +1306,18 @@ class VertriebAngebotForm(ModelForm):
 
         interessent = cleaned_data.get("name")
         modulanzahl = cleaned_data.get("modulanzahl")
-
+        vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")
+        anrede = cleaned_data.get("anrede")
+        if anrede is None or anrede == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"anrede": anrede},
+            )
+        if anrede != "Firma":
+            # Perform validation for vorname_nachname if anrede is not "Firma"
+            if not vorname_nachname:  # or any other validation you need
+                raise ValidationError("Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'.")
 
         if action == "save":
             return cleaned_data
@@ -1326,14 +1336,10 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
-        anrede = cleaned_data.get("anrede")
-        if anrede is None or anrede == "":
-            raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
-                params={"anrede": anrede},
-            )
+        
             # Validation for 'name'
         name = cleaned_data.get("name")
+        
         if name is None or interessent == "----":
             raise forms.ValidationError(
                 {"hersteller": "Sie haben keinen Interessent ausgewählt"}
@@ -1348,7 +1354,7 @@ class VertriebAngebotForm(ModelForm):
             )
 
         # Validation for 'vorname_nachname'
-        vorname_nachname = cleaned_data.get("vorname_nachname")
+        
         if vorname_nachname is None or vorname_nachname == "":
             raise ValidationError(
                 ("Dieses Feld ist erforderlich"),
