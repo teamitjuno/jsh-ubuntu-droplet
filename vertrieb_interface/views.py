@@ -1040,14 +1040,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "save":
                 self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
+                    instance = form.instance
                     put_form_data_to_zoho_jpp(form)
-                    vertrieb_angebot.angebot_id_assigned = True
-                    vertrieb_angebot.save()
+                    instance.angebot_id_assigned == False
+                    instance.save()
                     all_user_angebots_list = fetch_user_angebote_all(request)
                     user.zoho_data_text = json.dumps(all_user_angebots_list)
                     user.save()
-                    instance = form.instance
-                    instance.save()  # type:ignore
                     CustomLogEntry.objects.log_action(
                         user_id=vertrieb_angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(
