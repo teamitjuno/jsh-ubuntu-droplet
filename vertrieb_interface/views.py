@@ -1042,7 +1042,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     put_form_data_to_zoho_jpp(form)
-                    instance.angebot_id_assigned == False
+                    instance.angebot_id_assigned = True
                     instance.save()
                     # all_user_angebots_list = fetch_user_angebote_all(request)
                     # user.zoho_data_text = json.dumps(all_user_angebots_list)
