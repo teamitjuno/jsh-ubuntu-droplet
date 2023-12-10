@@ -476,7 +476,7 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-select",
                 "id": "id_anrede",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -515,7 +515,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Telefon Mobil",
                 "id": "id_telefon_mobil",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -529,7 +529,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Telefon Festnetz",
                 "id": "id_telefon_festnetz",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -542,7 +542,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Email",
                 "id": "id_email",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -555,7 +555,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Firma",
                 "id": "firma",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -568,7 +568,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Straße & Hausnummer",
                 "id": "id_strasse",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -581,7 +581,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "PLZ & Ort",
                 "id": "id_ort",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
@@ -612,7 +612,7 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Anlagenstandort",
                 "id": "anlagenstandort",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
