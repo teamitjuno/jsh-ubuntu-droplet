@@ -1319,8 +1319,6 @@ class VertriebAngebotForm(ModelForm):
             if not vorname_nachname:  # or any other validation you need
                 raise ValidationError("Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'.")
 
-        if action == "save":
-            return cleaned_data
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1342,11 +1340,9 @@ class VertriebAngebotForm(ModelForm):
         
         if name is None or interessent == "----":
             raise forms.ValidationError(
-                {"hersteller": "Sie haben keinen Interessent ausgewählt"}
+                {"interessent": "Sie haben keinen Interessent ausgewählt"}
             )
 
-        if action == "save":
-            return cleaned_data
         if name == "":
             raise ValidationError(
                 ("Dieses Feld ist erforderlich"),
