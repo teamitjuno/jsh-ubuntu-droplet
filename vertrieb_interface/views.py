@@ -1044,9 +1044,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned == False
                     instance.save()
-                    all_user_angebots_list = fetch_user_angebote_all(request)
-                    user.zoho_data_text = json.dumps(all_user_angebots_list)
-                    user.save()
+                    # all_user_angebots_list = fetch_user_angebote_all(request)
+                    # user.zoho_data_text = json.dumps(all_user_angebots_list)
+                    # user.save()
                     CustomLogEntry.objects.log_action(
                         user_id=vertrieb_angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(
