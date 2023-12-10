@@ -501,7 +501,7 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "id_vorname_nachname",
-                "style": "max-width: 300px",
+                
             }
         ),
     )
