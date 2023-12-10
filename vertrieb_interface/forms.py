@@ -1246,6 +1246,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "anz_wandhalterung_fuer_speicher"}
         )
+        self.fields["zoho_kundennumer"].widget.attrs.update(
+            {"id": "zoho_kundennumer"}
+        )
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )
