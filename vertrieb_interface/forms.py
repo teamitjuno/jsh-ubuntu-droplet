@@ -509,7 +509,7 @@ class VertriebAngebotForm(ModelForm):
         label="Telefon Mobil",
         max_length=100,
         required=False,
-        validators=[validate_german_mobile_number],
+        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
