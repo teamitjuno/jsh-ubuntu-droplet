@@ -484,10 +484,10 @@ class VertriebAngebot(TimeStampMixin):
         else:
             action_flag = CHANGE
 
-        (
-            self.postanschrift_latitude,
-            self.postanschrift_longitude,
-        ) = self.coordinates_extractor
+        # (
+        #     self.postanschrift_latitude,
+        #     self.postanschrift_longitude,
+        # ) = self.coordinates_extractor
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -600,34 +600,34 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return None
 
-    @property
-    def coordinates_extractor(self):
-        # Return "0.0", "0.0" if strasse or ort is None
-        if self.strasse is None or self.ort is None:
-            return "0.0", "0.0"
+    # @property
+    # def coordinates_extractor(self):
+    #     # Return "0.0", "0.0" if strasse or ort is None
+    #     if self.strasse is None or self.ort is None:
+    #         return "0.0", "0.0"
 
-        # Load variables from .env
-        OWNER_ID = os.getenv("OWNER_ID")
-        STYLE_ID = os.getenv("STYLE_ID")
-        MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+    #     # Load variables from .env
+    #     OWNER_ID = os.getenv("OWNER_ID")
+    #     STYLE_ID = os.getenv("STYLE_ID")
+    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 
-        # Prepare the query string
-        query = f"{self.strasse}, {self.ort}"
+    #     # Prepare the query string
+    #     query = f"{self.strasse}, {self.ort}"
 
-        # You might need to adjust this URL to match the Mapbox API version/documentation you're using
-        url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
+    #     # You might need to adjust this URL to match the Mapbox API version/documentation you're using
+    #     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
 
-        # Make the API call
-        response = requests.get(url)
-        data = response.json()
+    #     # Make the API call
+    #     response = requests.get(url)
+    #     data = response.json()
 
-        # Extracting latitude and longitude from the response
-        try:
-            longitude, latitude = data["features"][0]["geometry"]["coordinates"]
-            return latitude, longitude
-        except (IndexError, KeyError):
-            # Handle cases where the address isn't found or the API response structure has unexpected changes
-            return 0.0, 0.0
+    #     # Extracting latitude and longitude from the response
+    #     try:
+    #         longitude, latitude = data["features"][0]["geometry"]["coordinates"]
+    #         return latitude, longitude
+    #     except (IndexError, KeyError):
+    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
+    #         return 0.0, 0.0
 
     # @property
     # def coordinates_extractor(self):
@@ -650,17 +650,17 @@ class VertriebAngebot(TimeStampMixin):
     #         # Handle cases where the address isn't found or the API response structure has unexpected changes
     #         return 0.0, 0.0
 
-    @property
-    def mapbox_data(self):
-        # Replace with your Solar API key if different
-        latitude, longitude = self.coordinates_extractor
-        print(latitude, longitude)
+    # @property
+    # def mapbox_data(self):
+    #     # Replace with your Solar API key if different
+    #     latitude, longitude = self.coordinates_extractor
+    #     print(latitude, longitude)
 
-        url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&key={GOOGLE_MAPS_API_KEY}"
+    #     url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&key={GOOGLE_MAPS_API_KEY}"
 
-        response = requests.get(url)
-        print(response.json())
-        return response.json()
+    #     response = requests.get(url)
+    #     print(response.json())
+    #     return response.json()
 
     @property
     def swap_name_order(self):
