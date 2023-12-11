@@ -158,8 +158,11 @@
                                                                             <th>{{ form.anlagenstandort.label_tag }}</th>
                                                                             <td>{{ form.anlagenstandort }}</td>
                                                                             
-                                                                            <td hidden>{{ form.postanschrift_latitude }}</td>
-                                                                            <td hidden>{{ form.postanschrift_longitude }}</td>
+                                                                            <td hidden><input type="text" id="longitude" name="postanschrift_longitude" value="{{ form.postanschrift_longitude.value }}"></td>
+                                                                            <td hidden><input type="text" id="latitude" name="postanschrift_latitude" value="{{ form.postanschrift_latitude.value }}"></td>
+                                                                            
+
+
                                                                         </tr>
                                                                         
                                                                     </tbody>
@@ -168,8 +171,26 @@
                                                         </div>
                                                     </div>
                                                         <!-- Column 2 -->
-                                                            {% if user.map_notizen_container_view == "Map" %}
-                                                                {% include 'vertrieb/extra/map.html' %}
+                                                        {% if user.map_notizen_container_view == "Map" %}
+                                                        <div class="col-lg-7">
+                                                            <div class="card mb-3">
+                                                                <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Karte</div>
+                                                                <div class="card-body">
+                                                                    <div class="col-xl-12">
+                                                                        <div class="card">
+                                                                            <div id="map" style="width: 100%; height: 550px;"></div>
+
+                                                                            
+
+                                                                            <br/>
+
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                            
+                                                                
                                                             {% elif user.map_notizen_container_view == "Notizen" %}
                                                                 {% include 'vertrieb/extra/notizen.html' %}
                                                            {% endif %}
@@ -1896,7 +1917,7 @@ $(document).ready(function() {
 
 
 
-<script>
+{% comment %} <script>
   function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
@@ -1935,7 +1956,7 @@ $(document).ready(function() {
       .then(response => response.json())
       .then(data => console.log(data));
   });
-</script>
+</script> {% endcomment %}
   
 <script>
 $(document).ready(function() {
@@ -1961,6 +1982,8 @@ $(document).ready(function() {
                 $("#id_ort").val(data.ort);
                 $("#id_notizen").val(data.notizen);
                 $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
+                $("#longitude").val(data.postanschrift_longitude);
+                $("#latitude").val(data.postanschrift_latitude);
 
             }
         });
@@ -1968,6 +1991,7 @@ $(document).ready(function() {
 });
 
 </script>
+
 <script>
     let arbeitsListe = JSON.parse('{{ vertrieb_angebot.Arbeits_liste|escapejs }}');
     let restListe = JSON.parse('{{ vertrieb_angebot.Rest_liste|escapejs }}');
@@ -2085,15 +2109,57 @@ $(document).ready(function() {
         })
     }(window.jQuery)
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const longitudeInput = document.getElementById('longitude');
+    const latitudeInput = document.getElementById('latitude');
 
+    // Initialize the map
+    var map = L.map('map').setView([latitudeInput.value, longitudeInput.value], 14);
+
+    // Load and display tile layers on the map (from OpenStreetMap by default)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker
+    var marker = L.marker([latitudeInput.value, longitudeInput.value]).addTo(map);
+
+    function pollForChanges() {
+        var newLat = parseFloat(latitudeInput.value);
+        var newLng = parseFloat(longitudeInput.value);
+
+        // Check if the current map center is different from the input values
+        if(map.getCenter().lat !== newLat || map.getCenter().lng !== newLng ||
+           marker.getLatLng().lat !== newLat || marker.getLatLng().lng !== newLng) {
+            updateMap();
+        }
+    }
+
+    // Update map function
+    function updateMap() {
+        console.log('Updating map with new coordinates');
+        var newLat = parseFloat(latitudeInput.value);
+        var newLng = parseFloat(longitudeInput.value);
+        map.setView([newLat, newLng], 14);
+        marker.setLatLng([newLat, newLng]);
+        // Update your marker position if you have one
+    }
+
+    // Set up polling every 1000 milliseconds (1 second)
+    setInterval(pollForChanges, 1000);
+});
+
+</script>
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://maps.google.com/maps/api/js"></script>
-<script src="{% static 'assets/vendor/gmaps/gmaps.min.js' %}"></script>
+{% comment %} <script src="https://maps.google.com/maps/api/js"></script> {% endcomment %}
+{% comment %} <script src="{% static 'assets/vendor/gmaps/gmaps.min.js' %}"></script> {% endcomment %}
 
         <!-- Google Maps Demo js -->
-<script src="{% static 'assets/js/pages/demo.google-maps.js' %}"></script>
+{% comment %} <script src="{% static 'assets/js/pages/demo.google-maps.js' %}"></script> {% endcomment %}
 <script src="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
 
 <!-- Code Highlight js -->
@@ -2114,7 +2180,7 @@ $(document).ready(function() {
 <script src="https://apexcharts.com/samples/assets/series1000.js"></script>
 <script src="https://apexcharts.com/samples/assets/github-data.js"></script>
 <script src="https://apexcharts.com/samples/assets/irregular-data-series.js"></script>
-<script src="{% static 'assets/js/pages/demo.apex-area.js' %}"></script>  
+{% comment %} <script src="{% static 'assets/js/pages/demo.apex-area.js' %}"></script>   {% endcomment %}
 
 
 
@@ -2145,7 +2211,7 @@ $(document).ready(function() {
     <script src="{% static 'assets/vendor/flatpickr/flatpickr.min.js' %}"></script>
 
     <!-- Demo js -->
-    <script src="{% static 'assets/js/pages/demo.typehead.js' %}"></script>
+    {% comment %} <script src="{% static 'assets/js/pages/demo.typehead.js' %}"></script> {% endcomment %}
     <script src="{% static 'assets/js/pages/demo.timepicker.js' %}"></script>
 
     <!-- Init js -->

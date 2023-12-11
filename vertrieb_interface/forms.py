@@ -590,7 +590,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "id": "id_postanschrift_latitude",
+                "id": "latitude",
             }
         ),
     )
@@ -599,7 +599,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "id": "id_postanschrift_longitude",
+                "id": "longitude",
             }
         ),
     )

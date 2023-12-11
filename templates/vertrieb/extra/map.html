@@ -1,26 +1,61 @@
 {% block content %}
 <div class="col-lg-7">
     <div class="card mb-3">
-            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Karte</div>
-            <div class="card-body">
-                <div class="col-xl-12">
-                    <div class="card">
-                        <iframe 
-                            width="100%" 
-                            height="550px" 
-                            frameborder="0" 
-                            scrolling="yes" 
-                            src="https://www.openstreetmap.org/export/embed.html?bbox={{ LONGITUDE }}%2C{{ LATITUDE }}%2C{{ LONGITUDE }}%2C{{ LATITUDE }}&amp;layer=mapnik&amp;marker={{ LATITUDE }}%2C{{ LONGITUDE }}&amp;zoom=14" 
-                            style="border: 1px solid black">
-                        </iframe>
-                        <br/>
-                        <small>
-                            <a href="https://www.openstreetmap.org/?mlat={{ LATITUDE }}&amp;mlon={{ LONGITUDE }}#map=14/{{ LATITUDE }}/{{ LONGITUDE }}">Größere Karte anzeigen</a>
-                        </small>
-                    </div> <!-- end card-->
-                </div> <!-- end col-->
-            </div>
+        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Karte</div>
+        <div class="card-body">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div id="map" style="width: 100%; height: 550px;"></div>
+                    
+
+                    <br/>
+
+                </div> <!-- end card-->
+            </div> <!-- end col-->
         </div>
-    
     </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const longitudeInput = document.getElementById('longitude');
+    const latitudeInput = document.getElementById('latitude');
+
+    // Initialize the map
+    var map = L.map('map').setView([latitudeInput.value, longitudeInput.value], 14);
+
+    // Load and display tile layers on the map (from OpenStreetMap by default)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker
+    var marker = L.marker([latitudeInput.value, longitudeInput.value]).addTo(map);
+
+    function pollForChanges() {
+        var newLat = parseFloat(latitudeInput.value);
+        var newLng = parseFloat(longitudeInput.value);
+
+        // Check if the current map center is different from the input values
+        if(map.getCenter().lat !== newLat || map.getCenter().lng !== newLng ||
+           marker.getLatLng().lat !== newLat || marker.getLatLng().lng !== newLng) {
+            updateMap();
+        }
+    }
+
+    // Update map function
+    function updateMap() {
+        console.log('Updating map with new coordinates');
+        var newLat = parseFloat(latitudeInput.value);
+        var newLng = parseFloat(longitudeInput.value);
+        map.setView([newLat, newLng], 14);
+        marker.setLatLng([newLat, newLng]);
+        // Update your marker position if you have one
+    }
+
+    // Set up polling every 1000 milliseconds (1 second)
+    setInterval(pollForChanges, 1000);
+});
+
+</script>
 {% endblock %}
