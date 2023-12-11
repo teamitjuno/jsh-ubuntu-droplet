@@ -1200,6 +1200,7 @@ class VertriebAngebotForm(ModelForm):
                 name_to_kundennumer = {
                     item["name"]: item["zoho_kundennumer"] for item in data
                 }
+                
             else:
                 # Set initial value to "-----" if there is no data
                 self.fields["name"].initial = "-----"
@@ -1308,6 +1309,7 @@ class VertriebAngebotForm(ModelForm):
             return cleaned_data
 
         interessent = cleaned_data.get("name")
+        kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")

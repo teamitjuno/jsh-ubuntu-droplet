@@ -647,8 +647,9 @@
                                                 <i class="mdi mdi-account widget-icon"></i>
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
-                                            <p hidden>{{ form.zoho_kundennumer}}</p>
+                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ vertrieb_angebot.zoho_kundennumer }}">
+                                            {% comment %} <p>{{ vertrieb_angebot.zoho_kundennumer}}</p> {% endcomment %}
+                                            {% comment %} <p hidden>{{ form.zoho_kundennumer}}</p>  {% endcomment %}
                                             
                                             <p class="mb-0 text-muted">
                                             {% if not vertrieb_angebot.termine_text %}
@@ -715,7 +716,7 @@
 
                                                     <div class="row m-2">
                                                         
-                                                        <button type="submit" onclick=submitFormWithAction('save') class="btn btn-soft-success rounded-pill">Speichern</button>
+                                                        <button type="submit" onclick="submitFormWithAction('save')" class="btn btn-soft-success rounded-pill">Speichern</button>
 
                                                     </div>
                                                     <div class="d-flex align-items-center">

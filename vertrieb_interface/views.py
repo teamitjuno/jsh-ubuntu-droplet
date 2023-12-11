@@ -780,9 +780,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             instance=vertrieb_angebot,
             user=self.request.user,
         )
-        context["form_rechner"] = VertriebAngebotRechnerForm(
-            instance=vertrieb_angebot, user=self.request.user
-        )
+        # context["form_rechner"] = VertriebAngebotRechnerForm(
+        #     instance=vertrieb_angebot, user=self.request.user
+        # )
         return context
 
     def get_form_kwargs(self):
@@ -877,6 +877,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item.get("notizen")
             vertrieb_angebot.email = item.get("email")
+            # vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
             vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
             vertrieb_angebot.postanschrift_longitude = item.get(
                 "postanschrift_longitude"
@@ -1043,10 +1044,23 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     instance = form.instance
                     put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned = True
-                    instance.save()
+                    
                     # all_user_angebots_list = fetch_user_angebote_all(request)
                     # user.zoho_data_text = json.dumps(all_user_angebots_list)
                     # user.save()
+                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+                    
+                    data_loads = json.loads(profile.zoho_data_text)
+                    name = instance.name
+                    
+                    data = next((item for item in data_loads if item["name"] == name), None)
+                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    print(name)
+                    print(data)
+                    instance.save()
+                    form.save()
+                    print(vertrieb_angebot.zoho_kundennumer)
+                    vertrieb_angebot.save()
                     CustomLogEntry.objects.log_action(
                         user_id=vertrieb_angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(
