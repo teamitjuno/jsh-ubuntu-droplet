@@ -1308,6 +1308,7 @@ class VertriebAngebotForm(ModelForm):
         if action == "angebotsumme_rechnen":
             return cleaned_data
 
+
         interessent = cleaned_data.get("name")
         kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")

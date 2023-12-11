@@ -525,9 +525,9 @@
                                                             <div class="card-body">
                                                                 <button type="submit" onclick=submitFormWithAction('kalkulation_erstellen') class="btn btn-outline-info rounded-pill">PDF-Kalkulation erstellen</button>
                                                                 {% if vertrieb_angebot.angebot_id_assigned == False %}
-                                                                <button type="submit" onclick="submitFormWithAction('angebotsumme_rechnen')" class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
+                                                                <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
                                                                 {% else %}
-                                                                <button type="submit" onclick="submitFormWithAction('angebotsumme_rechnen')" class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
+                                                                <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-outline-info rounded-pill">Kalkulation rechnen</button>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
