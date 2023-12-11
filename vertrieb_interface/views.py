@@ -1968,10 +1968,12 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             form.save()
             if self._send_email(form.instance):
                 messages.success(request, "Email sent successfully")
+                email_sent = True
                 return redirect(
                     "vertrieb_interface:document_and_calc_view",
-                    form.instance.angebot_id,
+                    form.instance.angebot_id
                 )
+        email_sent = False
         return self.form_invalid(form)
 
     def _send_email(self, vertrieb_angebot):

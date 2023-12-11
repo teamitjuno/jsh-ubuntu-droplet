@@ -4,6 +4,17 @@
 {% load widget_tweaks %}
 {% block content %}
 <div class="content-page">
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <script>
+        $(document).ready(function() {
+          $('#success-alert-modal').modal('show');
+        });
+      </script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 
     <div class="content">
@@ -13,9 +24,7 @@
                     <div class="page-title-box">
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                {% comment %} <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Angebote Liste</a></li>
-                                <li class="breadcrumb-item active">Angebot PDF view</li> {% endcomment %}
+
                             </ol>
                         </div>
                         <h4 class="page-title">{{ angebot_id }}</h4>

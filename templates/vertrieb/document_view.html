@@ -4,17 +4,17 @@
 {% load widget_tweaks %}
 {% block content %}
 <div class="content-page">
-{% comment %} <script>
-window.onload = function() {
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                $('#success-alert-modal').modal('show');
-            {% endif %}
-        {% endfor %}
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <script>
+        $(document).ready(function() {
+          $('#success-alert-modal').modal('show');
+        });
+      </script>
     {% endif %}
-};
-</script> {% endcomment %}
+  {% endfor %}
+{% endif %}
 
     <div class="content">
         <div class="container-fluid">
@@ -23,9 +23,7 @@ window.onload = function() {
                     <div class="page-title-box">
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                {% comment %} <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Angebote Liste</a></li>
-                                <li class="breadcrumb-item active">Angebot PDF view</li> {% endcomment %}
+                                
                             </ol>
                         </div>
                         <h4 class="page-title">{{ angebot_id }}</h4>
@@ -68,8 +66,6 @@ window.onload = function() {
                                 </div>
                             </div>
                         </div>
-                    
-
                 </div>
                 <div class="col-md-6 col-xxl-3">
                     <div class="card border-info border">
