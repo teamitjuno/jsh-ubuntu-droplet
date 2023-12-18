@@ -23,6 +23,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "159.89.22.211",
     "http://159.89.22.211",
+    "https://159.89.22.211",
 ]
 LOGIN_URL = "/login"
 
@@ -100,6 +101,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
+    "https://159.89.22.211"
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.80.1",
@@ -108,11 +110,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
+    "https://159.89.22.211"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://159.89.22.211:80")
-CSP_FRAME_SRC = ("http://159.89.22.211:80",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://159.89.22.211")
+CSP_FRAME_SRC = ("https://159.89.22.211",)
 
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
