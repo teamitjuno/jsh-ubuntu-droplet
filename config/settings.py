@@ -22,6 +22,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "159.89.22.211",
+    "http://159.89.22.211",
 ]
 LOGIN_URL = "/login"
 
