@@ -61,6 +61,7 @@ SERVICE_APPS = [
     "schema_graph",
     "crispy_forms",
     "shared",
+    # "djoser",
     "storages",
     "channels",
     "corsheaders",
@@ -75,17 +76,38 @@ SIMPLE_JWT = {
     "TOKEN_SERIALIZER_CLASS": "accounts.jwt_utils.CustomTokenObtainPairSerializer",
 }
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+# }
+# DJOSER = {
+#     'LOGIN_FIELD': 'email', 
+# }
+
+
 AUTH_USER_MODEL = "authentication.User"
+
 CORS_ALLOWED_ORIGINS = [
+    "http://192.168.80.1",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
 ]
 CSRF_TRUSTED_ORIGINS = [
+    "http://192.168.80.1",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
 ]
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://159.89.22.211:80")
 
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -220,6 +242,35 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#         'file': {
+#             'class': 'logging.FileHandler',
+#             'filename': 'django_debug.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',  
+#             'propagate': True,
+#         },
+#         # Для логирования запросов к Django
+#         'django.request': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#         
+#     },
+# }
+
+
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'juno.dyntcb.de'
