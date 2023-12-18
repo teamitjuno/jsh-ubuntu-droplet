@@ -112,6 +112,7 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://159.89.22.211:80")
+CSP_FRAME_SRC = ("http://159.89.22.211:80",)
 
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
