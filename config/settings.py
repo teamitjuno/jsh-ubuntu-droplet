@@ -107,6 +107,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.jsh-home.app",
     "https://138.68.100.101",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://159.89.22.211:80")
 
 MIDDLEWARE = [
@@ -227,8 +229,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -257,7 +257,7 @@ LOGGING = {
 #     'loggers': {
 #         'django': {
 #             'handlers': ['console', 'file'],
-#             'level': 'DEBUG',  
+#             'level': 'DEBUG',  # Установите уровень логирования на DEBUG для максимальной детализации
 #             'propagate': True,
 #         },
 #         # Для логирования запросов к Django
@@ -266,7 +266,7 @@ LOGGING = {
 #             'level': 'DEBUG',
 #             'propagate': False,
 #         },
-#         
+#         # Вы можете добавить другие логгеры для других частей вашего приложения
 #     },
 # }
 
