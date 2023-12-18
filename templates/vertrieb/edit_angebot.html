@@ -2208,9 +2208,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         
     });
-    
-
-    
 
     function pollForChanges() {
         var newLat = parseFloat(latitudeInput.value);
@@ -2223,7 +2220,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    setInterval(pollForChanges, 1000);
+    setInterval(pollForChanges, 3000);
 });
 </script>
 
