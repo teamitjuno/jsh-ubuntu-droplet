@@ -113,9 +113,10 @@ def validate_german_landline_number(value):
         raise ValidationError("Geben Sie eine gültige deutsche Festnetznummer ein, die mit +49 beginnt.")
 
 def validate_name_format(value):
-    # Regular expression for 'Last_Name First_Name'
+    # Regular expression for 'Last_Name First_Name Middle_Name(optional)'
     # Expecting each to start with a capital letter followed by lowercase letters
-    if not re.match(r'^[A-Z][a-z]+ [A-Z][a-z]+$', value):
+    # The middle name is optional and can be included
+    if not re.match(r'^[A-Z][a-z]+ [A-Z][a-z]+(?: [A-Z][a-z]+)?$', value):
         raise ValidationError("Format 'Nachname Vorname', wobei jeder Name mit einem Großbuchstaben beginnt")
 
 def validate_two_decimal_places(value):

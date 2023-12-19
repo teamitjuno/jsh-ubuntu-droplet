@@ -255,18 +255,17 @@ def put_form_data_to_zoho_jpp(form):
     headers = {"Authorization": f"Bearer {access_token}"}
 
     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
-    name_parts = vorname_nachname.split()
     anrede = form_data.get('anrede')
-    last_name = name_parts[0]
-    first_name = name_parts[1] if len(name_parts) > 1 else ''
-    middle_name = ' '.join(name_parts[2:-1]) if len(name_parts) > 3 else ''
-
-    
-    log_and_notify(first_name)
-    log_and_notify(middle_name)
-    log_and_notify(last_name)
-    # Constructing the payload for the API
-    payload = {
+    name_parts = vorname_nachname.split()
+    log_and_notify(len(name_parts))
+    if len(name_parts) == 2:
+        last_name = name_parts[0]
+        first_name =' '.join(name_parts[1:-1])
+        middle_name = ''
+        log_and_notify(first_name)
+        log_and_notify(middle_name)
+        log_and_notify(last_name)
+        payload = {
         "data": {
             "Email": form_data.get('email'),
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
@@ -274,7 +273,7 @@ def put_form_data_to_zoho_jpp(form):
             "Name": {
                 "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                 "prefix": anrede,
-                "suffix": middle_name.strip(),
+                "suffix": middle_name,
                 "last_name": last_name,
                 "first_name": first_name,
             },
@@ -287,9 +286,45 @@ def put_form_data_to_zoho_jpp(form):
         }
     }
 
-    log_and_notify(payload)
-    response = requests.put(update_url, headers=headers, json=payload)
-    return response.json()
+        log_and_notify(payload)
+        response = requests.put(update_url, headers=headers, json=payload)
+        log_and_notify(response.json())
+        return response.json()
+    elif len(name_parts) == 3:
+        last_name = name_parts[0]
+        first_name =' '.join(name_parts[1:-1])
+        middle_name = name_parts[-1]
+        log_and_notify(first_name)
+        log_and_notify(middle_name)
+        log_and_notify(last_name)
+
+
+        # Constructing the payload for the API
+        payload = {
+            "data": {
+                "Email": form_data.get('email'),
+                "Telefon_Festnetz": form_data.get('telefon_festnetz'),
+                "Telefon_mobil": form_data.get('telefon_mobil'),
+                "Name": {
+                    "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                    "prefix": anrede,
+                    "suffix": middle_name,
+                    "last_name": last_name,
+                    "first_name": first_name,
+                },
+                "Adresse_PVA": {
+                    "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+                    "district_city1": form_data.get('ort').split(' ')[1],
+                    "address_line_11": form_data.get('strasse'),
+                    "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+                },
+            }
+        }
+
+        log_and_notify(payload)
+        response = requests.put(update_url, headers=headers, json=payload)
+        log_and_notify(response.json())
+        return response.json()
 
 def return_lower_bull(val):
     return "true" if val else "false"
