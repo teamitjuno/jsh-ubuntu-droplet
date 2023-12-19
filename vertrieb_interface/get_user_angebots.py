@@ -260,7 +260,7 @@ def put_form_data_to_zoho_jpp(form):
     log_and_notify(len(name_parts))
     if len(name_parts) == 2:
         last_name = name_parts[0]
-        first_name =' '.join(name_parts[1:-1])
+        first_name = name_parts[2]
         middle_name = ''
         log_and_notify(first_name)
         log_and_notify(middle_name)
@@ -292,7 +292,7 @@ def put_form_data_to_zoho_jpp(form):
         return response.json()
     elif len(name_parts) == 3:
         last_name = name_parts[0]
-        first_name =' '.join(name_parts[1:-1])
+        first_name = name_parts[2]
         middle_name = name_parts[-1]
         log_and_notify(first_name)
         log_and_notify(middle_name)
