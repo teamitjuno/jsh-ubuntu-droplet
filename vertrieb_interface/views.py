@@ -250,8 +250,8 @@ def get_icon_based_on_status(entry, status):
 def home(request):
     user = request.user
     load_user_angebots(request)
-    # if TELEGRAM_LOGGING:
-    #     send_message_to_bot(f"{user.email}: Now is on the homepage...")
+    if TELEGRAM_LOGGING:
+        send_message_to_bot(f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite")
     year, month = now.year, now.month
 
     users = (
@@ -636,7 +636,7 @@ def create_angebot(request):
     form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
 
     if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{request.user}, Neue Angebot created")
+        send_message_to_bot(f"{user.first_name} {user.last_name} erstellt ein neues Angebot ")
 
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
@@ -679,8 +679,8 @@ def create_angebot(request):
         )
 
     if not form_angebot.is_valid():
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(form_angebot.errors)
+        # if TELEGRAM_LOGGING:
+        #     send_message_to_bot(form_angebot.errors)
 
         return page_not_found(request, Exception())
 
@@ -960,7 +960,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         if request.method == "POST":
             action_type = request.POST.get("action_type")
             if action_type == "switch_to_bekommen":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
 
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
@@ -973,13 +973,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     vertrieb_angebot.angebot_zoho_id = new_record_id
                     vertrieb_angebot.save()
 
-                    self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
+                    if TELEGRAM_LOGGING:
+                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "switch_to_bekommen_pdf_plus_kalk":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
 
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
@@ -991,55 +993,57 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     new_record_id = response_data["data"]["ID"]
                     vertrieb_angebot.angebot_zoho_id = new_record_id
                     vertrieb_angebot.save()
-                    self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
+                    if TELEGRAM_LOGGING:
+                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
                     return redirect(
                         "vertrieb_interface:create_angebot_and_calc_pdf",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "zahlungs":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
                     instance.zahlungsbedingungen = form.cleaned_data[
                         "zahlungsbedingungen"
                     ]
                     instance.save(update_fields=["zahlungsbedingungen"])
-                    self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "kalkulation_erstellen":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
                     instance.save()
-                    self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
                     return redirect(
                         "vertrieb_interface:create_calc_pdf",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "angebotsumme_rechnen":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
                     if vertrieb_angebot.angebot_id_assigned == False:
                         instance.angebot_id_assigned == False
                         instance.save()
-                        self._log_and_notify_success(user)
+                        # self._log_and_notify_success(user)
                         return redirect(
                             "vertrieb_interface:edit_angebot",
                             vertrieb_angebot.angebot_id,
                         )
                     else:
                         instance.save()
-                        self._log_and_notify_success(user)
+                        # self._log_and_notify_success(user)
                         return redirect(
                             "vertrieb_interface:edit_angebot",
                             vertrieb_angebot.angebot_id,
                         )
             elif action_type == "save":
-                self._log_and_notify_attempt(user, action_type)
+                # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
                     put_form_data_to_zoho_jpp(form)
@@ -1055,11 +1059,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     
                     data = next((item for item in data_loads if item["name"] == name), None)
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
-                    print(name)
-                    print(data)
                     instance.save()
                     form.save()
-                    print(vertrieb_angebot.zoho_kundennumer)
+                    # print(vertrieb_angebot.zoho_kundennumer)
                     vertrieb_angebot.save()
                     CustomLogEntry.objects.log_action(
                         user_id=vertrieb_angebot.user_id,
@@ -1071,11 +1073,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         action_flag=CHANGE,
                         status=vertrieb_angebot.status,
                     )
-                    self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
                     return redirect(
                         "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
                     )
-            self._log_and_notify_error(user, form)
+            # self._log_and_notify_error(user, form)
             return self.form_invalid(form, vertrieb_angebot)
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
@@ -1130,10 +1132,10 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(
-                f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
-            )
+        # if TELEGRAM_LOGGING:
+        #     send_message_to_bot(
+        #         f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
+        #     )
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -1188,6 +1190,8 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 vertrieb_angebot.save()
                 form.vor
                 form.save()  # type:ignore
+                if TELEGRAM_LOGGING:
+                        send_message_to_bot(f"{user.first_name} {user.last_name}: ,hat ein PDF Ticket für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
 
                 return redirect(
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
@@ -1269,10 +1273,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(
-                f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
-            )
+        
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -1326,6 +1327,8 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
                 vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
+                if TELEGRAM_LOGGING:
+                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Kalkulation für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
 
                 return redirect(
                     "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
@@ -1419,7 +1422,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
             status__in=self._get_contact_statuses(),
         ).filter(self.zoho_kundennumer_is_numeric())
         if TELEGRAM_LOGGING:
-            send_message_to_bot(f"{self.request.user.email}: Now is on ViewOrders...")
+            send_message_to_bot(f"{self.request.user.first_name} {self.request.user.last_name} befindet sich auf der Listenseite der kommerziellen Angebote....")
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
@@ -1522,8 +1525,8 @@ def load_user_angebots(request):
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
 
-        if TELEGRAM_LOGGING:
-            send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
+        # if TELEGRAM_LOGGING:
+        #     send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
         return JsonResponse({"status": "success"}, status=200)
     except Exception:
         return JsonResponse(
@@ -1897,7 +1900,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 )
             if (
                 vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
-                or "Phono Solar PS430M8GFH-18/VNH"
+                or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH"
             ):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
 

@@ -69,7 +69,7 @@ def refresh_access_token():
 
         return token_info["access_token"]
     except:
-        log_and_notify(f"Error refreshing access token")
+        print(f"Error refreshing access token")
 
 
 def log_and_notify(message):
@@ -85,12 +85,10 @@ def fetch_data_from_api(url, params=None):
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == HTTP_OK:
-        log_and_notify(f"Data successfully fetched.")
+        
         return response.json()
     else:
-        log_and_notify(
-            f"Failed to fetch data, status code: {response.status_code}. Retrying in {SLEEP_TIME} seconds."
-        )
+        
         time.sleep(SLEEP_TIME)
 
     return None
@@ -100,10 +98,6 @@ def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
     all_user_angebots_list = []
-
-    log_and_notify(
-        f"Start fetching Angebote for user: {user.username}, User ID: {user.zoho_id}"
-    )
 
     while True:
         params = {
@@ -115,22 +109,16 @@ def fetch_user_angebote_all(request):
         data = fetch_data_from_api(VERTRIEB_URL, params)
 
         if data is None or not data.get("data"):
-            log_and_notify(
-                f"No more data to fetch for user: {user.username}, User ID: {user.zoho_id}. Exiting."
-            )
+
             break
         else:
             all_user_angebots_list.extend(process_all_user_data(data))
-            log_and_notify(
-                f"Data page {start_index // LIMIT_ALL + 1} fetched successfully. Continuing."
-            )
+
             start_index += LIMIT_ALL
             if len(data.get("data")) < LIMIT_ALL:
                 break
 
-    log_and_notify(
-        f"Fetched all available Angebote for user: {user.username}, User ID: {user.zoho_id}"
-    )
+
 
     return all_user_angebots_list
 
@@ -257,14 +245,12 @@ def put_form_data_to_zoho_jpp(form):
     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
     anrede = form_data.get('anrede')
     name_parts = vorname_nachname.split()
-    log_and_notify(len(name_parts))
+    
     if len(name_parts) == 2:
         last_name = name_parts[0]
         first_name = name_parts[1]
         middle_name = ''
-        log_and_notify(first_name)
-        log_and_notify(middle_name)
-        log_and_notify(last_name)
+
         payload = {
         "data": {
             "Email": form_data.get('email'),
@@ -286,17 +272,15 @@ def put_form_data_to_zoho_jpp(form):
         }
     }
 
-        log_and_notify(payload)
+
         response = requests.put(update_url, headers=headers, json=payload)
-        log_and_notify(response.json())
+
         return response.json()
     elif len(name_parts) == 3:
         last_name = name_parts[0]
         first_name = name_parts[1]
         middle_name = name_parts[-1]
-        log_and_notify(first_name)
-        log_and_notify(middle_name)
-        log_and_notify(last_name)
+
 
 
         # Constructing the payload for the API
@@ -321,9 +305,9 @@ def put_form_data_to_zoho_jpp(form):
             }
         }
 
-        log_and_notify(payload)
+
         response = requests.put(update_url, headers=headers, json=payload)
-        log_and_notify(response.json())
+
         return response.json()
 
 def return_lower_bull(val):
@@ -372,7 +356,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     response = requests.post(url, json=dataMap, headers=headers)
     response_data = response.json()
     new_record_id = response_data["data"]["ID"]
-    log_and_notify(f"New record ID: {new_record_id}")
+    log_and_notify(f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}")
 
     return response
 
@@ -387,12 +371,10 @@ def delete_redundant_angebot(angebot_zoho_id):
 
     response = requests.delete(url, headers=headers)
     if not response:
-        log_and_notify(
-            f"Failed to delete record with ID {angebot_zoho_id}. Response: {response.text}"
-        )
+
         pass
     else:
-        log_and_notify(f"Record with ID {angebot_zoho_id} deleted successfully")
+        
         pass
 
 
@@ -443,7 +425,5 @@ def extract_values(request):
         item["Angebot_ID"] for item in filtered_existing_angebote_result_data
     ]
 
-    log_and_notify(f"{angebotsumme_list}")
-    log_and_notify(f"{existing_angebot_ids}")
 
     return existing_angebot_ids
