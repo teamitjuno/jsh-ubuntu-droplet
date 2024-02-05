@@ -206,7 +206,33 @@ TEXT_FOR_EMAIL = """
                 Wir wünschen Ihnen einen schönen Tag und würden uns über eine positive Rückmeldung freuen
                 """
 
+ANREDE_CHOICES = (
+    ("Familie", "Familie"),
+    ("Firma", "Firma"),
+    ("Herr", "Herr"),
+    ("Herr Dr.", "Herr Dr."),
+    ("Herr Prof.", "Herr Prof."),
+    ("Frau", "Frau"),
+    ("Frau Dr.", "Frau Dr."),
+)
+AUSRICHTUNG_CHOICES = (
+    ("Sud", "Sud"),
+    ("Ost/West", "Ost/West"),
+)
+KOMPLEX_CHOICES = (
+    ("einfach, einfach erreichbar", "einfach, einfach erreichbar"),
+    ("einfach, schwer erreichbar", "einfach, schwer erreichbar"),
+    ("komplex, einfach erreichbar", "komplex, einfach erreichbar"),
+    ("komplex, schwer erreichbar", "komplex, schwer erreichbar"),
+    ("sehr komplex", "sehr komplex"),
+)
 
+GARANTIE_WR_CHOICES = [
+    ("keine", "keine"),
+    ("10 Jahre", "10 Jahre"),
+    ("15 Jahre", "15 Jahre"),
+    ("20 Jahre", "20 Jahre"),
+]
 class VertriebAngebot(TimeStampMixin):
     angebot_id = models.CharField(max_length=255, unique=True, primary_key=True)
     current_date = models.DateField(auto_now_add=True)
@@ -260,26 +286,7 @@ class VertriebAngebot(TimeStampMixin):
     ablehnungs_grund = models.CharField(
         choices=STORNIERUNGSGRUND_CHOICES, max_length=255, blank=True, null=True
     )
-    ANREDE_CHOICES = (
-        ("Familie", "Familie"),
-        ("Firma", "Firma"),
-        ("Herr", "Herr"),
-        ("Herr Dr.", "Herr Dr."),
-        ("Herr Prof.", "Herr Prof."),
-        ("Frau", "Frau"),
-        ("Frau Dr.", "Frau Dr."),
-    )
-    AUSRICHTUNG_CHOICES = (
-        ("Sud", "Sud"),
-        ("Ost/West", "Ost/West"),
-    )
-    KOMPLEX_CHOICES = (
-        ("einfach, einfach erreichbar", "einfach, einfach erreichbar"),
-        ("einfach, schwer erreichbar", "einfach, schwer erreichbar"),
-        ("komplex, einfach erreichbar", "komplex, einfach erreichbar"),
-        ("komplex, schwer erreichbar", "komplex, schwer erreichbar"),
-        ("sehr komplex", "sehr komplex"),
-    )
+
 
     anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
     name = models.CharField(max_length=100, blank=True, default="------")
@@ -361,12 +368,7 @@ class VertriebAngebot(TimeStampMixin):
     komplex = models.CharField(
         max_length=30, choices=KOMPLEX_CHOICES, default="sehr komplex"
     )
-    GARANTIE_WR_CHOICES = [
-        ("keine", "keine"),
-        ("10 Jahre", "10 Jahre"),
-        ("15 Jahre", "15 Jahre"),
-        ("20 Jahre", "20 Jahre"),
-    ]
+
     solar_module = models.CharField(
         max_length=100,
         default="Phono Solar PS420M7GFH-18/VNH",
@@ -457,6 +459,7 @@ class VertriebAngebot(TimeStampMixin):
     datenblatter_wechselrichter = models.BooleanField(default=False)
     datenblatter_wallbox = models.BooleanField(default=False)
     datenblatter_backup_box = models.BooleanField(default=False)
+    datenblatter_optimizer = models.BooleanField(default=False)
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
     angebot_pdf_admin = models.BinaryField(blank=True, null=True)
@@ -514,6 +517,8 @@ class VertriebAngebot(TimeStampMixin):
         self.gesamtkapazitat = self.gesamtkapazitat_rechnung
         if self.solar_module:
             self.datenblatter_solar_module = True
+        if self.anzOptimizer > 0:
+            self.datenblatter_optimizer = True
         if self.speicher_model == "LUNA 2000" and self.anz_speicher != 0:
             self.datenblatter_speichermodule = True
         if self.wechselrichter_model == "SUN 2000" and self.anz_speicher != 0:

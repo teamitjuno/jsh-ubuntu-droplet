@@ -64,7 +64,7 @@ SERVICE_APPS = [
     "schema_graph",
     "crispy_forms",
     "shared",
-    # "djoser",
+    "djoser",
     "storages",
     "channels",
     "corsheaders",
@@ -79,17 +79,17 @@ SIMPLE_JWT = {
     "TOKEN_SERIALIZER_CLASS": "accounts.jwt_utils.CustomTokenObtainPairSerializer",
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework.authentication.TokenAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     ),
-# }
-# DJOSER = {
-#     'LOGIN_FIELD': 'email', 
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+DJOSER = {
+    'LOGIN_FIELD': 'email', 
+}
 
 
 AUTH_USER_MODEL = "authentication.User"
@@ -235,19 +235,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 MEDIA_PDF_URL = "media/pdf/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "WARNING",
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "root": {
+#         "handlers": ["console"],
+#         "level": "WARNING",
+#     },
+# }
+
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,

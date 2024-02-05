@@ -1876,10 +1876,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            if (
-                vertrieb_angebot.solar_module
-                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
-            ):
+            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B":
                 self._attach_datenblatter(
                     email,
                     datenblatter,
@@ -1887,10 +1884,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
                         "solar_module_1",
                     ],
                 )
-            if (
-                vertrieb_angebot.solar_module
-                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
-            ):
+            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)":
                 self._attach_datenblatter(
                     email,
                     datenblatter,
@@ -1898,11 +1892,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
                         "solar_module_2",
                     ],
                 )
-            if (
-                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
-                or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH"
-            ):
+            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH" or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH":
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
+        if vertrieb_angebot.datenblatter_optimizer:
+            self._attach_datenblatter(email, datenblatter, ["optimizer"])
 
         if vertrieb_angebot.datenblatter_speichermodule:
             self._attach_datenblatter(email, datenblatter, ["speicher_module"])

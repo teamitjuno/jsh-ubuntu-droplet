@@ -9,3 +9,4 @@ class Datenblatter(models.Model):
     wall_box = models.FileField(upload_to="uploads/", blank=True, null=True)
     wechselrichter = models.FileField(upload_to="uploads/", blank=True, null=True)
     backup_box = models.FileField(upload_to="uploads/", blank=True, null=True)
+    optimizer = models.FileField(upload_to="uploads/", blank=True, null=True)

@@ -298,6 +298,16 @@ class VertriebAngebotEmailForm(ModelForm):
                 "id": "datenblatter_backup_box",
             }
         ),
+    )    
+    datenblatter_backup_box = forms.BooleanField(
+        label="Datenblatter Optimierer",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_optimierer",
+            }
+        ),
     )
 
     class Meta:
@@ -310,6 +320,7 @@ class VertriebAngebotEmailForm(ModelForm):
             "datenblatter_wechselrichter",
             "datenblatter_wallbox",
             "datenblatter_backup_box",
+            "datenblatter_optimizer",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -333,6 +344,9 @@ class VertriebAngebotEmailForm(ModelForm):
             self.fields[
                 "datenblatter_backup_box"
             ].initial = self.instance.datenblatter_backup_box
+            self.fields[
+                "datenblatter_optimizer"
+            ].initial = self.instance.datenblatter_optimizer
 
     def save(self, commit=True):
         form = super(VertriebAngebotEmailForm, self).save(commit=False)
