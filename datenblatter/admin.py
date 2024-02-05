@@ -12,6 +12,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
         "wall_box",
         "wechselrichter",
         "backup_box",
+        "optimizer",
     ]
 
     fieldsets = (
@@ -21,7 +22,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
         ),
         (
             "Other Components",
-            {"fields": ("speicher_module", "wall_box", "wechselrichter", "backup_box")},
+            {"fields": ("optimizer", "speicher_module", "wall_box", "wechselrichter", "backup_box")},
         ),
     )
     # Add any other customizations here
