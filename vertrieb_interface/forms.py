@@ -116,8 +116,9 @@ def validate_name_format(value):
     # Regular expression for 'Last_Name First_Name Middle_Name(optional)'
     # Expecting each to start with a capital letter followed by lowercase letters
     # The middle name is optional and can be included
-    if not re.match(r'^[A-Z][a-z]+ [A-Z][a-z]+(?: [A-Z][a-z]+)?$', value):
-        raise ValidationError("Format 'Nachname Vorname', wobei jeder Name mit einem Großbuchstaben beginnt")
+    if not re.match(r'^[A-ZÄÖÜ][a-zäöüß]+ [A-ZÄÖÜ][a-zäöüß]+(?: [A-ZÄÖÜ][a-zäöüß]+)?$', value):
+        raise ValidationError("Format 'Nachname Vorname Mittelname (optional)', wobei jeder Name mit einem Großbuchstaben beginnt und deutsche Sonderzeichen enthält.")
+
 
 def validate_two_decimal_places(value):
     # Check if the value is an instance of a valid number type
