@@ -15,6 +15,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = [
+    "*",
     "jsh-home.app",
     "www.jsh-home.app",
     "46.101.104.229",
@@ -112,7 +113,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://138.68.100.101",
     "https://159.89.22.211"
 ]
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://159.89.22.211")
 CSP_FRAME_SRC = ("https://159.89.22.211",)
