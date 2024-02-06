@@ -64,7 +64,7 @@ SERVICE_APPS = [
     "schema_graph",
     "crispy_forms",
     "shared",
-    "djoser",
+    # "djoser",
     "storages",
     "channels",
     "corsheaders",
