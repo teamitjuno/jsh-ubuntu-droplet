@@ -339,6 +339,8 @@ def put_form_data_to_zoho_jpp(form):
         response = requests.put(update_url, headers=headers, json=payload)
 
         return response.json()
+    else:
+        pass
 
 # def put_form_data_to_zoho_jpp(form):
 #     # Extrahieren der Formulardaten
