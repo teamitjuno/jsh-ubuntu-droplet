@@ -135,6 +135,20 @@ now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
 
+# Funktion zum Senden von Benachrichtigungen mit verbesserter Nachrichtenstruktur
+def send_custom_message(user, action, details):
+    """
+    Sendet eine benutzerdefinierte Nachricht über den Bot.
+
+    :param user: Das User-Objekt, das die Aktion ausführt.
+    :param action: Eine kurze Beschreibung der Aktion.
+    :param details: Details zur Aktion, z.B. was erstellt wurde und für wen.
+    """
+    user_name = f"{user.first_name} {user.last_name}".strip()
+    user_name = user_name if user_name else "Ein Benutzer"
+
+    message = f"{user_name} {action} {details}"
+    send_message_to_bot(message)
 
 def handler404(request, exception):
     return render(request, "404.html", status=404)
@@ -636,7 +650,7 @@ def create_angebot(request):
     form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
 
     if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{user.first_name} {user.last_name} erstellt ein neues Angebot ")
+        send_custom_message(user, "erstellt ein neues Angebot", "📄")
 
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
