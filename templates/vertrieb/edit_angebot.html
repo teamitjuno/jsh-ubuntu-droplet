@@ -962,9 +962,9 @@
         </form>
 
         
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
         <script>
-$(document).ready(function() {
+        $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     calculateGesamtkapazitat($('#hersteller').val()); // Initial calculation on document ready
     $('#anz_speicher, #hersteller').change(calculateGesamtkapazitat); // Recalculate when either changes
@@ -1001,19 +1001,27 @@ function toggleAnzWandhalterung(value) {
         $('#anz_wandhalterung_row').show();
     }
 }
+
+
 function calculateGesamtkapazitat(value) {
+    console.log('Calculating total capacity...');
     
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var gesamtkapazitat = anz_speicher * 5;
+    var gesamtkapazitat;
 
-    // Apply division for both Huawei and Viessmann
-    if(value === 'Huawei' || value === 'Viessmann') {
-        console.log('Hersteller is ' + value + ', adjusting capacity.'); // Corrected log message
-        gesamtkapazitat /= 2; // Simplified operation
+    if (value === 'Huawei') {
+        console.log('Hersteller is Huawei.'); // Corrected log message
+        gesamtkapazitat = anz_speicher * 5; // No halving, just calculating
+    } else if (value === 'Viessmann') {
+        console.log('Hersteller is Viessmann, halving capacity.'); // Accurate log message
+        gesamtkapazitat = anz_speicher * 2.5; // Directly applying the halved value
+    } else {
+        gesamtkapazitat = 0; // Default case if needed, or you can remove this else block if not.
     }
-    
-    $('#gesamtkapazitat').val(gesamtkapazitat);
+
+    $('#gesamtkapazitat').val(gesamtkapazitat); // Setting the value once after calculation
 }
+
 
 function limitModulanzahl(maxValue) {
     $('#modulanzahl').change(function() {
@@ -1926,19 +1934,27 @@ function toggleAnzWandhalterung(value) {
         $('#anz_wandhalterung_row').show();
     }
 }
+
+
 function calculateGesamtkapazitat(value) {
+    console.log('Calculating total capacity...');
     
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var gesamtkapazitat = anz_speicher * 5;
+    var gesamtkapazitat;
 
-    // Apply division for both Huawei and Viessmann
-    if(value === 'Huawei' || value === 'Viessmann') {
-        console.log('Hersteller is ' + value + ', adjusting capacity.'); // Corrected log message
-        gesamtkapazitat /= 2; // Simplified operation
+    if (value === 'Huawei') {
+        console.log('Hersteller is Huawei.'); // Corrected log message
+        gesamtkapazitat = anz_speicher * 5; // No halving, just calculating
+    } else if (value === 'Viessmann') {
+        console.log('Hersteller is Viessmann, halving capacity.'); // Accurate log message
+        gesamtkapazitat = anz_speicher * 2.5; // Directly applying the halved value
+    } else {
+        gesamtkapazitat = 0; // Default case if needed, or you can remove this else block if not.
     }
-    
-    $('#gesamtkapazitat').val(gesamtkapazitat);
+
+    $('#gesamtkapazitat').val(gesamtkapazitat); // Setting the value once after calculation
 }
+
 
 function limitModulanzahl(maxValue) {
     $('#modulanzahl').change(function() {
