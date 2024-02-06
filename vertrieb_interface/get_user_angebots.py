@@ -280,6 +280,8 @@ def put_form_data_to_zoho_jpp(form):
     }
         json_payload = json.dumps(payload, ensure_ascii=True)
         headers['Content-Type'] = 'application/json'
+        log_and_notify(type(json_payload))
+        log_and_notify(type(payload))
         log_and_notify(json_payload)
         response = requests.put(update_url, headers=headers, json=json_payload)
         log_and_notify(response)
