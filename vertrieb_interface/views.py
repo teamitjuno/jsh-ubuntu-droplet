@@ -1063,9 +1063,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned = True
                     
-                    # all_user_angebots_list = fetch_user_angebote_all(request)
-                    # user.zoho_data_text = json.dumps(all_user_angebots_list)
-                    # user.save()
+                    all_user_angebots_list = fetch_user_angebote_all(request)
+                    user.zoho_data_text = json.dumps(all_user_angebots_list)
+                    user.save()
                     profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
                     
                     data_loads = json.loads(profile.zoho_data_text)
