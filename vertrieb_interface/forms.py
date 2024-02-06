@@ -167,7 +167,7 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if not isinstance(value, int) or not (value == 0 or 6 <= value <= 69):
+    if not isinstance(value, int) or not (6 <= value <= 69):
         raise ValidationError(
             "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte entweder 0 oder zwischen 6 und 69 liegen.",
             params={"value": value},
