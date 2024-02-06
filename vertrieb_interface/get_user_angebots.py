@@ -263,10 +263,10 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
                 "display_value": display_value,
-                "prefix": f"{anrede}",
+                "prefix": anrede,
                 "suffix": middle_name,
-                "last_name": f"{last_name}",
-                "first_name": f"{first_name}",
+                "last_name": last_name,
+                "first_name": first_name,
             },
             "Adresse_PVA": {
                 # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
