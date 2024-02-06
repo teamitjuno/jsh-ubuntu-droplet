@@ -4,7 +4,7 @@ from dotenv import load_dotenv, set_key
 import datetime
 import requests
 from django.core.exceptions import ValidationError
-
+import json
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
     ZOHO_CLIENT_ID,
@@ -278,9 +278,9 @@ def put_form_data_to_zoho_jpp(form):
             },
         }
     }
-
-        log_and_notify(payload)
-        response = requests.put(update_url, headers=headers, json=payload)
+        json_payload = json.dumps(payload, ensure_ascii=True)
+        log_and_notify(json_payload)
+        response = requests.put(update_url, headers=headers, json=json_payload)
         log_and_notify(response)
         res = response.json()
         log_and_notify(res)
