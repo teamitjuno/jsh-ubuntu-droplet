@@ -1009,7 +1009,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     vertrieb_angebot.save()
                     # self._log_and_notify_success(user)
                     if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
+                        send_custom_message(user, "hat ein PDF Angebot für einen Interessenten erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 📑")
                     return redirect(
                         "vertrieb_interface:create_angebot_and_calc_pdf",
                         vertrieb_angebot.angebot_id,
@@ -1205,7 +1205,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 form.vor
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.first_name} {user.last_name}: ,hat ein PDF Ticket für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
+                    send_custom_message(user, "hat ein PDF Ticket für einen Kunden erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️")
 
                 return redirect(
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
@@ -1342,7 +1342,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Kalkulation für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
+                    send_custom_message(user, "hat eine PDF Kalkulation für einen Interessenten erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 📊")
 
                 return redirect(
                     "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
@@ -1436,7 +1436,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
             status__in=self._get_contact_statuses(),
         ).filter(self.zoho_kundennumer_is_numeric())
         if TELEGRAM_LOGGING:
-            send_message_to_bot(f"{self.request.user.first_name} {self.request.user.last_name} befindet sich auf der Listenseite der kommerziellen Angebote....")
+            send_custom_message(self.request.user, "befindet sich auf der Listenseite der Angebote", "...")
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
