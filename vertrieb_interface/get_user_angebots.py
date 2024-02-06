@@ -299,7 +299,7 @@ def put_form_data_to_zoho_jpp(form):
         log_and_notify(type(payload))
         log_and_notify(json_payload)
         str_payload = f"{json_payload}"
-        response = requests.put(update_url, headers=headers, json=payload)
+        response = requests.patch(update_url, headers=headers, json=json_payload)
         log_and_notify(response)
         res = response.json()
         log_and_notify(res)
