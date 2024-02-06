@@ -279,7 +279,7 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                "display_value": display_value,
+                "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                 "prefix": anrede,
                 "suffix": middle_name,
                 "last_name": last_name,
@@ -319,7 +319,7 @@ def put_form_data_to_zoho_jpp(form):
                 "Telefon_Festnetz": form_data.get('telefon_festnetz'),
                 "Telefon_mobil": form_data.get('telefon_mobil'),
                 "Name": {
-                    # "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                    "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                     "prefix": f"{anrede}",
                     "suffix": f"{middle_name}",
                     "last_name": f"{last_name}",
