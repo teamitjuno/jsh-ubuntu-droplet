@@ -227,13 +227,27 @@ def update_status(zoho_id, new_status):
     response = requests.put(update_url, headers=headers, json=payload)
     return response.json()
 
-
+def escape_unicode_chars(s):
+    """
+    Manually replace specific unicode characters with their escape sequences.
+    This is a simple implementation and might need to be extended based on actual use cases.
+    """
+    replacements = {
+        'ö': '\\u00f6',
+        'ä': '\\u00e4',
+        'ü': '\\u00fc',
+        # Add more replacements as needed
+    }
+    for original, escape in replacements.items():
+        s = s.replace(original, escape)
+    return s
 def put_form_data_to_zoho_jpp(form):
     # Extract data from form
     form_data = {field: form.cleaned_data.get(field) for field in form.fields}
 
     zoho_id = form_data.get('zoho_id')
     vorname_nachname = form_data.get('vorname_nachname')
+    vorname_nachname = escape_unicode_chars(vorname_nachname)
 
     if not zoho_id:
         raise ValueError("Zoho ID and new status are required")
@@ -284,7 +298,7 @@ def put_form_data_to_zoho_jpp(form):
         log_and_notify(type(payload))
         log_and_notify(json_payload)
         str_payload = f"{json_payload}"
-        response = requests.put(update_url, headers=headers, json=str_payload)
+        response = requests.put(update_url, headers=headers, json=payload)
         log_and_notify(response)
         res = response.json()
         log_and_notify(res)
