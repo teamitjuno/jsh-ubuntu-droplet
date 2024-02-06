@@ -3,6 +3,7 @@ import requests
 from dotenv import load_dotenv, set_key
 import datetime
 import requests
+from django.core.exceptions import ValidationError
 
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
@@ -227,38 +228,119 @@ def update_status(zoho_id, new_status):
     return response.json()
 
 
-def put_form_data_to_zoho_jpp(form):
-    # Extract data from form
-    form_data = {field: form.cleaned_data.get(field) for field in form.fields}
+# def put_form_data_to_zoho_jpp(form):
+#     # Extract data from form
+#     form_data = {field: form.cleaned_data.get(field) for field in form.fields}
 
+#     zoho_id = form_data.get('zoho_id')
+#     vorname_nachname = form_data.get('vorname_nachname')
+
+#     if not zoho_id:
+#         raise ValueError("Zoho ID and new status are required")
+
+#     update_url = f"{VERTRIEB_URL}/{zoho_id}"
+    
+#     access_token = refresh_access_token()
+#     headers = {"Authorization": f"Bearer {access_token}"}
+
+#     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
+#     anrede = form_data.get('anrede')
+#     name_parts = vorname_nachname.split()
+    
+#     if len(name_parts) == 2:
+#         last_name = name_parts[0]
+#         first_name = name_parts[1]
+#         middle_name = ''
+
+#         payload = {
+#         "data": {
+#             "Email": form_data.get('email'),
+#             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
+#             "Telefon_mobil": form_data.get('telefon_mobil'),
+#             "Name": {
+#                 "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+#                 "prefix": anrede,
+#                 "suffix": middle_name,
+#                 "last_name": last_name,
+#                 "first_name": first_name,
+#             },
+#             "Adresse_PVA": {
+#                 "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+#                 "district_city1": form_data.get('ort').split(' ')[1],
+#                 "address_line_11": form_data.get('strasse'),
+#                 "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+#             },
+#         }
+#     }
+
+
+#         response = requests.put(update_url, headers=headers, json=payload)
+
+#         return response.json()
+#     elif len(name_parts) == 3:
+#         last_name = name_parts[0]
+#         first_name = name_parts[1]
+#         middle_name = name_parts[-1]
+
+
+
+#         # Constructing the payload for the API
+#         payload = {
+#             "data": {
+#                 "Email": form_data.get('email'),
+#                 "Telefon_Festnetz": form_data.get('telefon_festnetz'),
+#                 "Telefon_mobil": form_data.get('telefon_mobil'),
+#                 "Name": {
+#                     "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+#                     "prefix": anrede,
+#                     "suffix": middle_name,
+#                     "last_name": last_name,
+#                     "first_name": first_name,
+#                 },
+#                 "Adresse_PVA": {
+#                     "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+#                     "district_city1": form_data.get('ort').split(' ')[1],
+#                     "address_line_11": form_data.get('strasse'),
+#                     "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+#                 },
+#             }
+#         }
+
+
+#         response = requests.put(update_url, headers=headers, json=payload)
+
+#         return response.json()
+
+def put_form_data_to_zoho_jpp(form):
+    # Extrahieren der Formulardaten
+    form_data = {field: form.cleaned_data.get(field) for field in form.fields}
     zoho_id = form_data.get('zoho_id')
     vorname_nachname = form_data.get('vorname_nachname')
 
-    if not zoho_id:
-        raise ValueError("Zoho ID and new status are required")
+    if not zoho_id or not vorname_nachname:
+        raise ValueError("Zoho ID und Vorname Nachname sind erforderlich")
 
+    # Vorbereitung der API-Anfrage
     update_url = f"{VERTRIEB_URL}/{zoho_id}"
-    
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
-    anrede = form_data.get('anrede')
+    # Aufbereitung der Namensteile
     name_parts = vorname_nachname.split()
-    
-    if len(name_parts) == 2:
-        last_name = name_parts[0]
-        first_name = name_parts[1]
-        middle_name = ''
+    if len(name_parts) < 2:
+        raise ValidationError("Vorname und Nachname sind erforderlich")
+    first_name, last_name = name_parts[1], name_parts[0]
+    middle_name = name_parts[2] if len(name_parts) == 3 else ''
 
-        payload = {
+    # Konstruktion des Payloads
+    payload = {
         "data": {
             "Email": form_data.get('email'),
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
-                "prefix": anrede,
+                "display_value": f"{form_data.get('anrede')} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                "prefix": form_data.get('anrede'),
                 "suffix": middle_name,
                 "last_name": last_name,
                 "first_name": first_name,
@@ -272,43 +354,12 @@ def put_form_data_to_zoho_jpp(form):
         }
     }
 
+    # Senden der Anfrage
+    response = requests.put(update_url, headers=headers, json=payload)
+    if response.status_code != 200:
+        raise ValueError("Fehler beim Aktualisieren des Zoho-Eintrags")
 
-        response = requests.put(update_url, headers=headers, json=payload)
-
-        return response.json()
-    elif len(name_parts) == 3:
-        last_name = name_parts[0]
-        first_name = name_parts[1]
-        middle_name = name_parts[-1]
-
-
-
-        # Constructing the payload for the API
-        payload = {
-            "data": {
-                "Email": form_data.get('email'),
-                "Telefon_Festnetz": form_data.get('telefon_festnetz'),
-                "Telefon_mobil": form_data.get('telefon_mobil'),
-                "Name": {
-                    "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
-                    "prefix": anrede,
-                    "suffix": middle_name,
-                    "last_name": last_name,
-                    "first_name": first_name,
-                },
-                "Adresse_PVA": {
-                    "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
-                    "district_city1": form_data.get('ort').split(' ')[1],
-                    "address_line_11": form_data.get('strasse'),
-                    "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
-                },
-            }
-        }
-
-
-        response = requests.put(update_url, headers=headers, json=payload)
-
-        return response.json()
+    return response.json()
 
 def return_lower_bull(val):
     return "true" if val else "false"
