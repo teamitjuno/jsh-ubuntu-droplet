@@ -257,6 +257,7 @@ def put_form_data_to_zoho_jpp(form):
         display_value = f"{anrede}" + " " + f"{first_name}" + " " + f"{' '.join([middle_name, last_name]).strip()}"
         log_and_notify(first_name)
         log_and_notify(last_name)
+        log_and_notify(display_value)
         payload = {
         "data": {
             "Email": form_data.get('email'),
