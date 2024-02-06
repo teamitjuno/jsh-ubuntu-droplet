@@ -1060,12 +1060,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
-                    put_form_data_to_zoho_jpp(form)
+                    # put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned = True
                     
-                    all_user_angebots_list = fetch_user_angebote_all(request)
-                    user.zoho_data_text = json.dumps(all_user_angebots_list)
-                    user.save()
+                    
                     profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
                     
                     data_loads = json.loads(profile.zoho_data_text)
@@ -1075,8 +1073,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     instance.save()
                     form.save()
+                    
                     # print(vertrieb_angebot.zoho_kundennumer)
                     vertrieb_angebot.save()
+                    put_form_data_to_zoho_jpp(form)
+                    all_user_angebots_list = fetch_user_angebote_all(request)
+                    user.zoho_data_text = json.dumps(all_user_angebots_list)
+                    user.save()
                     CustomLogEntry.objects.log_action(
                         user_id=vertrieb_angebot.user_id,
                         content_type_id=ContentType.objects.get_for_model(
