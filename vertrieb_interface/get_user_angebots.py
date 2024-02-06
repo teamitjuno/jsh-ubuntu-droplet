@@ -254,7 +254,7 @@ def put_form_data_to_zoho_jpp(form):
         postal_code = " ".join(form_data.get("ort").split(" ")[:-1]),
         district_city = form_data.get('ort').split(' ')[1],
         strasse = form_data.get('strasse'),
-        display_value = f"{anrede}" +" " + f"{first_name}" + " " + f"{' '.join([middle_name, last_name]).strip()}"
+        display_value = f"{anrede}" + " " + f"{first_name}" + " " + f"{' '.join([middle_name, last_name]).strip()}"
         log_and_notify(first_name)
         log_and_notify(last_name)
         payload = {
@@ -263,7 +263,7 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                "display_value": display_value,
+                # "display_value": display_value,
                 "prefix": anrede,
                 "suffix": middle_name,
                 "last_name": last_name,
