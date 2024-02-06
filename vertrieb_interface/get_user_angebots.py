@@ -279,11 +279,11 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
-                "prefix": anrede,
-                "suffix": middle_name,
-                "last_name": last_name,
-                "first_name": first_name,
+                    "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                    "prefix": f"{anrede}",
+                    "last_name": f"{last_name}",
+                    "suffix": f"{middle_name}",
+                    "first_name": f"{first_name}"
             },
             "Adresse_PVA": {
                 # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
@@ -312,6 +312,7 @@ def put_form_data_to_zoho_jpp(form):
 
 
 
+
         # Constructing the payload for the API
         payload = {
             "data": {
@@ -321,9 +322,9 @@ def put_form_data_to_zoho_jpp(form):
                 "Name": {
                     "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                     "prefix": f"{anrede}",
-                    "suffix": f"{middle_name}",
                     "last_name": f"{last_name}",
-                    "first_name": f"{first_name}",
+                    "suffix": f"{middle_name}",
+                    "first_name": f"{first_name}"
                 },
                 "Adresse_PVA": {
                     # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
