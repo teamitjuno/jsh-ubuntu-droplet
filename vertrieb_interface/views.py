@@ -1064,13 +1064,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     instance.angebot_id_assigned = True
                     
                     
-                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+                    # profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
                     
-                    data_loads = json.loads(profile.zoho_data_text)
-                    name = instance.name
+                    # data_loads = json.loads(profile.zoho_data_text)
+                    # name = instance.name
                     
-                    data = next((item for item in data_loads if item["name"] == name), None)
-                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    # data = next((item for item in data_loads if item["name"] == name), None)
+                    # instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     instance.save()
                     form.save()
                     
