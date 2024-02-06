@@ -272,13 +272,14 @@ def put_form_data_to_zoho_jpp(form):
         log_and_notify(first_name)
         log_and_notify(last_name)
         log_and_notify(display_value)
+        log_and_notify(type(display_value))
         payload = {
         "data": {
             "Email": form_data.get('email'),
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                # "display_value": display_value,
+                "display_value": display_value,
                 "prefix": anrede,
                 "suffix": middle_name,
                 "last_name": last_name,
