@@ -348,7 +348,7 @@ def put_form_data_to_zoho_jpp(form):
             "Adresse_PVA": {
                 "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
                 "district_city1": form_data.get('ort').split(' ')[1],
-                "address_line_11": form_data.get('strasse'),
+                "address_line_1": form_data.get('strasse'),
                 "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
             },
         }
