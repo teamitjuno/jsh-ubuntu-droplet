@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 {% block content %}
 {% load custom_filter %}
-
+<!DOCTYPE html>
 
 
 <div class="content-page">
@@ -962,72 +962,76 @@
         </form>
 
         
-        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(document).ready(function() {
-                toggleAnzWandhalterung($('#hersteller').val());
-                calculateGesamtkapazitat();
-                $('#anz_speicher').change(calculateGesamtkapazitat);
+$(document).ready(function() {
+    toggleAnzWandhalterung($('#hersteller').val());
+    calculateGesamtkapazitat(); // Initial calculation on document ready
+    $('#anz_speicher, #hersteller').change(calculateGesamtkapazitat); // Recalculate when either changes
 
-                $("#hersteller").change(function() {
-                    toggleAnzWandhalterung($(this).val());
-                    calculateGesamtkapazitat(); // Recalculate when manufacturer changes
-                    
-                    var hersteller = $(this).val();
-                    var wechselrichterOptions, speicherOptions, wallboxtypOptions;
-                    
-                    if(hersteller == "Viessmann") {
-                        limitModulanzahl(28);
-                        wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                        speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                        wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                    } else if(hersteller == "Huawei") {
-                        wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                        speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                        wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                    } else {
-                        wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
-                    }
+    $("#hersteller").change(function() {
+        var hersteller = $(this).val();
+        toggleAnzWandhalterung(hersteller);
+        
+        var wechselrichterOptions, speicherOptions, wallboxtypOptions;
+        
+        if(hersteller == "Viessmann") {
+            limitModulanzahl(28);
+            wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
+            speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
+            wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
+        } else if(hersteller == "Huawei") {
+            wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+            speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+            wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
+        } else {
+            wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
+        }
 
-                    $("#wechselrichter_model").html(wechselrichterOptions);
-                    $("#speicher_model").html(speicherOptions);
-                    $("#wallboxtyp").html(wallboxtypOptions);
-                });
-            });
+        $("#wechselrichter_model").html(wechselrichterOptions);
+        $("#speicher_model").html(speicherOptions);
+        $("#wallboxtyp").html(wallboxtypOptions);
+    });
+});
 
-            function toggleAnzWandhalterung(value) {
-                if (value === 'Viessmann') {
-                    $('#anz_wandhalterung_row').hide();
-                } else {
-                    $('#anz_wandhalterung_row').show();
-                }
-            }
+function toggleAnzWandhalterung(value) {
+    if (value === 'Viessmann') {
+        $('#anz_wandhalterung_row').hide();
+    } else {
+        $('#anz_wandhalterung_row').show();
+    }
+}
 
-            function calculateGesamtkapazitat() {
-                var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-                var gesamtkapazitat = anz_speicher * 5;
-                // Check if manufacturer is Viessmann and divide by 2 if true
-                if($('#hersteller').val() === 'Viessmann') {
-                    gesamtkapazitat /= 2;
-                }
-                $('#gesamtkapazitat').val(gesamtkapazitat);
-            }
+function calculateGesamtkapazitat() {
+    console.log('Calculating total capacity...'); // Debug log
+    var hersteller = $('#hersteller').val();
+    var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
+    var gesamtkapazitat = anz_speicher * 5;
 
-            function limitModulanzahl(maxValue) {
-                $('#modulanzahl').change(function() {
-                    var value = parseInt($(this).val());
-                    if (value > maxValue) {
-                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-                        $(this).val(maxValue);
-                    }
-                });
-            }
+    if(hersteller === 'Viessmann') {
+        console.log('Hersteller is Viessmann, halving capacity.'); // Debug log
+        gesamtkapazitat /= 2;
+    }
+    
+    $('#gesamtkapazitat').val(gesamtkapazitat);
+}
 
-            function submitFormWithAction(actionType) {
-                document.getElementById('actionType').value = actionType;
-                document.getElementById('main-form').submit();
-            }
-            </script>
+function limitModulanzahl(maxValue) {
+    $('#modulanzahl').change(function() {
+        var value = parseInt($(this).val());
+        if (value > maxValue) {
+            alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
+            $(this).val(maxValue);
+        }
+    });
+}
+
+function submitFormWithAction(actionType) {
+    document.getElementById('actionType').value = actionType;
+    document.getElementById('main-form').submit();
+}
+</script>
+
 
         {% comment %} <script>
         $(document).ready(function() {
