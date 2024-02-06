@@ -258,14 +258,14 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get('telefon_festnetz'),
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
-                "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                # "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                 "prefix": anrede,
                 "suffix": middle_name,
                 "last_name": last_name,
                 "first_name": first_name,
             },
             "Adresse_PVA": {
-                "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+                # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
                 "district_city": form_data.get('ort').split(' ')[1],
                 "address_line_1": form_data.get('strasse'),
                 "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
@@ -291,14 +291,14 @@ def put_form_data_to_zoho_jpp(form):
                 "Telefon_Festnetz": form_data.get('telefon_festnetz'),
                 "Telefon_mobil": form_data.get('telefon_mobil'),
                 "Name": {
-                    "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
+                    # "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
                     "prefix": anrede,
                     "suffix": middle_name,
                     "last_name": last_name,
                     "first_name": first_name,
                 },
                 "Adresse_PVA": {
-                    "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
+                    # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
                     "district_city": form_data.get('ort').split(' ')[1],
                     "address_line_1": form_data.get('strasse'),
                     "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
