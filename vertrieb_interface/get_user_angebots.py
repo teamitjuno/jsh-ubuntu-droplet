@@ -353,12 +353,14 @@ def put_form_data_to_zoho_jpp(form):
             },
         }
     }
+    log_and_notify(payload)
 
     # Senden der Anfrage
     response = requests.put(update_url, headers=headers, json=payload)
     if response.status_code != 200:
         raise ValueError("Fehler beim Aktualisieren des Zoho-Eintrags")
-
+    res = f'{response.json()}'
+    log_and_notify(res)
     return response.json()
 
 def return_lower_bull(val):
