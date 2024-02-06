@@ -246,7 +246,7 @@ def put_form_data_to_zoho_jpp(form):
     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
     anrede = form_data.get('anrede')
     name_parts = vorname_nachname.split()
-    
+    log_and_notify(name_parts)
     if len(name_parts) == 2:
         last_name = name_parts[0]
         first_name = name_parts[1]
