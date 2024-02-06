@@ -269,16 +269,16 @@ def put_form_data_to_zoho_jpp(form):
             },
             "Adresse_PVA": {
                 # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
-                "district_city": district_city,
-                "address_line_1": strasse,
-                "postal_code": postal_code,
+                "district_city": district_city[0],
+                "address_line_1": strasse[0],
+                "postal_code": postal_code[0],
             },
         }
     }
 
 
         response = requests.put(update_url, headers=headers, json=payload)
-
+        log_and_notify(response)
         return response.json()
     elif len(name_parts) == 3:
         last_name = name_parts[0]
