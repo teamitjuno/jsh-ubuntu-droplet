@@ -1003,11 +1003,15 @@ function toggleAnzWandhalterung(value) {
 
 function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var gesamtkapazitat = anz_speicher * 5;
-    // Check if manufacturer is Viessmann and divide by 2 if true
-    if($('#hersteller').val() === 'Viessmann') {
-        gesamtkapazitat /= 2;
+    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
+    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
+
+    if (hersteller === 'Huawei') {
+        gesamtkapazitat = anz_speicher * 5;
+    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
+        gesamtkapazitat = anz_speicher * 2.5; // Adjusted calculation for Viessmann
     }
+
     $('#gesamtkapazitat').val(gesamtkapazitat);
 }
 
@@ -1927,11 +1931,15 @@ function toggleAnzWandhalterung(value) {
 
 function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var gesamtkapazitat = anz_speicher * 5;
-    // Check if manufacturer is Viessmann and divide by 2 if true
-    if($('#hersteller').val() === 'Viessmann') {
-        gesamtkapazitat /= 2;
+    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
+    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
+
+    if (hersteller === 'Huawei') {
+        gesamtkapazitat = anz_speicher * 5;
+    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
+        gesamtkapazitat = anz_speicher * 2.5; // Adjusted calculation for Viessmann
     }
+
     $('#gesamtkapazitat').val(gesamtkapazitat);
 }
 
