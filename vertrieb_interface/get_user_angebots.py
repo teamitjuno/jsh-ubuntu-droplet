@@ -277,10 +277,13 @@ def put_form_data_to_zoho_jpp(form):
         }
     }
 
-
+        log_and_notify(payload)
         response = requests.put(update_url, headers=headers, json=payload)
         log_and_notify(response)
+        res = response.json()
+        log_and_notify(res)
         return response.json()
+    
     elif len(name_parts) == 3:
         last_name = name_parts[0]
         first_name = name_parts[1]
