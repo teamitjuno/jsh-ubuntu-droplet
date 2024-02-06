@@ -255,7 +255,8 @@ def put_form_data_to_zoho_jpp(form):
         district_city = form_data.get('ort').split(' ')[1],
         strasse = form_data.get('strasse'),
         display_value = f"{anrede}" +" " + f"{first_name}" + " " + f"{' '.join([middle_name, last_name]).strip()}"
-
+        log_and_notify(first_name)
+        log_and_notify(last_name)
         payload = {
         "data": {
             "Email": form_data.get('email'),
