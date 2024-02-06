@@ -241,7 +241,7 @@ def put_form_data_to_zoho_jpp(form):
     update_url = f"{VERTRIEB_URL}/{zoho_id}"
     
     access_token = refresh_access_token()
-    headers = {"Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json",}
 
     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
     anrede = form_data.get('anrede')
