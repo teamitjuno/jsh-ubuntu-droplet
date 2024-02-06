@@ -233,7 +233,7 @@ def put_form_data_to_zoho_jpp(form):
     form_data = {field: form.cleaned_data.get(field) for field in form.fields}
 
     zoho_id = form_data.get('zoho_id')
-    vorname_nachname = form_data.get('name')
+    vorname_nachname = form_data.get('vorname_nachname')
 
     if not zoho_id:
         raise ValueError("Zoho ID and new status are required")
