@@ -251,6 +251,9 @@ def put_form_data_to_zoho_jpp(form):
         last_name = name_parts[0]
         first_name = name_parts[1]
         middle_name = ''
+        postal_code = " ".join(form_data.get("ort").split(" ")[:-1]),
+        district_city = form_data.get('ort').split(' ')[1],
+        strasse = form_data.get('strasse'),
 
         payload = {
         "data": {
@@ -259,16 +262,16 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_mobil": form_data.get('telefon_mobil'),
             "Name": {
                 # "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
-                "prefix": anrede,
+                "prefix": f"{anrede}",
                 "suffix": middle_name,
-                "last_name": last_name,
-                "first_name": first_name,
+                "last_name": f"{last_name}",
+                "first_name": f"{first_name}",
             },
             "Adresse_PVA": {
                 # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
-                "district_city": form_data.get('ort').split(' ')[1],
-                "address_line_1": form_data.get('strasse'),
-                "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+                "district_city": district_city,
+                "address_line_1": strasse,
+                "postal_code": postal_code,
             },
         }
     }
@@ -292,16 +295,16 @@ def put_form_data_to_zoho_jpp(form):
                 "Telefon_mobil": form_data.get('telefon_mobil'),
                 "Name": {
                     # "display_value": f"{anrede} {first_name} {' '.join([middle_name, last_name]).strip()}",
-                    "prefix": anrede,
-                    "suffix": middle_name,
-                    "last_name": last_name,
-                    "first_name": first_name,
+                    "prefix": f"{anrede}",
+                    "suffix": f"{middle_name}",
+                    "last_name": f"{last_name}",
+                    "first_name": f"{first_name}",
                 },
                 "Adresse_PVA": {
                     # "display_value": f"{form_data.get('strasse')}, {form_data.get('ort')}",
-                    "district_city": form_data.get('ort').split(' ')[1],
-                    "address_line_1": form_data.get('strasse'),
-                    "postal_code": ' '.join(form_data.get('ort').split(' ')[:-1]),
+                    "district_city": district_city,
+                    "address_line_1": strasse,
+                    "postal_code": postal_code,
                 },
             }
         }
