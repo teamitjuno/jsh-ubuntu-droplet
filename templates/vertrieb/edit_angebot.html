@@ -972,6 +972,7 @@
     $("#hersteller").change(function() {
         var hersteller = $(this).val();
         toggleAnzWandhalterung(hersteller);
+        calculateGesamtkapazitat(hersteller);
         
         var wechselrichterOptions, speicherOptions, wallboxtypOptions;
         
@@ -1020,6 +1021,7 @@ function calculateGesamtkapazitat(value) {
     }
 
     $('#gesamtkapazitat').val(gesamtkapazitat); // Setting the value once after calculation
+    $('#gesamtkapazitat').(gesamtkapazitat)
 }
 
 
@@ -1896,7 +1898,7 @@ function submitFormWithAction(actionType) {
 {% endif %}
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
+       <script>
         $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     calculateGesamtkapazitat($('#hersteller').val()); // Initial calculation on document ready
@@ -1905,6 +1907,7 @@ function submitFormWithAction(actionType) {
     $("#hersteller").change(function() {
         var hersteller = $(this).val();
         toggleAnzWandhalterung(hersteller);
+        calculateGesamtkapazitat(hersteller);
         
         var wechselrichterOptions, speicherOptions, wallboxtypOptions;
         
@@ -1953,6 +1956,7 @@ function calculateGesamtkapazitat(value) {
     }
 
     $('#gesamtkapazitat').val(gesamtkapazitat); // Setting the value once after calculation
+    $('#gesamtkapazitat').(gesamtkapazitat)
 }
 
 
