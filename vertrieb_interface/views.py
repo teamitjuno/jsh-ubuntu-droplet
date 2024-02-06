@@ -251,7 +251,7 @@ def home(request):
     user = request.user
     load_user_angebots(request)
     if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite")
+        send_message_to_bot(f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite 🏠")
     year, month = now.year, now.month
 
     users = (
@@ -1472,7 +1472,7 @@ def process_vertrieb_angebot(request):
             angebot_zoho_id = bekommen_angebot.angebot_zoho_id
 
             if angebot_zoho_id is not None:
-                send_message_to_bot(f"{bekommen_angebot.angebot_zoho_id}")
+                # send_message_to_bot(f"{bekommen_angebot.angebot_zoho_id}")
                 delete_redundant_angebot(angebot_zoho_id)
                 bekommen_angebot.angebot_id_assigned = False
                 bekommen_angebot.save()
@@ -2040,7 +2040,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
                 )
             if (
                 vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
-                or "Phono Solar PS430M8GFH-18/VNH"
+                or "Phono Solar PS430M8GFH-18/VSH"
             ):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
 
