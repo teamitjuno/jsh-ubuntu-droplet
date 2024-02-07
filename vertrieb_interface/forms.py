@@ -1326,6 +1326,8 @@ class VertriebAngebotForm(ModelForm):
 
 
         interessent = cleaned_data.get("name")
+        hersteller = cleaned_data.get("hersteller")
+        wallboxtyp = cleaned_data.get("wallboxtyp")
         kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         vorname_nachname = cleaned_data.get("vorname_nachname")
@@ -1466,13 +1468,26 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        if hersteller == "Viessmann" and wallboxtyp=="Huawei FusionCharge AC":
+            raise forms.ValidationError(
+                {
+                    "wallboxtyp": "Sie haben einen Viessmann Hersteller ausgewählt. Sie können keine Huawei Wallbox auswählen. Überprüfen Sie die Daten."
+                }
+            )
+            
+        if hersteller == "Huawei" and wallboxtyp=="Viessmann Charging Station":
+            raise forms.ValidationError(
+                {
+                    "wallboxtyp": "Sie haben einen Huawei Hersteller ausgewählt. Sie können keine Viessmann Wallbox auswählen. Überprüfen Sie die Daten."
+                }
+            )
 
         if action == "save":
             return cleaned_data
 
         else:
-            hersteller = cleaned_data.get("hersteller")
-            wallboxtyp = cleaned_data.get("wallboxtyp")
+            # hersteller = cleaned_data.get("hersteller")
+            
             if interessent == "----":
                 raise forms.ValidationError(
                     {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
