@@ -169,7 +169,7 @@ def validate_integers_ticket(value):
 def validate_solar_module_anzahl(value):
     if not isinstance(value, int) or not (6 <= value <= 69):
         raise ValidationError(
-            "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte entweder 0 oder zwischen 6 und 69 liegen.",
+            "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 69 liegen.",
             params={"value": value},
         )
 
@@ -1472,6 +1472,7 @@ class VertriebAngebotForm(ModelForm):
 
         else:
             hersteller = cleaned_data.get("hersteller")
+            wallboxtyp = cleaned_data.get("wallboxtyp")
             if interessent == "----":
                 raise forms.ValidationError(
                     {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
@@ -1481,6 +1482,20 @@ class VertriebAngebotForm(ModelForm):
                 raise forms.ValidationError(
                     {
                         "modulanzahl": "Die Anzahl der Module kann nicht mehr als 28 sein, wenn der Hersteller Viessmann ist."
+                    }
+                )
+            
+            if hersteller == "Viessmann" and wallboxtyp=="Huawei FusionCharge AC":
+                raise forms.ValidationError(
+                    {
+                        "wallboxtyp": "Sie haben einen Viessmann Hersteller ausgewählt. Sie können keine Huawei Wallbox auswählen. Überprüfen Sie die Daten."
+                    }
+                )
+            
+            if hersteller == "Huawei" and wallboxtyp=="Viessmann Charging Station":
+                raise forms.ValidationError(
+                    {
+                        "wallboxtyp": "Sie haben einen Huawei Hersteller ausgewählt. Sie können keine Viessmann Wallbox auswählen. Überprüfen Sie die Daten."
                     }
                 )
 
