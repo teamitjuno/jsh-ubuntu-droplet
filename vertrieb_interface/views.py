@@ -486,6 +486,7 @@ def chat_bot(request):
 def user_redirect_view(request):
     if request.user.is_authenticated:
         if request.user.is_home_page:
+            load_user_angebots(request)
             return redirect("vertrieb_interface:intermediate_view")
         else:
             return redirect("vertrieb_interface:home")
