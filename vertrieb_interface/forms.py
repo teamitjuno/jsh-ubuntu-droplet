@@ -1319,6 +1319,17 @@ class VertriebAngebotForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # Define a dictionary to map incompatible combinations
+        incompatible_combinations = {
+            ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
+            ("Viessmann", "SUN 2000"): "wechselrichter_model",
+            ("Viessmann", "LUNA 2000"): "speicher_model",
+            ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
+            ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
+            ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",
+        }
+
         action = self.data.get("action_type")
 
         if action == "angebotsumme_rechnen":
@@ -1328,6 +1339,8 @@ class VertriebAngebotForm(ModelForm):
         interessent = cleaned_data.get("name")
         hersteller = cleaned_data.get("hersteller")
         wallboxtyp = cleaned_data.get("wallboxtyp")
+        wechselrichter_model = cleaned_data.get("wechselrichter_model")
+        speicher_model = cleaned_data.get("speicher_model")
         kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         vorname_nachname = cleaned_data.get("vorname_nachname")
@@ -1468,19 +1481,12 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
-        if hersteller == "Viessmann" and wallboxtyp=="Huawei FusionCharge AC":
-            raise forms.ValidationError(
-                {
-                    "wallboxtyp": "Sie haben einen Viessmann Hersteller ausgewählt. Sie können keine Huawei Wallbox auswählen. Überprüfen Sie die Daten."
-                }
-            )
-            
-        if hersteller == "Huawei" and wallboxtyp=="Viessmann Charging Station":
-            raise forms.ValidationError(
-                {
-                    "wallboxtyp": "Sie haben einen Huawei Hersteller ausgewählt. Sie können keine Viessmann Wallbox auswählen. Überprüfen Sie die Daten."
-                }
-            )
+        for (manufacturer, model), field_name in incompatible_combinations.items():
+            if hersteller == manufacturer and cleaned_data.get(field_name) == model:
+                raise forms.ValidationError({
+                    field_name: f"Sie haben einen {manufacturer} Hersteller ausgewählt. Sie können keine {model.split()[0]} {field_name.replace('_', ' ')} auswählen. Überprüfen Sie die Daten."
+                })
+
 
         if action == "save":
             return cleaned_data
@@ -1491,27 +1497,6 @@ class VertriebAngebotForm(ModelForm):
             if interessent == "----":
                 raise forms.ValidationError(
                     {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
-                )
-
-            if hersteller == "Viessmann" and modulanzahl > 28:
-                raise forms.ValidationError(
-                    {
-                        "modulanzahl": "Die Anzahl der Module kann nicht mehr als 28 sein, wenn der Hersteller Viessmann ist."
-                    }
-                )
-            
-            if hersteller == "Viessmann" and wallboxtyp=="Huawei FusionCharge AC":
-                raise forms.ValidationError(
-                    {
-                        "wallboxtyp": "Sie haben einen Viessmann Hersteller ausgewählt. Sie können keine Huawei Wallbox auswählen. Überprüfen Sie die Daten."
-                    }
-                )
-            
-            if hersteller == "Huawei" and wallboxtyp=="Viessmann Charging Station":
-                raise forms.ValidationError(
-                    {
-                        "wallboxtyp": "Sie haben einen Huawei Hersteller ausgewählt. Sie können keine Viessmann Wallbox auswählen. Überprüfen Sie die Daten."
-                    }
                 )
 
             if hersteller == "----":
