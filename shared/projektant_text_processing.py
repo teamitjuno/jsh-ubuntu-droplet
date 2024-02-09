@@ -18,7 +18,7 @@ start_chat_log = [
 ]
 
 chat_log = None
-completion = openai.ChatCompletion()
+completion = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 
 def ask(question, chat_log=None):
