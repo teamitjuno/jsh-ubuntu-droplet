@@ -1,82 +1,74 @@
 # Python standard libraries
-import os
-import io
-import json
-import datetime
-from time import sleep
-from pprint import pformat, pprint
-from urllib.parse import unquote
 import asyncio
+import datetime
+import json
+import os
+from time import sleep
+from urllib.parse import unquote
 
 # Django related imports
-from django.urls import reverse
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views import View
-from django.views.generic import ListView, UpdateView, DeleteView
-from django.views.generic.edit import FormMixin
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.db.models import Count, IntegerField, Q, Sum, Case, When, Value
+from django.db.models.functions import Cast
 from django.http import (
-    HttpResponseRedirect,
-    Http404,
-    JsonResponse,
-    StreamingHttpResponse,
-    HttpResponse,
+    FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse,
+    StreamingHttpResponse
 )
-from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.formats import date_format
-from django.core.exceptions import PermissionDenied
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.db.models.functions import Cast
-from django.db.models import IntegerField, Q, Sum, Count
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.defaults import page_not_found
-from django.conf import settings
+from django.views.generic import (
+    DeleteView, DetailView, ListView, UpdateView, View
+)
+from django.views.generic.edit import FormMixin
 
-# Local imports
-from config import settings
+# Local imports from 'config'
+from config import settings as local_settings
 from config.settings import EMAIL_BACKEND, TELEGRAM_LOGGING
+
+# Local imports from 'prices'
 from prices.models import SolarModulePreise
+
+# Local imports from 'calculator'
 from calculator.models import Calculator
-from datenblatter.models import Datenblatter
 from calculator.forms import CalculatorForm
+
+# Local imports from 'datenblatter'
+from datenblatter.models import Datenblatter
+
+# Local imports from 'shared'
 from shared.chat_bot import handle_message
+
+# Local imports from 'vertrieb_interface'
+from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm
 from vertrieb_interface.get_user_angebots import (
-    fetch_user_angebote_all,
-    fetch_angenommen_status,
-    pushAngebot,
-    extract_values,
-    delete_redundant_angebot,
-    log_and_notify,
-    put_form_data_to_zoho_jpp
+    delete_redundant_angebot, extract_values, fetch_angenommen_status,
+    fetch_user_angebote_all, log_and_notify, pushAngebot, put_form_data_to_zoho_jpp
 )
-from vertrieb_interface.models import VertriebAngebot, CustomLogEntry
-from vertrieb_interface.telegram_logs_sender import send_message_to_bot
-from vertrieb_interface.forms import (
-    VertriebAngebotForm,
-    VertriebAngebotEmailForm,
-    VertriebAngebotEmptyForm,
-    VertriebAngebotRechnerForm,
-)
-from vertrieb_interface.utils import load_vertrieb_angebot
+from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.pdf_services import (
-    angebot_pdf_creator,
-    angebot_pdf_creator_user,
-    calc_pdf_creator,
-    ticket_pdf_creator,
-    angebot_plus_calc_pdf,
+    angebot_pdf_creator, angebot_pdf_creator_user, angebot_plus_calc_pdf,
+    calc_pdf_creator, ticket_pdf_creator
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
-from vertrieb_interface.models import VertriebAngebot
+from vertrieb_interface.telegram_logs_sender import send_message_to_bot
+from vertrieb_interface.utils import load_vertrieb_angebot
+
+# Local imports from 'authentication'
 from authentication.models import User
 from authentication.forms import InitialAngebotDataViewForm
-from django.http import FileResponse
-from vertrieb_interface.templatetags.custom_filter import format_errors
 
 
 def generate_angebot_id(request):
@@ -411,12 +403,16 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(  # type: ignore
+        queryset = self.model.objects.filter(
             user=self.request.user, status="angenommen", angebot_id_assigned=True
         )
 
         queryset = queryset.annotate(
-            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
+            zoho_kundennumer_int=Case(
+                When(zoho_kundennumer__isnull=False, then=Cast('zoho_kundennumer', IntegerField())),
+                default=Value(0),  # or another appropriate default value
+                output_field=IntegerField(),
+            )
         )
         queryset = queryset.order_by("-zoho_kundennumer_int")
 
@@ -2441,40 +2437,6 @@ def get_angebots_and_urls(user_angebots):
         for angebot in user_angebots
         if angebot.angebot_pdf
     ]
-
-
-# @login_required
-# @user_passes_test(vertrieb_check)
-# def pdf_angebots_list_view(request):
-#     user_angebots = VertriebAngebot.objects.filter(user=request.user)
-
-#     query = request.GET.get("q")
-#     if query:
-#         user_angebots = user_angebots.filter(
-#             Q(zoho_kundennumer__icontains=query)
-#             | Q(angebot_id__icontains=query)
-#             | Q(status__icontains=query)
-#             | Q(name__icontains=query)
-#             | Q(anfrage_vom__icontains=query)
-#         )
-
-#     angebots_and_urls = []
-
-#     for angebot in user_angebots:
-#         name = replace_spaces_with_underscores(angebot.name)
-#         if angebot.angebot_pdf is not None:
-#             angebot_url = reverse(
-#                 "vertrieb_interface:serve_pdf", args=[angebot.angebot_id]
-#             )
-#             angebots_and_urls.append((angebot, angebot_url))
-
-#     context = {
-#         "ang_name": name,
-#         "zipped_angebots": angebots_and_urls,
-#         "angebots": user_angebots,
-#     }
-
-#     return render(request, "vertrieb/pdf_angebot_created.html", context)
 
 
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
