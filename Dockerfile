@@ -7,6 +7,7 @@ ENV DJANGO_SETTINGS_MODULE=config.settings
 WORKDIR /app
 
 COPY Pipfile Pipfile.lock /app/
+RUN pip install --upgrade pip
 RUN pip install pipenv && pipenv install --system
 
 # Copying your media files

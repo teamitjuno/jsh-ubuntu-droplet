@@ -63,6 +63,7 @@ ANREDE_CHOICES = (
     ("Herr Dr.", "Herr Dr."),
     ("Herr Prof.", "Herr Prof."),
     ("Frau", "Frau"),
+    ("Frau Dr.", "Frau Dr."),
 )
 AUSRICHTUNG_CHOICES = (
     ("Sud", "Sud"),

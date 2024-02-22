@@ -91,7 +91,7 @@ class PDF(FPDF):
         self.ln(15)
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_text_color(0)
-        self.multi_cell(0, 5, f'{data["firma"]}\n{data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
+        self.multi_cell(0, 5, f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
         # self.line(18,65,80,65) #unter Adresse
         self.set_x(130)
         self.set_y(33)
@@ -113,7 +113,7 @@ class PDF(FPDF):
         self.set_x(0)
         self.set_y(80)
         self.cell(0, 6, "ANGEBOT", 0, 0, "L")
-        self.set_x(135)
+        self.set_x(138)
         self.cell(0, 6, f"{self.title1}", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_x(0)
@@ -126,10 +126,12 @@ class PDF(FPDF):
         self.set_x(70)
         self.multi_cell(0, 5, f'{str(data["kWp"])} kWp\n{data["standort"]}', 0, "L")
         self.set_y(115)
-        if "und" in data["anrede"]:
-            self.cell(0, 6, f'{data["anrede"]},', 0, 0, "L")
+        if "Firma" in data["anrede"]:
+            self.cell(0, 6, f'Sehr geehrte Damen und Herren', 0, 0, "L")
+        elif "Familie" in data["anrede"]:
+            self.cell(0, 6, f'Sehr geehrte Damen und Herren', 0, 0, "L")
         else:
-            self.cell(0, 6, f'{data["anrede"]} {data["kunde"]},', 0, 0, "L")
+            self.cell(0, 6, f'Sehr geehrte {data["anrede"]} {data["kunde"]},', 0, 0, "L")
         self.set_x(0)
         self.set_y(125)
         self.multi_cell(
@@ -144,7 +146,7 @@ class PDF(FPDF):
         self.set_x(0)
         self.set_y(135)
         self.cell(0, 6, "Pos.", 0, 0, "L")
-        self.set_x(25)
+        self.set_x(26)
         self.cell(0, 6, "Bezeichnung", 0, 0, "L")
         self.set_x(150)
         self.cell(0, 6, "Menge", 0, 0, "L")
