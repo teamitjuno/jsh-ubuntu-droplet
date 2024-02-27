@@ -1425,53 +1425,20 @@ class DeleteAngebot(DeleteView):
         self.object.delete()
         return redirect(self.get_success_url())
 
-
 class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders.html"
     context_object_name = "angebots"
 
     def get_queryset(self):
-        return self._get_filtered_and_ordered_queryset()
+        # Retrieve all objects from the VertriebAngebot model, excluding ones with "angenommen" or "bekommen" status
+        return self.model.objects.exclude(status__in=["angenommen", "bekommen"])
 
-    def zoho_kundennumer_is_numeric(self):
-        return Q(zoho_kundennumer__regex=r"^\d+$")
-
-    def _get_contact_statuses(self):
-        return [
-            "in Kontakt",
-            "Kontaktversuch",
-            "on Hold",
-            "abgelehnt",
-            "abgelaufen",
-            "storniert",
-            "",
-        ]
-
-    def _get_filtered_and_ordered_queryset(self):
-        queryset = self.model.objects.filter(
-            user=self.request.user,
-            angebot_id_assigned=True,
-            status__in=self._get_contact_statuses(),
-        ).filter(self.zoho_kundennumer_is_numeric())
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
             send_custom_message(self.request.user, "befindet sich auf der Listenseite der Angebote", "...")
-        query = self.request.GET.get("q")
-        if query:
-            queryset = queryset.filter(
-                Q(zoho_kundennumer__icontains=query)
-                | Q(angebot_id__icontains=query)
-                | Q(status__icontains=query)
-                | Q(name__icontains=query)
-                | Q(anfrage_vom__icontains=query)
-            )
-
-        queryset = queryset.annotate(
-            zoho_kundennumer_int=Cast("zoho_kundennumer", IntegerField())
-        )
-        queryset = queryset.order_by("-zoho_kundennumer_int")
-
-        return queryset
+        return context
 
 
 def set_angebot_id_assigned_false_for_user(request):

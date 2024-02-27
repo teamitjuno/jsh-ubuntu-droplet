@@ -45,11 +45,9 @@
                                             <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
                                             <td>{{ vertrieb_angebot.name }}</td>
 
-                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                            
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>
-                                            {% else %}
-                                            <td> noch nicht zugeordnet </td>
-                                            {% endif %}
+
                                             
                                             {% if vertrieb_angebot.status == "bekommen" %}
                                                 <td class="link-warning">
@@ -80,7 +78,7 @@
                                             </td>
                                             
                                             <td>
-                                                {% if vertrieb_angebot.angebot_id_assigned %}
+                                                {% if vertrieb_angebot.angebot_id_assigned %}   
                                                 <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
                                                 {% endif %}
                                             </td>
