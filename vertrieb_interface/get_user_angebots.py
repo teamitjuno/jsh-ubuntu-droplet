@@ -135,6 +135,7 @@ def process_all_user_data(data):
                 {
                     "zoho_id": item.get("ID", ""),
                     "status": item.get("Status", ""),
+                    "status_pva": item.get("Status_PVA", ""),
                     "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
                     "anrede": item.get("Name", {}).get("prefix", ""),
                     "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),

@@ -840,6 +840,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             fetched_data = {
                 "zoho_id": item.get("ID", ""),
                 "status": item.get("Status", ""),
+                "status_pva": item.get("Status_PVA", ""),
                 "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
                 "anrede": item.get("Name", {}).get("prefix", ""),
                 "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
@@ -886,6 +887,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             item = json.loads(vertrieb_angebot.ag_fetched_data)
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
             vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
+            vertrieb_angebot.status_pva = item.get("status_pva")
             vertrieb_angebot.angebot_bekommen_am = (
                 item.get("angebot_bekommen_am")
                 if item.get("angebot_bekommen_am")
@@ -982,7 +984,15 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 # self._log_and_notify_attempt(user, action_type)
 
                 if form.is_valid():
+                    instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
+                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+                    
+                    data_loads = json.loads(profile.zoho_data_text)
+                    name = instance.name
+                    
+                    data = next((item for item in data_loads if item["name"] == name), None)
+                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
                     form.instance.status = "bekommen"
                     form.save()
@@ -1544,7 +1554,6 @@ def load_user_angebots(request):
         profile.save()
 
         update_vertrieb_angebot_assignment(user)
-        load_vertrieb_angebot(all_user_angebots_list, user, kurz)
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
 

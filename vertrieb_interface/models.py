@@ -250,6 +250,12 @@ class VertriebAngebot(TimeStampMixin):
         blank=True,
         null=True,
     )
+    status_pva = models.CharField(
+        default="",
+        max_length=255,
+        blank=True,
+        null=True,
+    )
     status_change_field = models.DateTimeField(null=True, blank=True)
     status_change_date = models.CharField(max_length=255, null=True, blank=True)
     telefon_festnetz = models.CharField(max_length=255, blank=True, null=True)

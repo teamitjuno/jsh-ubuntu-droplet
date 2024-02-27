@@ -74,7 +74,20 @@
                                             <td>{{ vertrieb_angebot.anfrage_vom }}</td>
                                             
                                             <td>
+                                            {% if vertrieb_angebot.status_pva == "in Prüfung" %} 
                                                 <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+                                            {% elif vertrieb_angebot.status_pva == "in Planung" %}
+                                                <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+                                            {% elif vertrieb_angebot.status_pva == "projektiert"%}
+                                                <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+                                            {% elif vertrieb_angebot.status_pva == "in Bau" %}
+                                                <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+                                            {% elif vertrieb_angebot.status_pva == "abgeschlossen"%}
+                                                <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
+
+                                            {% else %}
+                                                <button href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm" disabled>Ticket erstellen</button>
+                                            {% endif %}
                                             </td>
                                              {% if vertrieb_angebot.angebot_id_assigned %}
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>

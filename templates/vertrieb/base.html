@@ -217,8 +217,8 @@
                             <li class="side-nav-title">Navigation</li>
                                 <li class="side-nav-item">
                                     <ul class="side-nav-link">               
-                                        <a href="{% url 'vertrieb_interface:home' %}"><i class="ri-home-8-line"></i></a>
-                                        <span href="{% url 'vertrieb_interface:home' %}"><a href="{% url 'vertrieb_interface:home' %}">Home</a></span>
+                                        <a href="{% url 'vertrieb_interface:home' %}"><i class="ri-home-8-line text-white"></i></a>
+                                        <span href="{% url 'vertrieb_interface:home' %}"><a href="{% url 'vertrieb_interface:home' %}" class="text-white">Home</a></span>
                                     </ul>    
                                 </li>
                             <li class="side-nav-item">
@@ -226,27 +226,27 @@
                                     <form id="create-angebot-form" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="create_blank_angebot" value="1">
-                                        <a href="#"><i class=" ri-file-edit-line"></i></a>
-                                        <span href="#"><a href="#" onclick="document.getElementById('create-angebot-form').submit(); ">Neues Angebot erstellen</a></span>
+                                        <a href="#"><i class=" ri-file-edit-line text-white"></i></a>
+                                        <span href="#"><a href="#" onclick="document.getElementById('create-angebot-form').submit(); " class="text-white">Neues Angebot erstellen</a></span>
                                     </form>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:ticket_creation' %}"><i class="uil-file-plus-alt"></i></a>
-                                    <span href="{% url 'vertrieb_interface:ticket_creation' %}"><a href="{% url 'vertrieb_interface:ticket_creation' %}">Ticket erstellen</a></span>
+                                    <a href="{% url 'vertrieb_interface:ticket_creation' %}"><i class="uil-file-plus-alt text-white"></i></a>
+                                    <span href="{% url 'vertrieb_interface:ticket_creation' %}"><a href="{% url 'vertrieb_interface:ticket_creation' %}" class="text-white">Ticket erstellen</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:view_orders' %}"><i class="uil-list-ul"></i></a>
-                                    <span href="{% url 'vertrieb_interface:view_orders' %}"><a href="{% url 'vertrieb_interface:view_orders' %}">Alle Angebote</a></span>
+                                    <a href="{% url 'vertrieb_interface:view_orders' %}"><i class="uil-list-ul text-white"></i></a>
+                                    <span href="{% url 'vertrieb_interface:view_orders' %}"><a href="{% url 'vertrieb_interface:view_orders' %}" class="text-white">Alle Angebote</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><i class="ri-file-pdf-fill"></i></a>
-                                    <span href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}">PDF Dokumente</a></span>
+                                    <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><i class="ri-file-pdf-fill text-white"></i></a>
+                                    <span href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="text-white">PDF Dokumente</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
@@ -285,6 +285,16 @@
                             {% endif %}
     
                         </ul>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        <script>
+                        $(document).ready(function(){
+                            $('.side-nav-link a').hover(
+                                function() { $(this).addClass('text-info').removeClass('text-white'); },
+                                function() { $(this).removeClass('text-info').addClass('text-white'); }
+                            );
+                        });
+                        </script>
+
                         <!--- End Sidemenu -->
     
                         <div class="clearfix"></div>
