@@ -41,6 +41,7 @@
                                     </thead>
                                     <tbody>
                                         {% for vertrieb_angebot in angebots %}
+                                        {% if vertrieb_angebot.status != "abgelehnt" %}
                                         <tr>
                                             <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
                                             <td>{{ vertrieb_angebot.name }}</td>
@@ -101,6 +102,7 @@
                                             <tr>
                                                 <td colspan="9">No orders found.</td>
                                             </tr>
+                                            {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
