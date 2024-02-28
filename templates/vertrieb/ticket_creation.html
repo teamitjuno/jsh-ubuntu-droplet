@@ -86,7 +86,7 @@
                                                 <a href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Ticket erstellen</a>
 
                                             {% else %}
-                                                <button href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm" disabled>Ticket erstellen</button>
+                                                <button href="{% url 'vertrieb_interface:edit_ticket' vertrieb_angebot.angebot_id %}" class="btn btn-outline-danger rounded-pill btn-sm" disabled>Ticket erstellen</button>
                                             {% endif %}
                                             </td>
                                              {% if vertrieb_angebot.angebot_id_assigned %}
