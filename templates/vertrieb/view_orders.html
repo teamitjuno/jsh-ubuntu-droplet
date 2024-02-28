@@ -98,11 +98,12 @@
                                                 {% endif %}
                                                 
                                         </tr>
+                                        {% endif %}
                                         {% empty %}
                                             <tr>
                                                 <td colspan="9">No orders found.</td>
                                             </tr>
-                                            {% endif %}
+                                            
                                         {% endfor %}
                                     </tbody>
                                 </table>
