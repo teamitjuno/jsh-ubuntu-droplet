@@ -1439,7 +1439,7 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
-            send_custom_message(self.request.user.username, "Accessed the offers list page.", "Info")
+            send_custom_message(self.request.user, "Accessed the offers list page.", "Info")
         return context
     
 
