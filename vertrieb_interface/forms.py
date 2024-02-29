@@ -1126,7 +1126,7 @@ class VertriebAngebotForm(ModelForm):
         model = VertriebAngebot
         fields = [
             "is_locked",
-            "angebot_id_assigned",
+            # "angebot_id_assigned",
             "status",
             "anrede",
             "zoho_id",
