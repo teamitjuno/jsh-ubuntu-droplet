@@ -37,6 +37,7 @@
                                     </thead>
                                     <tbody>
                                         {% for vertrieb_angebot in angebots %}
+                                        {% if vertrieb_angebot.angebot_id_assigned != False %}
                                         <tr>
                                             
                                             <td>{{ vertrieb_angebot.name }}</td>
@@ -97,6 +98,7 @@
                                             
                                                 
                                         </tr>
+                                        {% endif %}
                                         {% empty %}
                                             <tr>
                                                 <td colspan="9">No orders found.</td>
