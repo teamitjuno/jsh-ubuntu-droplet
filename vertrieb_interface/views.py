@@ -1056,21 +1056,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
-                    if vertrieb_angebot.angebot_id_assigned == False:
-                        instance.angebot_id_assigned == False
-                        instance.save()
+                    instance.save()
                         # self._log_and_notify_success(user)
-                        return redirect(
+                    return redirect(
                             "vertrieb_interface:edit_angebot",
                             vertrieb_angebot.angebot_id,
                         )
-                    else:
-                        instance.save()
-                        # self._log_and_notify_success(user)
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
+
             elif action_type == "save":
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
