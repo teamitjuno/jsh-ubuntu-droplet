@@ -1063,6 +1063,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "angebotsumme_rechnen":
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
+                    instance = form.instance
+                    
                     profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
                     
                     data_loads = json.loads(profile.zoho_data_text)
@@ -1071,7 +1073,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     data = next((item for item in data_loads if item["name"] == name), None)
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
-                    form.save()
+                    instance.save()
                         # self._log_and_notify_success(user)
                     return redirect(
                             "vertrieb_interface:edit_angebot",
