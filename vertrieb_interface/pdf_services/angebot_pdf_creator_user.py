@@ -146,7 +146,7 @@ class PDF(FPDF):
         self.set_x(0)
         self.set_y(135)
         self.cell(0, 6, "Pos.", 0, 0, "L")
-        self.set_x(26)
+        self.set_x(27)
         self.cell(0, 6, "Bezeichnung", 0, 0, "L")
         self.set_x(150)
         self.cell(0, 6, "Menge", 0, 0, "L")
