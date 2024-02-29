@@ -408,7 +408,7 @@ class VertriebAngebotForm(ModelForm):
     zoho_id = forms.IntegerField(required=False)
 
     angebot_id_assigned = forms.BooleanField(
-        # required=True,
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 "class": "form-check-input",
