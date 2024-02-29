@@ -1071,8 +1071,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     data = next((item for item in data_loads if item["name"] == name), None)
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
-                    instance = form.instance
-                    instance.save()
+                    form.save()
                         # self._log_and_notify_success(user)
                     return redirect(
                             "vertrieb_interface:edit_angebot",
