@@ -1425,21 +1425,23 @@ class DeleteAngebot(DeleteView):
         self.object.delete()
         return redirect(self.get_success_url())
 
+
+
 class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders.html"
     context_object_name = "angebots"
 
     def get_queryset(self):
-        # Retrieve all objects from the VertriebAngebot model, excluding ones with "angenommen" or "bekommen" status
-        return self.model.objects.exclude(status__in=["angenommen", "bekommen"])
+        # Optimized query to directly exclude "angenommen" and "bekommen" statuses
+        return self.model.objects.filter(user=self.request.user).exclude(status__in=["angenommen", "bekommen"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
-            send_custom_message(self.request.user, "befindet sich auf der Listenseite der Angebote", "...")
+            send_custom_message(self.request.user.username, "Accessed the offers list page.", "Info")
         return context
-
+    
 
 def set_angebot_id_assigned_false_for_user(request):
     user = request.user
