@@ -10,6 +10,7 @@ from authentication.views import (
     protected_schema_view,
 )
 
+
 def include_with_namespace(pattern_prefix, app_name):
     """Include patterns with namespace.
 

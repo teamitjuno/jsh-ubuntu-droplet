@@ -7,13 +7,12 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.auth import get_user_model
 from vertrieb_interface.get_user_angebots import update_status
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
-from .models import VertriebAngebot
-import datetime
+from vertrieb_interface.models import VertriebAngebot
 import re
+
 now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
@@ -106,19 +105,29 @@ STORNIERUNGSGRUND_CHOICES = (
 
 
 def validate_german_mobile_number(value):
-    if not re.match(r'^\+49(1[5-7][0-9])\d{7,8}$', value):
-        raise ValidationError("Geben Sie eine gültige deutsche Handynummer ein, die mit +49 beginnt.")
-    
+    if not re.match(r"^\+49(1[5-7][0-9])\d{7,8}$", value):
+        raise ValidationError(
+            "Geben Sie eine gültige deutsche Handynummer ein, die mit +49 beginnt."
+        )
+
+
 def validate_german_landline_number(value):
-    if not re.match(r'^\+49\(\d{2,5}\)\d{3,}$', value):
-        raise ValidationError("Geben Sie eine gültige deutsche Festnetznummer ein, die mit +49 beginnt.")
+    if not re.match(r"^\+49\(\d{2,5}\)\d{3,}$", value):
+        raise ValidationError(
+            "Geben Sie eine gültige deutsche Festnetznummer ein, die mit +49 beginnt."
+        )
+
 
 def validate_name_format(value):
     # Regular expression for 'Last_Name First_Name Middle_Name(optional)'
     # Expecting each to start with a capital letter followed by lowercase letters
     # The middle name is optional and can be included
-    if not re.match(r'^[A-ZÄÖÜ][a-zäöüß]+ [A-ZÄÖÜ][a-zäöüß]+(?: [A-ZÄÖÜ][a-zäöüß]+)?$', value):
-        raise ValidationError("Format 'Nachname Vorname Mittelname (optional)', wobei jeder Name mit einem Großbuchstaben beginnt und deutsche Sonderzeichen enthält.")
+    if not re.match(
+        r"^[A-ZÄÖÜ][a-zäöüß]+ [A-ZÄÖÜ][a-zäöüß]+(?: [A-ZÄÖÜ][a-zäöüß]+)?$", value
+    ):
+        raise ValidationError(
+            "Format 'Nachname Vorname Mittelname (optional)', wobei jeder Name mit einem Großbuchstaben beginnt und deutsche Sonderzeichen enthält."
+        )
 
 
 def validate_two_decimal_places(value):
@@ -300,7 +309,7 @@ class VertriebAngebotEmailForm(ModelForm):
                 "id": "datenblatter_backup_box",
             }
         ),
-    )    
+    )
     datenblatter_backup_box = forms.BooleanField(
         label="Datenblatter Optimierer",
         required=False,
@@ -331,24 +340,24 @@ class VertriebAngebotEmailForm(ModelForm):
         if self.instance and self.instance.pk:
             self.fields["email"].initial = self.instance.email
             self.fields["text_for_email"].initial = self.instance.text_for_email
-            self.fields[
-                "datenblatter_solar_module"
-            ].initial = self.instance.datenblatter_solar_module
-            self.fields[
-                "datenblatter_speichermodule"
-            ].initial = self.instance.datenblatter_speichermodule
-            self.fields[
-                "datenblatter_wechselrichter"
-            ].initial = self.instance.datenblatter_wechselrichter
-            self.fields[
-                "datenblatter_wallbox"
-            ].initial = self.instance.datenblatter_wallbox
-            self.fields[
-                "datenblatter_backup_box"
-            ].initial = self.instance.datenblatter_backup_box
-            self.fields[
-                "datenblatter_optimizer"
-            ].initial = self.instance.datenblatter_optimizer
+            self.fields["datenblatter_solar_module"].initial = (
+                self.instance.datenblatter_solar_module
+            )
+            self.fields["datenblatter_speichermodule"].initial = (
+                self.instance.datenblatter_speichermodule
+            )
+            self.fields["datenblatter_wechselrichter"].initial = (
+                self.instance.datenblatter_wechselrichter
+            )
+            self.fields["datenblatter_wallbox"].initial = (
+                self.instance.datenblatter_wallbox
+            )
+            self.fields["datenblatter_backup_box"].initial = (
+                self.instance.datenblatter_backup_box
+            )
+            self.fields["datenblatter_optimizer"].initial = (
+                self.instance.datenblatter_optimizer
+            )
 
     def save(self, commit=True):
         form = super(VertriebAngebotEmailForm, self).save(commit=False)
@@ -493,7 +502,6 @@ class VertriebAngebotForm(ModelForm):
             attrs={
                 "class": "form-select",
                 "id": "id_anrede",
-                
             }
         ),
     )
@@ -513,12 +521,41 @@ class VertriebAngebotForm(ModelForm):
     vorname_nachname = forms.CharField(
         label="Nach-, Vorname",
         required=False,
-        validators=[validate_name_format],
+        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "id": "id_vorname_nachname",
-                
+            }
+        ),
+    )
+    zoho_first_name = forms.CharField(
+        label="Vorname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname",
+            }
+        ),
+    )
+    name_suffix = forms.CharField(
+        label="Vorname Suffix",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname",
+            }
+        ),
+    )
+    zoho_last_name = forms.CharField(
+        label="Nachname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_nachname",
             }
         ),
     )
@@ -526,13 +563,11 @@ class VertriebAngebotForm(ModelForm):
         label="Telefon Mobil",
         max_length=100,
         required=False,
-        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "Telefon Mobil",
                 "id": "id_telefon_mobil",
-                
             }
         ),
     )
@@ -540,13 +575,11 @@ class VertriebAngebotForm(ModelForm):
         label="Telefon Festnetz",
         max_length=100,
         required=False,
-        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "Telefon Festnetz",
                 "id": "id_telefon_festnetz",
-                
             }
         ),
     )
@@ -559,7 +592,6 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Email",
                 "id": "id_email",
-                
             }
         ),
     )
@@ -572,7 +604,6 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Firma",
                 "id": "firma",
-                
             }
         ),
     )
@@ -585,7 +616,6 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Straße & Hausnummer",
                 "id": "id_strasse",
-                
             }
         ),
     )
@@ -598,7 +628,6 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "PLZ & Ort",
                 "id": "id_ort",
-                
             }
         ),
     )
@@ -629,7 +658,6 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Anlagenstandort",
                 "id": "anlagenstandort",
-                
             }
         ),
     )
@@ -1126,7 +1154,6 @@ class VertriebAngebotForm(ModelForm):
         model = VertriebAngebot
         fields = [
             "is_locked",
-            # "angebot_id_assigned",
             "status",
             "anrede",
             "zoho_id",
@@ -1146,6 +1173,9 @@ class VertriebAngebotForm(ModelForm):
             "ablehnungs_grund",
             "name",
             "vorname_nachname",
+            "zoho_first_name",
+            "name_suffix",
+            "zoho_last_name",
             "firma",
             "strasse",
             "ort",
@@ -1217,7 +1247,7 @@ class VertriebAngebotForm(ModelForm):
                 name_to_kundennumer = {
                     item["name"]: item["zoho_kundennumer"] for item in data
                 }
-                
+
             else:
                 # Set initial value to "-----" if there is no data
                 self.fields["name"].initial = "-----"
@@ -1264,9 +1294,7 @@ class VertriebAngebotForm(ModelForm):
         self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "anz_wandhalterung_fuer_speicher"}
         )
-        self.fields["zoho_kundennumer"].widget.attrs.update(
-            {"id": "zoho_kundennumer"}
-        )
+        self.fields["zoho_kundennumer"].widget.attrs.update({"id": "zoho_kundennumer"})
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )
@@ -1336,13 +1364,12 @@ class VertriebAngebotForm(ModelForm):
         if action == "angebotsumme_rechnen":
             return cleaned_data
 
-
         interessent = cleaned_data.get("name")
         hersteller = cleaned_data.get("hersteller")
         wallboxtyp = cleaned_data.get("wallboxtyp")
         wechselrichter_model = cleaned_data.get("wechselrichter_model")
         speicher_model = cleaned_data.get("speicher_model")
-        kundennumer = cleaned_data.get("kundennumer")
+        # kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")
@@ -1355,8 +1382,9 @@ class VertriebAngebotForm(ModelForm):
         if anrede != "Firma":
             # Perform validation for vorname_nachname if anrede is not "Firma"
             if not vorname_nachname:  # or any other validation you need
-                raise ValidationError("Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'.")
-
+                raise ValidationError(
+                    "Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'."
+                )
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1372,10 +1400,10 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
-        
+
             # Validation for 'name'
         name = cleaned_data.get("name")
-        
+
         if name is None or interessent == "----":
             raise forms.ValidationError(
                 {"interessent": "Sie haben keinen Interessent ausgewählt"}
@@ -1388,7 +1416,7 @@ class VertriebAngebotForm(ModelForm):
             )
 
         # Validation for 'vorname_nachname'
-        
+
         if vorname_nachname is None or vorname_nachname == "":
             raise ValidationError(
                 ("Dieses Feld ist erforderlich"),
@@ -1484,17 +1512,18 @@ class VertriebAngebotForm(ModelForm):
                 )
         for (manufacturer, model), field_name in incompatible_combinations.items():
             if hersteller == manufacturer and cleaned_data.get(field_name) == model:
-                raise forms.ValidationError({
-                    field_name: f"Sie haben einen {manufacturer} Hersteller ausgewählt. Sie können keine {model.split()[0]} {field_name.replace('_', ' ')} auswählen. Überprüfen Sie die Daten."
-                })
-
+                raise forms.ValidationError(
+                    {
+                        field_name: f"Sie haben einen {manufacturer} Hersteller ausgewählt. Sie können keine {model.split()[0]} {field_name.replace('_', ' ')} auswählen. Überprüfen Sie die Daten."
+                    }
+                )
 
         if action == "save":
             return cleaned_data
 
         else:
             # hersteller = cleaned_data.get("hersteller")
-            
+
             if interessent == "----":
                 raise forms.ValidationError(
                     {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
@@ -1812,7 +1841,7 @@ class TicketForm(forms.ModelForm):
             self.add_error(
                 "modul_anzahl_ticket",
                 ValidationError(
-                    ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
+                    ("Die Anzahl der Modul kann nicht mehr als 4 sein"),
                     params={
                         "modul_anzahl_ticket": modul_anzahl_ticket,
                     },

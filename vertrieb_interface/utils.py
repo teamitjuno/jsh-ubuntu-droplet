@@ -10,19 +10,6 @@ def load_vertrieb_angebot(data, user, kurz):
         with transaction.atomic():
             for item in data:
                 if not VertriebAngebot.objects.filter(zoho_id=item["zoho_id"]).exists():
-                    # if not item.get("zoho_kundennumer"):
-                    #     print(
-                    #         f"Missing zoho_kundennumer for {item['name']}, skipping..."
-                    #     )
-                    #     continue
-                    # # Check if a VertriebAngebot with this zoho_kundennumer already exists
-                    # elif VertriebAngebot.objects.filter(
-                    #     zoho_kundennumer=item["zoho_kundennumer"]
-                    # ).exists():
-                    #     print(
-                    #         f"VertriebAngebot with zoho_kundennumer {item['zoho_kundennumer']} already exists, skipping..."
-                    #     )
-                    #     continue
 
                     item["user"] = user
                     item["angebot_id"] = generate_angebot_id(

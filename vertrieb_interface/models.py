@@ -233,6 +233,8 @@ GARANTIE_WR_CHOICES = [
     ("15 Jahre", "15 Jahre"),
     ("20 Jahre", "20 Jahre"),
 ]
+
+
 class VertriebAngebot(TimeStampMixin):
     angebot_id = models.CharField(max_length=255, unique=True, primary_key=True)
     current_date = models.DateField(auto_now_add=True)
@@ -293,10 +295,11 @@ class VertriebAngebot(TimeStampMixin):
         choices=STORNIERUNGSGRUND_CHOICES, max_length=255, blank=True, null=True
     )
 
-
     anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
     name = models.CharField(max_length=100, blank=True, default="------")
     vorname_nachname = models.CharField(max_length=100, blank=True, null=True)
+    zoho_first_name = models.CharField(max_length=100, blank=True, null=True)
+    zoho_last_name = models.CharField(max_length=100, blank=True, null=True)
     firma = models.CharField(max_length=100, blank=True)
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
@@ -1085,9 +1088,7 @@ class VertriebAngebot(TimeStampMixin):
         text = (
             "\nHarvi\nHub"
             if "Zappi" in str(self.wallboxtyp)
-            else "Inkl. Power Boost"
-            if "Power Boost" in str(self.wallboxtyp)
-            else ""
+            else "Inkl. Power Boost" if "Power Boost" in str(self.wallboxtyp) else ""
         )
         return text
 
@@ -1100,9 +1101,7 @@ class VertriebAngebot(TimeStampMixin):
         return (
             "\n1\n1"
             if "Zappi" in str(self.wallboxtyp)
-            else "\n1"
-            if "Power Boost" in str(self.wallboxtyp)
-            else "\n1"
+            else "\n1" if "Power Boost" in str(self.wallboxtyp) else "\n1"
         )
 
     @property

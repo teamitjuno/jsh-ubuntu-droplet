@@ -89,7 +89,7 @@ SIMPLE_JWT = {
 #     ),
 # }
 # DJOSER = {
-#     'LOGIN_FIELD': 'email', 
+#     'LOGIN_FIELD': 'email',
 # }
 
 
@@ -102,7 +102,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
-    "https://159.89.22.211"
+    "https://159.89.22.211",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.80.1",
@@ -111,7 +111,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://jsh-home.app",
     "https://www.jsh-home.app",
     "https://138.68.100.101",
-    "https://159.89.22.211"
+    "https://159.89.22.211",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 
@@ -183,7 +183,7 @@ ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_REFRESH_TOKEN")
 SERVER_UPLINK_KEY = os.getenv("SERVER_UPLINK_KEY")
 CLIENT_UPLINK_KEY = os.getenv("CLIENT_UPLINK_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", default="openaikey")
-ASSISTANT_ID=os.getenv("ASSISTANT_ID")
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 DEVELOPEMENT_MODE = os.getenv(f"DEVELOPEMENT")
 TELEBOT_TOKEN = os.getenv("TELEBOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -278,7 +278,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #         # Вы можете добавить другие логгеры для других частей вашего приложения
 #     },
 # }
-
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -18,8 +18,12 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models import Count, IntegerField, Q, Sum, Case, When, Value
 from django.db.models.functions import Cast
 from django.http import (
-    FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse,
-    StreamingHttpResponse
+    FileResponse,
+    Http404,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse,
+    StreamingHttpResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -29,9 +33,7 @@ from django.utils.formats import date_format
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.defaults import page_not_found
-from django.views.generic import (
-    DeleteView, DetailView, ListView, UpdateView, View
-)
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormMixin
 
 # Local imports from 'config'
@@ -54,13 +56,21 @@ from shared.chat_bot import handle_message
 # Local imports from 'vertrieb_interface'
 from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm
 from vertrieb_interface.get_user_angebots import (
-    delete_redundant_angebot, extract_values, fetch_angenommen_status,
-    fetch_user_angebote_all, log_and_notify, pushAngebot, put_form_data_to_zoho_jpp
+    delete_redundant_angebot,
+    extract_values,
+    fetch_angenommen_status,
+    fetch_user_angebote_all,
+    log_and_notify,
+    pushAngebot,
+    put_form_data_to_zoho_jpp,
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.pdf_services import (
-    angebot_pdf_creator, angebot_pdf_creator_user, angebot_plus_calc_pdf,
-    calc_pdf_creator, ticket_pdf_creator
+    angebot_pdf_creator,
+    angebot_pdf_creator_user,
+    angebot_plus_calc_pdf,
+    calc_pdf_creator,
+    ticket_pdf_creator,
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
@@ -127,6 +137,7 @@ now = timezone.now()
 now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
 
+
 # Funktion zum Senden von Benachrichtigungen mit verbesserter Nachrichtenstruktur
 def send_custom_message(user, action, details):
     """
@@ -141,6 +152,7 @@ def send_custom_message(user, action, details):
 
     message = f"{user_name} {action} {details}"
     send_message_to_bot(message)
+
 
 def handler404(request, exception):
     return render(request, "404.html", status=404)
@@ -177,44 +189,74 @@ def get_recent_activities(user):
                 "module": entry.content_type.model_class()._meta.verbose_name_plural,
                 "action": {
                     "message": entry.get_change_message(),
-                    "class": "text-danger"
-                    if entry.get_vertrieb_angebot().status == "abgelaufen"
-                    else "text-warning"
-                    if entry.get_vertrieb_angebot().status == "bekommen"
-                    else "text-success"
-                    if entry.get_vertrieb_angebot().status == "angenommen"
-                    else "text-primary"
-                    if entry.action_flag == ADDITION
-                    else "text-info"
-                    if entry.action_flag == CHANGE
-                    else "text-danger",
+                    "class": (
+                        "text-danger"
+                        if entry.get_vertrieb_angebot().status == "abgelaufen"
+                        else (
+                            "text-warning"
+                            if entry.get_vertrieb_angebot().status == "bekommen"
+                            else (
+                                "text-success"
+                                if entry.get_vertrieb_angebot().status == "angenommen"
+                                else (
+                                    "text-primary"
+                                    if entry.action_flag == ADDITION
+                                    else (
+                                        "text-info"
+                                        if entry.action_flag == CHANGE
+                                        else "text-danger"
+                                    )
+                                )
+                            )
+                        )
+                    ),
                 },
                 "user": entry.user,
                 "object": {
                     "repr": entry.object_repr,
-                    "class": "text-danger"
-                    if entry.get_vertrieb_angebot().status == "abgelaufen"
-                    else "text-warning"
-                    if entry.get_vertrieb_angebot().status == "bekommen"
-                    else "text-success"
-                    if entry.get_vertrieb_angebot().status == "angenommen"
-                    else "text-primary"
-                    if entry.action_flag == ADDITION
-                    else "text-info"
-                    if entry.action_flag == CHANGE
-                    else "text-danger",
+                    "class": (
+                        "text-danger"
+                        if entry.get_vertrieb_angebot().status == "abgelaufen"
+                        else (
+                            "text-warning"
+                            if entry.get_vertrieb_angebot().status == "bekommen"
+                            else (
+                                "text-success"
+                                if entry.get_vertrieb_angebot().status == "angenommen"
+                                else (
+                                    "text-primary"
+                                    if entry.action_flag == ADDITION
+                                    else (
+                                        "text-info"
+                                        if entry.action_flag == CHANGE
+                                        else "text-danger"
+                                    )
+                                )
+                            )
+                        )
+                    ),
                 },
-                "icon": "mdi-delete bg-danger-lighten text-danger"
-                if entry.get_vertrieb_angebot().status == "abgelaufen"
-                else "mdi-minus bg-warning-lighten text-warning"
-                if entry.get_vertrieb_angebot().status == "bekommen"
-                else "mdi-update bg-success-lighten text-success"
-                if entry.get_vertrieb_angebot().status == "angenommen"
-                else "mdi-plus bg-primary-lighten text-primary"
-                if entry.action_flag == ADDITION
-                else "mdi-update bg-info-lighten text-info"
-                if entry.action_flag == CHANGE
-                else "mdi-delete bg-danger-lighten text-danger",
+                "icon": (
+                    "mdi-delete bg-danger-lighten text-danger"
+                    if entry.get_vertrieb_angebot().status == "abgelaufen"
+                    else (
+                        "mdi-minus bg-warning-lighten text-warning"
+                        if entry.get_vertrieb_angebot().status == "bekommen"
+                        else (
+                            "mdi-update bg-success-lighten text-success"
+                            if entry.get_vertrieb_angebot().status == "angenommen"
+                            else (
+                                "mdi-plus bg-primary-lighten text-primary"
+                                if entry.action_flag == ADDITION
+                                else (
+                                    "mdi-update bg-info-lighten text-info"
+                                    if entry.action_flag == CHANGE
+                                    else "mdi-delete bg-danger-lighten text-danger"
+                                )
+                            )
+                        )
+                    )
+                ),
                 "status": status,
                 "kundenname": kundenname,
             }
@@ -257,7 +299,9 @@ def home(request):
     user = request.user
     load_user_angebots(request)
     if TELEGRAM_LOGGING:
-        send_message_to_bot(f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite 🏠")
+        send_message_to_bot(
+            f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite 🏠"
+        )
     year, month = now.year, now.month
 
     users = (
@@ -409,7 +453,10 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
         queryset = queryset.annotate(
             zoho_kundennumer_int=Case(
-                When(zoho_kundennumer__isnull=False, then=Cast('zoho_kundennumer', IntegerField())),
+                When(
+                    zoho_kundennumer__isnull=False,
+                    then=Cast("zoho_kundennumer", IntegerField()),
+                ),
                 default=Value(0),  # or another appropriate default value
                 output_field=IntegerField(),
             )
@@ -465,6 +512,7 @@ def profile(request, *args, **kwargs):
 def help(request):
     return render(request, "vertrieb/help.html")
 
+
 @user_passes_test(vertrieb_check)
 @csrf_exempt
 def chat_bot(request):
@@ -473,13 +521,13 @@ def chat_bot(request):
         question = data.get("question", "")
 
         # Retrieve the thread_id from the session if it exists, else None
-        thread_id = request.session.get('thread_id', None)
+        thread_id = request.session.get("thread_id", None)
 
         # Pass the question and thread_id to the handle_message function
         response, thread_id = handle_message(question, thread_id)
 
         # Update the thread_id in the session
-        request.session['thread_id'] = thread_id
+        request.session["thread_id"] = thread_id
 
         return JsonResponse({"response": response})
     else:
@@ -763,14 +811,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             try:
                 # Formatting the error message for clarity
                 formatted_errors = "\n".join(
-                [
-                    f"*{field.replace('_', ' ').capitalize()}*: {error}"
-                    for field, errors in form.errors.items()
-                    for error in errors
-                ]
-            )
+                    [
+                        f"*{field.replace('_', ' ').capitalize()}*: {error}"
+                        for field, errors in form.errors.items()
+                        for error in errors
+                    ]
+                )
                 message = f"*Error for {user.email}*\n{formatted_errors}"
-                log_and_notify(message, parse_mode='Markdown')
+                log_and_notify(message, parse_mode="Markdown")
             except Exception as e:
                 # Log the exception for debugging purposes
                 log_and_notify(f"Error logging to Telegram: {str(e)}")
@@ -976,7 +1024,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         user = request.user
         user_zoho_id = user.zoho_id
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)
-        
 
         if request.method == "POST":
             action_type = request.POST.get("action_type")
@@ -986,12 +1033,16 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
-                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-                    
+                    profile, created = User.objects.get_or_create(
+                        zoho_id=request.user.zoho_id
+                    )
+
                     data_loads = json.loads(profile.zoho_data_text)
                     name = instance.name
-                    
-                    data = next((item for item in data_loads if item["name"] == name), None)
+
+                    data = next(
+                        (item for item in data_loads if item["name"] == name), None
+                    )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
                     form.instance.status = "bekommen"
@@ -1004,7 +1055,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                     # self._log_and_notify_success(user)
                     if TELEGRAM_LOGGING:
-                        send_message_to_bot(f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}")
+                        send_message_to_bot(
+                            f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}"
+                        )
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
                         vertrieb_angebot.angebot_id,
@@ -1014,14 +1067,20 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
-                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-                    
+                    instance = form.instance
+                    profile, created = User.objects.get_or_create(
+                        zoho_id=request.user.zoho_id
+                    )
+
                     data_loads = json.loads(profile.zoho_data_text)
                     name = instance.name
-                    
-                    data = next((item for item in data_loads if item["name"] == name), None)
+
+                    data = next(
+                        (item for item in data_loads if item["name"] == name), None
+                    )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
-                    
+                    instance.save()
+
                     vertrieb_angebot.save()
                     form.instance.status = "bekommen"
                     form.save()
@@ -1032,7 +1091,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     vertrieb_angebot.save()
                     # self._log_and_notify_success(user)
                     if TELEGRAM_LOGGING:
-                        send_custom_message(user, "hat ein PDF Angebot für einen Interessenten erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 📑")
+                        send_custom_message(
+                            user,
+                            "hat ein PDF Angebot für einen Interessenten erstellt.",
+                            f"Kunde: {vertrieb_angebot.vorname_nachname} 📑",
+                        )
                     return redirect(
                         "vertrieb_interface:create_angebot_and_calc_pdf",
                         vertrieb_angebot.angebot_id,
@@ -1064,21 +1127,25 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
-                    
-                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-                    
+
+                    profile, created = User.objects.get_or_create(
+                        zoho_id=request.user.zoho_id
+                    )
+
                     data_loads = json.loads(profile.zoho_data_text)
                     name = instance.name
-                    
-                    data = next((item for item in data_loads if item["name"] == name), None)
+
+                    data = next(
+                        (item for item in data_loads if item["name"] == name), None
+                    )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
                     instance.save()
-                        # self._log_and_notify_success(user)
+                    # self._log_and_notify_success(user)
                     return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
+                        "vertrieb_interface:edit_angebot",
+                        vertrieb_angebot.angebot_id,
+                    )
 
             elif action_type == "save":
                 # self._log_and_notify_attempt(user, action_type)
@@ -1086,21 +1153,24 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     instance = form.instance
                     # put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned = True
-                    
-                    
-                    profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-                    
+
+                    profile, created = User.objects.get_or_create(
+                        zoho_id=request.user.zoho_id
+                    )
+
                     data_loads = json.loads(profile.zoho_data_text)
                     name = instance.name
-                    
-                    data = next((item for item in data_loads if item["name"] == name), None)
+
+                    data = next(
+                        (item for item in data_loads if item["name"] == name), None
+                    )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     instance.save()
                     print(instance)
                     form.save()
-                    
+
                     # print(vertrieb_angebot.zoho_kundennumer)
-                    
+
                     put_form_data_to_zoho_jpp(form)
                     all_user_angebots_list = fetch_user_angebote_all(request)
                     user.zoho_data_text = json.dumps(all_user_angebots_list)
@@ -1233,7 +1303,11 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 form.vor
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
-                    send_custom_message(user, "hat ein PDF Ticket für einen Kunden erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️")
+                    send_custom_message(
+                        user,
+                        "hat ein PDF Ticket für einen Kunden erstellt.",
+                        f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
+                    )
 
                 return redirect(
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
@@ -1315,7 +1389,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
-        
+
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -1370,7 +1444,11 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
-                    send_custom_message(user, "hat eine PDF Kalkulation für einen Interessenten erstellt.", f"Kunde: {vertrieb_angebot.vorname_nachname} 📊")
+                    send_custom_message(
+                        user,
+                        "hat eine PDF Kalkulation für einen Interessenten erstellt.",
+                        f"Kunde: {vertrieb_angebot.vorname_nachname} 📊",
+                    )
 
                 return redirect(
                     "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
@@ -1435,7 +1513,6 @@ class DeleteAngebot(DeleteView):
         return redirect(self.get_success_url())
 
 
-
 class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders.html"
@@ -1443,14 +1520,18 @@ class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def get_queryset(self):
         # Optimized query to directly exclude "angenommen" and "bekommen" statuses
-        return self.model.objects.filter(user=self.request.user).exclude(status__in=["angenommen", "bekommen"])
+        return self.model.objects.filter(user=self.request.user).exclude(
+            status__in=["angenommen", "bekommen"]
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
-            send_custom_message(self.request.user, "Accessed the offers list page.", "Info")
+            send_custom_message(
+                self.request.user, "Accessed the offers list page.", "Info"
+            )
         return context
-    
+
 
 def set_angebot_id_assigned_false_for_user(request):
     user = request.user
@@ -1620,9 +1701,9 @@ def create_angebot_pdf(request, angebot_id):
         vertrieb_angebot.save()
     async_iterator = AsyncBytesIter(vertrieb_angebot.angebot_pdf_admin)
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
-    response[
-        "Content-Disposition"
-    ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
+    response["Content-Disposition"] = (
+        f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
+    )
     return response
 
 
@@ -1886,7 +1967,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B":
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
+            ):
                 self._attach_datenblatter(
                     email,
                     datenblatter,
@@ -1894,7 +1978,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
                         "solar_module_1",
                     ],
                 )
-            if vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)":
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
+            ):
                 self._attach_datenblatter(
                     email,
                     datenblatter,
@@ -1902,7 +1989,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
                         "solar_module_2",
                     ],
                 )
-            if vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH" or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH":
+            if (
+                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
+                or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH"
+            ):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
         if vertrieb_angebot.datenblatter_optimizer:
             self._attach_datenblatter(email, datenblatter, ["optimizer"])
@@ -1977,7 +2067,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
                 email_sent = True
                 return redirect(
                     "vertrieb_interface:document_and_calc_view",
-                    form.instance.angebot_id
+                    form.instance.angebot_id,
                 )
         email_sent = False
         return self.form_invalid(form)
