@@ -111,9 +111,27 @@
                                                                                 
                                                                             </td>
                                                                         </tr>
-                                                                        <tr>
+                                                                        <tr hidden>
                                                                             <th>{{ form.vorname_nachname.label_tag }}</th>
                                                                             <td>{{ form.vorname_nachname }}
+                                                                                
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr hidden>
+                                                                            <th>{{ form.name_suffix.label_tag }}</th>
+                                                                            <td>{{ form.name_suffix }}
+                                                                                
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr id="tr_first_name">
+                                                                            <th>{{ form.zoho_first_name.label_tag }}</th>
+                                                                            <td>{{ form.zoho_first_name }}
+                                                                                
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{ form.zoho_last_name.label_tag }}</th>
+                                                                            <td>{{ form.zoho_last_name }}
                                                                                 
                                                                             </td>
                                                                         </tr>
@@ -133,7 +151,7 @@
                                                                                 
                                                                             </td>
                                                                         </tr>
-                                                                        <tr>
+                                                                        <tr hidden>
                                                                             <th>{{ form.firma.label_tag }}</th>
                                                                             <td>{{ form.firma }}</td>
                                                                         </tr>
@@ -149,9 +167,6 @@
                                                                             
                                                                             </td>
                                                                         </tr>
-
-
-                                                                        
                                                                         <tr>
                                                                             <th>{{ form.anlagenstandort.label_tag }}</th>
                                                                             <td>{{ form.anlagenstandort }}</td>
@@ -185,10 +200,10 @@
                                                                     <li class="nav-item">
                                                                         <a href="#profile-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
                                                                             <i class="mdi mdi-account-circle d-md-none d-block"></i>
-                                                                            <span class="d-none d-md-block">Solar-API</span>
+                                                                            <span class="d-none d-md-block">Notizen</span>
                                                                         </a>
                                                                     </li>
-                                                                    <li class="nav-item">
+                                                                    {% comment %} <li class="nav-item">
                                                                         <a href="#settings-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
                                                                             <i class="mdi mdi-settings-outline d-md-none d-block"></i>
                                                                             <span class="d-none d-md-block">FAQ</span>
@@ -199,7 +214,7 @@
                                                                             <i class="mdi mdi-settings-outline d-md-none d-block"></i>
                                                                             <span class="d-none d-md-block">Abdeckung</span>
                                                                         </a>
-                                                                    </li>
+                                                                    </li> {% endcomment %}
                                                                 </ul>
                                                                 
                                                                     <div class="tab-content">
@@ -211,7 +226,7 @@
                                                                         </div>
                                                                         <!-- Tab Map SolarApi -->
                                                                         <div class="tab-pane" id="profile-b1">
-                                                                            <iframe src="https://159.89.22.211" width="100%" height="550px"></iframe>
+                                                                            {% include 'vertrieb/extra/notizen.html' %}
                                                                         </div>
                                                                         <!-- Tab Map FAQ -->
                                                                         <div class="tab-pane" id="settings-b1">
@@ -807,7 +822,7 @@
                                                         }
                                                     </script>
 
-                                                    <div hidden class="row m-2">
+                                                    <div class="row m-2">
                                                         
                                                         <button type="submit" onclick=submitFormWithAction('save') class="btn btn-soft-success rounded-pill">Speichern</button>
 
@@ -1009,7 +1024,7 @@ function calculateGesamtkapazitat() {
     if (hersteller === 'Huawei') {
         gesamtkapazitat = anz_speicher * 5;
     } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 2.5; // Adjusted calculation for Viessmann
+        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
     }
 
     $('#gesamtkapazitat').val(gesamtkapazitat);
@@ -1937,7 +1952,7 @@ function calculateGesamtkapazitat() {
     if (hersteller === 'Huawei') {
         gesamtkapazitat = anz_speicher * 5;
     } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 2.5; // Adjusted calculation for Viessmann
+        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
     }
 
     $('#gesamtkapazitat').val(gesamtkapazitat);
@@ -2148,8 +2163,23 @@ $(document).ready(function() {
   
 <script>
 $(document).ready(function() {
+    var anredeField = $("#id_anrede");
+    var firstNameField = $("#tr_first_name"); // Ensure this matches your field
+    var lastNameLabel = $('label[for="id_nachname"]'); // Adjust the selector as necessary
+
+    function updateFormFields() {
+        if (anredeField.val() === 'Firma') {
+            firstNameField.prop('hidden', true);
+            lastNameLabel.text('Firma');
+        } else {
+            firstNameField.prop('hidden', false);
+            lastNameLabel.text('Nachname');
+        }
+    }
+
+    // Listen for changes on the name field to perform AJAX
     $("#id_name").change(function() {
-        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}";
+        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Make sure this URL is correct
         var name = $(this).val();
 
         $.ajax({
@@ -2160,8 +2190,10 @@ $(document).ready(function() {
             success: function(data) {
                 // Fill the form fields with data
                 $("#id_vorname_nachname").val(data.name);
+                $("#id_vorname").val(data.zoho_first_name);
+                $("#id_nachname").val(data.zoho_last_name);
                 $("#id_zoho_id").val(data.zoho_id);
-                $("#id_anrede").val(data.anrede);
+                anredeField.val(data.anrede);
                 $("#zoho_kundennumer").val(data.zoho_kundennumer);
                 $("#id_strasse").val(data.strasse);
                 $("#id_email").val(data.email);
@@ -2173,12 +2205,18 @@ $(document).ready(function() {
                 $("#longitude").val(data.postanschrift_longitude);
                 $("#latitude").val(data.postanschrift_latitude);
 
+                // Call updateFormFields to reflect any changes from AJAX response
+                updateFormFields();
             }
         });
     });
-});
 
+    // Call updateFormFields on page load and on anrede change
+    updateFormFields();
+    anredeField.change(updateFormFields);
+});
 </script>
+
 
 <script>
     let arbeitsListe = JSON.parse('{{ vertrieb_angebot.Arbeits_liste|escapejs }}');
@@ -2297,91 +2335,29 @@ $(document).ready(function() {
         })
     }(window.jQuery)
 </script>
-{% comment %} <script>
-document.addEventListener("DOMContentLoaded", function() {
-    
-    const interessent = document.getElementById('id_name');
-    const longitudeInput = document.getElementById('longitude');
-    const latitudeInput = document.getElementById('latitude');
-    var mapInitialized = false;
-    var map, marker;
-    var intervalId = null;
 
-    function startPollingInterval() {
-        if (intervalId !== null) {
-            clearInterval(intervalId); // Clear existing interval
-        }
-        intervalId = setInterval(pollForChanges, 3000); // Start a new interval
-        
-    }
 
-    // Event listener to detect changes in the interessent field and start/restart polling
-    interessent.addEventListener('input', function() {
-        setInterval(pollForChanges, 3000); 
-        startPollingInterval();
-    });
-    
+{% comment %} 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var anredeField = document.getElementById('id_anrede');
+    var firstNameField = document.getElementById('tr_first_name');
+    var lastNameLabel = document.querySelector('label[for="id_nachname"]');
 
-    function updateMapLink() {
-        var lat = latitudeInput.value;
-        var lon = longitudeInput.value;
-        var link = document.getElementById('dynamicMapLink');
-        if (lat && lon && link) {
-            link.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=14/${lat}/${lon}`;
+    function updateFirstNameField() {
+        if (anredeField.value === 'Firma') {
+            firstNameField.setAttribute('hidden', true);
+            lastNameLabel.textContent = 'Firma';
+        } else {
+            firstNameField.removeAttribute('hidden');
+            lastNameLabel.textContent = 'Nachname';
         }
     }
-
-    // Call updateMapLink whenever the input values change
-    longitudeInput.addEventListener('change', updateMapLink);
-    latitudeInput.addEventListener('change', updateMapLink);
-
-    function initializeMap() {
-        if (!mapInitialized && latitudeInput.value && longitudeInput.value) {
-            document.getElementById('map').style.height = '550px';
-            document.getElementById('map').style.width = '100%';
-
-            map = L.map('map').setView([latitudeInput.value, longitudeInput.value], 14);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            marker = L.marker([latitudeInput.value, longitudeInput.value]).addTo(map);
-            mapInitialized = true;
-        }
-    }
-
-    function updateMapSize() {
-        if (map) {
-            map.invalidateSize();
-        }
-    }
-
-    // Adjust this selector and event according to your tab implementation
-    document.querySelector('a[href="#home-b1"]').addEventListener('shown.bs.tab', function(e) {
-        updateMapLink();
-        initializeMap();
-
-
-        
-    });
-
-    function pollForChanges() {
-        var newLat = parseFloat(latitudeInput.value);
-        var newLng = parseFloat(longitudeInput.value);
-
-        if (map && (map.getCenter().lat !== newLat || map.getCenter().lng !== newLng ||
-           marker.getLatLng().lat !== newLat || marker.getLatLng().lng !== newLng)) {
-            map.setView([newLat, newLng], 14);
-            marker.setLatLng([newLat, newLng]);
-        }
-    }
-    
-    updateMapLink();
-    initializeMap();
-   
+    updateFirstNameField();
+    anredeField.addEventListener('change', updateFirstNameField);
 });
 </script> {% endcomment %}
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     
