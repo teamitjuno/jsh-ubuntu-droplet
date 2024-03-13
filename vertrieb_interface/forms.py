@@ -205,14 +205,6 @@ def validate_optimizer_ticket_anzahl(value):
         )
 
 
-def validate_range(value):
-    # Check if value is an integer and within the specified range
-    if not isinstance(value, int) or not 0 <= value <= 6:
-        raise ValidationError(
-            "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
-            params={"value": value},
-        )
-
 def validate_range(value, hersteller):
     # Define the maximum values for different hersteller
     max_values = {"Viessmann": 3, "default": 6}
@@ -1246,7 +1238,8 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-
+        self.fields['anz_speicher'].validators.append(self.clean_anz_speicher)
+        
         default_choice = [("", "--------")]
         try:
             profile = User.objects.get(zoho_id=user.zoho_id)
@@ -1319,7 +1312,6 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
-        self.fields['anz_speicher'].validators.append(self.clean_anz_speicher)
 
 
     
