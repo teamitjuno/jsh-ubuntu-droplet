@@ -545,7 +545,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "id": "id_vorname",
+                "id": "id_name_suffix",
             }
         ),
     )

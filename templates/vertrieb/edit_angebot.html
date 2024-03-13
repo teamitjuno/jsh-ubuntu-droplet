@@ -125,9 +125,7 @@
                                                                         </tr>
                                                                         <tr id="tr_first_name">
                                                                             <th>{{ form.zoho_first_name.label_tag }}</th>
-                                                                            <td>{{ form.zoho_first_name }}
-                                                                                
-                                                                            </td>
+                                                                            <td>{{ form.zoho_first_name }}</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <th>{{ form.zoho_last_name.label_tag }}</th>
@@ -1904,6 +1902,88 @@ function submitFormWithAction(actionType) {
 {% endif %}
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Cache selectors for efficiency
+    var $anredeField = $("#id_anrede");
+    var $firstNameField = $("#tr_first_name");
+    var $lastNameLabel = $('label[for="id_nachname"]');
+    var $nameField = $("#id_name");
+
+    // Function to update form fields based on anredeField value
+    function updateFormFields() {
+        if ($anredeField.val() === 'Firma') {
+            $firstNameField.prop('hidden', true);
+            $lastNameLabel.text('Firma');
+        } else if ($anredeField.val() === 'Familie') {
+            $firstNameField.prop('hidden', true);
+            $lastNameLabel.text('Nachname');
+        } else {
+            $firstNameField.prop('hidden', false);
+            $lastNameLabel.text('Nachname');
+        }
+    }
+
+    // Function to handle AJAX request for name field change
+    function handleNameChange() {
+        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Ensure the URL is correct
+        var name = $nameField.val();
+
+        $.ajax({
+            url: url,
+            data: { 'name': name },
+            success: function(data) {
+                // Destructuring data for cleaner access
+                const {
+                    name,
+                    zoho_first_name,
+                    zoho_last_name,
+                    zoho_id,
+                    anrede,
+                    zoho_kundennumer,
+                    strasse,
+                    email,
+                    telefon_mobil,
+                    telefon_festnetz,
+                    ort,
+                    notizen,
+                    angebot_bekommen_am,
+                    postanschrift_longitude: longitude,
+                    postanschrift_latitude: latitude
+                } = data;
+
+                // Update fields with AJAX response data
+                $("#id_vorname_nachname").val(name);
+                $("#id_vorname").val(zoho_first_name);
+                $("#id_nachname").val(zoho_last_name);
+                $("#id_zoho_id").val(zoho_id);
+                $anredeField.val(anrede);
+                $("#zoho_kundennumer").val(zoho_kundennumer);
+                $("#id_strasse").val(strasse);
+                $("#id_email").val(email);
+                $("#id_telefon_mobil").val(telefon_mobil);
+                $("#id_telefon_festnetz").val(telefon_festnetz);
+                $("#id_ort").val(ort);
+                $("#id_notizen").val(notizen);
+                $("#id_angebot_bekommen_am").val(angebot_bekommen_am);
+                $("#longitude").val(longitude);
+                $("#latitude").val(latitude);
+
+                // Reflect any changes from AJAX response
+                updateFormFields();
+            }
+        });
+    }
+
+    // Event listener for changes in the anrede field
+    $anredeField.change(updateFormFields);
+
+    // Event listener for changes in the name field to trigger AJAX
+    $nameField.change(handleNameChange);
+});
+</script>
+
        <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
@@ -2160,7 +2240,7 @@ $(document).ready(function() {
       .then(data => console.log(data));
   });
 </script> {% endcomment %}
-  
+{% comment %}   
 <script>
 $(document).ready(function() {
     var anredeField = $("#id_anrede");
@@ -2171,6 +2251,9 @@ $(document).ready(function() {
         if (anredeField.val() === 'Firma') {
             firstNameField.prop('hidden', true);
             lastNameLabel.text('Firma');
+        elif (anredeField.val() === 'Familie') {
+            firstNameField.prop('hidden', true);
+            lastNameLabel.text('Nachname');
         } else {
             firstNameField.prop('hidden', false);
             lastNameLabel.text('Nachname');
@@ -2193,7 +2276,7 @@ $(document).ready(function() {
                 $("#id_vorname").val(data.zoho_first_name);
                 $("#id_nachname").val(data.zoho_last_name);
                 $("#id_zoho_id").val(data.zoho_id);
-                anredeField.val(data.anrede);
+                $("#id_anrede").val(data.anrede);
                 $("#zoho_kundennumer").val(data.zoho_kundennumer);
                 $("#id_strasse").val(data.strasse);
                 $("#id_email").val(data.email);
@@ -2211,11 +2294,11 @@ $(document).ready(function() {
         });
     });
 
-    // Call updateFormFields on page load and on anrede change
-    updateFormFields();
+
     anredeField.change(updateFormFields);
 });
-</script>
+</script> {% endcomment %}
+
 
 
 <script>
