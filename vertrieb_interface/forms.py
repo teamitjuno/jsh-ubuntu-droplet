@@ -1238,6 +1238,11 @@ class VertriebAngebotForm(ModelForm):
             "notstrom_ticket",
             "eddi_ticket",
         ]
+    def clean_anz_speicher(self):
+        anz_speicher = self.cleaned_data['anz_speicher']
+        hersteller = self.cleaned_data.get('hersteller', 'default')
+        validate_range(anz_speicher, hersteller)
+        return anz_speicher
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
@@ -1316,11 +1321,7 @@ class VertriebAngebotForm(ModelForm):
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
         self.fields['anz_speicher'].validators.append(self.clean_anz_speicher)
 
-    def clean_anz_speicher(self):
-        anz_speicher = self.cleaned_data['anz_speicher']
-        hersteller = self.cleaned_data.get('hersteller', 'default')
-        validate_range(anz_speicher, hersteller)
-        return anz_speicher
+
     
 
     def save(self, commit=True):
