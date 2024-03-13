@@ -9,7 +9,7 @@
     </td>
 </tr>
 <tr id="thor-details-table" style="{% if not form.thor.value %}display: none;{% endif %}">
-    <th>{{ form.heizstab.label_tag }}</th>
+    <th hidden>{{ form.heizstab.label_tag }}</th>
     <td>
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" disabled id="heizstab-checkbox" {% if form.heizstab.value %}checked{% endif %} data-switch="success" name="{{ form.heizstab.html_name }}" readonly/>

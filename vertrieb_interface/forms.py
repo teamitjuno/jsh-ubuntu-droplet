@@ -878,6 +878,7 @@ class VertriebAngebotForm(ModelForm):
     heizstab = forms.BooleanField(
         label="Heizstab für THOR inklusive",
         required=False,
+        initial=True,
         widget=forms.CheckboxInput(
             attrs={
                 "class": "form-check-input",
@@ -1215,7 +1216,7 @@ class VertriebAngebotForm(ModelForm):
             "zahlungsbedingungen",
             "elwa",
             "thor",
-            "heizstab",
+            # "heizstab",
             "eddi",
             "notstrom",
             "anzOptimizer",
