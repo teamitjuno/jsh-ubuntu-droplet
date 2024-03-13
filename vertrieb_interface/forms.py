@@ -1230,15 +1230,9 @@ class VertriebAngebotForm(ModelForm):
             "notstrom_ticket",
             "eddi_ticket",
         ]
-    def clean_anz_speicher(self):
-        anz_speicher = self.cleaned_data['anz_speicher']
-        hersteller = self.cleaned_data.get('hersteller', 'default')
-        validate_range(anz_speicher, hersteller)
-        return anz_speicher
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-        self.fields['anz_speicher'].validators.append(self.clean_anz_speicher)
         
         default_choice = [("", "--------")]
         try:
@@ -1467,36 +1461,8 @@ class VertriebAngebotForm(ModelForm):
 
         speicher = cleaned_data.get("speicher")
         anz_speicher = cleaned_data.get("anz_speicher")
-        if speicher == True and anz_speicher is not None:
-            if anz_speicher <= 0:
-                self.add_error(
-                    "anz_speicher",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Speicher kann nicht 0 sein wenn speicher inkl. = True"
-                        ),
-                        params={
-                            "anz_speicher": anz_speicher,
-                            "speicher": speicher,
-                        },
-                    ),
-                )
-        if hersteller == "Viessman":
-            
-            if anz_speicher > 3 :
-                self.add_error(
-                    "anz_speicher",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein"
-                        ),
-                        params={
-                            "anz_speicher": anz_speicher,
-                            
-                        },
-                    ),
-                )
-
+        validate_range(anz_speicher, hersteller)
+        
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
         if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(
