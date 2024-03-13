@@ -213,6 +213,19 @@ def validate_range(value):
             params={"value": value},
         )
 
+def validate_range(value, hersteller):
+    # Define the maximum values for different hersteller
+    max_values = {"Viessmann": 3, "default": 6}
+    max_value = max_values.get(hersteller, max_values["default"])
+    
+    error_message = {
+        "Viessmann": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein",
+        "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6."
+    }
+    message = error_message.get(hersteller, error_message["default"])
+    
+    if not isinstance(value, int) or not 0 <= value <= max_value:
+        raise ValidationError(message, params={"value": value})
 
 def validate_empty(value):
     if value is None or value == "":
@@ -751,11 +764,11 @@ class VertriebAngebotForm(ModelForm):
         label="Anzahl Speichermodule",
         required=False,
         initial=0,
-        validators=[validate_range],
+        validators=[],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Anzahl (kann sein 0 und <=6 )",
+                
                 "id": "anz_speicher",
             }
         ),
@@ -1301,6 +1314,14 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
+        self.fields['anz_speicher'].validators.append(self.clean_anz_speicher)
+
+    def clean_anz_speicher(self):
+        anz_speicher = self.cleaned_data['anz_speicher']
+        hersteller = self.cleaned_data.get('hersteller', 'default')
+        validate_range(anz_speicher, hersteller)
+        return anz_speicher
+    
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
