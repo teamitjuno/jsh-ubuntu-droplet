@@ -1467,6 +1467,22 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        if hersteller == "Viessman":
+            
+            if anz_speicher > 3 :
+                self.add_error(
+                    "anz_speicher",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein"
+                        ),
+                        params={
+                            "anz_speicher": anz_speicher,
+                            
+                        },
+                    ),
+                )
+
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
         if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(
