@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
-
+{% load custom_filter %}
 {% block content %}
 <div class="content-page">
     <div class="content">
@@ -28,6 +28,7 @@
                                             <th>Kundennumer</th>
                                             <th>Kunde</th>
                                             <th>SolarModule & Zubehör</th>
+                                            <th>AngebotSumme</th>
                                             <th>Angebot ID</th>
                                             {% comment %} <th>Status</th> {% endcomment %}
                                             <th>Datum</th>
@@ -69,7 +70,7 @@
                                                     
                                                 </td>
 
-                                            
+                                            <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>
 
 {% comment %}                                             
