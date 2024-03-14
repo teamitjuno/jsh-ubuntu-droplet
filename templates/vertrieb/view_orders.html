@@ -28,7 +28,7 @@
                                             <th>Kundennumer</th>
                                             <th>Kunde</th>
                                             <th>Angebot ID</th>
-                                            <th>Status</th>
+                                            {% comment %} <th>Status</th> {% endcomment %}
                                             <th>Datum</th>
                                             
                                             <th>Link</th>
@@ -49,7 +49,7 @@
                                             
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>
 
-                                            
+{% comment %}                                             
                                             {% if vertrieb_angebot.status == "bekommen" %}
                                                 <td class="link-warning">
                                                     {{ vertrieb_angebot.status }}
@@ -70,7 +70,7 @@
                                                 <td class="link-secondary">
                                                     {{ vertrieb_angebot.status }}
                                                 </td>
-                                                {% endif %}
+                                                {% endif %} {% endcomment %}
                                             
                                             <td>{{ vertrieb_angebot.anfrage_vom }}</td>
                                             
