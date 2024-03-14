@@ -49,6 +49,7 @@
                                             <td>{{ vertrieb_angebot.name }}</td>
                                             <td>
                                                     <h5 class="font-16 my-1 fw-normal link-warning">{{ vertrieb_angebot.solar_module }}  |  {{ vertrieb_angebot.modulanzahl }} </h5>
+                                                    <span class="text-warning font-13">Hersteller: {{ vertrieb_angebot.hersteller }}</span> <br>
                                                     {% if vertrieb_angebot.anzOptimizer > 0 %}
                                                     <span class="text-warning font-13">Optimierer: {{ vertrieb_angebot.anzOptimizer }}</span> <br>
                                                     {% endif %}
