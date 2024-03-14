@@ -79,8 +79,8 @@
                                                 </td>
                                                 <td>
                                                    
-                                                    {% if vertrieb_angebot.angebot_id %}
-    <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
+                                                    {% if angebot.angebot_id %}
+    <a href="{% url 'vertrieb_interface:edit_calc' angebot.angebot_id %}" class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
 {% else %}
     None
 {% endif %}
