@@ -62,7 +62,6 @@ class PDF(FPDF):
             self.set_font("JUNO Solar Lt", "", 8)
             # Text color in gray
             self.set_text_color(128)
-            # Position at 1.5 cm from bottom
             self.set_y(-25)
             self.set_x(25)
             self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignorehttp://127.0.0.1:8000/vertrieb/home/
