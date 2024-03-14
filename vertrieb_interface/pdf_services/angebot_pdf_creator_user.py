@@ -74,6 +74,28 @@ class PDF(FPDF):
             self.set_x(150)
             centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
             self.multi_cell(0, 3, centered_text1, 0, "")
+    def set_default_style(self, size, bold=False):
+        """Set default font style."""
+        style = 'B' if bold else ''
+        self.set_font("JUNO Solar Lt", style, size)
+        self.set_text_color(0)
+
+    def add_address_line(self, x, y, text, align='L'):
+        """Add an address line with standard formatting."""
+        self.set_xy(x, y)
+        self.multi_cell(0, 5, text, 0, align)
+
+    def add_table_entry(self, eintrag, x, y, data, additional_info=''):
+        """Add a table entry for a product with details."""
+        self.set_y(y)
+        eintrag += 1
+        self.cell(0, 6, f"{eintrag}.", 0, 0, "L")
+        self.set_x(x)
+        self.set_default_style(11)
+        product_details = data.get('details', '')
+        self.multi_cell(0, 5, product_details + additional_info, 0, "L")
+        return eintrag
+    
 
     def page1(self, data, eintrag):
         self.add_page()
@@ -222,7 +244,7 @@ class PDF(FPDF):
             # Tabelle Eintrag 3
             self.set_font("JUNO Solar Lt", "", 11)
             self.set_y(210)
-        else:
+        elif data["hersteller"] == "Huawei":
             self.cell(0, 5, "Wechselrichter Huawei SUN2000", 0, 0, "L")
             self.set_y(185)
             self.set_x(25)
@@ -268,7 +290,7 @@ class PDF(FPDF):
             # Tabelle Eintrag 4
             self.set_font("JUNO Solar Lt", "", 11)
             self.set_y(225)
-        else:
+        elif data["hersteller"] == "Huawei":
             self.cell(0, 5, "Huawei Smart Power Sensor DTSU666H", 0, 0, "L")
             self.set_y(215)
             self.set_x(25)
@@ -292,57 +314,47 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         if data["hersteller"] == "Viessmann":
+            self.cell(0, 5, "Batteriespeicher: Viessmann Vitocharge VX3\nBatteriemodule (je 5 kWh)", 0, 0, "L")
+            self.set_y(215)
             self.set_x(25)
-            self.multi_cell(0, 5, "Stecker und Buchsen", 0, "L")
-            self.set_y(225)
+            self.set_font("JUNO Solar Lt", "", 10)
+            self.multi_cell(
+                0,
+                5,
+                "∙ max. Lade-/Entladeleistung:5 kW\n∙ Produktgarantie: 10 Jahre",
+                0,
+                "L",
+            )
+            self.set_y(210)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.cell(0, 6, "nach Auslegung", 0, 0, "L")
+            self.cell(0, 6, f"{str(data["batterieAnz"])}", 0, 0, "L")
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
-            # # Tabelle Eintrag 5
-            # self.set_font('JUNO Solar Lt', '', 11)
-            # self.set_y(255)
-            # eintrag += 1
-            # self.cell(0, 6, str(eintrag) + ".", 0, 0, 'L')
-            # self.set_x(25)
-            # self.cell(0, 5, "Unterkonstruktion", 0, 0, 'L')
-            # self.set_y(260)
-            # self.set_x(25)
-            # self.set_font('JUNO Solar Lt', '', 10)
-            # self.multi_cell(0, 5, "S-FLEX LEICHTmount rail oder gleichwertig", 0, 'L')
-            # self.set_y(255)
-            # self.set_x(150)
-            # self.set_font('JUNO Solar Lt', '', 11)
-            # self.cell(0, 6, "nach Auslegung", 0, 0, 'L')
-            # self.set_x(170)
-            # self.cell(0, 6, "inklusive", 0, 0, 'R')
-        else:
-            self.set_x(25)
-            self.multi_cell(0, 5, "Stecker und Buchsen", 0, "L")
+            # Tabelle Eintrag 4
+            self.set_font("JUNO Solar Lt", "", 11)
             self.set_y(225)
+        elif data["hersteller"] == "Huawei":
+            self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000\nLeistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
+            self.set_y(215)
+            self.set_x(25)
+            self.set_font("JUNO Solar Lt", "", 10)
+            self.multi_cell(
+                0,
+                5,
+                "∙ max. Lade-/Entladeleistung:5 kW\n∙ Produktgarantie: 10 Jahre",
+                0,
+                "L",
+            )
+            self.set_y(210)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.cell(0, 6, "nach Auslegung", 0, 0, "L")
+            self.cell(0, 6, f"{str(data["batterieAnz"])}", 0, 0, "L")
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
-            # # Tabelle Eintrag 5
-            # self.set_font('JUNO Solar Lt', '', 11)
-            # self.set_y(255)
-            # eintrag += 1
-            # self.cell(0, 6, str(eintrag) + ".", 0, 0, 'L')
-            # self.set_x(25)
-            # self.cell(0, 5, "Unterkonstruktion", 0, 0, 'L')
-            # self.set_y(260)
-            # self.set_x(25)
-            # self.set_font('JUNO Solar Lt', '', 10)
-            # self.multi_cell(0, 5, "S-FLEX LEICHTmount rail oder gleichwertig", 0, 'L')
-            # self.set_y(255)
-            # self.set_x(150)
-            # self.set_font('JUNO Solar Lt', '', 11)
-            # self.cell(0, 6, "nach Auslegung", 0, 0, 'L')
-            # self.set_x(170)
-            # self.cell(0, 6, "inklusive", 0, 0, 'R')
+            # Tabelle Eintrag 4
+            self.set_font("JUNO Solar Lt", "", 11)
+            self.set_y(225)
         return eintrag
 
     def page2(self, data, eintrag):
