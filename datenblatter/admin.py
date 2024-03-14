@@ -12,13 +12,13 @@ class DatenblatterAdmin(admin.ModelAdmin):
         "speicher_module",
         "speicher_module_viessmann",
         "wall_box",
-        "wall_box_viessman",
+        "wall_box_viessmann",
         "wechselrichter",
-        "wechselrichter_viessman",
+        "wechselrichter_viessmann",
         "backup_box",
-        "backup_box_viessman",
+        "backup_box_viessmann",
         "optimizer",
-        "optimizer_viessman",
+        "optimizer_viessmann",
     ]
 
     fieldsets = (
@@ -31,15 +31,15 @@ class DatenblatterAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "optimizer",
-                    "optimizer_viessman",
+                    "optimizer_viessmann",
                     "speicher_module",
                     "speicher_module_viessmann",
                     "wall_box",
-                    "wall_box_viessman",
+                    "wall_box_viessmann",
                     "wechselrichter",
-                    "wechselrichter_viessman",
+                    "wechselrichter_viessmann",
                     "backup_box",
-                    "backup_box_viessman",
+                    "backup_box_viessmann",
                 )
             },
         ),
