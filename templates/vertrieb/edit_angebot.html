@@ -983,6 +983,7 @@ $(document).ready(function() {
 
     $("#hersteller").change(function() {
         toggleAnzWandhalterung($(this).val());
+        toggleBoolElwaRow($(this).val());
         calculateGesamtkapazitat(); // Recalculate when manufacturer changes
         
         var hersteller = $(this).val();
