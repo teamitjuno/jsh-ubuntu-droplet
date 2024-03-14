@@ -8,27 +8,38 @@ class DatenblatterAdmin(admin.ModelAdmin):
         "solar_module_1",
         "solar_module_2",
         "solar_module_3",
+        "solar_module_4",
         "speicher_module",
+        "speicher_module_viessmann",
         "wall_box",
+        "wall_box_viessman",
         "wechselrichter",
+        "wechselrichter_viessman",
         "backup_box",
+        "backup_box_viessman",
         "optimizer",
+        "optimizer_viessman",
     ]
 
     fieldsets = (
         (
             "Solar Modules",
-            {"fields": ("solar_module_1", "solar_module_2", "solar_module_3")},
+            {"fields": ("solar_module_1", "solar_module_2", "solar_module_3", "solar_module_4",)},
         ),
         (
             "Other Components",
             {
                 "fields": (
                     "optimizer",
+                    "optimizer_viessman",
                     "speicher_module",
+                    "speicher_module_viessmann",
                     "wall_box",
+                    "wall_box_viessman",
                     "wechselrichter",
+                    "wechselrichter_viessman",
                     "backup_box",
+                    "backup_box_viessman",
                 )
             },
         ),
