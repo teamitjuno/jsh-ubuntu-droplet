@@ -977,6 +977,7 @@
         <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
+    toggleBoolElwaRow($('#hersteller').val());
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
 
@@ -1014,7 +1015,7 @@ function toggleAnzWandhalterung(value) {
     }
 }
 
-function toggleAnzWandhalterung(value) {
+function toggleBoolElwaRow(value) {
     if (value === 'Viessmann') {
         $('#bool_elwa_row').hide();
     } else {
