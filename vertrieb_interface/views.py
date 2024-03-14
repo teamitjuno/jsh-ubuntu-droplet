@@ -98,10 +98,10 @@ class AsyncBytesIter:
         return self
 
     async def __anext__(self):
-        # If it's the end of the byte_data
+
         if self.index >= len(self.byte_data):
             raise StopAsyncIteration
-        # Get the next chunk and update the index
+
         chunk = self.byte_data[self.index : self.index + self.chunk_size]
         self.index += self.chunk_size
         return chunk
@@ -118,15 +118,15 @@ class AsyncFileIter:
 
     async def __anext__(self):
         if isinstance(self.file, memoryview):
-            # If it's the end of the memoryview object
+
             if self.index >= len(self.file):
                 raise StopAsyncIteration
-            # Get the next chunk and update the index
+
             chunk = self.file[self.index : self.index + self.chunk_size]
             self.index += self.chunk_size
         else:
             chunk = await asyncio.to_thread(self.file.read, self.chunk_size)
-            # If the chunk is empty, it's the end of the file
+
             if not chunk:
                 raise StopAsyncIteration
 
@@ -457,7 +457,7 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
                     zoho_kundennumer__isnull=False,
                     then=Cast("zoho_kundennumer", IntegerField()),
                 ),
-                default=Value(0),  # or another appropriate default value
+                default=Value(0),
                 output_field=IntegerField(),
             )
         )
@@ -1625,70 +1625,10 @@ def load_user_angebots(request):
         )
 
 
-# @user_passes_test(vertrieb_check)
-# def load_user_angebots(request):
-#     try:
-#         profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-#         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
-#         kurz = user.kuerzel  # type: ignore
-#         all_user_angebots_list = fetch_user_angebote_all(request)
-#         zoho_data = json.dumps(all_user_angebots_list)
-#         user.zoho_data_text = zoho_data  # type: ignore
-#         user.save()
-
-#         all_user_angebots_list_parsed = json.loads(user.zoho_data_text)
-#         zoho_ids_in_list = {item.get("zoho_id") for item in all_user_angebots_list_parsed}
-
-#         for item in all_user_angebots_list:
-#             zoho_id = item.get("zoho_id")
-#             status = item.get("status")
-#             vertrieb_angebots = VertriebAngebot.objects.filter(user=user, zoho_id=int(zoho_id))
-#             for angebot in vertrieb_angebots:
-#                 angebot.status = status
-#                 angebot.save()
-
-#         # Setting angebot_id_assigned to False for angebots which zoho_id was not found in all_user_angebots_list
-#         all_vertrieb_angebots_for_user = VertriebAngebot.objects.filter(user=user)
-#         for angebot in all_vertrieb_angebots_for_user:
-#             if angebot.zoho_id not in zoho_ids_in_list:
-#                 angebot.angebot_id_assigned = False
-#                 angebot.save()
-
-#         load_vertrieb_angebot(all_user_angebots_list, user, kurz)
-#         return JsonResponse({"status": "success"}, status=200)
-#     except Exception:
-#         return JsonResponse(
-#             {"status": "failed", "error": "Not a POST request."}, status=400
-#         )
-
-
 def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_")
 
 
-# @admin_required
-# def create_angebot_pdf(request, angebot_id):
-# vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-# user = vertrieb_angebot.user
-# data = vertrieb_angebot.data
-# name = replace_spaces_with_underscores(vertrieb_angebot.name)
-#  if vertrieb_angebot.angebot_pdf_admin is None:
-#     pdf_content, filename = angebot_pdf_creator_user.createOfferPdf(
-#     data,
-#     vertrieb_angebot,
-#     user,
-# )
-#     vertrieb_angebot.angebot_pdf_admin = pdf_content
-#     vertrieb_angebot.save()
-
-
-#     response = FileResponse(
-#         io.BytesIO(vertrieb_angebot.angebot_pdf_admin), content_type="application/pdf"
-#     )
-#     response[
-#         "Content-Disposition"
-#     ] = f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
-#     return response
 @admin_required
 def create_angebot_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -1768,11 +1708,9 @@ def create_calc_pdf(request, angebot_id):
 @login_required
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = request.user  # Fetching the user from vertrieb_angebot
+    user = request.user
     data = vertrieb_angebot.data
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
-
-    # Check if the ticket PDF already exists, if not, create it.
 
     pdf_content = ticket_pdf_creator.createTicketPdf(data)
     vertrieb_angebot.ticket_pdf = pdf_content
@@ -1780,105 +1718,6 @@ def create_ticket_pdf(request, angebot_id):
     return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
 
 
-# @login_required
-# def document_view(request, angebot_id):
-#     form = VertriebAngebotEmailForm
-#     pdf_url = reverse("vertrieb_interface:serve_pdf", args=[angebot_id])
-#     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
-#     return render(request, "vertrieb/document_view.html", context)
-# class DocumentView(LoginRequiredMixin, DetailView):
-#     model = VertriebAngebot
-#     template_name = 'vertrieb/document_view.html'
-#     context_object_name = 'vertrieb_angebot'
-#     pk_url_kwarg = 'angebot_id'
-#     form_class = VertriebAngebotEmailForm
-
-#     def dispatch(self, request, *args, **kwargs):
-#         angebot_id = kwargs.get("angebot_id")
-#         if not request.user.is_authenticated:
-#             raise PermissionDenied()
-#         return super().dispatch(request, *args, **kwargs)
-
-#     def get_object(self):
-#         return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         vertrieb_angebot = self.get_object()
-#         angebot_id = self.kwargs.get('angebot_id')
-#         pdf_url = reverse('vertrieb_interface:serve_pdf', args=[angebot_id])
-#         context['pdf_url'] = pdf_url
-#         context['angebot_id'] = angebot_id
-#         context['form'] = self.form_class(instance=vertrieb_angebot, user=self.request.user)
-#         return context
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         user = request.user
-#         angebot_id = self.kwargs.get("angebot_id")
-#         instance = VertriebAngebot.objects.get(angebot_id=angebot_id)
-#         form = self.form_class(request.POST, instance=instance, user=user)
-#         if form.is_valid():
-#             print("Form is valid")
-#             form.save()
-#             print("Form saved")
-
-#             email_address = request.POST.get('email')
-#             email_content = request.POST.get('text_for_email')
-#             vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-
-#             pdf = vertrieb_angebot.angebot_pdf
-#             subject = f"Angebot Photovoltaikanlage {angebot_id}"
-#             # geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
-#             body = email_content
-#             name = replace_spaces_with_underscores(vertrieb_angebot.name)
-#             print(f"Subject: {subject}")
-#             print(f"Body: {body}")
-#             print(f"From: {user.smtp_username}")
-#             print(f"To: si@juno-solar.com")
-
-
-#             connection = get_connection(
-#             backend=EMAIL_BACKEND,
-#             host=user.smtp_server,
-#             port=user.smtp_port,
-#             username=user.smtp_username,
-#             password=user.smtp_password,
-#             use_tsl=True,
-#             fail_silently=False,
-#         )
-#             email = EmailMultiAlternatives(
-#                 subject,
-#                 body,
-#                 user.smtp_username,
-#                 [f"{email_address}"],
-#                 connection=connection,
-#             )
-#             file_data = vertrieb_angebot.angebot_pdf.tobytes()  # type:ignore
-#             email.attach(
-#                 f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
-#             )
-
-#             try:
-#                 email.send()
-#                 print("Email sent successfully")
-#                 messages.success(request, "Email sent successfully")
-#             except Exception as e:
-#                 print(f"Failed to send email: {str(e)}")
-#                 messages.error(request, f"Failed to send email: {str(e)}")
-#             return redirect(
-#                         "vertrieb_interface:document_view",
-#                         angebot_id,
-#                     )
-#         else:
-#             print("Not a POST request")
-#             return self.form_invalid(form, instance)
-
-
-#     def form_invalid(self, form, *args, **kwargs):
-#         context = self.get_context_data()
-#         context["form"] = form
-#         return render(self.request, self.template_name, context)
 class DocumentView(LoginRequiredMixin, DetailView):
     model = VertriebAngebot
     template_name = "vertrieb/document_view.html"
@@ -2472,9 +2311,9 @@ def send_ticket_invoice(request, angebot_id):
         )
 
 
-
-
 from django.views.generic.list import ListView
+
+
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/pdf_angebot_created.html"
@@ -2482,8 +2321,10 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def get_queryset(self):
         # Initial queryset filters
-        queryset = super().get_queryset().filter(
-            user=self.request.user, angebot_id_assigned=True, status="bekommen"
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
         )
         query = self.request.GET.get("q")
         if query:
@@ -2492,8 +2333,8 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_angebots = context['angebots']
-        
+        user_angebots = context["angebots"]
+
         # Generating angebots and URLs
         angebots_and_urls = [
             (
@@ -2504,53 +2345,14 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
             for angebot in user_angebots
             if angebot.angebot_pdf
         ]
-        
+
         # Update context with the zipped angebots
-        context.update({
-            "zipped_angebots": angebots_and_urls,
-        })
+        context.update(
+            {
+                "zipped_angebots": angebots_and_urls,
+            }
+        )
         return context
-# @login_required
-# @user_passes_test(vertrieb_check)
-# def pdf_angebots_list_view(request):
-#     user_angebots = VertriebAngebot.objects.filter(
-#         user=request.user, angebot_id_assigned=True, status="bekommen"
-#     )
-#     query = request.GET.get("q")
-#     if query:
-#         user_angebots = filter_user_angebots_by_query(user_angebots, query)
-
-#     angebots_and_urls = get_angebots_and_urls(user_angebots)
-
-#     context = {
-#         "zipped_angebots": angebots_and_urls,
-#         "angebots": user_angebots,
-#     }
-#     return render(request, "vertrieb/pdf_angebot_created.html", context)
-
-
-# def get_angebots_and_urls(user_angebots):
-#     """Generate a list of tuples containing angebot, URL, and name with underscores."""
-#     return [
-#         (
-#             angebot,
-#             reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
-#             replace_spaces_with_underscores(angebot.name),
-#         )
-#         for angebot in user_angebots
-#         if angebot.angebot_pdf
-#     ]
-
-# def filter_user_angebots_by_query(user_angebots, query):
-#     """Filter user angebots based on the given query."""
-#     query_conditions = (
-#         Q(zoho_kundennumer__icontains=query)
-#         | Q(angebot_id__icontains=query)
-#         | Q(status__icontains=query)
-#         | Q(name__icontains=query)
-#         | Q(anfrage_vom__icontains=query)
-#     )
-#     return user_angebots.filter(query_conditions)
 
 
 def get_angebots_and_urls(user_angebots):
@@ -2565,6 +2367,7 @@ def get_angebots_and_urls(user_angebots):
         if angebot.angebot_pdf
     ]
 
+
 def filter_user_angebots_by_query(user_angebots, query):
     """Filter user angebots based on the given query."""
     query_conditions = (
@@ -2576,6 +2379,7 @@ def filter_user_angebots_by_query(user_angebots, query):
     )
     return user_angebots.filter(query_conditions)
 
+
 class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/pdf_angebot_created.html"
@@ -2585,8 +2389,10 @@ class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return vertrieb_check(self.request.user)
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(
-            user=self.request.user, angebot_id_assigned=True, status="bekommen"
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
         )
         query = self.request.GET.get("q")
         if query:
@@ -2595,13 +2401,13 @@ class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_angebots = context['angebots']
-        context['zipped_angebots'] = get_angebots_and_urls(user_angebots)
+        user_angebots = context["angebots"]
+        context["zipped_angebots"] = get_angebots_and_urls(user_angebots)
         return context
 
-# Decorators for the class view to enforce login and custom test
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(vertrieb_check), name='dispatch')
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(user_passes_test(vertrieb_check), name="dispatch")
 class PDFAngebotsListView(PDFAngebotsListView):
     pass
 

@@ -209,17 +209,18 @@ def validate_range(value, hersteller):
     # Define the maximum values for different hersteller
     max_values = {"Viessmann": 3, "default": 6}
     max_value = max_values.get(hersteller, max_values["default"])
-    
+
     # Prepare the error messages
     error_messages = {
         "Viessmann": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
-        "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6."
+        "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
     }
-    
+
     # Check if value is within the valid range
     if not isinstance(value, int) or not 0 <= value <= max_value:
         return error_messages.get(hersteller, error_messages["default"]), False
     return "", True
+
 
 def validate_empty(value):
     if value is None or value == "":
@@ -529,7 +530,6 @@ class VertriebAngebotForm(ModelForm):
     vorname_nachname = forms.CharField(
         label="Nach-, Vorname",
         required=False,
-        
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
@@ -762,7 +762,6 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
-                
                 "id": "anz_speicher",
             }
         ),
@@ -1237,7 +1236,7 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-        
+
         default_choice = [("", "--------")]
         try:
             profile = User.objects.get(zoho_id=user.zoho_id)
@@ -1310,9 +1309,6 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
-
-
-    
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
@@ -1467,8 +1463,10 @@ class VertriebAngebotForm(ModelForm):
         anz_speicher = cleaned_data.get("anz_speicher")
         message, is_valid = validate_range(anz_speicher, hersteller)
         if not is_valid:
-            self.add_error('anz_speicher', ValidationError(message, params={'value': anz_speicher}))
-        
+            self.add_error(
+                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
+            )
+
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
         if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(
