@@ -2483,6 +2483,7 @@ def filter_user_angebots_by_query(user_angebots, query):
     )
     return user_angebots.filter(query_conditions)
 
+from django.views.generic.list import ListView
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/pdf_angebot_created.html"
