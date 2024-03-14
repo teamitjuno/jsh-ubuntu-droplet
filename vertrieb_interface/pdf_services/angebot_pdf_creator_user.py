@@ -328,7 +328,7 @@ class PDF(FPDF):
             self.set_y(210)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.cell(0, 6, f"{str(data["batterieAnz"])}", 0, 0, "L")
+            self.multi_cell(0, 5, str(ceil(data["batterieAnz"] / 3)) + "\n" + str(data["batterieAnz"]), 0, 0, "L")  # type: ignore
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
             # Tabelle Eintrag 4
@@ -349,7 +349,7 @@ class PDF(FPDF):
             self.set_y(210)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
-            self.cell(0, 6, f"{str(data["batterieAnz"])}", 0, 0, "L")
+            self.multi_cell(0, 5, str(ceil(data["batterieAnz"] / 3)) + "\n" + str(data["batterieAnz"]), 0, 0, "L")  # type: ignore
             self.set_x(170)
             self.cell(0, 6, "inklusive", 0, 0, "R")
             # Tabelle Eintrag 4
