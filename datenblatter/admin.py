@@ -31,7 +31,10 @@ class DatenblatterAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "optimizer",
+                    "huawei_power_sensor",
+                    "huawei_smart_energie_controller",
                     "optimizer_viessmann",
+                    "viessmann_tigo",
                     "speicher_module",
                     "speicher_module_viessmann",
                     "wall_box",
@@ -40,6 +43,9 @@ class DatenblatterAdmin(admin.ModelAdmin):
                     "wechselrichter_viessman",
                     "backup_box",
                     "backup_box_viessmann",
+                    "viessmann_allgemeine_bedingungen",
+                    "viessmann_versicherung_ausweis",
+                    "ac_thor",
                 )
             },
         ),
