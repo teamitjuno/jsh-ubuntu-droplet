@@ -104,6 +104,17 @@ ModuleGarantiePreise.objects.create(name='garantie16_20', price=1460.00, actual_
 ModuleGarantiePreise.objects.create(name='garantie20_20', price=1620.00, actual_price=0.00, old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie25_20', price=1700.00, actual_price=0.00, old_price=0.00)
 ModuleGarantiePreise.objects.create(name='garantie30_20', price=1780.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie3_25', price=510.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie4_25', price=550.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie5_25', price=610.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie6_25', price=690.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie8_25', price=770.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie10_25', price=850.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie15_25', price=1400.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie16_25', price=1460.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie20_25', price=1620.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie25_25', price=1700.00, actual_price=0.00, old_price=0.00)
+ModuleGarantiePreise.objects.create(name='garantie30_25', price=1780.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import ModulePreise
 
@@ -140,10 +151,12 @@ OptionalAccessoriesPreise.objects.create(name='erzeugung_ost_west', price=880.00
 OptionalAccessoriesPreise.objects.create(name='wandhalterung_fuer_speicher', price=120.00, actual_price=0.00, old_price=0.00)
 
 from prices.models import SolarModulePreise
-SolarModulePreise.objects.create(name='Phono Solar PS430M8GFH-18/VSH', price=530.00, actual_price=0.00,old_price=0.00)
-SolarModulePreise.objects.create(name='Phono Solar PS420M7GFH-18/VNH', price=530.00, actual_price=0.00,old_price=0.00)
+
+SolarModulePreise.objects.create(name='Phono Solar PS430M8GF-18/VNH', price=582.70, actual_price=0.00,old_price=0.00)
+SolarModulePreise.objects.create(name='Phono Solar PS430M8GFH-18/VSH', price=582.70, actual_price=0.00,old_price=0.00)
+SolarModulePreise.objects.create(name='Phono Solar PS420M7GFH-18/VNH', price=562.00, actual_price=0.00,old_price=0.00)
 SolarModulePreise.objects.create(name='Jinko Solar Tiger Neo N-type JKM420N-54HL4-B', price=516.00, actual_price=0.00,old_price=0.00)
-SolarModulePreise.objects.create(name='Jinko Solar Tiger Neo N-type JKM425N-54HL4-B', price=516.00, actual_price=0.00,old_price=0.00)
+SolarModulePreise.objects.create(name='Jinko Solar Tiger Neo N-type JKM425N-54HL4-B', price=562.00, actual_price=0.00,old_price=0.00)
 
 from prices.models import WallBoxPreise
 
