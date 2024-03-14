@@ -977,13 +977,13 @@
         <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
-    toggleBoolElwaRow($('#hersteller').val());
+    
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
 
     $("#hersteller").change(function() {
         toggleAnzWandhalterung($(this).val());
-        toggleBoolElwaRow($(this).val());
+        
         calculateGesamtkapazitat(); // Recalculate when manufacturer changes
         
         var hersteller = $(this).val();
@@ -1011,18 +1011,14 @@ $(document).ready(function() {
 function toggleAnzWandhalterung(value) {
     if (value === 'Viessmann') {
         $('#anz_wandhalterung_row').hide();
-    } else {
-        $('#anz_wandhalterung_row').show();
-    }
-}
-
-function toggleBoolElwaRow(value) {
-    if (value === 'Viessmann') {
         $('#bool_elwa_row').hide();
     } else {
+        $('#anz_wandhalterung_row').show();
         $('#bool_elwa_row').show();
     }
 }
+
+
 
 function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
