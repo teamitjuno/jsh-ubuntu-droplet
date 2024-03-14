@@ -342,7 +342,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Optimierer_Menge": str(vertrieb_angebot.anzOptimizer),
             "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
             "AC_THOR": return_lower_bull(vertrieb_angebot.thor),
-            
+            "AC_THOR_Heizstab": vertrieb_angebot.heizstab,
             "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
         }
