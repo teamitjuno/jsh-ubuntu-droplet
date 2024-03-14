@@ -35,7 +35,7 @@
                                             
                                             
                                             {% comment %} <th>Kalkulation</th> {% endcomment %}
-                                            <th>Bearbeitbar</th>
+                                            {% comment %} <th>Bearbeitbar</th> {% endcomment %}
                                             
                                         </tr>
                                     </thead>
@@ -85,7 +85,7 @@
                                             </td> {% endcomment %}
                                             
                                             
-                                                {% if vertrieb_angebot.is_locked %}
+                                                {% comment %} {% if vertrieb_angebot.is_locked %}
                                                 <td>
                                                 <span class="badge bg-danger rounded-pill">Nein</span>
                                                 </td>
@@ -95,7 +95,7 @@
                                                 <td>
                                                 <span class="badge bg-success rounded-pill">Ja</span>
                                                 </td>
-                                                {% endif %}
+                                                {% endif %} {% endcomment %}
                                                 
                                         </tr>
                                         {% endif %}
