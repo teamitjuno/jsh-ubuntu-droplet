@@ -27,6 +27,7 @@
                                         <tr>
                                             <th>Kundennumer</th>
                                             <th>Kunde</th>
+                                            <th>SolarModule & Zubehör</th>
                                             <th>Angebot ID</th>
                                             {% comment %} <th>Status</th> {% endcomment %}
                                             <th>Datum</th>
@@ -45,6 +46,28 @@
                                         <tr>
                                             <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
                                             <td>{{ vertrieb_angebot.name }}</td>
+                                            <td>
+                                                    <h5 class="font-16 my-1 fw-normal link-warning">{{ vertrieb_angebot.solar_module }}  |  {{ vertrieb_angebot.modulanzahl }} </h5>
+                                                    {% if vertrieb_angebot.anzOptimizer > 0 %}
+                                                    <span class="text-warning font-13">Optimierer: {{ vertrieb_angebot.anzOptimizer }}</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.anz_speicher > 0 %}
+                                                    <span class="text-warning font-13">Batteriespeicher: {{ vertrieb_angebot.anz_speicher }} </span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.notstrom %}
+                                                    <span class="text-warning font-13">Notstrom inklusive</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.wallbox %}
+                                                    <span class="text-warning font-13">WallBox inklusive: {{ vertrieb_angebot.wallboxtyp }} </span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.elwa %}
+                                                    <span class="text-warning font-13">Elwa inklusive</span> <br>
+                                                    {% endif %}
+                                                    {% if vertrieb_angebot.thor %}
+                                                    <span class="text-warning font-13">Thor inklusive</span>
+                                                    {% endif %}
+                                                    
+                                                </td>
 
                                             
                                             <td>{{ vertrieb_angebot.angebot_id }}</td>

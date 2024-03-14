@@ -25,9 +25,7 @@
                                 <table id="scroll-horizontal-datatable" class="table table-striped nowrap row-border order-column w-100">
                                     <thead>
                                         <tr>
-                                            
                                             <th>Kunde</th>
-                                            
                                             <th>Solar Module</th>
                                             <th>AngebotSumme</th>
                                             <th>Datum</th>
@@ -40,12 +38,7 @@
                                         
                                         {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert"%}
                                         <tr>
-                                            
                                             <td>{{ vertrieb_angebot.name }}</td>
-
-                                           
-                                            
-                                                
                                                 <td>
                                                     <h5 class="font-16 my-1 fw-normal link-warning">{{ vertrieb_angebot.solar_module }}  |  {{ vertrieb_angebot.modulanzahl }} </h5>
                                                     {% if vertrieb_angebot.anzOptimizer > 0 %}
@@ -66,11 +59,7 @@
                                                     {% if vertrieb_angebot.thor %}
                                                     <span class="text-warning font-13">Thor inklusive</span>
                                                     {% endif %}
-                                                    {% if vertrieb_angebot.heizstab %}
-                                                    <span class="text-warning font-13"> mit Heizstab</span> <br>
-                                                    {% endif %}
                                                 </td>
-                                                
                                             
                                             <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                             <td>{{ vertrieb_angebot.anfrage_vom }}</td>
