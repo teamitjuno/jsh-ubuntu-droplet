@@ -101,7 +101,7 @@ vertrieb_patterns = [
         views.UpdateVertriebAngebotView.as_view(),
         name="update_vertrieb_angebot",
     ),
-    path('pdf_angebots_list_view/', views.PDFAngebotsListView.as_view(), name='pdf_angebots_list_view'),
+    path('vertrieb/pdf_angebots_list_view/', views.PDFAngebotsListView.as_view(), name='pdf_angebots_list_view'),
     path(
         "PDFCalculationsListView/<str:angebot_id>/",
         views.PDFCalculationsListView,
