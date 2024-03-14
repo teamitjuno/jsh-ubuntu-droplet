@@ -37,7 +37,6 @@ class PDF(FPDF):
             font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
             self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
 
-            # Position at 1.5 cm from bottom
             self.set_y(15)
             self.set_font("JUNO Solar Lt", "", 12)
             self.set_text_color(0)
