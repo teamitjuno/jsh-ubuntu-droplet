@@ -51,7 +51,6 @@ class PDF(FPDF):
                 w=30,
                 h=15,
             )
-            # Line break
             self.ln(15)
 
     def footer(self):
