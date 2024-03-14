@@ -74,28 +74,7 @@ class PDF(FPDF):
             self.set_x(150)
             centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
             self.multi_cell(0, 3, centered_text1, 0, "")
-    def set_default_style(self, size, bold=False):
-        """Set default font style."""
-        style = 'B' if bold else ''
-        self.set_font("JUNO Solar Lt", style, size)
-        self.set_text_color(0)
 
-    def add_address_line(self, x, y, text, align='L'):
-        """Add an address line with standard formatting."""
-        self.set_xy(x, y)
-        self.multi_cell(0, 5, text, 0, align)
-
-    def add_table_entry(self, eintrag, x, y, data, additional_info=''):
-        """Add a table entry for a product with details."""
-        self.set_y(y)
-        eintrag += 1
-        self.cell(0, 6, f"{eintrag}.", 0, 0, "L")
-        self.set_x(x)
-        self.set_default_style(11)
-        product_details = data.get('details', '')
-        self.multi_cell(0, 5, product_details + additional_info, 0, "L")
-        return eintrag
-    
 
     def page1(self, data, eintrag):
         self.add_page()
