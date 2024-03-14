@@ -213,6 +213,7 @@ ANREDE_CHOICES = (
     ("Herr Dr.", "Herr Dr."),
     ("Herr Prof.", "Herr Prof."),
     ("Frau", "Frau"),
+    ("Frau Prof.", "Frau Prof."),
     ("Frau Dr.", "Frau Dr."),
 )
 AUSRICHTUNG_CHOICES = (
