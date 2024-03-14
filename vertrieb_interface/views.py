@@ -2472,16 +2472,7 @@ def send_ticket_invoice(request, angebot_id):
         )
 
 
-def filter_user_angebots_by_query(user_angebots, query):
-    """Filter user angebots based on the given query."""
-    query_conditions = (
-        Q(zoho_kundennumer__icontains=query)
-        | Q(angebot_id__icontains=query)
-        | Q(status__icontains=query)
-        | Q(name__icontains=query)
-        | Q(anfrage_vom__icontains=query)
-    )
-    return user_angebots.filter(query_conditions)
+
 
 from django.views.generic.list import ListView
 class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
@@ -2519,23 +2510,47 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
             "zipped_angebots": angebots_and_urls,
         })
         return context
-@login_required
-@user_passes_test(vertrieb_check)
-def pdf_angebots_list_view(request):
-    user_angebots = VertriebAngebot.objects.filter(
-        user=request.user, angebot_id_assigned=True, status="bekommen"
-    )
-    query = request.GET.get("q")
-    if query:
-        user_angebots = filter_user_angebots_by_query(user_angebots, query)
+# @login_required
+# @user_passes_test(vertrieb_check)
+# def pdf_angebots_list_view(request):
+#     user_angebots = VertriebAngebot.objects.filter(
+#         user=request.user, angebot_id_assigned=True, status="bekommen"
+#     )
+#     query = request.GET.get("q")
+#     if query:
+#         user_angebots = filter_user_angebots_by_query(user_angebots, query)
 
-    angebots_and_urls = get_angebots_and_urls(user_angebots)
+#     angebots_and_urls = get_angebots_and_urls(user_angebots)
 
-    context = {
-        "zipped_angebots": angebots_and_urls,
-        "angebots": user_angebots,
-    }
-    return render(request, "vertrieb/pdf_angebot_created.html", context)
+#     context = {
+#         "zipped_angebots": angebots_and_urls,
+#         "angebots": user_angebots,
+#     }
+#     return render(request, "vertrieb/pdf_angebot_created.html", context)
+
+
+# def get_angebots_and_urls(user_angebots):
+#     """Generate a list of tuples containing angebot, URL, and name with underscores."""
+#     return [
+#         (
+#             angebot,
+#             reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
+#             replace_spaces_with_underscores(angebot.name),
+#         )
+#         for angebot in user_angebots
+#         if angebot.angebot_pdf
+#     ]
+
+# def filter_user_angebots_by_query(user_angebots, query):
+#     """Filter user angebots based on the given query."""
+#     query_conditions = (
+#         Q(zoho_kundennumer__icontains=query)
+#         | Q(angebot_id__icontains=query)
+#         | Q(status__icontains=query)
+#         | Q(name__icontains=query)
+#         | Q(anfrage_vom__icontains=query)
+#     )
+#     return user_angebots.filter(query_conditions)
 
 
 def get_angebots_and_urls(user_angebots):
@@ -2550,43 +2565,45 @@ def get_angebots_and_urls(user_angebots):
         if angebot.angebot_pdf
     ]
 
+def filter_user_angebots_by_query(user_angebots, query):
+    """Filter user angebots based on the given query."""
+    query_conditions = (
+        Q(zoho_kundennumer__icontains=query)
+        | Q(angebot_id__icontains=query)
+        | Q(status__icontains=query)
+        | Q(name__icontains=query)
+        | Q(anfrage_vom__icontains=query)
+    )
+    return user_angebots.filter(query_conditions)
 
-class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
+class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/pdf_angebot_created.html"
     context_object_name = "angebots"
 
-    def dispatch(self, request, *args, **kwargs):
-        angebot_id = self.kwargs.get("angebot_id")
-        vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
-        user = vertrieb_angebot.user  # type: ignore
-        if not request.user.is_authenticated and self.request.user != user:
-            raise PermissionDenied()
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        return vertrieb_check(self.request.user)
 
     def get_queryset(self):
-        angebot_id = self.kwargs.get("angebot_id")
-        vertrieb_angebot = get_object_or_404(self.model, angebot_id=angebot_id)  # type: ignore
-        user = vertrieb_angebot.user  # type: ignore
-        name = replace_spaces_with_underscores(vertrieb_angebot.name)
+        queryset = super().get_queryset().filter(
+            user=self.request.user, angebot_id_assigned=True, status="bekommen"
+        )
+        query = self.request.GET.get("q")
+        if query:
+            queryset = filter_user_angebots_by_query(queryset, query)
+        return queryset
 
-        if self.request.user != user and not self.request.user.is_staff:  # type: ignore
-            raise Http404()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_angebots = context['angebots']
+        context['zipped_angebots'] = get_angebots_and_urls(user_angebots)
+        return context
 
-        user_angebots = self.model.objects.filter(user=user, angebot_id_assigned=True)  # type: ignore
-
-        angebot_urls = [
-            reverse("serve_pdf", args=[vertrieb_angebot.angebot_id])  # type:ignore
-            for vertrieb_angebot in user_angebots
-        ]
-
-        self.extra_context = {
-            "ang_name": name,
-            "user": user,
-            "zipped_angebots": zip(user_angebots, angebot_urls),
-        }
-
-        return user_angebots
+# Decorators for the class view to enforce login and custom test
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(vertrieb_check), name='dispatch')
+class PDFAngebotsListView(PDFAngebotsListView):
+    pass
 
 
 @user_passes_test(vertrieb_check)
