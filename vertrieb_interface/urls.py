@@ -103,7 +103,7 @@ vertrieb_patterns = [
     ),
     path(
         "vertrieb/pdf_angebots_list_view/",
-        views.pdf_angebots_list_view,
+        views.PDFAngebotsListView,
         name="pdf_angebots_list_view",
     ),
     path(

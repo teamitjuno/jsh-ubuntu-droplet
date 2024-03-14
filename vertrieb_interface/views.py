@@ -2483,7 +2483,41 @@ def filter_user_angebots_by_query(user_angebots, query):
     )
     return user_angebots.filter(query_conditions)
 
+class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
+    model = VertriebAngebot
+    template_name = "vertrieb/pdf_angebot_created.html"
+    context_object_name = "angebots"
 
+    def get_queryset(self):
+        # Initial queryset filters
+        queryset = super().get_queryset().filter(
+            user=self.request.user, angebot_id_assigned=True, status="bekommen"
+        )
+        query = self.request.GET.get("q")
+        if query:
+            queryset = filter_user_angebots_by_query(queryset, query)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_angebots = context['angebots']
+        
+        # Generating angebots and URLs
+        angebots_and_urls = [
+            (
+                angebot,
+                reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
+                replace_spaces_with_underscores(angebot.name),
+            )
+            for angebot in user_angebots
+            if angebot.angebot_pdf
+        ]
+        
+        # Update context with the zipped angebots
+        context.update({
+            "zipped_angebots": angebots_and_urls,
+        })
+        return context
 @login_required
 @user_passes_test(vertrieb_check)
 def pdf_angebots_list_view(request):
