@@ -1014,6 +1014,14 @@ function toggleAnzWandhalterung(value) {
     }
 }
 
+function toggleAnzWandhalterung(value) {
+    if (value === 'Viessmann') {
+        $('#bool_elwa_row').hide();
+    } else {
+        $('#bool_elwa_row').show();
+    }
+}
+
 function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
     var hersteller = $('#hersteller').val(); // Correctly get the value as a string
@@ -2015,6 +2023,14 @@ $(document).ready(function() {
         $("#wallboxtyp").html(wallboxtypOptions);
     });
 });
+
+function toggleAnzWandhalterung(value) {
+    if (value === 'Viessmann') {
+        $('#anz_wandhalterung_row').hide();
+    } else {
+        $('#anz_wandhalterung_row').show();
+    }
+}
 
 function toggleAnzWandhalterung(value) {
     if (value === 'Viessmann') {
