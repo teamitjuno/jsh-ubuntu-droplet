@@ -35,7 +35,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for angebot, angebot_file, formatted_name in zipped_angebots %}
+                                        {% for angebot, angebot_file, formatted_name in angebots %}
                                             <tr>
                                                 <td>{% if angebot.angebot_id_assigned %}
                                                     {{ angebot.angebot_id }}
