@@ -57,7 +57,6 @@ class PDF(FPDF):
         if not self.is_last_page:
             # Arial italic 8
             self.set_font("JUNO Solar Lt", "", 8)
-            # Text color in gray
             self.set_text_color(128)
             self.set_y(-25)
             self.set_x(25)
