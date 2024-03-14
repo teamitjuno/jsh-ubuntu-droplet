@@ -31,6 +31,7 @@
                                             <th>Angebot Summe</th>
                                             <th>Datum</th>
                                             <th>Angebot File</th>
+                                            <th>Kalkulation<th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -75,6 +76,11 @@
                                                             {{ formatted_name }}_{{ angebot.angebot_id }}.pdf
                                                         {% endif %}
                                                     </a>                    
+                                                </td>
+                                                <td>
+                                                {% if vertrieb_angebot.angebot_id_assigned %}   
+                                                <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
+                                                {% endif %}
                                                 </td>
                                             </tr>
                                         {% empty %}

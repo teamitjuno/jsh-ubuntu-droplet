@@ -34,7 +34,7 @@
                                             <th>Link</th>
                                             
                                             
-                                            <th>Kalkulation</th>
+                                            {% comment %} <th>Kalkulation</th> {% endcomment %}
                                             <th>Bearbeitbar</th>
                                             
                                         </tr>
@@ -78,11 +78,11 @@
                                                 <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Öffnen</a>
                                             </td>
                                             
-                                            <td>
+                                            {% comment %} <td>
                                                 {% if vertrieb_angebot.angebot_id_assigned %}   
                                                 <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
                                                 {% endif %}
-                                            </td>
+                                            </td> {% endcomment %}
                                             
                                             
                                                 {% if vertrieb_angebot.is_locked %}
