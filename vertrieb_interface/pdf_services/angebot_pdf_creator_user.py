@@ -27,7 +27,6 @@ class PDF(FPDF):
         self.set_y(0)
         self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(0)
-        # Page number
         self.cell(
             0, 10, f"Seite {str(self.page_no())}/{pages}   {self.title1}", 0, 0, ""
         )
