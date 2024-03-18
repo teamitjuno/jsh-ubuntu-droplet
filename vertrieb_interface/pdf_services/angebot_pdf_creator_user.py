@@ -936,12 +936,12 @@ class PDF(FPDF):
         # 
         # Zusätzliche Leistungen
         
-        self.line(18, 76, 200, 76)
-        self.set_y(79)
+
+        self.set_y(y + 5)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Zusätzliche Leistungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(80)
+        self.set_y(y + 5)
         self.multi_cell(
             0,
             5,
