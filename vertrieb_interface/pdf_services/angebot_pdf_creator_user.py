@@ -930,6 +930,36 @@ class PDF(FPDF):
         y = 140
         y += 25
         self.line(18, y - 4, 200, y - 4)
+        
+
+        # 
+        # Netzanschlussmanagement
+        self.line(18, 76, 200, 76)
+        self.set_y(79)
+        self.set_font("JUNO Solar Lt", "B", 12)
+        self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(80)
+        self.multi_cell(
+            0,
+            5,
+            "Die folgenden inkludierten Leistungen umfassen alles Notwendige, damit Sie sich um nichts Weiteres kümmern müssen. Wir sorgen für alles, von der Planung bis zum Aufräumen nach erfolgreicher Arbeit.",
+            0,
+            "L",
+        )
+        self.line(18, 76, 200, 76)
+        self.set_y(79)
+        self.set_font("JUNO Solar Lt", "B", 12)
+        self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(80)
+        self.multi_cell(
+            0,
+            5,
+            "\nVon der Einspeiseanfrage bis hin zur Inbetriebnahme der PV-Anlage, unser Netzanschlussmanagement bearbeitet für Sie alle Formalitäten, die der VNB vom Anlagenbetreiber zum Beantragen seines Anschlussbegehrens fordert, unter Berücksichtung öffentlich- und privatrechlicher Vorschriften.",
+            0,
+            "L",
+        )
         return eintrag
         
     
