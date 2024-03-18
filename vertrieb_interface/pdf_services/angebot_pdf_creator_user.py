@@ -790,8 +790,7 @@ class PDF(FPDF):
                 0,
                 "L",
             )
-        else:
-            pass
+
         self.set_y(55)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
@@ -930,7 +929,7 @@ class PDF(FPDF):
         self.cell(0, 6, "inklusive", 0, 0, "R")
         y = 140
         y += 25
-        self.line(18, y - 4, 200, y - 4)
+
         
 
         # 
