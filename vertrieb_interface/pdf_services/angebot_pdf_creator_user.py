@@ -810,11 +810,11 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "\nDas Netzanschlussmanagement bearbeitet alle Formulare, die vom Anlagenbetreiber zum Erzielen einer Einspeisevergütung ausgefüllt werden müssen, von der Netzanfrage bis hin zur Anmeldung der PV-Anlage beim EVU, unter Berücksichtigung öffentlicher- und privatrechtlicher Vorschriften.",
+            "\nVon der Einspeiseanfrage bis hin zur Inbetriebnahme der PV-Anlage, unser Netzanschlussmanagement bearbeitet für Sie alle Formalitäten, die der VNB vom Anlagenbetreiber zum Beantragen seines Anschlussbegehrens fordert, unter Berücksichtung öffentlich- und privatrechlicher Vorschriften.",
             0,
             "L",
         )
-        # Tabelle Eintrag 18
+        # Tabelle Eintrag 16
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(105)
         eintrag += 1
@@ -837,7 +837,7 @@ class PDF(FPDF):
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
-        # Tabelle Eintrag 19
+        # Tabelle Eintrag 17
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(125)
         eintrag += 1
@@ -856,7 +856,7 @@ class PDF(FPDF):
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
-        # Tabelle Eintrag 20
+        # Tabelle Eintrag 18
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(140)
         eintrag += 1
@@ -879,7 +879,61 @@ class PDF(FPDF):
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
+
+        # Tabelle Eintrag 19
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(160)
+        eintrag += 1
+        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+        self.set_x(25)
+        self.cell(0, 6, "Antrag zum Zählerwechsel", 0, 0, "L")
+        self.set_y(145)
+        self.set_x(25)
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.multi_cell(
+            0,
+            5,
+            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein Zweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            0,
+            "L",
+        )
+        self.set_y(160)
+        self.set_x(150)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "1", 0, 0, "L")
+        self.set_x(170)
+        self.cell(0, 6, "inklusive", 0, 0, "R")
+
+        # Tabelle Eintrag 20
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(180)
+        eintrag += 1
+        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+        self.set_x(25)
+        self.cell(0, 6, "Bestellung FRE (bei Modulleistung ≥ 25 kWp)", 0, 0, "L")
+        self.set_y(180)
+        self.set_x(25)
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.multi_cell(
+            0,
+            5,
+            "• Der Einbau des FRE (Funk-Rundsteuerempfänger) erfolgt kostenfrei durch den Auftraggeber.• Anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            0,
+            "L",
+        )
+        self.set_y(140)
+        self.set_x(150)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "1", 0, 0, "L")
+        self.set_x(170)
+        self.cell(0, 6, "inklusive", 0, 0, "R")
+        y = 140
+        y += 25
+        self.line(18, y - 4, 200, y - 4)
         return eintrag
+        
+    
+
 
     # not in use
     def page4_verschwinden(self, data, eintrag):
