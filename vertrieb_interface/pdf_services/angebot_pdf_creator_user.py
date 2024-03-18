@@ -911,7 +911,7 @@ class PDF(FPDF):
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Bestellung FRE (bei Modulleistung ≥ 25 kWp)", 0, 0, "L")
-        self.set_y(180)
+        self.set_y(185)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -921,7 +921,7 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(140)
+        self.set_y(180)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
