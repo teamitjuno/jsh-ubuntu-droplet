@@ -399,7 +399,7 @@ class PDF(FPDF):
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
-        self.multi_cell(0, 5, "Solarkabel 2-fach isoliert, UV-beständig, Leitungsverlust DC unter 1%: S:FLEX oder gleichwertig", 0, "L")
+        self.multi_cell(0, 5, "Solarkabel 2-fach isoliert, UV-beständig, Leitungsverlust DC unter 1%", 0, "L")
         self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
@@ -856,6 +856,7 @@ class PDF(FPDF):
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
+
         # Tabelle Eintrag 18
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(140)
@@ -933,30 +934,18 @@ class PDF(FPDF):
         
 
         # 
-        # Netzanschlussmanagement
+        # Zusätzliche Leistungen
+        
         self.line(18, 76, 200, 76)
         self.set_y(79)
         self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
+        self.cell(0, 6, "Zusätzliche Leistungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(80)
         self.multi_cell(
             0,
             5,
             "Die folgenden inkludierten Leistungen umfassen alles Notwendige, damit Sie sich um nichts Weiteres kümmern müssen. Wir sorgen für alles, von der Planung bis zum Aufräumen nach erfolgreicher Arbeit.",
-            0,
-            "L",
-        )
-        self.line(18, 76, 200, 76)
-        self.set_y(79)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(80)
-        self.multi_cell(
-            0,
-            5,
-            "\nVon der Einspeiseanfrage bis hin zur Inbetriebnahme der PV-Anlage, unser Netzanschlussmanagement bearbeitet für Sie alle Formalitäten, die der VNB vom Anlagenbetreiber zum Beantragen seines Anschlussbegehrens fordert, unter Berücksichtung öffentlich- und privatrechlicher Vorschriften.",
             0,
             "L",
         )
