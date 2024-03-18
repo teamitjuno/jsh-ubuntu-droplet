@@ -887,7 +887,7 @@ class PDF(FPDF):
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Antrag zum Zählerwechsel", 0, 0, "L")
-        self.set_y(145)
+        self.set_y(165)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
