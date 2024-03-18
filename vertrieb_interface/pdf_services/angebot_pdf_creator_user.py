@@ -956,7 +956,7 @@ class PDF(FPDF):
 
     # not in use
     def page4_verschwinden(self, data, eintrag):
-        y = 165
+        y = 195
         if data["batterieVorh"]:
             # Batteriespeichersystem
             self.line(18, y, 200, y)
