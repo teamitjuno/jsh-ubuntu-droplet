@@ -893,7 +893,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein\nZweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            "• Der Einbau des Zweirichtungszähler erfolgt durch\nden zuständigen Messstellenbetreiber (Falls kein\nZweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber\nsind vom Auftragnehmer zu tragen.",
             0,
             "L",
         )
@@ -906,12 +906,12 @@ class PDF(FPDF):
 
         # Tabelle Eintrag 20
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(180)
+        self.set_y(195)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Bestellung FRE (bei Modulleistung ≥ 25 kWp)", 0, 0, "L")
-        self.set_y(185)
+        self.set_y(200)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -921,27 +921,27 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(180)
+        self.set_y(190)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
         y = 140
-        y += 25
-        self.line(18, y + 20, 200, y + 20)
+        y += 45
+        self.line(18, y + 40, 200, y + 40)
 
         
 
         # 
         # Zusätzliche Leistungen
         
-
-        self.set_y(y + 30)
+        y += 5
+        self.set_y(y + 40)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Zusätzliche Leistungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(y + 35)
+        self.set_y(y + 45)
         self.multi_cell(
             0,
             5,
@@ -949,6 +949,31 @@ class PDF(FPDF):
             0,
             "L",
         )
+
+        # Tabelle Eintrag 21
+        y += 45
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(y + 5)
+        eintrag += 1
+        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+        self.set_x(25)
+        self.cell(0, 6, "Frachtkosten", 0, 0, "L")
+        self.set_y(y + 10)
+        self.set_x(25)
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.multi_cell(
+            0,
+            5,
+            "Die Frachtkosten beziehen sich auf die alle Materialien/Komponenten",
+            0,
+            "L",
+        )
+        self.set_y(y + 5)
+        self.set_x(150)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "1", 0, 0, "L")
+        self.set_x(170)
+        self.cell(0, 6, "inklusive", 0, 0, "R")
         return eintrag
         
     
