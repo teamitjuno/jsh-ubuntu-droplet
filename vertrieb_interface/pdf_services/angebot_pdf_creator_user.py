@@ -951,7 +951,7 @@ class PDF(FPDF):
         )
 
         # Tabelle Eintrag 21
-        y += 45
+        y += 55
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y + 5)
         eintrag += 1
