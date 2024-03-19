@@ -893,7 +893,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein Zweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein\nZweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
             0,
             "L",
         )
@@ -917,7 +917,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "• Der Einbau des FRE (Funk-Rundsteuerempfänger) erfolgt kostenfrei durch den Auftraggeber.• Anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            "• Der Einbau des FRE (Funk-Rundsteuerempfänger) erfolgt kostenfrei durch den Auftraggeber.\n• Anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
             0,
             "L",
         )
@@ -936,7 +936,7 @@ class PDF(FPDF):
         # Zusätzliche Leistungen
         
 
-        self.set_y(y + 35)
+        self.set_y(y + 30)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Zusätzliche Leistungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
