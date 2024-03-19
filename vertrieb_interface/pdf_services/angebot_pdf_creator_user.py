@@ -893,7 +893,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein\nZweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.",
+            "• Der Einbau des Zweirichtungszähler erfolgt durch den zuständigen Messstellenbetreiber (Falls kein\nZweirichtungszähler vorhanden ist).\n• Evtl anfallende Kosten durch\nden Netzbetreiber sind vom Auftragnehmer zu tragen.",
             0,
             "L",
         )
