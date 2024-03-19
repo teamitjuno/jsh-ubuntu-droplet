@@ -369,7 +369,7 @@ class PDF(FPDF):
 
     def page2(self, data, eintrag):
         self.add_page()
-        y = 35
+        y = 30
 
         # Tabelle Eintrag 5
         self.set_font("JUNO Solar Lt", "", 11)
@@ -760,11 +760,12 @@ class PDF(FPDF):
     def page3(self, data, eintrag):
         self.add_page()
         # Anlagenüberwachung und Visualisierung
-        self.set_y(34)
+        y = 25
+        self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Anlagenüberwachung und Visualisierung", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(35)
+        self.set_y(y + 5)
         self.multi_cell(
             0,
             5,
@@ -772,17 +773,25 @@ class PDF(FPDF):
             0,
             "L",
         )
+        y += 25
         # Tabelle Eintrag 15
+
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(55)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
-        self.multi_cell(0, 6, "Integriertes Monitoring zur Anlagenüberwachung\nmittels Viessmann ViCare App\nkompatibel mit Android und iOS", 0, 0, "L")
-        self.set_y(60)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "Integriertes Monitoring zur Anlagenüberwachung", 0, 0, "L")
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.set_y(y + 5)
+        self.set_x(25)
+        self.multi_cell(0, 5, "mittels Viessmann ViCare App\nkompatibel mit Android und iOS", 0, 0, "L")
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         if not data["hersteller"]:
+            self.set_font("JUNO Solar Lt", "", 10)
             self.multi_cell(
                 0,
                 5,
@@ -791,21 +800,21 @@ class PDF(FPDF):
                 "L",
             )
 
-        self.set_y(55)
+        self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
         
-        
+        y += 25
         # Netzanschlussmanagement
-        self.line(18, 76, 200, 76)
-        self.set_y(79)
+        self.line(18, y - 4, 200, y - 4)
+        self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(80)
+        self.set_y(y)
         self.multi_cell(
             0,
             5,
@@ -813,14 +822,15 @@ class PDF(FPDF):
             0,
             "L",
         )
+        y += 25
         # Tabelle Eintrag 16
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(105)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Anmeldung zum Netzanschluss", 0, 0, "L")
-        self.set_y(110)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -830,40 +840,43 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(105)
+        self.set_y(y + 5)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
+        y += 20
+
         # Tabelle Eintrag 17
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(125)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "EEG-Fertigmeldung und -Inbetriebnahme", 0, 0, "L")
-        self.set_y(130)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
             0, 5, "Die Fertigmeldung erfolgt nach erfolgreichem Bauabschluss.", 0, "L"
         )
-        self.set_y(125)
+        self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
 
+        y += 15
         # Tabelle Eintrag 18
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(140)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Registrierung im Marktstammdatenregister", 0, 0, "L")
-        self.set_y(145)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -873,21 +886,23 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(140)
+        self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
 
+        y += 20
+
         # Tabelle Eintrag 19
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(160)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Antrag zum Zählerwechsel", 0, 0, "L")
-        self.set_y(165)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -897,21 +912,23 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(160)
+        self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
 
+        y += 35
+
         # Tabelle Eintrag 20
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(195)
+        self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 6, "Bestellung FRE (bei Modulleistung ≥ 25 kWp)", 0, 0, "L")
-        self.set_y(200)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -921,15 +938,16 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(190)
+        self.set_y(y)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "1", 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
+
         y = 140
         y += 45
-        self.line(18, y + 40, 200, y + 40)
+        self.line(18, y + 35, 200, y + 35)
 
         
 
@@ -941,7 +959,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Zusätzliche Leistungen", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(y + 45)
+        self.set_y(y + 50)
         self.multi_cell(
             0,
             5,
@@ -951,7 +969,7 @@ class PDF(FPDF):
         )
 
         # Tabelle Eintrag 21
-        y += 55
+        y += 60
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y + 5)
         eintrag += 1
@@ -975,6 +993,65 @@ class PDF(FPDF):
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
         return eintrag
+    
+    def page4(self, data, eintrag):
+        self.add_page()
+        y = 25
+
+        # Tabelle Eintrag 22
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(y)
+        eintrag += 1
+        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+        self.set_x(25)
+        self.cell(0, 6, "Müllentsorgung", 0, 0, "L")
+        self.set_y(y + 5)
+        self.set_x(25)
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.multi_cell(
+            0,
+            5,
+            "Nach Fertigstellung werden sämtliche Reste an\nBaumaterialien und Abfällen beseitigt.",
+            0,
+            "L",
+        )
+        self.set_y(y + 5)
+        self.set_x(150)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "1", 0, 0, "L")
+        self.set_x(170)
+        self.cell(0, 6, "inklusive", 0, 0, "R")
+
+        y += 20
+
+        # Tabelle Eintrag 22
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.set_y(y)
+        eintrag += 1
+        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+        self.set_x(25)
+        self.cell(0, 6, "Planung", 0, 0, "L")
+        self.set_y(y + 5)
+        self.set_x(25)
+        self.set_font("JUNO Solar Lt", "", 10)
+        self.multi_cell(
+            0,
+            5,
+            "komplette Anlagenplanung (Stringplanung) inkl. Dokumentation.",
+            0,
+            "L",
+        )
+        self.set_y(y + 5)
+        self.set_x(150)
+        self.set_font("JUNO Solar Lt", "", 11)
+        self.cell(0, 6, "1", 0, 0, "L")
+        self.set_x(170)
+        self.cell(0, 6, "inklusive", 0, 0, "R")
+
+        self.line(18, y + 15, 200, y + 15)
+
+        return eintrag
+
         
     
 
@@ -2089,6 +2166,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     eintrag = pdf.page1(data, eintrag)
     eintrag = pdf.page2(data, eintrag)
     eintrag = pdf.page3(data, eintrag)
+    eintrag = pdf.page4(data, eintrag)
     # eintrag = pdf.page4_durchgestrichen(data, eintrag)
     
     pdf.lastPage(data, eintrag)
