@@ -954,7 +954,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
             vertrieb_angebot.termine_text = item.get("termine_text")
             vertrieb_angebot.termine_id = item.get("termine_id")
-            vertrieb_angebot.save()
+            # vertrieb_angebot.save()
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
