@@ -1604,7 +1604,7 @@ def update_vertrieb_angebot_assignment(user):
 def load_user_angebots(request):
     existing_angebot_ids = extract_values(request)
     try:
-        profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
+        profile, created = User.objects.update_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
         kurz = user.kuerzel  # type: ignore
 
