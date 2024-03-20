@@ -946,7 +946,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item.get("notizen")
             vertrieb_angebot.email = item.get("email")
-            vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
+            # vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
             vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
             vertrieb_angebot.postanschrift_longitude = item.get(
                 "postanschrift_longitude"
@@ -2440,7 +2440,53 @@ def PDFCalculationsListView(request, angebot_id):
         },
     )
 
-
+def fetch_ticket_status_pva_data(self, request, angebot_id):
+    fetched_angebote_list = []
+    vertrieb_angebot = VertriebAngebot.objects.get(
+        status=angebot_id, user=request.user
+    )
+    zoho_id = vertrieb_angebot.zoho_id
+    if zoho_id is not None:
+        item = fetch_angenommen_status(request, zoho_id)
+        fetched_data = {
+            "zoho_id": item.get("ID", ""),
+            "status": item.get("Status", ""),
+            "status_pva": item.get("Status_PVA", ""),
+            "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
+            "anrede": item.get("Name", {}).get("prefix", ""),
+            "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
+            "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
+            + " "
+            + item.get("Adresse_PVA", {}).get("district_city", ""),
+            "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
+                "longitude", ""
+            ),
+            "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
+                "latitude", ""
+            ),
+            "telefon_festnetz": item.get("Telefon_Festnetz", ""),
+            "telefon_mobil": item.get("Telefon_mobil", ""),
+            "zoho_kundennumer": item.get("Kundennummer", ""),
+            "email": item.get("Email", ""),
+            "notizen": item.get("Notizen", ""),
+            "name": item.get("Name", {}).get("last_name", "")
+            + " "
+            + item.get("Name", {}).get("suffix", "")
+            + " "
+            + item.get("Name", {}).get("first_name", ""),
+            "vertriebler_display_value": item.get("Vertriebler", {}).get(
+                "display_value", ""
+            ),
+            "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
+            "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
+                "display_value", ""
+            ),
+            "anfrage_vom": item.get("Anfrage_vom", ""),
+        }
+        vertrieb_angebot.ag_fetched_data = json.dumps(fetched_data)
+        vertrieb_angebot.save()
+    else:
+        pass
 @user_passes_test(vertrieb_check)
 def PDFTicketListView(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
