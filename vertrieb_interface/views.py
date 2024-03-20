@@ -946,7 +946,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item.get("notizen")
             vertrieb_angebot.email = item.get("email")
-            # vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
+            vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
             vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
             vertrieb_angebot.postanschrift_longitude = item.get(
                 "postanschrift_longitude"
@@ -954,6 +954,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
             vertrieb_angebot.termine_text = item.get("termine_text")
             vertrieb_angebot.termine_id = item.get("termine_id")
+            vertrieb_angebot.save()
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
