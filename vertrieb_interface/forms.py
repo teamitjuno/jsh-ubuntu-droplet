@@ -1427,7 +1427,7 @@ class VertriebAngebotForm(ModelForm):
 
         if name is None or interessent == "----":
             raise forms.ValidationError(
-                {"interessent": "Sie haben keinen Interessent ausgewählt"}
+                {"name": "Sie haben keinen Interessent ausgewählt"}
             )
 
         if name == "":
@@ -1719,10 +1719,10 @@ class UpdateAdminAngebotForm(forms.ModelForm):
 
 
 class TicketForm(forms.ModelForm):
-    name = forms.ChoiceField(
-        choices=[],
+    name = forms.CharField(
+        
         label="Interessent",
-        required=True,
+        
         widget=forms.Select(
             attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
         ),
@@ -1849,6 +1849,14 @@ class TicketForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        
+        name = cleaned_data.get("name")
+
+        if name is None or name == "----":
+            raise forms.ValidationError(
+                {"name": "Sie haben keinen Interessent ausgewählt"}
+            )
+
         modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
         if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
             self.add_error(

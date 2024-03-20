@@ -54,7 +54,7 @@ from datenblatter.models import Datenblatter
 from shared.chat_bot import handle_message
 
 # Local imports from 'vertrieb_interface'
-from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm
+from vertrieb_interface.forms import VertriebAngebotForm, VertriebAngebotEmailForm, TicketForm
 from vertrieb_interface.get_user_angebots import (
     delete_redundant_angebot,
     extract_values,
@@ -1208,7 +1208,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
 class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     model = VertriebAngebot
-    form_class = VertriebAngebotForm
+    form_class = TicketForm
     template_name = "vertrieb/edit_ticket.html"
     context_object_name = "vertrieb_angebot"
 
@@ -1293,7 +1293,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 }
                 name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
                 name = form.cleaned_data["name"]
-                zoho_id = form.cleaned_data["zoho_id"]
+                
                 kundennumer = name_to_kundennumer[name]
 
                 zoho_id = name_to_zoho_id[name]
@@ -1301,7 +1301,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 vertrieb_angebot.zoho_kundennumer = kundennumer
                 vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
-                form.vor
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
                     send_custom_message(
@@ -1314,23 +1313,39 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
                 )
         elif form.is_valid():
-            vertrieb_angebot.angebot_id_assigned = True
+            # vertrieb_angebot.angebot_id_assigned = True
 
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
-            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            name = form.cleaned_data["name"]
-            zoho_id = form.cleaned_data["zoho_id"]
-            kundennumer = name_to_kundennumer[name]
+            # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            # name_to_kundennumer = {
+            #     item["name"]: item["zoho_kundennumer"] for item in data
+            # }
+            # name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+            # name = form.cleaned_data["name"]
+            # zoho_id = form.cleaned_data["zoho_id"]
+            # kundennumer = name_to_kundennumer[name]
 
-            zoho_id = name_to_zoho_id[name]
+            # zoho_id = name_to_zoho_id[name]
 
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.zoho_id = int(zoho_id)
+            # vertrieb_angebot.zoho_kundennumer = kundennumer
+            # vertrieb_angebot.zoho_id = int(zoho_id)
+            # vertrieb_angebot.save()
+            # form.save()  # type:ignore
+            
+            instance = form.instance
+
+            profile, created = User.objects.get_or_create(
+                zoho_id=request.user.zoho_id
+            )
+
+            data_loads = json.loads(profile.zoho_data_text)
+            name = instance.name
+
+            data = next(
+                (item for item in data_loads if item["name"] == name), None
+            )
+            instance.zoho_kundennumer = data.get("zoho_kundennumer")
             vertrieb_angebot.save()
-            form.save()  # type:ignore
+            instance.save()
 
             return redirect(
                 "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
