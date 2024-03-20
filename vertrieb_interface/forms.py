@@ -445,6 +445,17 @@ class VertriebAngebotForm(ModelForm):
         ),
         required=False,
     )
+    status_pva = forms.ChoiceField(
+        label="Status_PVA",
+        
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "id": "id_status_pva",
+            }
+        ),
+        required=False,
+    )
     status_change_date = forms.CharField(
         label="Angebotstatus Änderungsdatum:",
         required=False,
@@ -1164,6 +1175,7 @@ class VertriebAngebotForm(ModelForm):
         fields = [
             "is_locked",
             "status",
+            "status_pva",
             "anrede",
             "zoho_id",
             "telefon_festnetz",
