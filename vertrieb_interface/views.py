@@ -1584,19 +1584,29 @@ def update_status_to_angenommen(angebot_ids):
     return angebote.count()
 
 
-def update_vertrieb_angebot_assignment(user):
+def update_vertrieb_angebot_assignment(user, existing_angebot_ids):
     user_data = json.loads(user.zoho_data_text)
     # Extract zoho_id values from user_data
     if user_data != []:
         user_zoho_ids = {item["zoho_id"] for item in user_data}
+        
+        zoho_id_to_status_pva = {item["zoho_id"]: item["status_pva"] for item in user_data}
+        log_and_notify(user_zoho_ids)
+        log_and_notify(zoho_id_to_status_pva)
+        log_and_notify(existing_angebot_ids)
+        
+        
 
         # Filter vertrieb_angebot instances that need to be updated
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
             user=user, angebot_id_assigned=True
         ).exclude(zoho_id__in=user_zoho_ids)
-
+        
         # Bulk update angebot_id_assigned to False
         vertrieb_angebots_to_update.update(angebot_id_assigned=False)
+
+        
+
     else:
         pass
 
@@ -1604,6 +1614,21 @@ def update_vertrieb_angebot_assignment(user):
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
     existing_angebot_ids = extract_values(request)
+    user = request.user
+    user_data = json.loads(user.zoho_data_text)
+    # Extract zoho_id values from user_data
+    if user_data != []:
+        user_zoho_ids = {item["zoho_id"] for item in user_data}
+        
+        zoho_id_to_status_pva = {item["zoho_id"]: item["status_pva"] for item in user_data}
+    for existing_angebot_id in existing_angebot_ids:
+        vertrieb_angebot, created = VertriebAngebot.objects.get_or_create(user=user, angebot_id=existing_angebot_id)
+        zoho_id = vertrieb_angebot.zoho_id
+        if zoho_id != None:
+            status_pva = zoho_id_to_status_pva[zoho_id]
+            log_and_notify(status_pva)
+            vertrieb_angebot.status_pva = status_pva
+            vertrieb_angebot.save()
     try:
         profile, created = User.objects.update_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
@@ -1613,7 +1638,7 @@ def load_user_angebots(request):
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
 
-        update_vertrieb_angebot_assignment(user)
+        update_vertrieb_angebot_assignment(user, existing_angebot_ids)
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
 

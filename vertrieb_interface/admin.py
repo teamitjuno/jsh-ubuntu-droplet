@@ -9,6 +9,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "angebot_id",
         "user",
         "status",
+        "status_pva",
         "zoho_id",
         "angebot_zoho_id",
         "angebot_id_assigned",
