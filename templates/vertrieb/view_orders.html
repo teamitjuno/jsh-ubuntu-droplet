@@ -34,6 +34,7 @@
                                             <th>Datum</th>
                                             
                                             <th>Link</th>
+                                            <th>Entfernen</th>
                                             
                                             
                                             {% comment %} <th>Kalkulation</th> {% endcomment %}
@@ -101,6 +102,12 @@
                                             
                                             <td>
                                                 <a href="{% url 'vertrieb_interface:edit_angebot' vertrieb_angebot.angebot_id %}" class="btn btn-outline-success rounded-pill btn-sm">Öffnen</a>
+                                            </td>
+                                            <td>
+                                                <form action="{% url 'vertrieb_interface:delete_user_angebot' vertrieb_angebot.angebot_id %}"  method="post">
+                                                    {% csrf_token %}
+                                                <input type="submit" value="Löschen" class="btn btn-outline-danger rounded-pill btn-sm">
+                                            </form>
                                             </td>
                                             
                                             {% comment %} <td>

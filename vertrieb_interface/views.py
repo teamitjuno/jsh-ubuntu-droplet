@@ -1546,7 +1546,41 @@ class DeleteAngebot(DeleteView):
         self.object.delete()
         return redirect(self.get_success_url())
 
+class DeleteUserAngebot(DeleteView):
+    model = VertriebAngebot
+    template_name = "vertrieb/view_orders.html"
 
+    def get_success_url(self):
+        return reverse("vertrieb_interface:view_orders")
+
+    def get_object(self, queryset=None):
+        return VertriebAngebot.objects.get(angebot_id=self.kwargs["angebot_id"])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if TELEGRAM_LOGGING:
+            send_custom_message(
+                self.request.user, "Accessed the offers list page.", "Info"
+            )
+        return context
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.angebot_id_assigned = False
+        self.object.save()
+        CustomLogEntry.objects.log_action(
+            user_id=self.object.user_id,
+            content_type_id=ContentType.objects.get_for_model(self.object).pk,
+            object_id=self.object.pk,
+            object_repr=str(self.object),
+            action_flag=CHANGE,
+            status=self.object.status,
+        )
+        self.object.delete()
+        return redirect(self.get_success_url())
+    
 class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders.html"

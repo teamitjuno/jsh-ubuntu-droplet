@@ -47,6 +47,11 @@ vertrieb_patterns = [
     path("vertrieb/profile/", views.profile, name="profile"),
     path("vertrieb/view_orders/", views.ViewOrders.as_view(), name="view_orders"),
     path(
+        "vertrieb/view_orders/delete/<str:angebot_id>/",
+        views.DeleteUserAngebot.as_view(),
+        name="delete_user_angebot",
+    ),
+    path(
         "vertrieb/ticket_creation/",
         views.TicketCreationView.as_view(),
         name="ticket_creation",
