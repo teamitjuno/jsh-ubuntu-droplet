@@ -1592,7 +1592,7 @@ def process_vertrieb_angebot(request):
         )
         bek_ang_list.append(bekommen_angebote)
 
-    print("BEKOMMEN ANGEBOTE", bek_ang_list)
+    
     for queryset in bek_ang_list:
         for bekommen_angebot in queryset:
             angebot_zoho_id = bekommen_angebot.angebot_zoho_id
