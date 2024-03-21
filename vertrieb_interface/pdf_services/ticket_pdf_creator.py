@@ -129,7 +129,7 @@ class PDF(FPDF):
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 5, data["module"], 0, 0, "L")
-        self.set_y(160)
+        self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -153,7 +153,7 @@ class PDF(FPDF):
             "R",
         )
 
-        y += 30
+        y += 22
         # Tabelle Eintrag Optimierer
         if data["hersteller"] == "Huawei":
             if data["optimizerTicket"] > 0:
@@ -167,8 +167,8 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 6, "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n", 0, 0, "L")
-                self.set_y(y + 5)
+                self.multi_cell(0, 5, "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n", 0, "L")
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
@@ -182,19 +182,19 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 15
+                y += 17
             # Tabelle Eintrag 2X
             if data["batterieTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.set_y(230)
+                self.set_y(y)
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
                 self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
-                self.set_y(235)
+                self.set_y(y + 5)
                 self.set_x(25)
                 self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
-                self.set_y(245)
+                self.set_y(y+15)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
@@ -204,7 +204,7 @@ class PDF(FPDF):
                     0,
                     "L",
                 )
-                self.set_y(230)
+                self.set_y(y + 5)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 leistungsmodule = ceil(
@@ -405,8 +405,8 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 6, "∙ individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre", 0, 0, "L")
-                self.set_y(y + 5)
+                self.multi_cell(0, 5, "∙ individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre", 0,"L")
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
@@ -420,7 +420,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 15
+                y += 17
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.set_y(y)
                 eintrag += 1
@@ -431,15 +431,15 @@ class PDF(FPDF):
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(0, 6, "Drahtlose Kommunikation mit Tigo Smart Modulen", 0, 0, "L")
-                self.set_y(y + 5)
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.multi_cell(0, 5, '1 Stk.', 0, "L")
-                self.set_y(y + 5)
+                self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
 
-                y += 15
+                y += 12
 
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.set_y(y)
@@ -454,19 +454,19 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y+=10
+                y+=7
             # Tabelle Eintrag 2X
             if data["batterieTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.set_y(230)
+                self.set_y(y)
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
                 self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
-                self.set_y(235)
+                self.set_y(y + 5)
                 self.set_x(25)
                 self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
-                self.set_y(245)
+                self.set_y(y + 15)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
@@ -476,7 +476,7 @@ class PDF(FPDF):
                     0,
                     "L",
                 )
-                self.set_y(230)
+                self.set_y(y + 5)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 leistungsmodule = ceil(
@@ -502,7 +502,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 20
+                y += 26
 
             if data["thorTicket"] > 0:
                 # Tabelle Eintrag Thor
@@ -540,8 +540,8 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 5
-                y += 15
+                
+                y += 17
             # Tabelle Eintrag Ersatzstrom
             if data["notstromTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)
