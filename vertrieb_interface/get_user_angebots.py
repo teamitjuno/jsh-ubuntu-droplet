@@ -113,12 +113,13 @@ def fetch_user_angebote_all(request):
 
             break
         else:
+            
             all_user_angebots_list.extend(process_all_user_data(data))
 
             start_index += LIMIT_ALL
             if len(data.get("data")) < LIMIT_ALL:
                 break
-
+    
     return all_user_angebots_list
 
 
@@ -291,7 +292,7 @@ def put_form_data_to_zoho_jpp(form):
             },
         }
     }
-    log_and_notify(payload)
+    
     json_payload = json.dumps(payload, ensure_ascii=True)
     headers["Content-Type"] = "application/json"
 
@@ -299,7 +300,7 @@ def put_form_data_to_zoho_jpp(form):
     response = requests.patch(update_url, headers=headers, json=payload)
 
     res = response.json()
-    log_and_notify(res)
+    
 
     return response.json()
 
@@ -356,7 +357,75 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
     return response
 
+def pushTicket(vertrieb_angebot, user_zoho_id):
+    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form "
+    access_token = refresh_access_token()
+    headers = {"Authorization": f"Bearer {access_token}"}
 
+    date_obj_gultig = datetime.datetime.strptime(
+        vertrieb_angebot.angebot_gultig, "%d.%m.%Y"
+    )
+    formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
+
+#     dataMap = {"Ticket" : {
+#     "Wechselrichter" : {
+#     "Hersteller_Typ": vertrieb_angebot.hersteller,
+#     "Leistung_kVA": float/decimal,
+#     "Status_Bau": String mit Optionen wie Status_PVA synchron gehalten (für Analyse/Lager relevant),
+#     "PVA_klein": ID PVA_klein,
+#     },
+#     "PVA_klein": ID PVA_klein (Pflichtfeld)
+#     "Privatkunde": ID Interessent
+#     "Vertriebler": ID Vertriebler
+#     "Status": Startwert ist immer "ausstehend" 
+#     "Optionen": "ausstehend","bearbeitet","freigegeben","on Hold" 
+#     "Ticket_erstellt_am": Datum
+#     "Ticket_verl_ngert_am": Datum
+#     "Bisher_geplante_Module": String (Text mit Info der Module aus PVA_klein)
+#     "M_gliche_Anzahl_Module": Integer
+#    "Modulanzahl": Startwert ist leer
+#     "Optionen": "Anzahl gleichbleibend", "Anzahl muss angepasst werden"
+#     "Notizen": String
+#     "Ticket_erstellt_durch": ID von Innendienstler in Zoho, muss eventuell umgebaut werden, wenn Tickets aus Angebotstool erstellt werden
+#     }
+#     }
+    dataMap = {
+        "data": {
+            "Angebot_ID": str(vertrieb_angebot.angebot_id),
+            "Privatkunde_ID": str(vertrieb_angebot.zoho_id),
+            "Vertriebler_ID": str(user_zoho_id),
+            "erstellt_am": str(vertrieb_angebot.anfrage_vom),
+            "g_ltig_bis": formatted_gultig_date_str,
+            "Anz_Speicher": str(vertrieb_angebot.anz_speicher),
+            "Wallbox_Typ": str(vertrieb_angebot.wallboxtyp),
+            "Wallbox_Anzahl": str(vertrieb_angebot.wallbox_anzahl),
+            "Kabelanschluss": str(vertrieb_angebot.kabelanschluss),
+            "SolarModule_Typ": str(vertrieb_angebot.solar_module),
+            "SolarModule_Leistung": str(vertrieb_angebot.modulleistungWp),
+            "SolarModule_Menge": str(vertrieb_angebot.modulanzahl),
+            "GarantieWR": str(vertrieb_angebot.garantieWR),
+            "Wechselrichter": str(vertrieb_angebot.wechselrichter_model),
+            "Speicher_Typ": str(vertrieb_angebot.speicher_model),
+            "Wandhalterung_Anzahl": int(
+                vertrieb_angebot.anz_wandhalterung_fuer_speicher
+            ),
+            "Notstrom": return_lower_bull(vertrieb_angebot.notstrom),
+            "Optimierer_Menge": str(vertrieb_angebot.anzOptimizer),
+            "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
+            "AC_THOR": return_lower_bull(vertrieb_angebot.thor),
+            "AC_THOR_Heizstab": vertrieb_angebot.heizstab,
+            "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
+            "Angebotssumme": str(vertrieb_angebot.angebotsumme),
+        }
+    }
+    response = requests.post(url, json=dataMap, headers=headers)
+    response_data = response.json()
+    new_record_id = response_data["data"]["ID"]
+    log_and_notify(
+        f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
+    )
+
+    return response
 import requests
 
 

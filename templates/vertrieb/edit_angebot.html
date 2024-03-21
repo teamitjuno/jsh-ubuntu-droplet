@@ -17,7 +17,15 @@
                         <div class="col-xl-12">
                             <div class="card m-3">
                                 <div class="card-body border-primary border">     
-                                    <div class="alert alert-danger">Bitte beachten Sie, dass die folgenden Felder für die PDF-Erstellung erforderlich sind::
+                                    <div class="alert alert-danger">Fehler :
+                                        
+                                        {% if form.non_field_errors %}
+                                            <div class="error">
+                                                {% for error in form.non_field_errors %}
+                                                <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
                                         <ul>
                                             {% for field in form %}
                                                 {% if field.errors %}
@@ -25,6 +33,13 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </ul>
+                                        {% if messages %}
+                                                <ul class="messages">
+                                                    {% for message in messages %}
+                                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
                                     </div>
                                     
                                 </div>
@@ -1949,6 +1964,7 @@ $(document).ready(function() {
                     anrede,
                     zoho_kundennumer,
                     strasse,
+                    status_pva,
                     email,
                     telefon_mobil,
                     telefon_festnetz,
@@ -1967,6 +1983,7 @@ $(document).ready(function() {
                 $anredeField.val(anrede);
                 $("#zoho_kundennumer").val(zoho_kundennumer);
                 $("#id_strasse").val(strasse);
+                $("#id_status_pva").val(status_pva);
                 $("#id_email").val(email);
                 $("#id_telefon_mobil").val(telefon_mobil);
                 $("#id_telefon_festnetz").val(telefon_festnetz);

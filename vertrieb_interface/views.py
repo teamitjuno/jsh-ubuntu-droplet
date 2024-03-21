@@ -764,11 +764,13 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
             self.data != []
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
+            
 
             return JsonResponse(data)
         except:
             name = request.GET.get("name", None)
             data = next((item for item in self.data if item["name"] == name), None)
+            
             if data is None:
                 data = {}
             return JsonResponse(data)
@@ -818,7 +820,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     ]
                 )
                 message = f"*Error for {user.email}*\n{formatted_errors}"
-                log_and_notify(message, parse_mode="Markdown")
+                log_and_notify(message)
             except Exception as e:
                 # Log the exception for debugging purposes
                 log_and_notify(f"Error logging to Telegram: {str(e)}")
@@ -827,7 +829,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.fetch_angebot_data(request, angebot_id)
+        self.fetch_angebot_data(request, angebot_id, request.user)
         self.handle_status_change(angebot_id)
 
         return super().dispatch(request, *args, **kwargs)
@@ -877,7 +879,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         status=angebot.status,
                     )
 
-    def fetch_angebot_data(self, request, angebot_id):
+    def fetch_angebot_data(self, request, angebot_id, user):
         fetched_angebote_list = []
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
@@ -903,7 +905,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 ),
                 "telefon_festnetz": item.get("Telefon_Festnetz", ""),
                 "telefon_mobil": item.get("Telefon_mobil", ""),
-                "zoho_kundennumer": item.get("Kundennummer", ""),
+                # "zoho_kundennumer": kundennumer,
                 "email": item.get("Email", ""),
                 "notizen": item.get("Notizen", ""),
                 "name": item.get("Name", {}).get("last_name", "")
@@ -930,9 +932,21 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
+        user = request.user
 
         if zoho_id is not None:
             item = json.loads(vertrieb_angebot.ag_fetched_data)
+
+
+            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            name_to_kundennumer = {
+                item["name"]: item["zoho_kundennumer"] for item in data
+            }
+            
+            name = vertrieb_angebot.name
+            zoho_id = vertrieb_angebot.zoho_id
+            kundennumer = name_to_kundennumer[name]
+            
             vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
             vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
             vertrieb_angebot.status_pva = item.get("status_pva")
@@ -946,7 +960,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             )
             vertrieb_angebot.notizen = item.get("notizen")
             vertrieb_angebot.email = item.get("email")
-            # vertrieb_angebot.zoho_kundennumer = item.get("zoho_kundennumer")
+            vertrieb_angebot.zoho_kundennumer = kundennumer
             vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
             vertrieb_angebot.postanschrift_longitude = item.get(
                 "postanschrift_longitude"
@@ -954,7 +968,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
             vertrieb_angebot.termine_text = item.get("termine_text")
             vertrieb_angebot.termine_id = item.get("termine_id")
-            # vertrieb_angebot.save()
+            vertrieb_angebot.save()
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
@@ -1004,6 +1018,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             countdown = vertrieb_angebot.countdown()
             context = {
                 "countdown": vertrieb_angebot.countdown(),
+                'messages': messages.get_messages(request),
                 "user": user,
                 "vertrieb_angebot": vertrieb_angebot,
                 "form": form,
@@ -1128,7 +1143,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
-
+                    instance.angebot_id_assigned = False
                     profile, created = User.objects.get_or_create(
                         zoho_id=request.user.zoho_id
                     )
@@ -1141,7 +1156,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
                     vertrieb_angebot.save()
-                    instance.save()
+                    form.save()
+
                     # self._log_and_notify_success(user)
                     return redirect(
                         "vertrieb_interface:edit_angebot",
@@ -1149,55 +1165,57 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     )
 
             elif action_type == "save":
-                # self._log_and_notify_attempt(user, action_type)
+                
                 if form.is_valid():
                     instance = form.instance
-                    # put_form_data_to_zoho_jpp(form)
                     instance.angebot_id_assigned = True
-
                     profile, created = User.objects.get_or_create(
                         zoho_id=request.user.zoho_id
                     )
-
                     data_loads = json.loads(profile.zoho_data_text)
                     name = instance.name
-
                     data = next(
                         (item for item in data_loads if item["name"] == name), None
                     )
                     instance.zoho_kundennumer = data.get("zoho_kundennumer")
-                    instance.save()
-                    print(instance)
-                    form.save()
+                    angebot_existing = VertriebAngebot.objects.filter(user=user, angebot_id_assigned=True, status="", zoho_kundennumer=instance.zoho_kundennumer,)
+                    
+                    if angebot_existing.count() != 0:
+                        extracted_part = str(angebot_existing).split("VertriebAngebot: ")[1].split(">]")[0]
+                        # Add a message indicating that there are duplicate instances
+                        form.add_error(None, f'Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n')
+                        return self.form_invalid(form, vertrieb_angebot, request)
 
-                    # print(vertrieb_angebot.zoho_kundennumer)
+                    else:
+                        instance.save()
+                        form.save()
+                        put_form_data_to_zoho_jpp(form)
+                        all_user_angebots_list = fetch_user_angebote_all(request)
+                        user.zoho_data_text = json.dumps(all_user_angebots_list)
+                        user.save()
+                        CustomLogEntry.objects.log_action(
+                            user_id=vertrieb_angebot.user_id,
+                            content_type_id=ContentType.objects.get_for_model(
+                                vertrieb_angebot
+                            ).pk,
+                            object_id=vertrieb_angebot.pk,
+                            object_repr=str(vertrieb_angebot),
+                            action_flag=CHANGE,
+                            status=vertrieb_angebot.status,
+                        )
+                        
+                        return redirect(
+                            "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
+                        )
+            
+            return self.form_invalid(form, vertrieb_angebot, request)
 
-                    put_form_data_to_zoho_jpp(form)
-                    all_user_angebots_list = fetch_user_angebote_all(request)
-                    user.zoho_data_text = json.dumps(all_user_angebots_list)
-                    user.save()
-                    CustomLogEntry.objects.log_action(
-                        user_id=vertrieb_angebot.user_id,
-                        content_type_id=ContentType.objects.get_for_model(
-                            vertrieb_angebot
-                        ).pk,
-                        object_id=vertrieb_angebot.pk,
-                        object_repr=str(vertrieb_angebot),
-                        action_flag=CHANGE,
-                        status=vertrieb_angebot.status,
-                    )
-                    # self._log_and_notify_success(user)
-                    return redirect(
-                        "vertrieb_interface:edit_angebot", vertrieb_angebot.angebot_id
-                    )
-            # self._log_and_notify_error(user, form)
-            return self.form_invalid(form, vertrieb_angebot)
-
-    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
+    def form_invalid(self, form, vertrieb_angebot, request, *args, **kwargs):
         context = self.get_context_data()
         countdown = vertrieb_angebot.countdown()
         context["status_change_field"] = vertrieb_angebot.status_change_field
         context["countdown"] = vertrieb_angebot.countdown()
+        context['messages'] = messages.get_messages(request)
         context["vertrieb_angebot"] = vertrieb_angebot
         context["form"] = form
         return render(self.request, self.template_name, context)
@@ -1599,16 +1617,11 @@ def update_status_to_angenommen(angebot_ids):
     return angebote.count()
 
 
-def update_vertrieb_angebot_assignment(user, existing_angebot_ids):
+def update_vertrieb_angebot_assignment(user):
     user_data = json.loads(user.zoho_data_text)
     # Extract zoho_id values from user_data
     if user_data != []:
         user_zoho_ids = {item["zoho_id"] for item in user_data}
-        
-        zoho_id_to_status_pva = {item["zoho_id"]: item["status_pva"] for item in user_data}
-        log_and_notify(user_zoho_ids)
-        log_and_notify(zoho_id_to_status_pva)
-        log_and_notify(existing_angebot_ids)
         
         
 
@@ -1630,20 +1643,7 @@ def update_vertrieb_angebot_assignment(user, existing_angebot_ids):
 def load_user_angebots(request):
     existing_angebot_ids = extract_values(request)
     user = request.user
-    user_data = json.loads(user.zoho_data_text)
-    # Extract zoho_id values from user_data
-    if user_data != []:
-        user_zoho_ids = {item["zoho_id"] for item in user_data}
-        
-        zoho_id_to_status_pva = {item["zoho_id"]: item["status_pva"] for item in user_data}
-    for existing_angebot_id in existing_angebot_ids:
-        vertrieb_angebot, created = VertriebAngebot.objects.get_or_create(user=user, angebot_id=existing_angebot_id)
-        zoho_id = vertrieb_angebot.zoho_id
-        if zoho_id != None:
-            status_pva = zoho_id_to_status_pva[zoho_id]
-            log_and_notify(status_pva)
-            vertrieb_angebot.status_pva = status_pva
-            vertrieb_angebot.save()
+    
     try:
         profile, created = User.objects.update_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
@@ -1652,8 +1652,21 @@ def load_user_angebots(request):
         all_user_angebots_list = fetch_user_angebote_all(request)
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
+        user_data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+        # Extract zoho_id values from user_data
+        if user_data != []:
+            user_zoho_ids = {item["zoho_id"] for item in user_data}
+            
+            zoho_id_to_status_pva = {item["zoho_id"]: item["status_pva"] for item in user_data}
+        for existing_angebot_id in existing_angebot_ids:
+            vertrieb_angebot, created = VertriebAngebot.objects.get_or_create(user=user, angebot_id=existing_angebot_id)
+            zoho_id = vertrieb_angebot.zoho_id
+            if zoho_id != None:
+                status_pva = zoho_id_to_status_pva[zoho_id]
+                vertrieb_angebot.status_pva = status_pva
+                vertrieb_angebot.save()
 
-        update_vertrieb_angebot_assignment(user, existing_angebot_ids)
+        update_vertrieb_angebot_assignment(user)
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
 
