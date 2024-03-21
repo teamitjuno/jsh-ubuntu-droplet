@@ -64,6 +64,10 @@
                                                                             <th>Kundenname:</th>
                                                                             <td><input type="text" class="form-control" name="{{ form.name.name }}" value="{{ form.name.value }}" readonly></td>
                                                                         </tr>
+                                                                        <tr>
+                                                                            <th>Hersteller:</th>
+                                                                            <td><input type="text" class="form-control" name="{{ form.hersteller.name }}" value="{{ form.hersteller.value }}" readonly></td>
+                                                                        </tr>
                                                                         
                                                                     </tbody>
                                                                 </table>
@@ -102,18 +106,42 @@
                                                                             <th>{{ form.batteriemodule_ticket.label_tag }}</th>
                                                                             <td>{{ form.batteriemodule_ticket }}</td>
                                                                         </tr>
+                                                                        {% if vertrieb_angebot.hersteller == "Huawei"%}
                                                                         <tr>
                                                                             <th>{{ form.wandhalterung_fuer_speicher_ticket.label_tag }}</th>
                                                                             <td>{{ form.wandhalterung_fuer_speicher_ticket }}</td>
                                                                         </tr>
+                                                                        {% else %}
+                                                                        <tr hidden>
+                                                                            <th>{{ form.wandhalterung_fuer_speicher_ticket.label_tag }}</th>
+                                                                            <td>{{ form.wandhalterung_fuer_speicher_ticket }}</td>
+                                                                        </tr>
+                                                                        {% endif %}
                                                                         <tr>
                                                                             <th>{{ form.notstrom_ticket.label_tag }}</th>
                                                                             <td>{{ form.notstrom_ticket }}</td>
                                                                         </tr>
+                                                                        {% if vertrieb_angebot.hersteller == "Huawei"%}
+                                                                            
                                                                         <tr>
                                                                             <th>{{ form.elwa_ticket.label_tag }}</th>
                                                                             <td>{{ form.elwa_ticket }}</td>
                                                                         </tr>
+                                                                        {% else %}
+                                                                        <tr hidden>
+                                                                            <th>{{ form.elwa_ticket.label_tag }}</th>
+                                                                            <td>{{ form.elwa_ticket }}</td>
+                                                                        </tr>
+
+                                                                        {% endif %}
+                                                                        <tr>
+                                                                            <th>{{ form.thor_ticket.label_tag }}</th>
+                                                                            <td>{{ form.thor_ticket }}</td>
+                                                                            
+                                                                        </tr>
+
+
+
                                                                         <tr hidden>
                                                                             <th>{{ form.eddi_ticket.label_tag }}</th>
                                                                             <td>{{ form.eddi_ticket }}</td>
@@ -126,16 +154,7 @@
                                                             
                                                                     </tbody>
                                                                 </table>
-                                                                <table>
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>{{ form.thor_ticket.label_tag }}</th>
-                                                                            <td>{{ form.thor_ticket }}</td>
-                                                                            <th class="m-3">{{ form.heizstab_ticket.label_tag }}</th>
-                                                                            <td>{{ form.heizstab_ticket }}</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
+
                                                             </div>
                                                         </div>
                                                     </div>

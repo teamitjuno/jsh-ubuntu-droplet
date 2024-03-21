@@ -1739,6 +1739,21 @@ class TicketForm(forms.ModelForm):
         required=False,
         widget=forms.Select(attrs={"class": "form-select", "id": "module_ticket"}),
     )
+    HERSTELLER_CHOICES = [
+        ("----", "----"),
+        ("Huawei", "Huawei"),
+        ("Viessmann", "Viessmann"),
+    ]
+
+    hersteller = forms.ChoiceField(
+        label="Hersteller",
+        choices=HERSTELLER_CHOICES,
+        
+        
+        
+        widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
+    )
+    
 
     modul_anzahl_ticket = forms.IntegerField(
         label="Module Ticket-Anzahl",
@@ -1757,7 +1772,7 @@ class TicketForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "elwa_ticket"}),
     )
     thor_ticket = forms.IntegerField(
-        label="AC THOR 2 3kW ",
+        label="AC THOR 2  ",
         required=False,
         initial=0,
         validators=[validate_integers_ticket],
@@ -1821,11 +1836,11 @@ class TicketForm(forms.ModelForm):
         fields = [
             "is_locked",
             "name",
+            "hersteller",
             "module_ticket",
             "elwa_ticket",
             "wandhalterung_fuer_speicher_ticket",
             "thor_ticket",
-            "heizstab_ticket",
             "modul_anzahl_ticket",
             "optimizer_ticket",
             "batteriemodule_ticket",
@@ -1851,6 +1866,7 @@ class TicketForm(forms.ModelForm):
         cleaned_data = super().clean()
         
         name = cleaned_data.get("name")
+        name = cleaned_data.get("hersteller")
 
         if name is None or name == "----":
             raise forms.ValidationError(
