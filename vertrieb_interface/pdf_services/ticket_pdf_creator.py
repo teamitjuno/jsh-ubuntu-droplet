@@ -153,7 +153,7 @@ class PDF(FPDF):
             "R",
         )
 
-        y += 22
+        y += 21
         # Tabelle Eintrag Optimierer
         if data["hersteller"] == "Huawei":
             if data["optimizerTicket"] > 0:
@@ -182,7 +182,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 17
+                y += 16
             # Tabelle Eintrag 2X
             if data["batterieTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -230,7 +230,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 20
+                y += 27
             # if
             #     self.set_y(y + 5)
             #     self.set_font("JUNO Solar Lt", "B", 12)
@@ -267,12 +267,12 @@ class PDF(FPDF):
                 # self.line(25, y + 7.5, 83, y + 7.5)
                 # Tabelle Eintrag Optimierer
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.set_y(y + 60)
+                self.set_y(y)
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
                 self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
-                self.set_y(y + 60)
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.multi_cell(0, 6, f'{str(data["wandhalterungTicket"])} Stk', 0, 0, "L")  # type: ignore
@@ -286,7 +286,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 10
+                y += 6
             if data["elwaTicket"] > 0:
                 # Tabelle Eintrag Elwa
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -319,7 +319,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                y += 13
+                y += 20
             if data["thorTicket"] > 0:
                 # Tabelle Eintrag Thor
                 self.set_font("JUNO Solar Lt", "", 11)
