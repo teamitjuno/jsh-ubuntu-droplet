@@ -2010,11 +2010,13 @@ $(document).ready(function() {
        <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
+    toggleBoolelwaRow($('#hersteller').val());
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
 
     $("#hersteller").change(function() {
         toggleAnzWandhalterung($(this).val());
+        toggleBoolelwaRow($(this).val());
         calculateGesamtkapazitat(); // Recalculate when manufacturer changes
         
         var hersteller = $(this).val();
@@ -2047,11 +2049,11 @@ function toggleAnzWandhalterung(value) {
     }
 }
 
-function toggleAnzWandhalterung(value) {
+function toggleBoolelwaRow(value) {
     if (value === 'Viessmann') {
-        $('#anz_wandhalterung_row').hide();
+        $('#bool_elwa_row').hide();
     } else {
-        $('#anz_wandhalterung_row').show();
+        $('#bool_elwa_row').show();
     }
 }
 
