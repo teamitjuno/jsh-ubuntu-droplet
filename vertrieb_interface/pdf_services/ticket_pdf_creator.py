@@ -121,6 +121,7 @@ class PDF(FPDF):
         self.line(10, 141, 200, 141)
         eintrag = 0
         y = 145
+
         # Tabelle Eintrag 1
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y)
@@ -128,7 +129,7 @@ class PDF(FPDF):
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 5, data["module"], 0, 0, "L")
-        self.set_y(y + 5)
+        self.set_y(160)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
@@ -151,188 +152,189 @@ class PDF(FPDF):
             0,
             "R",
         )
+
         y += 30
         # Tabelle Eintrag Optimierer
-        if data["optimizerTicket"] > 0:
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "Modul-Leistungsoptimierer", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(0, 5, "indiviuelle Schattenerkennung pro Modul", 0, "L")
-            self.set_y(y)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["optimizerTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 15
-        # Tabelle Eintrag 2X
-        if data["batterieTicket"] > 0:
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "Batteriespeicher Huawei LUNA 2000", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, "L")
-            self.set_y(y + 5)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            leistungsmodule = ceil(
-                (int(data["batterieTicket"]) + int(data["batterieAnz"])) / 3
-            ) - ceil(int(data["batterieAnz"]) / 3)
-            self.multi_cell(0, 5, f"{str(leistungsmodule)} Stk" + "\n" + f'{str(data["batterieTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y + 5)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["leistungTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            self.set_y(y + 10)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["batterieTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 20
-        # Tabelle Eintrag Eddi
-        if data["eddiTicket"] > 0:
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "myenergi Leistungsverteiler eddi", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(
-                0, 5, "zur Nutzung überschüssiger Energie im Hausnetz", 0, "L"
-            )
-            self.set_y(y)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'{str(data["eddiTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["eddiTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 15
-        # Wand halterung
-        if data["wandhalterungTicket"] > 0:
-            # self.line(10, y + 3, 200, y + 3)
-            # self.line(25, y + 7.5, 83, y + 7.5)
-            # Tabelle Eintrag Optimierer
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
-            self.set_y(y + 0)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'{str(data["wandhalterungTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["wandhalterungTicketPreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 10
-        if data["elwaTicket"] > 0:
-            # Tabelle Eintrag Elwa
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "my-PV AC-ELWA 2 Heizstab", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(
-                0,
-                5,
-                "Intelligenter Heizstab um überschüssige PV-Energie als Warmwasser optimal zu nutzen",
-                0,
-                "L",
-            )
-            self.set_y(y)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'{str(data["elwaTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["elwaTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 13
-        if data["thorTicket"] > 0:
-            # Tabelle Eintrag Thor
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "my-PV AC-THOR intelligente Steuerung", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            if data["heizstabTicket"] > 0:
+        if data["hersteller"] == "Huawei":
+            if data["optimizerTicket"] > 0:
+                # OPTIMIERER HUAWEI
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Huawei SUN2000-450W-P2 Moduloptimierer", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(0, 6, "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["optimizerTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 15
+            # Tabelle Eintrag 2X
+            if data["batterieTicket"] > 0:
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(230)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
+                self.set_y(235)
+                self.set_x(25)
+                self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
+                self.set_y(245)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(
+                    0,
+                    5,
+                    "∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 10 Jahre",
+                    0,
+                    "L",
+                )
+                self.set_y(230)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                leistungsmodule = ceil(
+                    (int(data["batterieTicket"]) + int(data["batterieAnz"])) / 3
+                ) - ceil(int(data["batterieAnz"]) / 3)
+                self.multi_cell(0, 5, f"{str(leistungsmodule)} Stk" + "\n" + f'{str(data["batterieTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y + 5)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["leistungTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                self.set_y(y + 10)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["batterieTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 20
+            # if
+            #     self.set_y(y + 5)
+            #     self.set_font("JUNO Solar Lt", "B", 12)
+            #     self.cell(0, 6, "Ladestation für E-Fahrzeug (Wallbox)", 0, 0, "L")
+            #     self.set_y(y + 10)
+            #     self.set_font("JUNO Solar Lt", "", 11)
+            #     self.multi_cell(0, 6, "Mit einer Wallbox können Sie die Energie Ihrer Photovoltaikanlage zum Laden Ihres Elektrofahrzeugs nutzen. Eine intelligente Steuerung (opt. Zubehör) kann den Ladestrom kontinuierlich der aktuellen Energieerzeugung anpassen.", 0, 0, "L")  # type: ignore
+            #     # Tabelle Eintrag 2X
+            #     self.set_font("JUNO Solar Lt", "", 11)
+            #     self.set_y(y + 25)
+            #     eintrag += 1
+            #     self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+            #     self.set_x(25)
+            #     self.cell(0, 6, "Huawei Fusion Charge AC", 0, 0, "L")
+            #     self.set_y(y + 30)
+            #     self.set_x(25)
+            #     self.set_font("JUNO Solar Lt", "", 10)
+            #     self.multi_cell(0, 6, "∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre", 0, 0, "L")                
+            #     self.set_y(y + 25)
+            #     self.set_x(25)
+            #     # self.set_font('JUNO Solar Lt', '', 10)
+            #     self.multi_cell(0, 5, data["wallboxText"], 0, "L")
+            #     self.set_y(y + 25)
+            #     self.set_x(150)
+            #     self.set_font("JUNO Solar Lt", "", 11)
+            #     self.multi_cell(0, 5, str(data["wallboxAnz"]), 0, "L")
+            #     self.set_y(y + 25)
+            #     self.set_x(170)
+            #     self.cell(0, 6, "inklusive", 0, 0, "R")
+            
+            # Wand halterung
+            if data["wandhalterungTicket"] > 0:
+                # self.line(10, y + 3, 200, y + 3)
+                # self.line(25, y + 7.5, 83, y + 7.5)
+                # Tabelle Eintrag Optimierer
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y + 60)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
+                self.set_y(y + 60)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["wandhalterungTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["wandhalterungTicketPreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 10
+            if data["elwaTicket"] > 0:
+                # Tabelle Eintrag Elwa
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "mypv AC ELWA 2", 0, 0, "L")
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
                     0,
                     5,
-                    "Heizstab inklusive",
+                    "∙ 0 - 3,5 KW stufenlos geregeltes Warmwasserbereitungsgerät\nfür netzgekoppelte Photovoltaikanlagen\n∙ Produktgarantie: 2 Jahre",
                     0,
                     "L",
                 )
-                self.set_y(y + 9)
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["elwaTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["elwaTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 13
+            if data["thorTicket"] > 0:
+                # Tabelle Eintrag Thor
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "mypv AC∙THOR", 0, 0, "L")
+                self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
                     0,
-                    4,
-                    "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
+                    5,
+                    "∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager\nfür Warmwasser, elektrische Wärmequellen und optional Heizung\n∙ Produktgarantie: 2 Jahre",
                     0,
                     "L",
                 )
@@ -355,64 +357,226 @@ class PDF(FPDF):
                     "R",
                 )
                 y += 5
-            else:
+                y += 15
+            # Tabelle Eintrag Ersatzstrom
+            if data["notstromTicket"] > 0:
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+
+                self.cell(0, 6, "Viessmann VX3 Backup-Box", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+
+                self.multi_cell(
+                        0,
+                        5,
+                        "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
+                        0,
+                        "L",
+                    )
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["notstromTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["notstromTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 15
+        if data["hersteller"] == "Viessmann":
+            if data["optimizerTicket"] > 0:
+                # OPTIMIERER VIESSMANN
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Tigo TS4-A-0 Moduloptimierer", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(0, 6, "∙ individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["optimizerTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 15
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Tigo Acess Point (TAP)", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(0, 6, "Drahtlose Kommunikation mit Tigo Smart Modulen", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 5, '1 Stk.', 0, "L")
+                self.set_y(y + 5)
+                self.set_x(170)
+                self.cell(0, 6, "inklusive", 0, 0, "R")
+
+                y += 15
+
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "Tigo Cloud Connect Advances (CCA)", 0, 0, "L")
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 5, '1 Stk.', 0, "L")
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(0, 6, "inklusive", 0, 0, "R")
+                y+=10
+            # Tabelle Eintrag 2X
+            if data["batterieTicket"] > 0:
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(230)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
+                self.set_y(235)
+                self.set_x(25)
+                self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
+                self.set_y(245)
+                self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
                     0,
                     5,
-                    "Steuerungseinheit für bestehende Wärmeerzeuger bis 3 kW um überschüssige\nPV-Energie optimal zu nutzen",
+                    "∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 10 Jahre",
+                    0,
+                    "L",
+                )
+                self.set_y(230)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                leistungsmodule = ceil(
+                    (int(data["batterieTicket"]) + int(data["batterieAnz"])) / 3
+                ) - ceil(int(data["batterieAnz"]) / 3)
+                self.multi_cell(0, 5, f"{str(leistungsmodule)} Stk" + "\n" + f'{str(data["batterieTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y + 5)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["leistungTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                self.set_y(y + 10)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["batterieTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 20
+
+            if data["thorTicket"] > 0:
+                # Tabelle Eintrag Thor
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+                self.cell(0, 6, "mypv AC THOR", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+                self.multi_cell(
+                    0,
+                    5,
+                    "∙ 0 - 3 KW stufenlos geregelter Photovoltaik Power-Manager\nfür Warmwasser, elektrische Wärmequellen und optional Heizun\n∙ Produktgarantie: 2 Jahre",
                     0,
                     "L",
                 )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f"1", 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["thorTicket"])} Stk', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
                     0,
                     6,
-                    convertCurrency("{:,.2f} €".format(data["thorTicketpreis"])),
+                    convertCurrency(
+                        "{:,.2f} €".format(
+                            data["thorTicketpreis"] + data["heizstabTicketpreis"]
+                        )
+                    ),
                     0,
                     0,
                     "R",
                 )
                 y += 5
-            y += 15
-        # Tabelle Eintrag Ersatzstrom
-        if data["notstromTicket"] > 0:
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.set_y(y)
-            eintrag += 1
-            self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            self.set_x(25)
-            self.cell(0, 6, "Huawei Ersatzstromversorgung", 0, 0, "L")
-            self.set_y(y + 5)
-            self.set_x(25)
-            self.set_font("JUNO Solar Lt", "", 10)
-            self.multi_cell(
-                0,
-                5,
-                "Huawei Backup-Box-B1 zur einphasigen Ersatzstromversorgung",
-                0,
-                "L",
-            )
-            self.set_y(y)
-            self.set_x(150)
-            self.set_font("JUNO Solar Lt", "", 11)
-            self.multi_cell(0, 6, f'{str(data["notstromTicket"])} Stk', 0, 0, "L")  # type: ignore
-            self.set_y(y)
-            self.set_x(170)
-            self.cell(
-                0,
-                6,
-                convertCurrency("{:,.2f} €".format(data["notstromTicketpreis"])),
-                0,
-                0,
-                "R",
-            )
-            y += 15
+                y += 15
+            # Tabelle Eintrag Ersatzstrom
+            if data["notstromTicket"] > 0:
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.set_y(y)
+                eintrag += 1
+                self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
+                self.set_x(25)
+
+                self.cell(0, 6, "Viessmann VX3 Backup-Box", 0, 0, "L")
+                self.set_y(y + 5)
+                self.set_x(25)
+                self.set_font("JUNO Solar Lt", "", 10)
+
+                self.multi_cell(
+                        0,
+                        5,
+                        "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
+                        0,
+                        "L",
+                    )
+                self.set_y(y)
+                self.set_x(150)
+                self.set_font("JUNO Solar Lt", "", 11)
+                self.multi_cell(0, 6, f'{str(data["notstromTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.set_y(y)
+                self.set_x(170)
+                self.cell(
+                    0,
+                    6,
+                    convertCurrency("{:,.2f} €".format(data["notstromTicketpreis"])),
+                    0,
+                    0,
+                    "R",
+                )
+                y += 15
 
     def lastPage(self, data):
         self.add_page()
