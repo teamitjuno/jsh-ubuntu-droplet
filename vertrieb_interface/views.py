@@ -1366,18 +1366,9 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 
         elif form.is_valid():
             instance = form.instance
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
-            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            name = form.cleaned_data["name"]
-            kundennumer = name_to_kundennumer[name]
-            zoho_id = name_to_zoho_id[name]
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.zoho_id = int(zoho_id)
-            vertrieb_angebot.save()
+            
             instance.save()
+            form.save()
 
             return redirect(
                 "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
