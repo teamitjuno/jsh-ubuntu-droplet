@@ -1146,17 +1146,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     instance.angebot_id_assigned = False
-                    profile, created = User.objects.get_or_create(
-                        zoho_id=request.user.zoho_id
-                    )
-
-                    data_loads = json.loads(profile.zoho_data_text)
-                    name = instance.name
-
-                    data = next(
-                        (item for item in data_loads if item["name"] == name), None
-                    )
-                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    name_to_kundennumer = {
+                        item["name"]: item["zoho_kundennumer"] for item in data
+                    }
+                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                    name = form.cleaned_data["name"]
+                    kundennumer = name_to_kundennumer[name]
+                    instance.zoho_kundennumer = kundennumer
                     vertrieb_angebot.save()
                     form.save()
 
@@ -1171,20 +1168,21 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     instance.angebot_id_assigned = True
-                    profile, created = User.objects.get_or_create(
-                        zoho_id=request.user.zoho_id
-                    )
-                    data_loads = json.loads(profile.zoho_data_text)
+                    
                     name = instance.name
-                    data = next(
-                        (item for item in data_loads if item["name"] == name), None
-                    )
-                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    name_to_kundennumer = {
+                        item["name"]: item["zoho_kundennumer"] for item in data
+                    }
+                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                    name = form.cleaned_data["name"]
+                    kundennumer = name_to_kundennumer[name]
+                    instance.zoho_kundennumer = kundennumer
                     angebot_existing = VertriebAngebot.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
                         status="",
-                        zoho_kundennumer=instance.zoho_kundennumer,
+                        zoho_kundennumer=kundennumer,
                     )
 
                     if angebot_existing.count() != 0:
@@ -1346,39 +1344,15 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
                 )
         elif form.is_valid():
-            # vertrieb_angebot.angebot_id_assigned = True
-
-            # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            # name_to_kundennumer = {
-            #     item["name"]: item["zoho_kundennumer"] for item in data
-            # }
-            # name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            # name = form.cleaned_data["name"]
-            # zoho_id = form.cleaned_data["zoho_id"]
-            # kundennumer = name_to_kundennumer[name]
-
-            # zoho_id = name_to_zoho_id[name]
-
-            # vertrieb_angebot.zoho_kundennumer = kundennumer
-            # vertrieb_angebot.zoho_id = int(zoho_id)
-            # vertrieb_angebot.save()
-            # form.save()  # type:ignore
-
             instance = form.instance
-
-            profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-
             data = json.loads(user.zoho_data_text or '[["test", "test"]]')
             name_to_kundennumer = {
                 item["name"]: item["zoho_kundennumer"] for item in data
             }
             name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
             name = form.cleaned_data["name"]
-
             kundennumer = name_to_kundennumer[name]
-
             zoho_id = name_to_zoho_id[name]
-
             vertrieb_angebot.zoho_kundennumer = kundennumer
             vertrieb_angebot.zoho_id = int(zoho_id)
             vertrieb_angebot.save()
