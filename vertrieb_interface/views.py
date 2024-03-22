@@ -1936,30 +1936,36 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VSH"
             ):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
-        if vertrieb_angebot.hersteller == "Huawei":
-            if vertrieb_angebot.datenblatter_optimizer:
+        
+        if vertrieb_angebot.datenblatter_optimizer:
+            if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["optimizer"])
+            else:
+                self._attach_datenblatter(email, datenblatter, ["optimizer_viessmann"])
+                self._attach_datenblatter(email, datenblatter, ["viessmann_tigo"])
 
-            if vertrieb_angebot.datenblatter_speichermodule:
+        if vertrieb_angebot.datenblatter_speichermodule:
+            if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+            else:
+                self._attach_datenblatter(email, datenblatter, ["speicher_module_viessmann"])
 
-            if vertrieb_angebot.datenblatter_wechselrichter:
+        if vertrieb_angebot.datenblatter_wechselrichter:
+            if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["wechselrichter"])
 
-            if vertrieb_angebot.datenblatter_wallbox:
+        if vertrieb_angebot.datenblatter_wallbox:
+            if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["wall_box"])
 
-            if vertrieb_angebot.datenblatter_backup_box:
+        if vertrieb_angebot.datenblatter_backup_box:
+            if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["backup_box"])
+
         if vertrieb_angebot.hersteller == "Viessmann":
             self._attach_datenblatter(email, datenblatter, ["viessmann_allgemeine_bedingungen"])
             self._attach_datenblatter(email, datenblatter, ["viessmann_versicherung_ausweis"])
 
-            if vertrieb_angebot.datenblatter_optimizer:
-                self._attach_datenblatter(email, datenblatter, ["optimizer_viessmann"])
-                self._attach_datenblatter(email, datenblatter, ["viessmann_tigo"])
-            if vertrieb_angebot.datenblatter_speichermodule:
-                self._attach_datenblatter(email, datenblatter, ["speicher_module_viessmann"])
 
 
     def _attach_datenblatter(self, email, datenblatter, fields):
