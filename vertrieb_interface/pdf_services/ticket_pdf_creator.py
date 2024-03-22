@@ -561,7 +561,7 @@ class PDF(FPDF):
                     "R",
                 )
 
-                y += 17
+                y += 19
             # Tabelle Eintrag Ersatzstrom
             if data["notstromTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)

@@ -1317,50 +1317,50 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
 
-                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
-                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-                zoho_last_name_to_kundennumer = {
-                    item["zoho_last_name"]: item["zoho_kundennumer"] for item in data
-                }
-                zoho_last_name_to_zoho_id = {item["zoho_last_name"]: item["zoho_id"] for item in data}
-                name = vertrieb_angebot.name
-                zoho_last_name = vertrieb_angebot.zoho_last_name
-                try:
-                    kundennumer = name_to_kundennumer[name]
-                    zoho_id = name_to_zoho_id[name]
+                # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                # name_to_kundennumer = {
+                #     item["name"]: item["zoho_kundennumer"] for item in data
+                # }
+                # name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                # zoho_last_name_to_kundennumer = {
+                #     item["zoho_last_name"]: item["zoho_kundennumer"] for item in data
+                # }
+                # zoho_last_name_to_zoho_id = {item["zoho_last_name"]: item["zoho_id"] for item in data}
+                # name = vertrieb_angebot.name
+                # zoho_last_name = vertrieb_angebot.zoho_last_name
+                # try:
+                #     kundennumer = name_to_kundennumer[name]
+                #     zoho_id = name_to_zoho_id[name]
 
-                    vertrieb_angebot.zoho_kundennumer = kundennumer
-                    vertrieb_angebot.zoho_id = int(zoho_id)
-                    vertrieb_angebot.save()
-                    form.save()  # type:ignore
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat ein PDF Ticket für einen Kunden erstellt.",
-                            f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
-                        )
-                    return redirect(
-                    "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
-                        )
-                except:
-                    kundennumer = zoho_last_name_to_kundennumer[zoho_last_name]
-                    zoho_id = zoho_last_name_to_zoho_id[zoho_last_name]
-                    vertrieb_angebot.zoho_kundennumer = kundennumer
-                    vertrieb_angebot.zoho_id = int(zoho_id)
-                    vertrieb_angebot.save()
-                    form.save()  # type:ignore
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat ein PDF Ticket für einen Kunden erstellt.",
-                            f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
-                        )
-                    return redirect(
-                    "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
-                        )
+                #     vertrieb_angebot.zoho_kundennumer = kundennumer
+                #     vertrieb_angebot.zoho_id = int(zoho_id)
+                vertrieb_angebot.save()
+                form.save()  # type:ignore
+                if TELEGRAM_LOGGING:
+                    send_custom_message(
+                        user,
+                        "hat ein PDF Ticket für einen Kunden erstellt.",
+                        f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
+                    )
+                return redirect(
+                "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
+                    )
+                # except:
+                #     kundennumer = zoho_last_name_to_kundennumer[zoho_last_name]
+                #     zoho_id = zoho_last_name_to_zoho_id[zoho_last_name]
+                #     vertrieb_angebot.zoho_kundennumer = kundennumer
+                #     vertrieb_angebot.zoho_id = int(zoho_id)
+                #     vertrieb_angebot.save()
+                #     form.save()  # type:ignore
+                #     if TELEGRAM_LOGGING:
+                #         send_custom_message(
+                #             user,
+                #             "hat ein PDF Ticket für einen Kunden erstellt.",
+                #             f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
+                #         )
+                #     return redirect(
+                #     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
+                #         )
 
 
                 
