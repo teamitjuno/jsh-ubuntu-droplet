@@ -1323,10 +1323,9 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 }
                 name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
                 name = form.cleaned_data["name"]
-                if name:
-
+                if name != '':
+                    
                     kundennumer = name_to_kundennumer[name]
-
                     zoho_id = name_to_zoho_id[name]
 
                     vertrieb_angebot.zoho_kundennumer = kundennumer
