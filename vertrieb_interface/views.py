@@ -1086,17 +1086,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
                     instance = form.instance
-                    profile, created = User.objects.get_or_create(
-                        zoho_id=request.user.zoho_id
-                    )
-
-                    data_loads = json.loads(profile.zoho_data_text)
-                    name = instance.name
-
-                    data = next(
-                        (item for item in data_loads if item["name"] == name), None
-                    )
-                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    name_to_kundennumer = {
+                        item["name"]: item["zoho_kundennumer"] for item in data
+                    }
+                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                    name = form.cleaned_data["name"]
+                    kundennumer = name_to_kundennumer[name]
+                    instance.zoho_kundennumer = kundennumer
                     instance.save()
 
                     vertrieb_angebot.save()
@@ -1107,7 +1104,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     new_record_id = response_data["data"]["ID"]
                     vertrieb_angebot.angebot_zoho_id = new_record_id
                     vertrieb_angebot.save()
-                    # self._log_and_notify_success(user)
+            
                     if TELEGRAM_LOGGING:
                         send_custom_message(
                             user,
@@ -1119,24 +1116,24 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "zahlungs":
-                # self._log_and_notify_attempt(user, action_type)
+         
                 if form.is_valid():
                     instance = form.instance
                     instance.zahlungsbedingungen = form.cleaned_data[
                         "zahlungsbedingungen"
                     ]
                     instance.save(update_fields=["zahlungsbedingungen"])
-                    # self._log_and_notify_success(user)
+       
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "kalkulation_erstellen":
-                # self._log_and_notify_attempt(user, action_type)
+       
                 if form.is_valid():
                     instance = form.instance
                     instance.save()
-                    # self._log_and_notify_success(user)
+                   
                     return redirect(
                         "vertrieb_interface:create_calc_pdf",
                         vertrieb_angebot.angebot_id,
