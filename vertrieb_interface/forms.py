@@ -219,7 +219,7 @@ def validate_range(value, hersteller):
 
     # Check if value is within the valid range
     # Note: For Huawei, we check if value is strictly less than 18, as per your condition
-    if not isinstance(value, int) or not 0 < value < max_values.get(hersteller, max_value + 1):
+    if not isinstance(value, int) or not 0 <= value < max_values.get(hersteller, max_value + 1):
         # Use %(value)s for string interpolation in the default error message
         error_message = error_messages.get(hersteller, error_messages["default"]) % {'value': value}
         return error_message, False
