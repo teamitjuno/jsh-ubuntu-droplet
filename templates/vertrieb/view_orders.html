@@ -35,6 +35,7 @@
                                             
                                             <th>Link</th>
                                             <th>Entfernen</th>
+                                            <th>Kalkulation</th>
                                             
                                             
                                             {% comment %} <th>Kalkulation</th> {% endcomment %}
@@ -110,11 +111,11 @@
                                             </form>
                                             </td>
                                             
-                                            {% comment %} <td>
+                                            <td>
                                                 {% if vertrieb_angebot.angebot_id_assigned %}   
                                                 <a href="{% url 'vertrieb_interface:edit_calc' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
                                                 {% endif %}
-                                            </td> {% endcomment %}
+                                            </td>
                                             
                                             
                                                 {% comment %} {% if vertrieb_angebot.is_locked %}
