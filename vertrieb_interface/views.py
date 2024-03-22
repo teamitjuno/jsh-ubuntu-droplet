@@ -1145,16 +1145,16 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         instance.zoho_kundennumer = kundennumer
                         instance.save()
                         form.save()
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
+                        # return redirect(
+                        #     "vertrieb_interface:edit_angebot",
+                        #     vertrieb_angebot.angebot_id,
+                        # )
                     else:
                         form.save()
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
+                        # return redirect(
+                        #     "vertrieb_interface:edit_angebot",
+                        #     vertrieb_angebot.angebot_id,
+                        # )
 
 
             elif action_type == "save":
@@ -1170,50 +1170,55 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     }
                     name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
                     name = form.cleaned_data["name"]
-                    kundennumer = name_to_kundennumer[name]
-                    instance.zoho_kundennumer = kundennumer
-                    angebot_existing = VertriebAngebot.objects.filter(
+                    if name != '':
+                        kundennumer = name_to_kundennumer[name]
+                        instance.zoho_kundennumer = kundennumer
+                        angebot_existing = VertriebAngebot.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
                         status="",
                         zoho_kundennumer=kundennumer,
-                    )
-
-                    if angebot_existing.count() != 0:
-                        extracted_part = (
-                            str(angebot_existing)
-                            .split("VertriebAngebot: ")[1]
-                            .split(">]")[0]
                         )
-                        # Add a message indicating that there are duplicate instances
-                        form.add_error(
-                            None,
-                            f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
-                        )
-                        return self.form_invalid(form, vertrieb_angebot, request)
+                        if angebot_existing.count() != 0:
+                            extracted_part = (
+                                str(angebot_existing)
+                                .split("VertriebAngebot: ")[1]
+                                .split(">]")[0]
+                            )
+                            # Add a message indicating that there are duplicate instances
+                            form.add_error(
+                                None,
+                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
+                            )
+                            return self.form_invalid(form, vertrieb_angebot, request)
+                        else:
+                            instance.save()
+                            form.save()
+                            put_form_data_to_zoho_jpp(form)
+                            all_user_angebots_list = fetch_user_angebote_all(request)
+                            user.zoho_data_text = json.dumps(all_user_angebots_list)
+                            user.save()
+                            CustomLogEntry.objects.log_action(
+                                user_id=vertrieb_angebot.user_id,
+                                content_type_id=ContentType.objects.get_for_model(
+                                    vertrieb_angebot
+                                ).pk,
+                                object_id=vertrieb_angebot.pk,
+                                object_repr=str(vertrieb_angebot),
+                                action_flag=CHANGE,
+                                status=vertrieb_angebot.status,
+                            )
+                            # return redirect(
+                            #     "vertrieb_interface:edit_angebot",
+                            #     vertrieb_angebot.angebot_id,
+                            # )
 
                     else:
-                        instance.save()
-                        form.save()
-                        put_form_data_to_zoho_jpp(form)
-                        all_user_angebots_list = fetch_user_angebote_all(request)
-                        user.zoho_data_text = json.dumps(all_user_angebots_list)
-                        user.save()
-                        CustomLogEntry.objects.log_action(
-                            user_id=vertrieb_angebot.user_id,
-                            content_type_id=ContentType.objects.get_for_model(
-                                vertrieb_angebot
-                            ).pk,
-                            object_id=vertrieb_angebot.pk,
-                            object_repr=str(vertrieb_angebot),
-                            action_flag=CHANGE,
-                            status=vertrieb_angebot.status,
+                        form.add_error(
+                            None,
+                            f"Sie hat keine Interessent ausgewählt",
                         )
-
-                        return redirect(
-                            "vertrieb_interface:edit_angebot",
-                            vertrieb_angebot.angebot_id,
-                        )
+                        return self.form_invalid(form, vertrieb_angebot, request)
 
             return self.form_invalid(form, vertrieb_angebot, request)
 
