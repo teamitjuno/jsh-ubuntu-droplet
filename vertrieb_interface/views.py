@@ -1368,11 +1368,19 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
             profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
 
-            data_loads = json.loads(profile.zoho_data_text)
-            name = instance.name
+            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+            name_to_kundennumer = {
+                item["name"]: item["zoho_kundennumer"] for item in data
+            }
+            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+            name = form.cleaned_data["name"]
 
-            data = next((item for item in data_loads if item["name"] == name), None)
-            instance.zoho_kundennumer = data.get("zoho_kundennumer")
+            kundennumer = name_to_kundennumer[name]
+
+            zoho_id = name_to_zoho_id[name]
+
+            vertrieb_angebot.zoho_kundennumer = kundennumer
+            vertrieb_angebot.zoho_id = int(zoho_id)
             vertrieb_angebot.save()
             instance.save()
 
