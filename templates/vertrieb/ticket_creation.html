@@ -26,6 +26,7 @@
                                     <thead>
                                         <tr>
                                             <th>Kunde</th>
+                                            <th>Status_PVA</th>
                                             <th>Solar Module</th>
                                             <th>AngebotSumme</th>
                                             <th>Datum</th>
@@ -39,6 +40,7 @@
                                         {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert"%}
                                         <tr>
                                             <td>{{ vertrieb_angebot.name }}</td>
+                                            <td>{{ vertrieb_angebot.status_pva }}
                                                 <td>
                                                     <h5 class="font-16 my-1 fw-normal link-warning">{{ vertrieb_angebot.solar_module }}  |  {{ vertrieb_angebot.modulanzahl }} </h5>
                                                     {% if vertrieb_angebot.anzOptimizer > 0 %}
