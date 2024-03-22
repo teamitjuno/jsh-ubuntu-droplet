@@ -251,7 +251,7 @@
                                             <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-secondary-lighten text-secondary"></i>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
-                                            <h5 class="fw-semibold mt-0 mb-1">leerer Status</h5>
+                                            <h5 class="fw-semibold mt-0 mb-1">offene Angebote</h5>
                                             <ul class="list-inline mb-0 text-muted">
                                                 <li class="list-inline-item"><b>{{ lee }}</b> leerer</li>
                                             </ul>
@@ -698,7 +698,7 @@ $(document).ready(function() {
         },
         colors: dataColors ? dataColors.split(",") : colors,
         series: series,
-        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch", "leerer Status"],
+        labels: ["Angenommen", "Abgelehnt", "Bekommen", "in Kontakt und Kontaktversuch", "offene Angebote"],
         plotOptions: {
             radialBar: {
                 track: {
