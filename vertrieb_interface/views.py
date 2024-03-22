@@ -1140,14 +1140,22 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
                     name = form.cleaned_data["name"]
-                    kundennumer = name_to_kundennumer[name]
-                    instance.zoho_kundennumer = kundennumer
-                    vertrieb_angebot.save()
-                    form.save()
-                    return redirect(
-                        "vertrieb_interface:edit_angebot",
-                        vertrieb_angebot.angebot_id,
-                    )
+                    if name != '':
+                        kundennumer = name_to_kundennumer[name]
+                        instance.zoho_kundennumer = kundennumer
+                        instance.save()
+                        form.save()
+                        return redirect(
+                            "vertrieb_interface:edit_angebot",
+                            vertrieb_angebot.angebot_id,
+                        )
+                    else:
+                        form.save()
+                        return redirect(
+                            "vertrieb_interface:edit_angebot",
+                            vertrieb_angebot.angebot_id,
+                        )
+
 
             elif action_type == "save":
 
