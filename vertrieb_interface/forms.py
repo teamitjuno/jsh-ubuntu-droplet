@@ -1452,17 +1452,7 @@ class VertriebAngebotForm(ModelForm):
         vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anrede = cleaned_data.get("anrede")
-        if anrede is None or anrede == "":
-            raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
-                params={"anrede": anrede},
-            )
-        if anrede != "Firma":
-            # Perform validation for vorname_nachname if anrede is not "Firma"
-            if not vorname_nachname:  # or any other validation you need
-                raise ValidationError(
-                    "Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'."
-                )
+        
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1493,7 +1483,17 @@ class VertriebAngebotForm(ModelForm):
                 params={"name": name},
             )
 
-        # Validation for 'vorname_nachname'
+        if anrede is None or anrede == "":
+            raise ValidationError(
+                ("Dieses Feld ist erforderlich"),
+                params={"anrede": anrede},
+            )
+        if anrede != "Firma":
+            # Perform validation for vorname_nachname if anrede is not "Firma"
+            if not vorname_nachname:  # or any other validation you need
+                raise ValidationError(
+                    "Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'."
+                )
 
         if vorname_nachname is None or vorname_nachname == "":
             raise ValidationError(
