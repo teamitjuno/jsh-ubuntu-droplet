@@ -1782,6 +1782,16 @@ class TicketForm(forms.ModelForm):
             attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
         ),
     )
+    zoho_last_name = forms.CharField(
+        label="Nachname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_nachname",
+            }
+        ),
+    )
     module_ticket = forms.ChoiceField(
         label="Zusätzlich & Abzüge: Module",
         choices=[
@@ -1887,6 +1897,7 @@ class TicketForm(forms.ModelForm):
         fields = [
             "is_locked",
             "name",
+            "zoho_last_name",
             "hersteller",
             "module_ticket",
             "elwa_ticket",
