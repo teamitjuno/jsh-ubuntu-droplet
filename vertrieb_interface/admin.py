@@ -75,6 +75,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "angebot_zoho_id",
                     "status",
                     "status_change_date",
+                    "zoho_first_name",
+                    "zoho_last_name",
                 ),
                 "classes": ("collapse",),
             },
