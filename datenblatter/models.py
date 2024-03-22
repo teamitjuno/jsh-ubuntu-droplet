@@ -20,9 +20,15 @@ class Datenblatter(models.Model):
     backup_box_viessmann = models.FileField(upload_to="uploads/", blank=True, null=True)
     optimizer = models.FileField(upload_to="uploads/", blank=True, null=True)
     huawei_power_sensor = models.FileField(upload_to="uploads/", blank=True, null=True)
-    huawei_smart_energie_controller = models.FileField(upload_to="uploads/", blank=True, null=True)
+    huawei_smart_energie_controller = models.FileField(
+        upload_to="uploads/", blank=True, null=True
+    )
     optimizer_viessmann = models.FileField(upload_to="uploads/", blank=True, null=True)
     viessmann_tigo = models.FileField(upload_to="uploads/", blank=True, null=True)
-    viessmann_allgemeine_bedingungen = models.FileField(upload_to="uploads/", blank=True, null=True)
-    viessmann_versicherung_ausweis = models.FileField(upload_to="uploads/", blank=True, null=True)
+    viessmann_allgemeine_bedingungen = models.FileField(
+        upload_to="uploads/", blank=True, null=True
+    )
+    viessmann_versicherung_ausweis = models.FileField(
+        upload_to="uploads/", blank=True, null=True
+    )
     ac_thor = models.FileField(upload_to="uploads/", blank=True, null=True)

@@ -24,7 +24,14 @@ class DatenblatterAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Solar Modules",
-            {"fields": ("solar_module_1", "solar_module_2", "solar_module_3", "solar_module_4",)},
+            {
+                "fields": (
+                    "solar_module_1",
+                    "solar_module_2",
+                    "solar_module_3",
+                    "solar_module_4",
+                )
+            },
         ),
         (
             "Other Components",

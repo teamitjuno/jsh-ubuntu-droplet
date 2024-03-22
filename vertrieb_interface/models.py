@@ -471,6 +471,7 @@ class VertriebAngebot(TimeStampMixin):
     datenblatter_wallbox = models.BooleanField(default=False)
     datenblatter_backup_box = models.BooleanField(default=False)
     datenblatter_optimizer = models.BooleanField(default=False)
+    datenblatter_thor = models.BooleanField(default=False)
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
     angebot_pdf_admin = models.BinaryField(blank=True, null=True)
@@ -538,6 +539,8 @@ class VertriebAngebot(TimeStampMixin):
             self.datenblatter_wallbox = True
         if self.notstrom == True:
             self.datenblatter_backup_box = True
+        if self.thor == True:
+            self.datenblatter_thor = True
         super(VertriebAngebot, self).save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(

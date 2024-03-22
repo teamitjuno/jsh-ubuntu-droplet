@@ -113,13 +113,13 @@ def fetch_user_angebote_all(request):
 
             break
         else:
-            
+
             all_user_angebots_list.extend(process_all_user_data(data))
 
             start_index += LIMIT_ALL
             if len(data.get("data")) < LIMIT_ALL:
                 break
-    
+
     return all_user_angebots_list
 
 
@@ -292,7 +292,7 @@ def put_form_data_to_zoho_jpp(form):
             },
         }
     }
-    
+
     json_payload = json.dumps(payload, ensure_ascii=True)
     headers["Content-Type"] = "application/json"
 
@@ -300,7 +300,6 @@ def put_form_data_to_zoho_jpp(form):
     response = requests.patch(update_url, headers=headers, json=payload)
 
     res = response.json()
-    
 
     return response.json()
 
@@ -357,6 +356,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
     return response
 
+
 def pushTicket(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form "
     access_token = refresh_access_token()
@@ -367,28 +367,28 @@ def pushTicket(vertrieb_angebot, user_zoho_id):
     )
     formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
 
-#     dataMap = {"Ticket" : {
-#     "Wechselrichter" : {
-#     "Hersteller_Typ": vertrieb_angebot.hersteller,
-#     "Leistung_kVA": float/decimal,
-#     "Status_Bau": String mit Optionen wie Status_PVA synchron gehalten (für Analyse/Lager relevant),
-#     "PVA_klein": ID PVA_klein,
-#     },
-#     "PVA_klein": ID PVA_klein (Pflichtfeld)
-#     "Privatkunde": ID Interessent
-#     "Vertriebler": ID Vertriebler
-#     "Status": Startwert ist immer "ausstehend" 
-#     "Optionen": "ausstehend","bearbeitet","freigegeben","on Hold" 
-#     "Ticket_erstellt_am": Datum
-#     "Ticket_verl_ngert_am": Datum
-#     "Bisher_geplante_Module": String (Text mit Info der Module aus PVA_klein)
-#     "M_gliche_Anzahl_Module": Integer
-#    "Modulanzahl": Startwert ist leer
-#     "Optionen": "Anzahl gleichbleibend", "Anzahl muss angepasst werden"
-#     "Notizen": String
-#     "Ticket_erstellt_durch": ID von Innendienstler in Zoho, muss eventuell umgebaut werden, wenn Tickets aus Angebotstool erstellt werden
-#     }
-#     }
+    #     dataMap = {"Ticket" : {
+    #     "Wechselrichter" : {
+    #     "Hersteller_Typ": vertrieb_angebot.hersteller,
+    #     "Leistung_kVA": float/decimal,
+    #     "Status_Bau": String mit Optionen wie Status_PVA synchron gehalten (für Analyse/Lager relevant),
+    #     "PVA_klein": ID PVA_klein,
+    #     },
+    #     "PVA_klein": ID PVA_klein (Pflichtfeld)
+    #     "Privatkunde": ID Interessent
+    #     "Vertriebler": ID Vertriebler
+    #     "Status": Startwert ist immer "ausstehend"
+    #     "Optionen": "ausstehend","bearbeitet","freigegeben","on Hold"
+    #     "Ticket_erstellt_am": Datum
+    #     "Ticket_verl_ngert_am": Datum
+    #     "Bisher_geplante_Module": String (Text mit Info der Module aus PVA_klein)
+    #     "M_gliche_Anzahl_Module": Integer
+    #    "Modulanzahl": Startwert ist leer
+    #     "Optionen": "Anzahl gleichbleibend", "Anzahl muss angepasst werden"
+    #     "Notizen": String
+    #     "Ticket_erstellt_durch": ID von Innendienstler in Zoho, muss eventuell umgebaut werden, wenn Tickets aus Angebotstool erstellt werden
+    #     }
+    #     }
     dataMap = {
         "data": {
             "Angebot_ID": str(vertrieb_angebot.angebot_id),
@@ -426,6 +426,8 @@ def pushTicket(vertrieb_angebot, user_zoho_id):
     )
 
     return response
+
+
 import requests
 
 

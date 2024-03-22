@@ -219,7 +219,7 @@ def validate_range(value, hersteller):
 
     # Check if value is within the valid range
     # Note: For Huawei, we check if value is strictly less than 18, as per your condition
-    if not isinstance(value, int) or not 0 <= value < max_values.get(hersteller, max_value + 1):
+    if not isinstance(value, int) or not 0 <= value <= max_values.get(hersteller, max_value + 1):
         # Use %(value)s for string interpolation in the default error message
         error_message = error_messages.get(hersteller, error_messages["default"]) % {'value': value}
         return error_message, False
@@ -333,6 +333,16 @@ class VertriebAngebotEmailForm(ModelForm):
             }
         ),
     )
+    datenblatter_thor = forms.BooleanField(
+        label="Datenblatter Thor",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_thor",
+            }
+        ),
+    )
 
     class Meta:
         model = VertriebAngebot
@@ -345,6 +355,7 @@ class VertriebAngebotEmailForm(ModelForm):
             "datenblatter_wallbox",
             "datenblatter_backup_box",
             "datenblatter_optimizer",
+            "datenblatter_thor",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -370,6 +381,9 @@ class VertriebAngebotEmailForm(ModelForm):
             )
             self.fields["datenblatter_optimizer"].initial = (
                 self.instance.datenblatter_optimizer
+            )
+            self.fields["datenblatter_thor"].initial = (
+                self.instance.datenblatter_thor
             )
 
     def save(self, commit=True):
