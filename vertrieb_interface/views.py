@@ -1046,22 +1046,17 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         if request.method == "POST":
             action_type = request.POST.get("action_type")
             if action_type == "switch_to_bekommen":
-                # self._log_and_notify_attempt(user, action_type)
-
                 if form.is_valid():
                     instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
-                    profile, created = User.objects.get_or_create(
-                        zoho_id=request.user.zoho_id
-                    )
-
-                    data_loads = json.loads(profile.zoho_data_text)
-                    name = instance.name
-
-                    data = next(
-                        (item for item in data_loads if item["name"] == name), None
-                    )
-                    instance.zoho_kundennumer = data.get("zoho_kundennumer")
+                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    name_to_kundennumer = {
+                        item["name"]: item["zoho_kundennumer"] for item in data
+                    }
+                    
+                    name = form.cleaned_data["name"]
+                    kundennumer = name_to_kundennumer[name]
+                    instance.zoho_kundennumer = kundennumer
                     vertrieb_angebot.save()
                     form.instance.status = "bekommen"
                     form.save()
@@ -1071,7 +1066,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     vertrieb_angebot.angebot_zoho_id = new_record_id
                     vertrieb_angebot.save()
 
-                    # self._log_and_notify_success(user)
                     if TELEGRAM_LOGGING:
                         send_message_to_bot(
                             f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}"
@@ -1081,7 +1075,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "switch_to_bekommen_pdf_plus_kalk":
-                # self._log_and_notify_attempt(user, action_type)
 
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
@@ -1090,7 +1083,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     name_to_kundennumer = {
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
-                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
+                    
                     name = form.cleaned_data["name"]
                     kundennumer = name_to_kundennumer[name]
                     instance.zoho_kundennumer = kundennumer
@@ -1139,7 +1132,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "angebotsumme_rechnen":
-                # self._log_and_notify_attempt(user, action_type)
                 if form.is_valid():
                     instance = form.instance
                     instance.angebot_id_assigned = False
@@ -1147,14 +1139,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     name_to_kundennumer = {
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
-                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
                     name = form.cleaned_data["name"]
                     kundennumer = name_to_kundennumer[name]
                     instance.zoho_kundennumer = kundennumer
                     vertrieb_angebot.save()
                     form.save()
-
-                    # self._log_and_notify_success(user)
                     return redirect(
                         "vertrieb_interface:edit_angebot",
                         vertrieb_angebot.angebot_id,
