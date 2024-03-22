@@ -37,7 +37,7 @@
                                     <tbody>
                                         {% for vertrieb_angebot in angebots %}
                                         
-                                        {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert"%}
+                                        {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert" and if vertrieb_angebot.status_pva == "in Prüfung" and vertrieb_angebot.status_pva == "in Planung" and vertrieb_angebot.status_pva == "projektiert" and vertrieb_angebot.status_pva == "in Bau" vertrieb_angebot.status_pva == "abgeschlossen"%}
                                         <tr>
                                             <td>{{ vertrieb_angebot.name }}</td>
                                             <td>{{ vertrieb_angebot.status_pva }}
