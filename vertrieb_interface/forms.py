@@ -206,19 +206,23 @@ def validate_optimizer_ticket_anzahl(value):
 
 
 def validate_range(value, hersteller):
-    # Define the maximum values for different hersteller
-    max_values = {"Viessmann": 3, "default": 6}
+    # Update the maximum values for different hersteller, including Huawei
+    max_values = {"Viessmann": 3, "Huawei": 18, "default": 6}
     max_value = max_values.get(hersteller, max_values["default"])
 
-    # Prepare the error messages
+    # Update the error messages, including a specific message for Huawei
     error_messages = {
         "Viessmann": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
+        "Huawei": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 18 sein.",
         "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
     }
 
     # Check if value is within the valid range
-    if not isinstance(value, int) or not 0 <= value <= max_value:
-        return error_messages.get(hersteller, error_messages["default"]), False
+    # Note: For Huawei, we check if value is strictly less than 18, as per your condition
+    if not isinstance(value, int) or not 0 < value < max_values.get(hersteller, max_value + 1):
+        # Use %(value)s for string interpolation in the default error message
+        error_message = error_messages.get(hersteller, error_messages["default"]) % {'value': value}
+        return error_message, False
     return "", True
 
 
@@ -447,7 +451,6 @@ class VertriebAngebotForm(ModelForm):
     )
     status_pva = forms.ChoiceField(
         label="Status_PVA",
-        
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -1720,9 +1723,7 @@ class UpdateAdminAngebotForm(forms.ModelForm):
 
 class TicketForm(forms.ModelForm):
     name = forms.CharField(
-        
         label="Interessent",
-        
         widget=forms.Select(
             attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
         ),
@@ -1748,12 +1749,8 @@ class TicketForm(forms.ModelForm):
     hersteller = forms.ChoiceField(
         label="Hersteller",
         choices=HERSTELLER_CHOICES,
-        
-        
-        
         widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
     )
-    
 
     modul_anzahl_ticket = forms.IntegerField(
         label="Module Ticket-Anzahl",
@@ -1864,7 +1861,7 @@ class TicketForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        
+
         name = cleaned_data.get("name")
         name = cleaned_data.get("hersteller")
 
