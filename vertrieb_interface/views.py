@@ -1327,7 +1327,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 }
                 zoho_last_name_to_zoho_id = {item["zoho_last_name"]: item["zoho_id"] for item in data}
                 name = form.cleaned_data["name"]
-                zoho_last_name = form.cleaned_data["zoho_last_name"]
+                zoho_last_name = vertrieb_angebot.zoho_last_name
                 try:
                     kundennumer = name_to_kundennumer[name]
                     zoho_id = name_to_zoho_id[name]
