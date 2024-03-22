@@ -1326,7 +1326,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     item["zoho_last_name"]: item["zoho_kundennumer"] for item in data
                 }
                 zoho_last_name_to_zoho_id = {item["zoho_last_name"]: item["zoho_id"] for item in data}
-                name = form.cleaned_data["name"]
+                name = vertrieb_angebot.name
                 zoho_last_name = vertrieb_angebot.zoho_last_name
                 try:
                     kundennumer = name_to_kundennumer[name]
@@ -1348,7 +1348,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 except:
                     kundennumer = zoho_last_name_to_kundennumer[zoho_last_name]
                     zoho_id = zoho_last_name_to_zoho_id[zoho_last_name]
-
                     vertrieb_angebot.zoho_kundennumer = kundennumer
                     vertrieb_angebot.zoho_id = int(zoho_id)
                     vertrieb_angebot.save()
