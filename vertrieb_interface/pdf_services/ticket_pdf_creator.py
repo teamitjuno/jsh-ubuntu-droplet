@@ -167,7 +167,13 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 5, "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n", 0, "L")
+                self.multi_cell(
+                    0,
+                    5,
+                    "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -193,8 +199,10 @@ class PDF(FPDF):
                 self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
                 self.set_y(y + 5)
                 self.set_x(25)
-                self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
-                self.set_y(y+15)
+                self.multi_cell(
+                    0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L"
+                )
+                self.set_y(y + 15)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
@@ -248,7 +256,7 @@ class PDF(FPDF):
             #     self.set_y(y + 30)
             #     self.set_x(25)
             #     self.set_font("JUNO Solar Lt", "", 10)
-            #     self.multi_cell(0, 6, "∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre", 0, 0, "L")                
+            #     self.multi_cell(0, 6, "∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre", 0, 0, "L")
             #     self.set_y(y + 25)
             #     self.set_x(25)
             #     # self.set_font('JUNO Solar Lt', '', 10)
@@ -260,7 +268,7 @@ class PDF(FPDF):
             #     self.set_y(y + 25)
             #     self.set_x(170)
             #     self.cell(0, 6, "inklusive", 0, 0, "R")
-            
+
             # Wand halterung
             if data["wandhalterungTicket"] > 0:
                 # self.line(10, y + 3, 200, y + 3)
@@ -281,7 +289,9 @@ class PDF(FPDF):
                 self.cell(
                     0,
                     6,
-                    convertCurrency("{:,.2f} €".format(data["wandhalterungTicketPreis"])),
+                    convertCurrency(
+                        "{:,.2f} €".format(data["wandhalterungTicketPreis"])
+                    ),
                     0,
                     0,
                     "R",
@@ -372,12 +382,12 @@ class PDF(FPDF):
                 self.set_font("JUNO Solar Lt", "", 10)
 
                 self.multi_cell(
-                        0,
-                        5,
-                        "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
-                        0,
-                        "L",
-                    )
+                    0,
+                    5,
+                    "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -405,7 +415,13 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 5, "∙ individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre", 0,"L")
+                self.multi_cell(
+                    0,
+                    5,
+                    "∙ individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -430,11 +446,13 @@ class PDF(FPDF):
                 self.set_y(y + 5)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(0, 6, "Drahtlose Kommunikation mit Tigo Smart Modulen", 0, 0, "L")
+                self.multi_cell(
+                    0, 6, "Drahtlose Kommunikation mit Tigo Smart Modulen", 0, 0, "L"
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 5, '1 Stk.', 0, "L")
+                self.multi_cell(0, 5, "1 Stk.", 0, "L")
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
@@ -450,11 +468,11 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 5, '1 Stk.', 0, "L")
+                self.multi_cell(0, 5, "1 Stk.", 0, "L")
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y+=7
+                y += 7
             # Tabelle Eintrag 2X
             if data["batterieTicket"] > 0:
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -465,7 +483,9 @@ class PDF(FPDF):
                 self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
                 self.set_y(y + 5)
                 self.set_x(25)
-                self.multi_cell(0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L")
+                self.multi_cell(
+                    0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L"
+                )
                 self.set_y(y + 15)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
@@ -540,7 +560,7 @@ class PDF(FPDF):
                     0,
                     "R",
                 )
-                
+
                 y += 17
             # Tabelle Eintrag Ersatzstrom
             if data["notstromTicket"] > 0:
@@ -556,12 +576,12 @@ class PDF(FPDF):
                 self.set_font("JUNO Solar Lt", "", 10)
 
                 self.multi_cell(
-                        0,
-                        5,
-                        "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
-                        0,
-                        "L",
-                    )
+                    0,
+                    5,
+                    "Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre",
+                    0,
+                    "L",
+                )
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
