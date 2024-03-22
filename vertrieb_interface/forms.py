@@ -1398,16 +1398,56 @@ class VertriebAngebotForm(ModelForm):
         }
 
         action = self.data.get("action_type")
+        hersteller = cleaned_data.get("hersteller")
+        speicher_model = cleaned_data.get("speicher_model")
+        modulanzahl = cleaned_data.get("modulanzahl")
+        anzOptimizer = cleaned_data.get("anzOptimizer")
+        anz_speicher = cleaned_data.get("anz_speicher")
+        message, is_valid = validate_range(anz_speicher, hersteller)
+        if not is_valid:
+            self.add_error(
+                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
+            )
+        if anzOptimizer is not None and modulanzahl is not None:
+            if anzOptimizer > modulanzahl:
+                self.add_error(
+                    "anzOptimizer",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Optimierer kann nicht größer sein als die Anzahl der Module."
+                        ),
+                        params={
+                            "anzOptimizer": anzOptimizer,
+                            "modulanzahl": modulanzahl,
+                        },
+                    ),
+                )
+        wallbox = cleaned_data.get("wallbox")
+        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
 
+        if wallbox is not None and wallbox_anzahl is not None:
+            if wallbox == True and wallbox_anzahl == 0:
+                self.add_error(
+                    "wallbox",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
+                        ),
+                        params={
+                            "wallbox": wallbox,
+                            "wallbox_anzahl": wallbox_anzahl,
+                        },
+                    ),
+                )
         if action == "angebotsumme_rechnen":
             return cleaned_data
 
         interessent = cleaned_data.get("name")
-        hersteller = cleaned_data.get("hersteller")
+        
         wallboxtyp = cleaned_data.get("wallboxtyp")
         wechselrichter_model = cleaned_data.get("wechselrichter_model")
         speicher_model = cleaned_data.get("speicher_model")
-        # kundennumer = cleaned_data.get("kundennumer")
+        kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")
