@@ -246,7 +246,7 @@ class VertriebAngebot(TimeStampMixin):
     #   ZOHO FIELDS
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
     angebot_zoho_id = models.CharField(max_length=255, blank=True, null=True)
-    angebot_id_assigned = models.BooleanField(default=True)
+    angebot_id_assigned = models.BooleanField(default=False)
     status = models.CharField(
         choices=ANGEBOT_STATUS_CHOICES,
         default="",
