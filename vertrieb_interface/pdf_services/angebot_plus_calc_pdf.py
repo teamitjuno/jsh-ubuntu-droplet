@@ -1013,7 +1013,7 @@ class PDF(FPDF):
         ):
             self.line(18, y, 200, y)
         else:
-            y += 35
+            y += 5
             self.line(18, y, 200, y)
             self.set_y(y + 5)
             self.set_font("JUNO Solar Lt", "B", 12)

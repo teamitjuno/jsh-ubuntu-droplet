@@ -95,6 +95,34 @@ def fetch_data_from_api(url, params=None):
     return None
 
 
+def fetch_form_user_angebote_all(user):
+
+    start_index = 1
+    all_user_angebots_list = []
+
+    while True:
+        params = {
+            "from": start_index,
+            "limit": LIMIT_ALL,
+            "criteria": f"Vertriebler.ID == {user.zoho_id}",
+        }
+
+        data = fetch_data_from_api(VERTRIEB_URL, params)
+
+        if data is None or not data.get("data"):
+
+            break
+        else:
+
+            all_user_angebots_list.extend(process_all_user_data(data))
+
+            start_index += LIMIT_ALL
+            if len(data.get("data")) < LIMIT_ALL:
+                break
+
+    return all_user_angebots_list
+
+
 def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
@@ -129,7 +157,47 @@ def process_all_user_data(data):
     all_user_angebots_list = []
 
     for item in data["data"]:
-        if "ID" in item:
+        if "ID" in item and item.get("Name", {}).get("prefix", "") == "Firma":
+
+            log_and_notify(f'{item.get("Name", {}).get("last_name", "")}!')
+
+            all_user_angebots_list.append(
+                {
+                    "zoho_id": item.get("ID", ""),
+                    "status": item.get("Status", ""),
+                    "status_pva": item.get("Status_PVA", ""),
+                    "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
+                    "anrede": item.get("Name", {}).get("prefix", ""),
+                    "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
+                    "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
+                    + " "
+                    + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
+                        "longitude", ""
+                    ),
+                    "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
+                        "latitude", ""
+                    ),
+                    "telefon_festnetz": item.get("Telefon_Festnetz", ""),
+                    "telefon_mobil": item.get("Telefon_mobil", ""),
+                    "zoho_kundennumer": item.get("Kundennummer", ""),
+                    "email": item.get("Email", ""),
+                    "notizen": item.get("Notizen", ""),
+                    "name": item.get("Name", {}).get("last_name", ""),
+                    "name_first_name": item.get("Name", {}).get("first_name", ""),
+                    "name_last_name": item.get("Name", {}).get("last_name", ""),
+                    "name_suffix": item.get("Name", {}).get("suffix", ""),
+                    "vertriebler_display_value": item.get("Vertriebler", {}).get(
+                        "display_value", ""
+                    ),
+                    "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
+                    "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
+                        "display_value", ""
+                    ),
+                    "anfrage_vom": item.get("Anfrage_vom", ""),
+                }
+            )
+        else:
             all_user_angebots_list.append(
                 {
                     "zoho_id": item.get("ID", ""),
@@ -157,8 +225,8 @@ def process_all_user_data(data):
                     + item.get("Name", {}).get("suffix", "")
                     + ""
                     + item.get("Name", {}).get("first_name", ""),
-                    "zoho_first_name": item.get("Name", {}).get("first_name", ""),
-                    "zoho_last_name": item.get("Name", {}).get("last_name", ""),
+                    "name_first_name": item.get("Name", {}).get("first_name", ""),
+                    "name_last_name": item.get("Name", {}).get("last_name", ""),
                     "name_suffix": item.get("Name", {}).get("suffix", ""),
                     "vertriebler_display_value": item.get("Vertriebler", {}).get(
                         "display_value", ""
@@ -265,9 +333,9 @@ def put_form_data_to_zoho_jpp(form):
 
     bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
     anrede = form_data.get("anrede")
-    zoho_first_name = form_data.get("zoho_first_name")
+    name_first_name = form_data.get("name_first_name")
     name_suffix = form_data.get("name_suffix")
-    zoho_last_name = form_data.get("zoho_last_name")
+    name_last_name = form_data.get("name_last_name")
 
     postal_code = (" ".join(form_data.get("ort").split(" ")[:-1]),)
     district_city = (form_data.get("ort").split(" ")[1],)
@@ -279,11 +347,11 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get("telefon_festnetz"),
             "Telefon_mobil": form_data.get("telefon_mobil"),
             "Name": {
-                "display_value": f"{anrede} {zoho_first_name} {name_suffix} {zoho_last_name}",
+                "display_value": f"{anrede} {name_first_name} {name_suffix} {name_last_name}",
                 "prefix": f"{anrede}",
-                "last_name": f"{zoho_last_name}",
+                "last_name": f"{name_last_name}",
                 "suffix": f"{name_suffix}",
-                "first_name": f"{zoho_first_name}",
+                "first_name": f"{name_first_name}",
             },
             "Adresse_PVA": {
                 "district_city": district_city[0],
@@ -347,14 +415,16 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
         }
     }
-    response = requests.post(url, json=dataMap, headers=headers)
-    response_data = response.json()
-    new_record_id = response_data["data"]["ID"]
-    log_and_notify(
-        f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
-    )
-
-    return response
+    try:
+        response = requests.post(url, json=dataMap, headers=headers)
+        response_data = response.json()
+        new_record_id = response_data["data"]["ID"]
+        log_and_notify(
+            f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
+        )
+        return response
+    except:
+        pass
 
 
 def pushTicket(vertrieb_angebot, user_zoho_id):

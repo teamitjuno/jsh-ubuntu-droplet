@@ -139,12 +139,12 @@
                                                                             </td>
                                                                         </tr>
                                                                         <tr id="tr_first_name">
-                                                                            <th>{{ form.zoho_first_name.label_tag }}</th>
-                                                                            <td>{{ form.zoho_first_name }}</td>
+                                                                            <th>{{ form.name_first_name.label_tag }}</th>
+                                                                            <td>{{ form.name_first_name }}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>{{ form.zoho_last_name.label_tag }}</th>
-                                                                            <td>{{ form.zoho_last_name }}
+                                                                            <th>{{ form.name_last_name.label_tag }}</th>
+                                                                            <td>{{ form.name_last_name }}
                                                                                 
                                                                             </td>
                                                                         </tr>
@@ -1958,8 +1958,8 @@ $(document).ready(function() {
                 // Destructuring data for cleaner access
                 const {
                     name,
-                    zoho_first_name,
-                    zoho_last_name,
+                    name_first_name,
+                    name_last_name,
                     zoho_id,
                     anrede,
                     zoho_kundennumer,
@@ -1977,8 +1977,8 @@ $(document).ready(function() {
 
                 // Update fields with AJAX response data
                 $("#id_vorname_nachname").val(name);
-                $("#id_vorname").val(zoho_first_name);
-                $("#id_nachname").val(zoho_last_name);
+                $("#id_vorname").val(name_first_name);
+                $("#id_nachname").val(name_last_name);
                 $("#id_zoho_id").val(zoho_id);
                 $anredeField.val(anrede);
                 $("#zoho_kundennumer").val(zoho_kundennumer);
@@ -2233,104 +2233,6 @@ $(document).ready(function() {
 
 
 
-{% comment %} <script>
-  function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
-          }
-      }
-      return cookieValue;
-  }
-  
-  const csrftoken = getCookie('csrftoken');
-  
-  document.getElementById('save-btn').addEventListener('click', function() {
-      fetch('/update_vertrieb_angebot/{{ angebot_id }}/', {
-          method: 'POST',
-          body: JSON.stringify({
-              
-              'grundpreis': document.getElementById('grundpreis-input').value,
-              'arbeitspreis': document.getElementById('arbeitspreis-input').value,
-              'prognose': document.getElementById('prognose-input').value,
-              'zeitraum': document.getElementById('zeitraum-input').value,
-              'bis10kWp': document.getElementById('bis10kWp-input').value,
-              'bis40kWp': document.getElementById('bis40kWp-input').value,
-              'ausrichtung': document.getElementById('ausrichtung-input').value
-          }),
-          headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': csrftoken
-          }
-      })
-      .then(response => response.json())
-      .then(data => console.log(data));
-  });
-</script> {% endcomment %}
-{% comment %}   
-<script>
-$(document).ready(function() {
-    var anredeField = $("#id_anrede");
-    var firstNameField = $("#tr_first_name"); // Ensure this matches your field
-    var lastNameLabel = $('label[for="id_nachname"]'); // Adjust the selector as necessary
-
-    function updateFormFields() {
-        if (anredeField.val() === 'Firma') {
-            firstNameField.prop('hidden', true);
-            lastNameLabel.text('Firma');
-        elif (anredeField.val() === 'Familie') {
-            firstNameField.prop('hidden', true);
-            lastNameLabel.text('Nachname');
-        } else {
-            firstNameField.prop('hidden', false);
-            lastNameLabel.text('Nachname');
-        }
-    }
-
-    // Listen for changes on the name field to perform AJAX
-    $("#id_name").change(function() {
-        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Make sure this URL is correct
-        var name = $(this).val();
-
-        $.ajax({
-            url: url,
-            data: {
-                'name': name
-            },
-            success: function(data) {
-                // Fill the form fields with data
-                $("#id_vorname_nachname").val(data.name);
-                $("#id_vorname").val(data.zoho_first_name);
-                $("#id_nachname").val(data.zoho_last_name);
-                $("#id_zoho_id").val(data.zoho_id);
-                $("#id_anrede").val(data.anrede);
-                $("#zoho_kundennumer").val(data.zoho_kundennumer);
-                $("#id_strasse").val(data.strasse);
-                $("#id_email").val(data.email);
-                $("#id_telefon_mobil").val(data.telefon_mobil);
-                $("#id_telefon_festnetz").val(data.telefon_festnetz);
-                $("#id_ort").val(data.ort);
-                $("#id_notizen").val(data.notizen);
-                $("#id_angebot_bekommen_am").val(data.angebot_bekommen_am);
-                $("#longitude").val(data.postanschrift_longitude);
-                $("#latitude").val(data.postanschrift_latitude);
-
-                // Call updateFormFields to reflect any changes from AJAX response
-                updateFormFields();
-            }
-        });
-    });
-
-
-    anredeField.change(updateFormFields);
-});
-</script> {% endcomment %}
 
 
 

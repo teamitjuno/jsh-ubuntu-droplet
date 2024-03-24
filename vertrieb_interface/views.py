@@ -888,43 +888,77 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             angebot_id=angebot_id, user=request.user
         )
         zoho_id = vertrieb_angebot.zoho_id
+        anrede = vertrieb_angebot.anrede
         if zoho_id is not None:
             item = fetch_angenommen_status(request, zoho_id)
-            fetched_data = {
-                "zoho_id": item.get("ID", ""),
-                "status": item.get("Status", ""),
-                "status_pva": item.get("Status_PVA", ""),
-                "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
-                "anrede": item.get("Name", {}).get("prefix", ""),
-                "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
-                "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
-                + " "
-                + item.get("Adresse_PVA", {}).get("district_city", ""),
-                "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
-                    "longitude", ""
-                ),
-                "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
-                    "latitude", ""
-                ),
-                "telefon_festnetz": item.get("Telefon_Festnetz", ""),
-                "telefon_mobil": item.get("Telefon_mobil", ""),
-                # "zoho_kundennumer": kundennumer,
-                "email": item.get("Email", ""),
-                "notizen": item.get("Notizen", ""),
-                "name": item.get("Name", {}).get("last_name", "")
-                + " "
-                + item.get("Name", {}).get("suffix", "")
-                + " "
-                + item.get("Name", {}).get("first_name", ""),
-                "vertriebler_display_value": item.get("Vertriebler", {}).get(
-                    "display_value", ""
-                ),
-                "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
-                "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
-                    "display_value", ""
-                ),
-                "anfrage_vom": item.get("Anfrage_vom", ""),
-            }
+            if anrede != "Firma":
+                fetched_data = {
+                    "zoho_id": item.get("ID", ""),
+                    "status": item.get("Status", ""),
+                    "status_pva": item.get("Status_PVA", ""),
+                    "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
+                    "anrede": item.get("Name", {}).get("prefix", ""),
+                    "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
+                    "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
+                    + " "
+                    + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
+                        "longitude", ""
+                    ),
+                    "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
+                        "latitude", ""
+                    ),
+                    "telefon_festnetz": item.get("Telefon_Festnetz", ""),
+                    "telefon_mobil": item.get("Telefon_mobil", ""),
+                    # "zoho_kundennumer": kundennumer,
+                    "email": item.get("Email", ""),
+                    "notizen": item.get("Notizen", ""),
+                    "name": item.get("Name", {}).get("last_name", "")
+                    + " "
+                    + item.get("Name", {}).get("suffix", "")
+                    + " "
+                    + item.get("Name", {}).get("first_name", ""),
+                    "vertriebler_display_value": item.get("Vertriebler", {}).get(
+                        "display_value", ""
+                    ),
+                    "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
+                    "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
+                        "display_value", ""
+                    ),
+                    "anfrage_vom": item.get("Anfrage_vom", ""),
+                }
+            else:
+                fetched_data = {
+                    "zoho_id": item.get("ID", ""),
+                    "status": item.get("Status", ""),
+                    "status_pva": item.get("Status_PVA", ""),
+                    "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
+                    "anrede": item.get("Name", {}).get("prefix", ""),
+                    "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
+                    "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
+                    + " "
+                    + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
+                        "longitude", ""
+                    ),
+                    "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
+                        "latitude", ""
+                    ),
+                    "telefon_festnetz": item.get("Telefon_Festnetz", ""),
+                    "telefon_mobil": item.get("Telefon_mobil", ""),
+                    # "zoho_kundennumer": kundennumer,
+                    "email": item.get("Email", ""),
+                    "notizen": item.get("Notizen", ""),
+                    "name": item.get("Name", {}).get("last_name", ""),
+                    "vertriebler_display_value": item.get("Vertriebler", {}).get(
+                        "display_value", ""
+                    ),
+                    "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
+                    "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
+                        "display_value", ""
+                    ),
+                    "anfrage_vom": item.get("Anfrage_vom", ""),
+                }
             vertrieb_angebot.ag_fetched_data = json.dumps(fetched_data)
             vertrieb_angebot.save()
         else:
@@ -938,39 +972,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         user = request.user
 
         if zoho_id is not None:
-            item = json.loads(vertrieb_angebot.ag_fetched_data)
 
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
-
-            name = vertrieb_angebot.name
-            zoho_id = vertrieb_angebot.zoho_id
-            kundennumer = name_to_kundennumer[name]
-
-            vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-            vertrieb_angebot.anfrage_ber = item.get("anfrage_vom")
-            vertrieb_angebot.status_pva = item.get("status_pva")
-            vertrieb_angebot.angebot_bekommen_am = (
-                item.get("angebot_bekommen_am")
-                if item.get("angebot_bekommen_am")
-                else ""
-            )
-            vertrieb_angebot.leadstatus = (
-                item.get("leadstatus") if item.get("leadstatus") else ""
-            )
-            vertrieb_angebot.notizen = item.get("notizen")
-            vertrieb_angebot.email = item.get("email")
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.postanschrift_latitude = item.get("postanschrift_latitude")
-            vertrieb_angebot.postanschrift_longitude = item.get(
-                "postanschrift_longitude"
-            )
-            vertrieb_angebot.empfohlen_von = item.get("empfohlen_von")
-            vertrieb_angebot.termine_text = item.get("termine_text")
-            vertrieb_angebot.termine_id = item.get("termine_id")
-            vertrieb_angebot.save()
             form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
             user = request.user
             user_folder = os.path.join(
@@ -1053,7 +1055,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     name_to_kundennumer = {
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
-                    
                     name = form.cleaned_data["name"]
                     kundennumer = name_to_kundennumer[name]
                     instance.zoho_kundennumer = kundennumer
@@ -1083,12 +1084,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     name_to_kundennumer = {
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
-                    
                     name = form.cleaned_data["name"]
                     kundennumer = name_to_kundennumer[name]
                     instance.zoho_kundennumer = kundennumer
                     instance.save()
-
                     vertrieb_angebot.save()
                     form.instance.status = "bekommen"
                     form.save()
@@ -1097,7 +1096,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     new_record_id = response_data["data"]["ID"]
                     vertrieb_angebot.angebot_zoho_id = new_record_id
                     vertrieb_angebot.save()
-            
+
                     if TELEGRAM_LOGGING:
                         send_custom_message(
                             user,
@@ -1109,24 +1108,24 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "zahlungs":
-         
+
                 if form.is_valid():
                     instance = form.instance
                     instance.zahlungsbedingungen = form.cleaned_data[
                         "zahlungsbedingungen"
                     ]
                     instance.save(update_fields=["zahlungsbedingungen"])
-       
+
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "kalkulation_erstellen":
-       
+
                 if form.is_valid():
                     instance = form.instance
                     instance.save()
-                   
+
                     return redirect(
                         "vertrieb_interface:create_calc_pdf",
                         vertrieb_angebot.angebot_id,
@@ -1140,64 +1139,44 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
                     name = form.cleaned_data["name"]
-                    if name != '':
+                    if name != "":
                         kundennumer = name_to_kundennumer[name]
                         instance.zoho_kundennumer = kundennumer
                         instance.save()
                         form.save()
-                        # return redirect(
-                        #     "vertrieb_interface:edit_angebot",
-                        #     vertrieb_angebot.angebot_id,
-                        # )
                     else:
                         form.save()
-                        # return redirect(
-                        #     "vertrieb_interface:edit_angebot",
-                        #     vertrieb_angebot.angebot_id,
-                        # )
-
 
             elif action_type == "save":
-
                 if form.is_valid():
                     instance = form.instance
                     instance.angebot_id_assigned = True
-                    
                     name = instance.name
                     data = json.loads(user.zoho_data_text or '[["test", "test"]]')
                     name_to_kundennumer = {
                         item["name"]: item["zoho_kundennumer"] for item in data
                     }
-                    name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
                     name = form.cleaned_data["name"]
-                    if name != '':
-                        kundennumer = name_to_kundennumer[name]
-                        instance.zoho_kundennumer = kundennumer
-                        angebot_existing = VertriebAngebot.objects.filter(
+                    kundennumer = name_to_kundennumer[name]
+                    instance.zoho_kundennumer = kundennumer
+
+                    angebot_existing = VertriebAngebot.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
                         status="",
                         zoho_kundennumer=kundennumer,
+                    )
+
+                    if angebot_existing.count() != 0:
+                        extracted_part = (
+                            str(angebot_existing)
+                            .split("VertriebAngebot: ")[1]
+                            .split(">]")[0]
                         )
-                        if angebot_existing.count() != 0:
-                            extracted_part = (
-                                str(angebot_existing)
-                                .split("VertriebAngebot: ")[1]
-                                .split(">]")[0]
-                            )
-                            # Add a message indicating that there are duplicate instances
-                            form.add_error(
-                                None,
-                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
-                            )
-                            return self.form_invalid(form, vertrieb_angebot, request)
-                        else:
+                        if vertrieb_angebot.angebot_id == extracted_part:
                             instance.save()
                             form.save()
                             put_form_data_to_zoho_jpp(form)
-                            all_user_angebots_list = fetch_user_angebote_all(request)
-                            user.zoho_data_text = json.dumps(all_user_angebots_list)
-                            user.save()
                             CustomLogEntry.objects.log_action(
                                 user_id=vertrieb_angebot.user_id,
                                 content_type_id=ContentType.objects.get_for_model(
@@ -1208,17 +1187,32 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                                 action_flag=CHANGE,
                                 status=vertrieb_angebot.status,
                             )
-                            # return redirect(
-                            #     "vertrieb_interface:edit_angebot",
-                            #     vertrieb_angebot.angebot_id,
-                            # )
 
+                        else:
+                            form.add_error(
+                                None,
+                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
+                            )
+                            return self.form_invalid(form, vertrieb_angebot, request)
                     else:
-                        form.add_error(
-                            None,
-                            f"Sie hat keine Interessent ausgewählt",
+                        instance.save()
+                        form.save()
+                        put_form_data_to_zoho_jpp(form)
+
+                        CustomLogEntry.objects.log_action(
+                            user_id=vertrieb_angebot.user_id,
+                            content_type_id=ContentType.objects.get_for_model(
+                                vertrieb_angebot
+                            ).pk,
+                            object_id=vertrieb_angebot.pk,
+                            object_repr=str(vertrieb_angebot),
+                            action_flag=CHANGE,
+                            status=vertrieb_angebot.status,
                         )
-                        return self.form_invalid(form, vertrieb_angebot, request)
+                    return redirect(
+                        "vertrieb_interface:edit_angebot",
+                        vertrieb_angebot.angebot_id,
+                    )
 
             return self.form_invalid(form, vertrieb_angebot, request)
 
@@ -1269,8 +1263,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
-        zoho_id = vertrieb_angebot.zoho_id
-
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
@@ -1316,24 +1308,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         if "pdf_erstellen" in request.POST:
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
-
-                # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                # name_to_kundennumer = {
-                #     item["name"]: item["zoho_kundennumer"] for item in data
-                # }
-                # name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-                # zoho_last_name_to_kundennumer = {
-                #     item["zoho_last_name"]: item["zoho_kundennumer"] for item in data
-                # }
-                # zoho_last_name_to_zoho_id = {item["zoho_last_name"]: item["zoho_id"] for item in data}
-                # name = vertrieb_angebot.name
-                # zoho_last_name = vertrieb_angebot.zoho_last_name
-                # try:
-                #     kundennumer = name_to_kundennumer[name]
-                #     zoho_id = name_to_zoho_id[name]
-
-                #     vertrieb_angebot.zoho_kundennumer = kundennumer
-                #     vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
                 if TELEGRAM_LOGGING:
@@ -1343,36 +1317,15 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
                     )
                 return redirect(
-                "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
-                    )
-                # except:
-                #     kundennumer = zoho_last_name_to_kundennumer[zoho_last_name]
-                #     zoho_id = zoho_last_name_to_zoho_id[zoho_last_name]
-                #     vertrieb_angebot.zoho_kundennumer = kundennumer
-                #     vertrieb_angebot.zoho_id = int(zoho_id)
-                #     vertrieb_angebot.save()
-                #     form.save()  # type:ignore
-                #     if TELEGRAM_LOGGING:
-                #         send_custom_message(
-                #             user,
-                #             "hat ein PDF Ticket für einen Kunden erstellt.",
-                #             f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
-                #         )
-                #     return redirect(
-                #     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
-                #         )
+                    "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
+                )
 
-
-                
         elif form.is_valid():
             instance = form.instance
-            
+
             instance.save()
             form.save()
 
-            return redirect(
-                "vertrieb_interface:edit_ticket", vertrieb_angebot.angebot_id
-            )
         return self.form_invalid(form, vertrieb_angebot)
 
     def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
@@ -1930,7 +1883,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VSH"
             ):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
-        
+
         if vertrieb_angebot.datenblatter_optimizer:
             if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["optimizer"])
@@ -1942,7 +1895,9 @@ class DocumentView(LoginRequiredMixin, DetailView):
             if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["speicher_module"])
             else:
-                self._attach_datenblatter(email, datenblatter, ["speicher_module_viessmann"])
+                self._attach_datenblatter(
+                    email, datenblatter, ["speicher_module_viessmann"]
+                )
 
         if vertrieb_angebot.datenblatter_wechselrichter:
             if vertrieb_angebot.hersteller == "Huawei":
@@ -1957,10 +1912,12 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 self._attach_datenblatter(email, datenblatter, ["backup_box"])
 
         if vertrieb_angebot.hersteller == "Viessmann":
-            self._attach_datenblatter(email, datenblatter, ["viessmann_allgemeine_bedingungen"])
-            self._attach_datenblatter(email, datenblatter, ["viessmann_versicherung_ausweis"])
-
-
+            self._attach_datenblatter(
+                email, datenblatter, ["viessmann_allgemeine_bedingungen"]
+            )
+            self._attach_datenblatter(
+                email, datenblatter, ["viessmann_versicherung_ausweis"]
+            )
 
     def _attach_datenblatter(self, email, datenblatter, fields):
         for field in fields:

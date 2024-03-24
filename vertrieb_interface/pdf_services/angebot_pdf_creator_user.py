@@ -918,7 +918,7 @@ class PDF(FPDF):
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
 
-        y += 15
+        y += 10
         # WALLBOX
         if data["wallboxVorh"]:
             if data["hersteller"] == "Huawei":
@@ -1011,7 +1011,7 @@ class PDF(FPDF):
         ):
             self.line(18, y, 200, y)
         else:
-            y += 35
+            y += 5
             self.line(18, y, 200, y)
             self.set_y(y + 5)
             self.set_font("JUNO Solar Lt", "B", 12)

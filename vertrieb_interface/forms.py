@@ -7,7 +7,10 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from vertrieb_interface.get_user_angebots import update_status
+from vertrieb_interface.get_user_angebots import (
+    update_status,
+    fetch_form_user_angebote_all,
+)
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
@@ -219,9 +222,13 @@ def validate_range(value, hersteller):
 
     # Check if value is within the valid range
     # Note: For Huawei, we check if value is strictly less than 18, as per your condition
-    if not isinstance(value, int) or not 0 <= value <= max_values.get(hersteller, max_value + 1):
+    if not isinstance(value, int) or not 0 <= value <= max_values.get(
+        hersteller, max_value + 1
+    ):
         # Use %(value)s for string interpolation in the default error message
-        error_message = error_messages.get(hersteller, error_messages["default"]) % {'value': value}
+        error_message = error_messages.get(hersteller, error_messages["default"]) % {
+            "value": value
+        }
         return error_message, False
     return "", True
 
@@ -382,9 +389,7 @@ class VertriebAngebotEmailForm(ModelForm):
             self.fields["datenblatter_optimizer"].initial = (
                 self.instance.datenblatter_optimizer
             )
-            self.fields["datenblatter_thor"].initial = (
-                self.instance.datenblatter_thor
-            )
+            self.fields["datenblatter_thor"].initial = self.instance.datenblatter_thor
 
     def save(self, commit=True):
         form = super(VertriebAngebotEmailForm, self).save(commit=False)
@@ -565,7 +570,7 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-    zoho_first_name = forms.CharField(
+    name_first_name = forms.CharField(
         label="Vorname",
         required=False,
         widget=forms.TextInput(
@@ -585,7 +590,7 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-    zoho_last_name = forms.CharField(
+    name_last_name = forms.CharField(
         label="Nachname",
         required=False,
         widget=forms.TextInput(
@@ -1211,9 +1216,9 @@ class VertriebAngebotForm(ModelForm):
             "ablehnungs_grund",
             "name",
             "vorname_nachname",
-            "zoho_first_name",
+            "name_first_name",
             "name_suffix",
-            "zoho_last_name",
+            "name_last_name",
             "firma",
             "strasse",
             "ort",
@@ -1268,8 +1273,12 @@ class VertriebAngebotForm(ModelForm):
 
         default_choice = [("", "--------")]
         try:
-            profile = User.objects.get(zoho_id=user.zoho_id)
-            data = json.loads(profile.zoho_data_text or "[]")
+            all_user_angebots_list = fetch_form_user_angebote_all(user)
+
+            user.zoho_data_text = json.dumps(all_user_angebots_list)
+            user.save()
+
+            data = json.loads(user.zoho_data_text or "[]")
 
             # Filter out records with status "abgelehnt" or "storniert"
             data = [
@@ -1314,6 +1323,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["vorname_nachname"].widget.attrs.update(
             {"id": "id_vorname_nachname"}
         )
+        self.fields["name"].widget.attrs.update({"id": "id_name"})
+        self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
+        self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
         self.fields["status"].widget.attrs.update({"id": "id_status"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
@@ -1443,7 +1455,7 @@ class VertriebAngebotForm(ModelForm):
             return cleaned_data
 
         interessent = cleaned_data.get("name")
-        
+
         wallboxtyp = cleaned_data.get("wallboxtyp")
         wechselrichter_model = cleaned_data.get("wechselrichter_model")
         speicher_model = cleaned_data.get("speicher_model")
@@ -1452,7 +1464,6 @@ class VertriebAngebotForm(ModelForm):
         vorname_nachname = cleaned_data.get("vorname_nachname")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anrede = cleaned_data.get("anrede")
-        
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1472,20 +1483,20 @@ class VertriebAngebotForm(ModelForm):
             # Validation for 'name'
         name = cleaned_data.get("name")
 
-        if name is None or interessent == "----":
+        if interessent == "----":
             raise forms.ValidationError(
                 {"name": "Sie haben keinen Interessent ausgewählt"}
             )
 
-        if name == "":
-            raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
-                params={"name": name},
-            )
+        # if name == "":
+        #     raise ValidationError(
+        #         ("Dieses Feld ist erforderlich"),
+        #         params={"name": name},
+        # )
 
         if anrede is None or anrede == "":
             raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
+                ("Anrede Feld ist erforderlich"),
                 params={"anrede": anrede},
             )
         if anrede != "Firma":
@@ -1497,7 +1508,7 @@ class VertriebAngebotForm(ModelForm):
 
         if vorname_nachname is None or vorname_nachname == "":
             raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
+                ("Vorname und Nachname Felde ist erforderlich"),
                 params={"vorname_nachname": vorname_nachname},
             )
 
@@ -1505,7 +1516,7 @@ class VertriebAngebotForm(ModelForm):
         strasse = cleaned_data.get("strasse")
         if strasse is None or strasse == "":
             raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
+                ("Strasse Feld ist erforderlich"),
                 params={"strasse": strasse},
             )
 
@@ -1513,7 +1524,7 @@ class VertriebAngebotForm(ModelForm):
         ort = cleaned_data.get("ort")
         if ort is None or ort == "":
             raise ValidationError(
-                ("Dieses Feld ist erforderlich"),
+                ("Ort Feld ist erforderlich"),
                 params={"ort": ort},
             )
 
@@ -1521,7 +1532,7 @@ class VertriebAngebotForm(ModelForm):
 
         # Check if the email is empty
         if not email:
-            raise ValidationError("Dieses Feld ist erforderlich")
+            raise ValidationError("Email Feld ist erforderlich")
         if email:
             try:
                 validate_email(email)

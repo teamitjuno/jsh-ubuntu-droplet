@@ -503,11 +503,13 @@ class VertriebAngebot(TimeStampMixin):
         #     self.postanschrift_latitude,
         #     self.postanschrift_longitude,
         # ) = self.coordinates_extractor
+
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
+        self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
@@ -586,6 +588,14 @@ class VertriebAngebot(TimeStampMixin):
             self.anfrage_vom = current_datetime.strftime("%d-%b-%Y")
             return current_datetime.strftime("%d-%b-%Y")
         return self.anfrage_vom
+
+    @property
+    def firma_case(self):
+        if self.anrede == "Firma":
+            self.name_first_name = ""
+            return self.name_last_name
+        else:
+            return self.name
 
     @property
     def assign_status_change_field(self):
@@ -683,16 +693,20 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def swap_name_order(self):
-        parts = self.name.split()
-        if len(parts) == 2:
-            return f"{parts[1]} {parts[0]}"
-        elif len(parts) == 3:
-            if parts[0] == "Dr.":
-                return f"{parts[0]} {parts[2]} {parts[1]}"
-            else:
-                return f"{parts[2]} {parts[1]} {parts[0].lower()}"
+        if self.anrede == "Firma":
+            parts = self.name_last_name
         else:
-            return self.name
+            if self.name_suffix:
+                parts = (
+                    str(self.name_suffix)
+                    + " "
+                    + str(self.name_last_name)
+                    + " "
+                    + str(self.name_first_name)
+                )
+            else:
+                parts = str(self.name_last_name) + " " + str(self.name_first_name)
+        return str(parts)
 
     @property
     def get_building_insights(
