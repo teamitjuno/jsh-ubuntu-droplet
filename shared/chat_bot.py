@@ -2,6 +2,7 @@ from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 import datetime
 from config.settings import OPENAI_API_KEY, ASSISTANT_ID
 
+
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
@@ -11,7 +12,7 @@ def log_and_notify(message):
 # start_chat_log = [
 #     {
 #         "role": "system",
-#         "content": """  
+#         "content": """
 # Titel: Assistent für Solarkraftwerkstechnik
 # Rolle: Als spezialisierter KI-Assistent im Bereich Solarkraftwerkstechnik biete ich umfassendes Fachwissen zu Solarmodulen, Installationen und zugehörigen Prozessen.
 #             """,
@@ -101,48 +102,37 @@ assistant_id = ASSISTANT_ID
 client = OpenAI(api_key=OPENAI_API_KEY)
 my_assistant = client.beta.assistants.retrieve(assistant_id)
 
+
 def handle_message(message, thread_id=None):
 
     try:
         my_assistant = client.beta.assistants.retrieve(assistant_id)
 
         if thread_id is None:
-           
+
             thread = client.beta.threads.create(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": message
-                    }
-                ]
+                messages=[{"role": "user", "content": message}]
             )
             thread_id = thread.id
         else:
-            
+
             client.beta.threads.messages.create(
-                thread_id=thread_id,
-                role='user',    
-                content=message
+                thread_id=thread_id, role="user", content=message
             )
 
         run = client.beta.threads.runs.create(
-            thread_id=thread_id,
-            assistant_id=my_assistant.id
+            thread_id=thread_id, assistant_id=my_assistant.id
         )
 
-        while run.status != 'completed':
-            run = client.beta.threads.runs.retrieve(
-                thread_id=thread_id,
-                run_id=run.id
-            )
-            time.sleep(5) 
+        while run.status != "completed":
+            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            time.sleep(5)
 
         thread_messages = client.beta.threads.messages.list(thread_id)
 
-       
         for msg in thread_messages.data:
-            if msg.role == 'assistant': 
-                
+            if msg.role == "assistant":
+
                 return msg.content[0].text.value, thread_id
 
     except Exception as e:
