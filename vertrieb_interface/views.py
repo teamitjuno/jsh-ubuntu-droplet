@@ -1074,11 +1074,12 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                                 None,
                                 f"ZOHO connection Fehler",
                             )
+                        
                         return self.form_invalid(form, vertrieb_angebot, request)
 
                     if TELEGRAM_LOGGING:
                         send_message_to_bot(
-                            f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.vorname_nachname}"
+                            f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.name}"
                         )
                     return redirect(
                         "vertrieb_interface:create_angebot_pdf_user",
@@ -1117,7 +1118,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         send_custom_message(
                             user,
                             "hat ein PDF Angebot für einen Interessenten erstellt.",
-                            f"Kunde: {vertrieb_angebot.vorname_nachname} 📑",
+                            f"Kunde: {vertrieb_angebot.name} 📑",
                         )
                     return redirect(
                         "vertrieb_interface:create_angebot_and_calc_pdf",
@@ -1147,11 +1148,22 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 
             elif action_type == "angebotsumme_rechnen":
                 if form.is_valid():
-                    
+                    if TELEGRAM_LOGGING:
+                        send_custom_message(
+                            user,
+                            "hat macht Angebotsumme_rechnen",
+                            f"Kunde: {vertrieb_angebot.name} 📑",
+                        )
                     form.save()
 
             elif action_type == "save":
                 if form.is_valid():
+                    if TELEGRAM_LOGGING:
+                        send_custom_message(
+                            user,
+                            "hat macht Speichern",
+                            f"Kunde: {vertrieb_angebot.name} 📑",
+                        )
                     instance = form.instance
                     instance.angebot_id_assigned = True
                     name = instance.name
@@ -1189,6 +1201,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                                 object_repr=str(vertrieb_angebot),
                                 action_flag=CHANGE,
                                 status=vertrieb_angebot.status,
+                            )
+                            return redirect(
+                                "vertrieb_interface:edit_angebot",
+                                vertrieb_angebot.angebot_id,
                             )
 
                         else:
@@ -1317,7 +1333,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     send_custom_message(
                         user,
                         "hat ein PDF Ticket für einen Kunden erstellt.",
-                        f"Kunde: {vertrieb_angebot.vorname_nachname} 🎟️",
+                        f"Kunde: {vertrieb_angebot.name} 🎟️",
                     )
                 return redirect(
                     "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
@@ -1442,7 +1458,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
                     send_custom_message(
                         user,
                         "hat eine PDF Kalkulation für einen Interessenten erstellt.",
-                        f"Kunde: {vertrieb_angebot.vorname_nachname} 📊",
+                        f"Kunde: {vertrieb_angebot.name} 📊",
                     )
 
                 return redirect(
@@ -1522,7 +1538,7 @@ class DeleteUserAngebot(DeleteView):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
             send_custom_message(
-                self.request.user, "Accessed the offers list page.", "Info"
+                self.request.user, "Hat ein Angebot gelöscht", "Info"
             )
         return context
 
