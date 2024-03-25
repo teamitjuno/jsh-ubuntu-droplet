@@ -159,8 +159,6 @@ def process_all_user_data(data):
     for item in data["data"]:
         if "ID" in item and item.get("Name", {}).get("prefix", "") == "Firma":
 
-            log_and_notify(f'{item.get("Name", {}).get("last_name", "")}!')
-
             all_user_angebots_list.append(
                 {
                     "zoho_id": item.get("ID", ""),

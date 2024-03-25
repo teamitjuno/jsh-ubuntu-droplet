@@ -1051,21 +1051,30 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
-                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    name_to_kundennumer = {
-                        item["name"]: item["zoho_kundennumer"] for item in data
-                    }
-                    name = form.cleaned_data["name"]
-                    kundennumer = name_to_kundennumer[name]
-                    instance.zoho_kundennumer = kundennumer
-                    vertrieb_angebot.save()
+                    # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    # name_to_kundennumer = {
+                    #     item["name"]: item["zoho_kundennumer"] for item in data
+                    # }
+                    # name = form.cleaned_data["name"]
+                    # kundennumer = name_to_kundennumer[name]
+                    # instance.zoho_kundennumer = kundennumer
+                    # vertrieb_angebot.save()
                     form.instance.status = "bekommen"
                     form.save()
-                    response = pushAngebot(vertrieb_angebot, user_zoho_id)
-                    response_data = response.json()
-                    new_record_id = response_data["data"]["ID"]
-                    vertrieb_angebot.angebot_zoho_id = new_record_id
-                    vertrieb_angebot.save()
+                    try:
+                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
+                        response_data = response.json()
+                        new_record_id = response_data["data"]["ID"]
+                        vertrieb_angebot.angebot_zoho_id = new_record_id
+                        vertrieb_angebot.save()
+                        form.instance.status = "bekommen"
+                        form.save()
+                    except:
+                        form.add_error(
+                                None,
+                                f"ZOHO connection Fehler",
+                            )
+                        return self.form_invalid(form, vertrieb_angebot, request)
 
                     if TELEGRAM_LOGGING:
                         send_message_to_bot(
@@ -1080,22 +1089,29 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
                     instance = form.instance
-                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    name_to_kundennumer = {
-                        item["name"]: item["zoho_kundennumer"] for item in data
-                    }
-                    name = form.cleaned_data["name"]
-                    kundennumer = name_to_kundennumer[name]
-                    instance.zoho_kundennumer = kundennumer
-                    instance.save()
-                    vertrieb_angebot.save()
-                    form.instance.status = "bekommen"
-                    form.save()
-                    response = pushAngebot(vertrieb_angebot, user_zoho_id)
-                    response_data = response.json()
-                    new_record_id = response_data["data"]["ID"]
-                    vertrieb_angebot.angebot_zoho_id = new_record_id
-                    vertrieb_angebot.save()
+                    # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+                    # name_to_kundennumer = {
+                    #     item["name"]: item["zoho_kundennumer"] for item in data
+                    # }
+                    # name = form.cleaned_data["name"]
+                    # kundennumer = name_to_kundennumer[name]
+                    # instance.zoho_kundennumer = kundennumer
+                    # instance.save()
+                    # vertrieb_angebot.save()
+                    try:
+                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
+                        response_data = response.json()
+                        new_record_id = response_data["data"]["ID"]
+                        vertrieb_angebot.angebot_zoho_id = new_record_id
+                        vertrieb_angebot.save()
+                        form.instance.status = "bekommen"
+                        form.save()
+                    except:
+                        form.add_error(
+                                None,
+                                f"ZOHO connection Fehler",
+                            )
+                        return self.form_invalid(form, vertrieb_angebot, request)
 
                     if TELEGRAM_LOGGING:
                         send_custom_message(

@@ -1,5 +1,5 @@
 import hashlib
-import re, os
+import re, os, json
 import requests
 from math import ceil
 from datetime import timedelta
@@ -511,6 +511,7 @@ class VertriebAngebot(TimeStampMixin):
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order
+        self.zoho_kundennumer = self.kundennumer_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
@@ -709,6 +710,23 @@ class VertriebAngebot(TimeStampMixin):
             else:
                 parts = str(self.name_last_name) + " " + str(self.name_first_name)
         return str(parts)
+    
+    @property
+    def kundennumer_finder(self):
+        if not self.zoho_kundennumer:
+            if self.zoho_id:
+                data = json.loads(self.user.zoho_data_text or '[["test", "test"]]')
+                zoho_id = str(self.zoho_id)
+                zoho_id_to_kundennumer = {
+                            item["zoho_id"]: item["zoho_kundennumer"] for item in data
+                        }
+                
+                kundennumer = zoho_id_to_kundennumer[zoho_id]
+                
+                return kundennumer
+            return ""
+        else:
+            return self.zoho_kundennumer
 
     @property
     def get_building_insights(
