@@ -12,14 +12,29 @@
             {% csrf_token %}
                 <div class="container-fluid">     
                     {% if form.errors %}
-                    <div class="alert alert-danger">Bitte korrigieren Sie die folgenden Fehler:
+                    <div class="alert alert-danger">Fehler :
+                                        
+                        {% if form.non_field_errors %}
+                            <div class="error">
+                                {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         <ul>
                             {% for field in form %}
                                 {% if field.errors %}
-                                    <li>{{ field.label }} - {{ field.errors.0 }} - {{ field.value }}</li>
+                                    <li>{{ field.label }} - {{ field.errors.0 }}</li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
+                        {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                     </div>
                     {% endif %}
                     <div class="row">
@@ -63,6 +78,16 @@
                                                                         <tr>
                                                                             <th>Kundenname:</th>
                                                                             <td><input type="text" class="form-control" name="{{ form.name.name }}" value="{{ form.name.value }}" readonly></td>
+                                                                        </tr>
+                                                                        <tr hidden>
+                                                                            <th>{{ form.name_first_name.label_tag }}</th>
+                                                                            <td>{{ form.name_first_name }}</td>
+                                                                        </tr>
+                                                                        <tr hidden>
+                                                                            <th>{{ form.name_last_name.label_tag }}</th>
+                                                                            <td>{{ form.name_last_name }}
+                                                                                
+                                                                            </td>
                                                                         </tr>
                                                                         
                                                                     </tbody>

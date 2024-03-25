@@ -1461,9 +1461,10 @@ class VertriebAngebotForm(ModelForm):
         speicher_model = cleaned_data.get("speicher_model")
         kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
-        vorname_nachname = cleaned_data.get("vorname_nachname")
+        name_last_name = cleaned_data.get("name_last_name")
+        
         anzOptimizer = cleaned_data.get("anzOptimizer")
-        anrede = cleaned_data.get("anrede")
+        
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1493,23 +1494,17 @@ class VertriebAngebotForm(ModelForm):
         #         ("Dieses Feld ist erforderlich"),
         #         params={"name": name},
         # )
-
+        anrede = cleaned_data.get("anrede")
         if anrede is None or anrede == "":
             raise ValidationError(
                 ("Anrede Feld ist erforderlich"),
                 params={"anrede": anrede},
             )
-        if anrede != "Firma":
-            # Perform validation for vorname_nachname if anrede is not "Firma"
-            if not vorname_nachname:  # or any other validation you need
-                raise ValidationError(
-                    "Dieses Feld ist obligatorisch, es sei denn, 'Anrede' ist eine 'Firma'."
-                )
-
-        if vorname_nachname is None or vorname_nachname == "":
+        
+        if not name_last_name or name_last_name == "":
             raise ValidationError(
-                ("Vorname und Nachname Felde ist erforderlich"),
-                params={"vorname_nachname": vorname_nachname},
+                ("Nachname Feld ist erforderlich und kann nicht lee sein"),
+                params={"name_last_name": name_last_name},
             )
 
         # Validation for 'strasse'
@@ -1599,7 +1594,16 @@ class VertriebAngebotForm(ModelForm):
                     }
                 )
 
-        if action == "save":
+        if action == "save" and anrede == "Firma":
+            return cleaned_data
+        
+        elif action == "save" and anrede != "Firma":
+            name_first_name = cleaned_data.get("name_first_name")
+            if not name_first_name or name_first_name == "":
+                raise ValidationError(
+                    ("Vorname Feld ist erforderlich und kann nicht lee sein"),
+                    params={"name_first_name": name_first_name},
+                )
             return cleaned_data
 
         else:

@@ -1123,29 +1123,16 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "kalkulation_erstellen":
 
                 if form.is_valid():
-                    instance = form.instance
-                    instance.save()
-
+                    form.save()
                     return redirect(
                         "vertrieb_interface:create_calc_pdf",
                         vertrieb_angebot.angebot_id,
                     )
+                
             elif action_type == "angebotsumme_rechnen":
                 if form.is_valid():
-                    instance = form.instance
-                    instance.angebot_id_assigned = False
-                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    name_to_kundennumer = {
-                        item["name"]: item["zoho_kundennumer"] for item in data
-                    }
-                    name = form.cleaned_data["name"]
-                    if name != "":
-                        kundennumer = name_to_kundennumer[name]
-                        instance.zoho_kundennumer = kundennumer
-                        instance.save()
-                        form.save()
-                    else:
-                        form.save()
+                    
+                    form.save()
 
             elif action_type == "save":
                 if form.is_valid():
