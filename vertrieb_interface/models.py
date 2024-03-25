@@ -695,6 +695,8 @@ class VertriebAngebot(TimeStampMixin):
     def swap_name_order(self):
         if self.anrede == "Firma":
             parts = self.name_last_name
+        elif self.anrede == "Familie":
+            parts = self.name_last_name
         else:
             if self.name_suffix:
                 parts = (
