@@ -61,7 +61,7 @@ class PDF(FPDF):
         self.ln(15)
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_text_color(0)
-        self.multi_cell(0, 5, f'{data["firma"]}\n{data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
+        self.multi_cell(0, 5, f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
         # self.line(10,65,80,65) #unter Adresse
         self.set_x(130)
         self.set_y(33)
