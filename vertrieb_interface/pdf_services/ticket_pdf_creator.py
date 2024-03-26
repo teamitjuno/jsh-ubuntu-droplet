@@ -135,7 +135,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            f'∙ Leistung pro Modul: {data["wpModule"]} Wp\n∙ Produktgarantie: {data["garantieJahre"]}\n∙ Leistungsgarantie: {data["leistungsGarantie"]}',
+            f'∙ Leistung pro Modul: {data["wpModule"]} Wp\n∙ Produktgarantie: {data["produktGarantie"]}\n∙ Leistungsgarantie: {data["leistungsGarantie"]}',
             0,
             "L",
         )

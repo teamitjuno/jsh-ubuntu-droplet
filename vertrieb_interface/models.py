@@ -888,9 +888,11 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def get_produktgarantie(self):
-        if "Phono Solar" in str(self.solar_module):
-            return "15 Jahre"
-        elif "Jinko Solar" in str(self.solar_module):
+        if "Phono Solar PS430M8GF-18/VNH" in str(self.solar_module):
+            return "25 Jahre"
+        if "Phono Solar PS430M8GFH-18/VSH" in str(self.solar_module):
+            return "25 Jahre"
+        elif "Jinko Solar Tiger Neo N-type JKM430N-54HL4R-B" in str(self.solar_module):
             return f"25 Jahre"
         else:
             return "15 Jahre"
