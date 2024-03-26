@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from vertrieb_interface.get_user_angebots import (
+from vertrieb_interface.zoho_api_connector import (
     update_status,
     fetch_form_user_angebote_all,
 )

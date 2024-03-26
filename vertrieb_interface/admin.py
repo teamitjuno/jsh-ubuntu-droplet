@@ -26,7 +26,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "zoho_id",
         "angebot_zoho_id",
         "zoho_kundennumer",
-        "user__username",  # Search User model's username field
+        "user__username",  
         "angebotsumme",
     )
 

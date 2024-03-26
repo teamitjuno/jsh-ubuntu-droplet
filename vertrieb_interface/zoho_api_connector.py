@@ -426,14 +426,11 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
 
 def pushTicket(vertrieb_angebot, user_zoho_id):
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form "
+    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form"
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    date_obj_gultig = datetime.datetime.strptime(
-        vertrieb_angebot.angebot_gultig, "%d.%m.%Y"
-    )
-    formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
+    Ticket_erstellt_am = datetime.datetime.now().strftime("%d-%b-%Y")
 
     #     dataMap = {"Ticket" : {
     #     "Wechselrichter" : {
@@ -458,42 +455,37 @@ def pushTicket(vertrieb_angebot, user_zoho_id):
     #     }
     #     }
     dataMap = {
-        "data": {
-            "Angebot_ID": str(vertrieb_angebot.angebot_id),
-            "Privatkunde_ID": str(vertrieb_angebot.zoho_id),
-            "Vertriebler_ID": str(user_zoho_id),
-            "erstellt_am": str(vertrieb_angebot.anfrage_vom),
-            "g_ltig_bis": formatted_gultig_date_str,
-            "Anz_Speicher": str(vertrieb_angebot.anz_speicher),
-            "Wallbox_Typ": str(vertrieb_angebot.wallboxtyp),
-            "Wallbox_Anzahl": str(vertrieb_angebot.wallbox_anzahl),
-            "Kabelanschluss": str(vertrieb_angebot.kabelanschluss),
-            "SolarModule_Typ": str(vertrieb_angebot.solar_module),
-            "SolarModule_Leistung": str(vertrieb_angebot.modulleistungWp),
-            "SolarModule_Menge": str(vertrieb_angebot.modulanzahl),
-            "GarantieWR": str(vertrieb_angebot.garantieWR),
-            "Wechselrichter": str(vertrieb_angebot.wechselrichter_model),
-            "Speicher_Typ": str(vertrieb_angebot.speicher_model),
-            "Wandhalterung_Anzahl": int(
-                vertrieb_angebot.anz_wandhalterung_fuer_speicher
-            ),
-            "Notstrom": return_lower_bull(vertrieb_angebot.notstrom),
-            "Optimierer_Menge": str(vertrieb_angebot.anzOptimizer),
-            "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
-            "AC_THOR": return_lower_bull(vertrieb_angebot.thor),
-            "AC_THOR_Heizstab": vertrieb_angebot.heizstab,
-            "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
-            "Angebotssumme": str(vertrieb_angebot.angebotsumme),
-        }
+        "Ticket": {
+            "Wechselrichter" : {
+            "Hersteller_Typ": vertrieb_angebot.hersteller,
+            "Leistung_kVA": vertrieb_angebot.modulleistungWp,
+            "Status_Bau": "",
+            "PVA_klein": "",
+            },
+            "PVA_klein": "",
+            "Privatkunde": vertrieb_angebot.zoho_id,
+            "Vertriebler": user_zoho_id,
+            "Status": "ausstehend",
+            "Ticket_erstellt_am": Ticket_erstellt_am,
+            "Ticket_verl_ngert_am": Ticket_erstellt_am,
+            "Bisher_geplante_Module": vertrieb_angebot.solar_module,
+            "M_gliche_Anzahl_Module": vertrieb_angebot.modul_anzahl_ticket,
+            "Modulanzahl": "",
+            "Notizen": "",
+            "Ticket_erstellt_durch": user_zoho_id,
+            }
     }
+
+
+    
     response = requests.post(url, json=dataMap, headers=headers)
     response_data = response.json()
-    new_record_id = response_data["data"]["ID"]
-    log_and_notify(
-        f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
-    )
+    # new_record_id = response_data["data"]["ID"]
+    # log_and_notify(
+    #     f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
+    # )
 
-    return response
+    return response_data
 
 
 import requests

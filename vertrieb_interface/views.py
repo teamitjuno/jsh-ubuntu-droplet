@@ -59,13 +59,14 @@ from vertrieb_interface.forms import (
     VertriebAngebotEmailForm,
     TicketForm,
 )
-from vertrieb_interface.get_user_angebots import (
+from vertrieb_interface.zoho_api_connector import (
     delete_redundant_angebot,
     extract_values,
     fetch_angenommen_status,
     fetch_user_angebote_all,
     log_and_notify,
     pushAngebot,
+    pushTicket,
     put_form_data_to_zoho_jpp,
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
@@ -78,7 +79,6 @@ from vertrieb_interface.pdf_services import (
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
-from vertrieb_interface.utils import load_vertrieb_angebot
 
 # Local imports from 'authentication'
 from authentication.models import User
@@ -1323,12 +1323,20 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
         )
         user = request.user
+        user_zoho_id = user.zoho_id
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
         if "pdf_erstellen" in request.POST:
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
+                response = pushTicket(vertrieb_angebot, user_zoho_id)
+                if TELEGRAM_LOGGING:
+                    send_custom_message(
+                        user,
+                        "Response",
+                        f"{response} 🎟️",
+                    )
                 if TELEGRAM_LOGGING:
                     send_custom_message(
                         user,
