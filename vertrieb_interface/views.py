@@ -814,7 +814,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         return kwargs
 
     def handle_status_change(self, angebot_id):
-        for angebot in VertriebAngebot.objects.filter(
+        for angebot in self.model.objects.filter(
             angebot_id=angebot_id, status="bekommen"
         ):
             if angebot.status_change_field:
@@ -834,14 +834,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     )
 
     def get(self, request, angebot_id, *args, **kwargs):
-        vertrieb_angebot = VertriebAngebot.objects.get(
-            angebot_id=angebot_id, user=request.user
+        user = request.user
+        vertrieb_angebot = self.model.objects.get(
+            angebot_id=angebot_id, user=user
         )
-        
-        user = request.user
-
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
-        user = request.user
+        form = self.form_class(instance=vertrieb_angebot, user=user)  
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -874,37 +871,20 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
-            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
+            self.model, angebot_id=self.kwargs.get("angebot_id")
         )
         user = request.user
         user_zoho_id = user.zoho_id
         form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)
-
+        instance = form.instance
         if request.method == "POST":
             action_type = request.POST.get("action_type")
             if action_type == "switch_to_bekommen":
                 if form.is_valid():
-                    instance = form.instance
-                    vertrieb_angebot.angebot_id_assigned = True
-
-                    form.instance.status = "bekommen"
+                    instance.angebot_id_assigned = True
+                    instance.status = "bekommen"
                     form.save()
-                    try:
-                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
-                        response_data = response.json()
-                        new_record_id = response_data["data"]["ID"]
-                        vertrieb_angebot.angebot_zoho_id = new_record_id
-                        vertrieb_angebot.save()
-                        form.instance.status = "bekommen"
-                        form.save()
-                    except:
-                        form.add_error(
-                            None,
-                            f"ZOHO connection Fehler",
-                        )
-
-                        return self.form_invalid(form, vertrieb_angebot, request)
-
+                    self.push_and_save_angebot(vertrieb_angebot, user_zoho_id, form, request)
                     if TELEGRAM_LOGGING:
                         send_message_to_bot(
                             f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.name}"
@@ -914,24 +894,11 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         vertrieb_angebot.angebot_id,
                     )
             elif action_type == "switch_to_bekommen_pdf_plus_kalk":
-
                 if form.is_valid():
-                    vertrieb_angebot.angebot_id_assigned = True
-                    instance = form.instance
-                    try:
-                        response = pushAngebot(vertrieb_angebot, user_zoho_id)
-                        response_data = response.json()
-                        new_record_id = response_data["data"]["ID"]
-                        vertrieb_angebot.angebot_zoho_id = new_record_id
-                        vertrieb_angebot.save()
-                        form.instance.status = "bekommen"
-                        form.save()
-                    except:
-                        form.add_error(
-                            None,
-                            f"ZOHO connection Fehler",
-                        )
-                        return self.form_invalid(form, vertrieb_angebot, request)
+                    instance.angebot_id_assigned = True
+                    instance.status = "bekommen"
+                    form.save()
+                    self.push_and_save_angebot(vertrieb_angebot, user_zoho_id, form, request)
 
                     if TELEGRAM_LOGGING:
                         send_custom_message(
@@ -946,7 +913,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "zahlungs":
 
                 if form.is_valid():
-                    instance = form.instance
                     instance.zahlungsbedingungen = form.cleaned_data[
                         "zahlungsbedingungen"
                     ]
@@ -967,14 +933,14 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
             elif action_type == "angebotsumme_rechnen":
                 if form.is_valid():
+                    form.save()
                     if TELEGRAM_LOGGING:
                         send_custom_message(
                             user,
                             "hat macht Angebotsumme_rechnen",
                             f"Kunde: {vertrieb_angebot.name} 📑",
                         )
-                    form.save()
-
+                    
             elif action_type == "save":
                 if form.is_valid():
                     if TELEGRAM_LOGGING:
@@ -983,18 +949,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             "hat macht Speichern",
                             f"Kunde: {vertrieb_angebot.name} 📑",
                         )
-                    instance = form.instance
                     instance.angebot_id_assigned = True
-                    name = instance.name
-                    data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    name_to_kundennumer = {
-                        item["name"]: item["zoho_kundennumer"] for item in data
-                    }
-                    name = form.cleaned_data["name"]
-                    kundennumer = name_to_kundennumer[name]
-                    instance.zoho_kundennumer = kundennumer
-
-                    angebot_existing = VertriebAngebot.objects.filter(
+                    kundennumer = instance.zoho_kundennumer
+                    angebot_existing = self.model.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
                         status="",
@@ -1053,6 +1010,23 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     )
 
             return self.form_invalid(form, vertrieb_angebot, request)
+    
+    def push_and_save_angebot(self, vertrieb_angebot, user_zoho_id, form, request):
+        """
+        Attempts to push an Angebot to ZOHO and save the response.
+        In case of any exception, adds an error to the form and returns a form invalid response.
+
+        """
+        try:
+            response = pushAngebot(vertrieb_angebot, user_zoho_id)
+            response_data = response.json()
+            new_record_id = response_data["data"]["ID"]
+            vertrieb_angebot.angebot_zoho_id = new_record_id
+            vertrieb_angebot.save()
+        except Exception as e:
+            error_message = f"ZOHO connection Fehler: {str(e)}"
+            form.add_error(None, error_message)
+            return self.form_invalid(form, vertrieb_angebot, request)
 
     def form_invalid(self, form, vertrieb_angebot, request, *args, **kwargs):
         context = self.get_context_data()
@@ -1100,8 +1074,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
-        vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  
         user = request.user
         user_folder = os.path.join(
