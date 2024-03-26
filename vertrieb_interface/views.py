@@ -144,13 +144,7 @@ now_german = date_format(now_localized, "DATETIME_FORMAT")
 
 # Funktion zum Senden von Benachrichtigungen mit verbesserter Nachrichtenstruktur
 def send_custom_message(user, action, details):
-    """
-    Sendet eine benutzerdefinierte Nachricht über den Bot.
 
-    :param user: Das User-Objekt, das die Aktion ausführt.
-    :param action: Eine kurze Beschreibung der Aktion.
-    :param details: Details zur Aktion, z.B. was erstellt wurde und für wen.
-    """
     user_name = f"{user.first_name} {user.last_name}".strip()
     user_name = user_name if user_name else "Ein Benutzer"
 
@@ -595,14 +589,12 @@ def create_angebot_redirect(request):
         "map_notizen_container_view": user.map_notizen_container_view,
     }
 
-    # Initialize form with POST data
     form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
     if form_angebot.is_valid():
         vertrieb_angebot = form_angebot.save(commit=False)
         vertrieb_angebot.created_at = timezone.now()
         vertrieb_angebot.current_date = datetime.datetime.now()
 
-        # Set attributes from user's initial data
         initial_attrs = [
             "verbrauch",
             "grundpreis",
@@ -677,7 +669,6 @@ def create_angebot_redirect(request):
 def create_angebot(request):
     user = request.user
 
-    # Extract initial values from the User model instance
     initial_data = {
         "verbrauch": user.initial_verbrauch,
         "grundpreis": user.initial_grundpreis,
@@ -750,8 +741,6 @@ def create_angebot(request):
         )
 
     if not form_angebot.is_valid():
-        # if TELEGRAM_LOGGING:
-        #     send_message_to_bot(form_angebot.errors)
 
         return page_not_found(request, Exception())
 
@@ -796,37 +785,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
     form_class = VertriebAngebotForm
     template_name = "vertrieb/edit_angebot.html"
     context_object_name = "vertrieb_angebot"
-
-    def _log_and_notify_attempt(self, user, action_type):
-        if TELEGRAM_LOGGING:
-            try:
-                log_and_notify(f"{user.email}: Attempt to {action_type}")
-            except Exception:
-                pass
-
-    def _log_and_notify_success(self, user):
-        if TELEGRAM_LOGGING:
-            try:
-                log_and_notify(f"{user.email} Successful!")
-            except Exception:
-                pass
-
-    def _log_and_notify_error(self, user, form):
-        if TELEGRAM_LOGGING:
-            try:
-                # Formatting the error message for clarity
-                formatted_errors = "\n".join(
-                    [
-                        f"*{field.replace('_', ' ').capitalize()}*: {error}"
-                        for field, errors in form.errors.items()
-                        for error in errors
-                    ]
-                )
-                message = f"*Error for {user.email}*\n{formatted_errors}"
-                log_and_notify(message)
-            except Exception as e:
-                # Log the exception for debugging purposes
-                log_and_notify(f"Error logging to Telegram: {str(e)}")
 
     def dispatch(self, request, *args, **kwargs):
         angebot_id = kwargs.get("angebot_id")
@@ -987,7 +945,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 calc_image_suffix, start=settings.MEDIA_ROOT
             )
             context = self.get_context_data()
-            countdown = vertrieb_angebot.countdown()
             context = {
                 "countdown": vertrieb_angebot.countdown(),
                 "user": user,
@@ -1051,14 +1008,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
-                    # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    # name_to_kundennumer = {
-                    #     item["name"]: item["zoho_kundennumer"] for item in data
-                    # }
-                    # name = form.cleaned_data["name"]
-                    # kundennumer = name_to_kundennumer[name]
-                    # instance.zoho_kundennumer = kundennumer
-                    # vertrieb_angebot.save()
+                    
                     form.instance.status = "bekommen"
                     form.save()
                     try:
@@ -1090,15 +1040,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     vertrieb_angebot.angebot_id_assigned = True
                     instance = form.instance
-                    # data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                    # name_to_kundennumer = {
-                    #     item["name"]: item["zoho_kundennumer"] for item in data
-                    # }
-                    # name = form.cleaned_data["name"]
-                    # kundennumer = name_to_kundennumer[name]
-                    # instance.zoho_kundennumer = kundennumer
-                    # instance.save()
-                    # vertrieb_angebot.save()
                     try:
                         response = pushAngebot(vertrieb_angebot, user_zoho_id)
                         response_data = response.json()
@@ -1237,7 +1178,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
     def form_invalid(self, form, vertrieb_angebot, request, *args, **kwargs):
         context = self.get_context_data()
-        countdown = vertrieb_angebot.countdown()
         context["status_change_field"] = vertrieb_angebot.status_change_field
         context["countdown"] = vertrieb_angebot.countdown()
         context["messages"] = messages.get_messages(request)
