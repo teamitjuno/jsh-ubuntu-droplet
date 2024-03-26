@@ -57,6 +57,7 @@ class SolarModulePreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
+        "module_garantie",
         "actual_price",
         "old_price",
         "in_stock",

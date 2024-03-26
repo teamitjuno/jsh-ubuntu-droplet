@@ -54,6 +54,7 @@ class ModulePreise(models.Model):
 
 class SolarModulePreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    module_garantie = models.CharField(max_length=100, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     actual_price = models.DecimalField(max_digits=10, decimal_places=2)
     old_price = models.DecimalField(max_digits=10, decimal_places=2)

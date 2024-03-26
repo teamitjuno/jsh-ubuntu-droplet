@@ -488,6 +488,9 @@ class VertriebAngebot(TimeStampMixin):
 
     def get_module_preis(self, name):
         return float(SolarModulePreise.objects.get(name=name).price)
+    
+    def get_module_garantie(self, name):
+        return str(SolarModulePreise.objects.get(name=name).module_garantie)
 
     def get_module_garantie_preis(self, name):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
@@ -1435,7 +1438,7 @@ class VertriebAngebot(TimeStampMixin):
             "module": self.solar_module,
             "wpModule": self.modulleistungWp,
             "anzModule": self.modulanzahl,
-            "produktGarantie": self.get_produktgarantie,
+            "produktGarantie": self.get_module_garantie(self.solar_module),
             "leistungsGarantie": self.get_leistungsgarantie,
             "kWp": self.modulsumme_kWp,
             "kWpOhneRundung": self.modulsumme_kWp,
