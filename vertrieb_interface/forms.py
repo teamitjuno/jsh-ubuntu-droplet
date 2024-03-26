@@ -1,20 +1,24 @@
-import json
+# Standard library imports
 import decimal
-from dotenv import load_dotenv
+import json
+import re
+
+# Related third-party imports
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.forms import ModelForm
 from django.utils import timezone
 from django.utils.formats import date_format
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from vertrieb_interface.zoho_api_connector import (
-    update_status,
-    fetch_form_user_angebote_all,
-)
+from dotenv import load_dotenv
+
+# Local application/library specific imports
+from authentication.models import User
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
-import re
+from vertrieb_interface.zoho_api_connector import fetch_form_user_angebote_all, update_status
+
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -22,24 +26,13 @@ now_german = date_format(now_localized, "DATETIME_FORMAT")
 load_dotenv(ENV_FILE)
 
 
-from authentication.models import User
+
 
 
 class ModulePreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.name}"  # type: ignore
 
-
-VERTRIEB_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Privatkunden1"
-BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Elektrikkalender"
-ACCESS_TOKEN_URL = "https://accounts.zoho.eu/oauth/v2/token"
-HTTP_OK = 200
-HTTP_UNAUTHORIZED = 401
-HTTP_NOT_FOUND = 404
-LIMIT_ALL = 200
-LIMIT_CURRENT = 10
-MAX_RETRIES = 5
-SLEEP_TIME = 1
 
 
 def filter_hidden_choices(choices):

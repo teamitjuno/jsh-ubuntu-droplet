@@ -1,9 +1,8 @@
 import time
 import requests
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv
 import datetime
 import requests
-from django.core.exceptions import ValidationError
 import json
 from vertrieb_interface.telegram_logs_sender import send_message_to_bot
 from config.settings import (
