@@ -162,7 +162,7 @@ def vertrieb_check(user):
 
 class VertriebCheckMixin(UserPassesTestMixin):
     def test_func(self):
-        return vertrieb_check(self.request.user)  # type: ignore
+        return vertrieb_check(self.request.user)  
 
 
 def get_recent_activities(user):
@@ -790,7 +790,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.fetch_angebot_data(request, angebot_id, request.user)
+        # self.fetch_angebot_data(request, angebot_id, request.user)
         self.handle_status_change(angebot_id)
 
         return super().dispatch(request, *args, **kwargs)
@@ -802,17 +802,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
 
-        user_profile = (
-            self.request.user
-        )  # assuming a profile model is linked to the user
-
         context["form"] = self.form_class(
             instance=vertrieb_angebot,
             user=self.request.user,
         )
-        # context["form_rechner"] = VertriebAngebotRechnerForm(
-        #     instance=vertrieb_angebot, user=self.request.user
-        # )
         return context
 
     def get_form_kwargs(self):
@@ -840,159 +833,44 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         status=angebot.status,
                     )
 
-    def fetch_angebot_data(self, request, angebot_id, user):
-        fetched_angebote_list = []
-        vertrieb_angebot = VertriebAngebot.objects.get(
-            angebot_id=angebot_id, user=request.user
-        )
-        zoho_id = vertrieb_angebot.zoho_id
-        anrede = vertrieb_angebot.anrede
-        if zoho_id is not None:
-            item = fetch_angenommen_status(request, zoho_id)
-            if anrede != "Firma":
-                fetched_data = {
-                    "zoho_id": item.get("ID", ""),
-                    "status": item.get("Status", ""),
-                    "status_pva": item.get("Status_PVA", ""),
-                    "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
-                    "anrede": item.get("Name", {}).get("prefix", ""),
-                    "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
-                    "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
-                    + " "
-                    + item.get("Adresse_PVA", {}).get("district_city", ""),
-                    "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
-                        "longitude", ""
-                    ),
-                    "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
-                        "latitude", ""
-                    ),
-                    "telefon_festnetz": item.get("Telefon_Festnetz", ""),
-                    "telefon_mobil": item.get("Telefon_mobil", ""),
-                    # "zoho_kundennumer": kundennumer,
-                    "email": item.get("Email", ""),
-                    "notizen": item.get("Notizen", ""),
-                    "name": item.get("Name", {}).get("last_name", "")
-                    + " "
-                    + item.get("Name", {}).get("suffix", "")
-                    + " "
-                    + item.get("Name", {}).get("first_name", ""),
-                    "vertriebler_display_value": item.get("Vertriebler", {}).get(
-                        "display_value", ""
-                    ),
-                    "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
-                    "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
-                        "display_value", ""
-                    ),
-                    "anfrage_vom": item.get("Anfrage_vom", ""),
-                }
-            else:
-                fetched_data = {
-                    "zoho_id": item.get("ID", ""),
-                    "status": item.get("Status", ""),
-                    "status_pva": item.get("Status_PVA", ""),
-                    "angebot_bekommen_am": item.get("Angebot_bekommen_am", ""),
-                    "anrede": item.get("Name", {}).get("prefix", ""),
-                    "strasse": item.get("Adresse_PVA", {}).get("address_line_1", ""),
-                    "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
-                    + " "
-                    + item.get("Adresse_PVA", {}).get("district_city", ""),
-                    "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
-                        "longitude", ""
-                    ),
-                    "postanschrift_latitude": item.get("Adresse_PVA", {}).get(
-                        "latitude", ""
-                    ),
-                    "telefon_festnetz": item.get("Telefon_Festnetz", ""),
-                    "telefon_mobil": item.get("Telefon_mobil", ""),
-                    # "zoho_kundennumer": kundennumer,
-                    "email": item.get("Email", ""),
-                    "notizen": item.get("Notizen", ""),
-                    "name": item.get("Name", {}).get("last_name", ""),
-                    "vertriebler_display_value": item.get("Vertriebler", {}).get(
-                        "display_value", ""
-                    ),
-                    "vertriebler_id": item.get("Vertriebler", {}).get("ID", ""),
-                    "adresse_pva_display_value": item.get("Adresse_PVA", {}).get(
-                        "display_value", ""
-                    ),
-                    "anfrage_vom": item.get("Anfrage_vom", ""),
-                }
-            vertrieb_angebot.ag_fetched_data = json.dumps(fetched_data)
-            vertrieb_angebot.save()
-        else:
-            pass
-
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = VertriebAngebot.objects.get(
             angebot_id=angebot_id, user=request.user
         )
-        zoho_id = vertrieb_angebot.zoho_id
+        
         user = request.user
 
-        if zoho_id is not None:
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
+        user = request.user
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        calc_image = os.path.join(user_folder, "tmp.png")
+        calc_image_suffix = os.path.join(
+            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
+        )
+        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
+        relative_path_suffix = os.path.relpath(
+            calc_image_suffix, start=settings.MEDIA_ROOT
+        )
+        context = self.get_context_data()
+        context = {
+            "countdown": vertrieb_angebot.countdown(),
+            "messages": messages.get_messages(request),
+            "user": user,
+            "vertrieb_angebot": vertrieb_angebot,
+            "form": form,
+            "calc_image": relative_path,
+            "calc_image_suffix": relative_path_suffix,
+            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
+            "OWNER_ID": settings.OWNER_ID,
+            "STYLE_ID": settings.STYLE_ID,
+            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
+            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
+        }
 
-            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
-            user = request.user
-            user_folder = os.path.join(
-                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-            )
-            calc_image = os.path.join(user_folder, "tmp.png")
-            calc_image_suffix = os.path.join(
-                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-            )
-            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-            relative_path_suffix = os.path.relpath(
-                calc_image_suffix, start=settings.MEDIA_ROOT
-            )
-            context = self.get_context_data()
-            context = {
-                "countdown": vertrieb_angebot.countdown(),
-                "user": user,
-                "vertrieb_angebot": vertrieb_angebot,
-                "form": form,
-                "calc_image": relative_path,
-                "calc_image_suffix": relative_path_suffix,
-                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-                "OWNER_ID": settings.OWNER_ID,
-                "STYLE_ID": settings.STYLE_ID,
-                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-            }
-
-            return render(request, self.template_name, context)
-        else:
-            form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
-            user = request.user
-            user_folder = os.path.join(
-                settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-            )
-            calc_image = os.path.join(user_folder, "tmp.png")
-            calc_image_suffix = os.path.join(
-                user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-            )
-            relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-            relative_path_suffix = os.path.relpath(
-                calc_image_suffix, start=settings.MEDIA_ROOT
-            )
-
-            context = self.get_context_data()
-            countdown = vertrieb_angebot.countdown()
-            context = {
-                "countdown": vertrieb_angebot.countdown(),
-                "messages": messages.get_messages(request),
-                "user": user,
-                "vertrieb_angebot": vertrieb_angebot,
-                "form": form,
-                "calc_image": relative_path,
-                "calc_image_suffix": relative_path_suffix,
-                "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-                "OWNER_ID": settings.OWNER_ID,
-                "STYLE_ID": settings.STYLE_ID,
-                "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-                "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-            }
-
-            return render(request, self.template_name, context)
+        return render(request, self.template_name, context)
+            
 
     def post(self, request, *args, **kwargs):
         vertrieb_angebot = get_object_or_404(
@@ -1208,8 +1086,8 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
 
-        context["form"] = self.form_class(  # type: ignore
-            instance=vertrieb_angebot, user=self.request.user  # type: ignore
+        context["form"] = self.form_class(
+            instance=vertrieb_angebot, user=self.request.user  
         )
         return context
 
@@ -1224,7 +1102,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
 
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
         user = request.user
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
@@ -1260,7 +1138,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         )
         user = request.user
         user_zoho_id = user.zoho_id
-        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  
         if "pdf_erstellen" in request.POST:
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
@@ -1324,8 +1202,8 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
         context = super().get_context_data(**kwargs)
         vertrieb_angebot = self.get_object()
 
-        context["form"] = self.form_class(  # type: ignore
-            instance=vertrieb_angebot, user=self.request.user  # type: ignore
+        context["form"] = self.form_class(  
+            instance=vertrieb_angebot, user=self.request.user  
         )
         return context
 
@@ -1342,7 +1220,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
 
         vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
 
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
+        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
         user = request.user
 
         user_folder = os.path.join(
@@ -1378,7 +1256,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
             VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
         )
         user = request.user
-        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  # type: ignore
+        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  
         if "pdf_erstellen" in request.POST:
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
@@ -2419,7 +2297,7 @@ def PDFCalculationsListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    calc_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/")  # type: ignore
+    calc_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/")  
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     calc_files = [
@@ -2490,7 +2368,7 @@ def PDFTicketListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    ticket_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/")  # type: ignore
+    ticket_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/")  
 
     ticket_files = [
         os.path.join(
