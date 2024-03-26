@@ -1462,9 +1462,8 @@ class VertriebAngebotForm(ModelForm):
         kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         name_last_name = cleaned_data.get("name_last_name")
-        
+
         anzOptimizer = cleaned_data.get("anzOptimizer")
-        
 
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
@@ -1500,7 +1499,7 @@ class VertriebAngebotForm(ModelForm):
                 ("Anrede Feld ist erforderlich"),
                 params={"anrede": anrede},
             )
-        
+
         if not name_last_name or name_last_name == "":
             raise ValidationError(
                 ("Nachname Feld ist erforderlich und kann nicht lee sein"),
@@ -1596,7 +1595,7 @@ class VertriebAngebotForm(ModelForm):
 
         if action == "save" and anrede == "Firma":
             return cleaned_data
-        
+
         elif action == "save" and anrede != "Firma":
             name_first_name = cleaned_data.get("name_first_name")
             if not name_first_name or name_first_name == "":

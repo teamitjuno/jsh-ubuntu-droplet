@@ -1008,7 +1008,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 if form.is_valid():
                     instance = form.instance
                     vertrieb_angebot.angebot_id_assigned = True
-                    
+
                     form.instance.status = "bekommen"
                     form.save()
                     try:
@@ -1021,10 +1021,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         form.save()
                     except:
                         form.add_error(
-                                None,
-                                f"ZOHO connection Fehler",
-                            )
-                        
+                            None,
+                            f"ZOHO connection Fehler",
+                        )
+
                         return self.form_invalid(form, vertrieb_angebot, request)
 
                     if TELEGRAM_LOGGING:
@@ -1050,9 +1050,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         form.save()
                     except:
                         form.add_error(
-                                None,
-                                f"ZOHO connection Fehler",
-                            )
+                            None,
+                            f"ZOHO connection Fehler",
+                        )
                         return self.form_invalid(form, vertrieb_angebot, request)
 
                     if TELEGRAM_LOGGING:
@@ -1086,7 +1086,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         "vertrieb_interface:create_calc_pdf",
                         vertrieb_angebot.angebot_id,
                     )
-                
+
             elif action_type == "angebotsumme_rechnen":
                 if form.is_valid():
                     if TELEGRAM_LOGGING:
@@ -1226,10 +1226,6 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)  # type: ignore
         user = request.user
-        # if TELEGRAM_LOGGING:
-        #     send_message_to_bot(
-        #         f"{user.email}: Attempt to create Ticket {vertrieb_angebot.angebot_id}:"
-        #     )
         user_folder = os.path.join(
             settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
         )
@@ -1485,9 +1481,7 @@ class DeleteUserAngebot(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
-            send_custom_message(
-                self.request.user, "Hat ein Angebot gelöscht", "Info"
-            )
+            send_custom_message(self.request.user, "Hat ein Angebot gelöscht", "Info")
         return context
 
     def delete(self, request, *args, **kwargs):
@@ -1560,7 +1554,6 @@ def process_vertrieb_angebot(request):
             angebot_zoho_id = bekommen_angebot.angebot_zoho_id
 
             if angebot_zoho_id is not None:
-                # send_message_to_bot(f"{bekommen_angebot.angebot_zoho_id}")
                 delete_redundant_angebot(angebot_zoho_id)
                 bekommen_angebot.angebot_id_assigned = False
                 bekommen_angebot.save()
@@ -1569,30 +1562,19 @@ def process_vertrieb_angebot(request):
 
 
 def update_status_to_angenommen(angebot_ids):
-    # Filter VertriebAngebot instances with the given list of angebot_id values
     angebote = VertriebAngebot.objects.filter(angebot_id__in=angebot_ids)
-
-    # Update status to 'angenommen' for the filtered instances
     angebote.update(status="angenommen")
-
-    # Optionally, you can return the count of updated instances
     return angebote.count()
 
 
 def update_vertrieb_angebot_assignment(user):
     user_data = json.loads(user.zoho_data_text)
-    # Extract zoho_id values from user_data
     if user_data != []:
         user_zoho_ids = {item["zoho_id"] for item in user_data}
-
-        # Filter vertrieb_angebot instances that need to be updated
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
             user=user, angebot_id_assigned=True
         ).exclude(zoho_id__in=user_zoho_ids)
-
-        # Bulk update angebot_id_assigned to False
         vertrieb_angebots_to_update.update(angebot_id_assigned=False)
-
     else:
         pass
 
@@ -1605,16 +1587,11 @@ def load_user_angebots(request):
     try:
         profile, created = User.objects.update_or_create(zoho_id=request.user.zoho_id)
         user = get_object_or_404(User, zoho_id=request.user.zoho_id)
-        kurz = user.kuerzel  # type: ignore
-
         all_user_angebots_list = fetch_user_angebote_all(request)
         profile.zoho_data_text = json.dumps(all_user_angebots_list)
         profile.save()
         user_data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-        # Extract zoho_id values from user_data
         if user_data != []:
-            user_zoho_ids = {item["zoho_id"] for item in user_data}
-
             zoho_id_to_status_pva = {
                 item["zoho_id"]: item["status_pva"] for item in user_data
             }
@@ -1632,8 +1609,6 @@ def load_user_angebots(request):
         update_status_to_angenommen(existing_angebot_ids)
         process_vertrieb_angebot(request)
 
-        # if TELEGRAM_LOGGING:
-        #     send_message_to_bot(f"{user.email}: Aufträge aus JPP aktualisiert")
         return JsonResponse({"status": "success"}, status=200)
     except Exception:
         return JsonResponse(
@@ -1716,8 +1691,6 @@ def create_calc_pdf(request, angebot_id):
     vertrieb_angebot.calc_pdf = pdf_content
     vertrieb_angebot.save()
 
-    pdf_link = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/Kalkulation_{name}_{vertrieb_angebot.angebot_id}.pdf")  # type: ignore
-
     return redirect("vertrieb_interface:document_calc_view", angebot_id=angebot_id)
 
 
@@ -1726,7 +1699,6 @@ def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = request.user
     data = vertrieb_angebot.data
-    name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     pdf_content = ticket_pdf_creator.createTicketPdf(data)
     vertrieb_angebot.ticket_pdf = pdf_content
@@ -1813,9 +1785,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
             return False
 
     def _attach_files(self, email, vertrieb_angebot, datenblatter):
-        file_data = (
-            vertrieb_angebot.angebot_pdf.tobytes()
-        )  # Ensure this is the correct way to get PDF data
+        file_data = vertrieb_angebot.angebot_pdf.tobytes()
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
         email.attach(
             f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
@@ -1946,7 +1916,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
                     "vertrieb_interface:document_and_calc_view",
                     form.instance.angebot_id,
                 )
-        email_sent = False
+
         return self.form_invalid(form)
 
     def _send_email(self, vertrieb_angebot):
@@ -1984,9 +1954,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             return False
 
     def _attach_files(self, email, vertrieb_angebot, datenblatter):
-        file_data = (
-            vertrieb_angebot.angebot_and_calc_pdf.tobytes()
-        )  # Ensure this is the correct way to get PDF data
+        file_data = vertrieb_angebot.angebot_and_calc_pdf.tobytes()
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
         email.attach(
             f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
@@ -2109,9 +2077,7 @@ def serve_calc_pdf(request, angebot_id):
     if not vertrieb_angebot.calc_pdf:
         return StreamingHttpResponse("File not found.", status=404)
 
-    # Create an instance of AsyncFileIter with the file object
     async_iterator = AsyncFileIter(vertrieb_angebot.calc_pdf)
-
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
 
@@ -2128,7 +2094,6 @@ def serve_ticket_pdf(request, angebot_id):
     if not vertrieb_angebot.ticket_pdf:
         return StreamingHttpResponse("File not found.", status=404)
 
-    # Create an instance of AsyncFileIter with the file object
     async_iterator = AsyncFileIter(vertrieb_angebot.ticket_pdf)
 
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
@@ -2199,9 +2164,7 @@ def send_invoice(request, angebot_id):
 
         vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
         text_for_email = data.get("text_for_email")
-        pdf = vertrieb_angebot.angebot_pdf
         subject = f"Angebot Photovoltaikanlage {angebot_id}"
-        # geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
         body = text_for_email
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
         print(f"Subject: {subject}")
@@ -2373,7 +2336,6 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
         context = super().get_context_data(**kwargs)
         user_angebots = context["angebots"]
 
-        # Generating angebots and URLs
         angebots_and_urls = [
             (
                 angebot,
@@ -2384,7 +2346,6 @@ class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
             if angebot.angebot_pdf
         ]
 
-        # Update context with the zipped angebots
         context.update(
             {
                 "zipped_angebots": angebots_and_urls,

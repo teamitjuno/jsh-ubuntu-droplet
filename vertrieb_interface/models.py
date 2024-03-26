@@ -488,7 +488,7 @@ class VertriebAngebot(TimeStampMixin):
 
     def get_module_preis(self, name):
         return float(SolarModulePreise.objects.get(name=name).price)
-    
+
     def get_module_garantie(self, name):
         return str(SolarModulePreise.objects.get(name=name).module_garantie)
 
@@ -713,7 +713,7 @@ class VertriebAngebot(TimeStampMixin):
             else:
                 parts = str(self.name_last_name) + " " + str(self.name_first_name)
         return str(parts)
-    
+
     @property
     def kundennumer_finder(self):
         if not self.zoho_kundennumer:
@@ -721,11 +721,11 @@ class VertriebAngebot(TimeStampMixin):
                 data = json.loads(self.user.zoho_data_text or '[["test", "test"]]')
                 zoho_id = str(self.zoho_id)
                 zoho_id_to_kundennumer = {
-                            item["zoho_id"]: item["zoho_kundennumer"] for item in data
-                        }
-                
+                    item["zoho_id"]: item["zoho_kundennumer"] for item in data
+                }
+
                 kundennumer = zoho_id_to_kundennumer[zoho_id]
-                
+
                 return kundennumer
             return ""
         else:

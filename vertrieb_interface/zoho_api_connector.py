@@ -456,11 +456,11 @@ def pushTicket(vertrieb_angebot, user_zoho_id):
     #     }
     dataMap = {
         "Ticket": {
-            "Wechselrichter" : {
-            "Hersteller_Typ": vertrieb_angebot.hersteller,
-            "Leistung_kVA": vertrieb_angebot.modulleistungWp,
-            "Status_Bau": "",
-            "PVA_klein": "",
+            "Wechselrichter": {
+                "Hersteller_Typ": vertrieb_angebot.hersteller,
+                "Leistung_kVA": vertrieb_angebot.modulleistungWp,
+                "Status_Bau": "",
+                "PVA_klein": "",
             },
             "PVA_klein": "",
             "Privatkunde": vertrieb_angebot.zoho_id,
@@ -473,11 +473,9 @@ def pushTicket(vertrieb_angebot, user_zoho_id):
             "Modulanzahl": "",
             "Notizen": "",
             "Ticket_erstellt_durch": user_zoho_id,
-            }
+        }
     }
 
-
-    
     response = requests.post(url, json=dataMap, headers=headers)
     response_data = response.json()
     # new_record_id = response_data["data"]["ID"]
