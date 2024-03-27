@@ -17,7 +17,10 @@ from authentication.models import User
 from config.settings import ENV_FILE
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
-from vertrieb_interface.zoho_api_connector import fetch_form_user_angebote_all, update_status
+from vertrieb_interface.zoho_api_connector import (
+    fetch_form_user_angebote_all,
+    update_status,
+)
 
 
 now = timezone.now()
@@ -26,13 +29,9 @@ now_german = date_format(now_localized, "DATETIME_FORMAT")
 load_dotenv(ENV_FILE)
 
 
-
-
-
 class ModulePreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.name}"  # type: ignore
-
 
 
 def filter_hidden_choices(choices):
@@ -1243,7 +1242,6 @@ class VertriebAngebotForm(ModelForm):
             "zahlungsbedingungen",
             "elwa",
             "thor",
-            # "heizstab",
             "eddi",
             "notstrom",
             "anzOptimizer",
@@ -1263,7 +1261,6 @@ class VertriebAngebotForm(ModelForm):
 
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
-
         default_choice = [("", "--------")]
         try:
             all_user_angebots_list = fetch_form_user_angebote_all(user)
@@ -1272,8 +1269,6 @@ class VertriebAngebotForm(ModelForm):
             user.save()
 
             data = json.loads(user.zoho_data_text or "[]")
-
-            # Filter out records with status "abgelehnt" or "storniert"
             data = [
                 item
                 for item in data
@@ -1287,15 +1282,11 @@ class VertriebAngebotForm(ModelForm):
                 name_to_kundennumer = {
                     item["name"]: item["zoho_kundennumer"] for item in data
                 }
-
             else:
-                # Set initial value to "-----" if there is no data
                 self.fields["name"].initial = "-----"
         except User.DoesNotExist:
-            # Handle case where the user does not exist
             self.fields["name"].initial = "-----"
 
-        # profile = User.objects.get(zoho_id=user.zoho_id)
         self.fields["solar_module"].choices = [
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
@@ -1316,7 +1307,7 @@ class VertriebAngebotForm(ModelForm):
         self.fields["vorname_nachname"].widget.attrs.update(
             {"id": "id_vorname_nachname"}
         )
-        self.fields["name"].widget.attrs.update({"id": "id_name"})
+
         self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
         self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
         self.fields["status"].widget.attrs.update({"id": "id_status"})
@@ -1343,17 +1334,15 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
+        self.fields["name"].widget.attrs.update({"id": "id_name"})
 
     def save(self, commit=True):
         form = super(VertriebAngebotForm, self).save(commit=False)
 
-        # Check if status is 'bekommen'
-
         if form.status == "bekommen":
             try:
-                # Try to get the object from the database
+
                 db_object = VertriebAngebot.objects.get(angebot_id=form.angebot_id)
-                vertrieb_angebot = db_object
                 db_countdown_on = db_object.countdown_on
                 db_zoho_id = db_object.zoho_id
                 if db_countdown_on == False:
@@ -1366,7 +1355,6 @@ class VertriebAngebotForm(ModelForm):
                     db_object.countdown_on = True
                     if db_zoho_id:
                         update_status(db_zoho_id, form.status)
-                    # post_angebot_to_zoho(form)
                     db_object.save()
                     form.save()
 
@@ -1391,8 +1379,6 @@ class VertriebAngebotForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-
-        # Define a dictionary to map incompatible combinations
         incompatible_combinations = {
             ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
             ("Viessmann", "SUN 2000"): "wechselrichter_model",
@@ -1404,7 +1390,6 @@ class VertriebAngebotForm(ModelForm):
 
         action = self.data.get("action_type")
         hersteller = cleaned_data.get("hersteller")
-        speicher_model = cleaned_data.get("speicher_model")
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
@@ -1448,11 +1433,6 @@ class VertriebAngebotForm(ModelForm):
             return cleaned_data
 
         interessent = cleaned_data.get("name")
-
-        wallboxtyp = cleaned_data.get("wallboxtyp")
-        wechselrichter_model = cleaned_data.get("wechselrichter_model")
-        speicher_model = cleaned_data.get("speicher_model")
-        kundennumer = cleaned_data.get("kundennumer")
         modulanzahl = cleaned_data.get("modulanzahl")
         name_last_name = cleaned_data.get("name_last_name")
 
@@ -1473,19 +1453,11 @@ class VertriebAngebotForm(ModelForm):
                     ),
                 )
 
-            # Validation for 'name'
-        name = cleaned_data.get("name")
-
         if interessent == "----":
             raise forms.ValidationError(
                 {"name": "Sie haben keinen Interessent ausgewählt"}
             )
 
-        # if name == "":
-        #     raise ValidationError(
-        #         ("Dieses Feld ist erforderlich"),
-        #         params={"name": name},
-        # )
         anrede = cleaned_data.get("anrede")
         if anrede is None or anrede == "":
             raise ValidationError(
@@ -1499,15 +1471,12 @@ class VertriebAngebotForm(ModelForm):
                 params={"name_last_name": name_last_name},
             )
 
-        # Validation for 'strasse'
         strasse = cleaned_data.get("strasse")
         if strasse is None or strasse == "":
             raise ValidationError(
                 ("Strasse Feld ist erforderlich"),
                 params={"strasse": strasse},
             )
-
-        # Validation for 'ort'
         ort = cleaned_data.get("ort")
         if ort is None or ort == "":
             raise ValidationError(
@@ -1516,8 +1485,6 @@ class VertriebAngebotForm(ModelForm):
             )
 
         email = self.cleaned_data.get("email")
-
-        # Check if the email is empty
         if not email:
             raise ValidationError("Email Feld ist erforderlich")
         if email:
@@ -1526,7 +1493,6 @@ class VertriebAngebotForm(ModelForm):
             except ValidationError:
                 raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
 
-        speicher = cleaned_data.get("speicher")
         anz_speicher = cleaned_data.get("anz_speicher")
         message, is_valid = validate_range(anz_speicher, hersteller)
         if not is_valid:
@@ -1599,8 +1565,6 @@ class VertriebAngebotForm(ModelForm):
             return cleaned_data
 
         else:
-            # hersteller = cleaned_data.get("hersteller")
-
             if interessent == "----":
                 raise forms.ValidationError(
                     {"hersteller": "Sie haben keinen Hersteller ausgewählt"}

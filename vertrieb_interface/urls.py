@@ -1,8 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, re_path
-from vertrieb_interface import views
-from vertrieb_interface.views import DocumentView
+from vertrieb_interface.api_views import views
+from vertrieb_interface.api_views.angebot_main_view import AngebotEditView
+from vertrieb_interface.api_views.ticket_view import TicketEditView
+from vertrieb_interface.api_views.kalkulation_view import KalkulationEditView
+from vertrieb_interface.api_views.auto_field_view import VertriebAutoFieldView
+from vertrieb_interface.api_views.alle_angebote_view import ViewOrders
 from django.views import defaults as default_views
 from adminfeautures.views import UpdateAdminAngebot
 
@@ -22,7 +26,7 @@ vertrieb_patterns = [
     ),
     path(
         "vertrieb/vertrieb_autofield/",
-        views.VertriebAutoFieldView.as_view(),
+        VertriebAutoFieldView.as_view(),
         name="vertrieb_autofield",
     ),
     path("vertrieb/create_angebot/", views.create_angebot, name="create_angebot"),
@@ -45,7 +49,7 @@ vertrieb_patterns = [
         name="load_user_angebots",
     ),
     path("vertrieb/profile/", views.profile, name="profile"),
-    path("vertrieb/view_orders/", views.ViewOrders.as_view(), name="view_orders"),
+    path("vertrieb/view_orders/", ViewOrders.as_view(), name="view_orders"),
     path(
         "vertrieb/view_orders/delete/<str:angebot_id>/",
         views.DeleteUserAngebot.as_view(),
@@ -58,17 +62,17 @@ vertrieb_patterns = [
     ),
     path(
         "vertrieb/edit_angebot/<str:angebot_id>/",
-        views.AngebotEditView.as_view(),
+        AngebotEditView.as_view(),
         name="edit_angebot",
     ),
     path(
         "vertrieb/edit_ticket/<str:angebot_id>/",
-        views.TicketEditView.as_view(),
+        TicketEditView.as_view(),
         name="edit_ticket",
     ),
     path(
         "vertrieb/edit_calc/<str:angebot_id>/",
-        views.KalkulationEditView.as_view(),
+        KalkulationEditView.as_view(),
         name="edit_calc",
     ),
     path(
@@ -135,7 +139,9 @@ vertrieb_patterns = [
         views.serve_ticket_pdf,
         name="serve_ticket_pdf",
     ),
-    path("document/<str:angebot_id>/", DocumentView.as_view(), name="document_view"),
+    path(
+        "document/<str:angebot_id>/", views.DocumentView.as_view(), name="document_view"
+    ),
     path(
         "document_calc/<str:angebot_id>/",
         views.document_calc_view,
@@ -172,7 +178,6 @@ vertrieb_patterns = [
     path("vertrieb/intermediate/", views.intermediate_view, name="intermediate_view"),
 ]
 
-# Error Handlers
 error_patterns = [
     re_path(
         r"^400/$",

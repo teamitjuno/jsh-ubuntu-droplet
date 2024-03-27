@@ -31,3 +31,13 @@ def send_message_to_bot(text):
         print(f"Telegram API error: {e}")
     except Exception as e:
         print(f"Error sending message: {e}")
+
+
+# Funktion zum Senden von Benachrichtigungen mit verbesserter Nachrichtenstruktur
+def send_custom_message(user, action, details):
+
+    user_name = f"{user.first_name} {user.last_name}".strip()
+    user_name = user_name if user_name else "Ein Benutzer"
+
+    message = f"{user_name} {action} {details}"
+    send_message_to_bot(message)

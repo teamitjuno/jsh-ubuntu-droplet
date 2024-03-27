@@ -328,7 +328,6 @@ def put_form_data_to_zoho_jpp(form):
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    bekommen_am = datetime.datetime.now().strftime("%d-%b-%Y")
     anrede = form_data.get("anrede")
     name_first_name = form_data.get("name_first_name")
     name_suffix = form_data.get("name_suffix")
@@ -358,13 +357,9 @@ def put_form_data_to_zoho_jpp(form):
         }
     }
 
-    json_payload = json.dumps(payload, ensure_ascii=True)
     headers["Content-Type"] = "application/json"
 
-    str_payload = f"{json_payload}"
     response = requests.patch(update_url, headers=headers, json=payload)
-
-    res = response.json()
 
     return response.json()
 

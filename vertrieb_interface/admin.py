@@ -34,7 +34,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "user",
         "status",
         "is_locked",
-        "zoho_kundennumer",
         "angebot_id_assigned",
     )
 

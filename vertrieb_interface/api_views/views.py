@@ -19,7 +19,6 @@ from django.db.models import Count, IntegerField, Q, Sum, Case, When, Value
 from django.db.models.functions import Cast
 from django.http import (
     FileResponse,
-    Http404,
     HttpResponse,
     HttpResponseRedirect,
     JsonResponse,
@@ -34,10 +33,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.defaults import page_not_found
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView, View
-from django.views.generic.edit import FormMixin
 
 # Local imports from 'config'
-from config import settings as local_settings
 from config.settings import EMAIL_BACKEND, TELEGRAM_LOGGING
 
 # Local imports from 'prices'
@@ -57,17 +54,12 @@ from shared.chat_bot import handle_message
 from vertrieb_interface.forms import (
     VertriebAngebotForm,
     VertriebAngebotEmailForm,
-    TicketForm,
 )
 from vertrieb_interface.zoho_api_connector import (
     delete_redundant_angebot,
     extract_values,
     fetch_angenommen_status,
     fetch_user_angebote_all,
-    log_and_notify,
-    pushAngebot,
-    pushTicket,
-    put_form_data_to_zoho_jpp,
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.pdf_services import (
@@ -78,7 +70,10 @@ from vertrieb_interface.pdf_services import (
     ticket_pdf_creator,
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
-from vertrieb_interface.telegram_logs_sender import send_message_to_bot
+from vertrieb_interface.telegram_logs_sender import (
+    send_message_to_bot,
+    send_custom_message,
+)
 
 # Local imports from 'authentication'
 from authentication.models import User
@@ -142,16 +137,6 @@ now_localized = timezone.localtime(now)
 now_german = date_format(now_localized, "DATETIME_FORMAT")
 
 
-# Funktion zum Senden von Benachrichtigungen mit verbesserter Nachrichtenstruktur
-def send_custom_message(user, action, details):
-
-    user_name = f"{user.first_name} {user.last_name}".strip()
-    user_name = user_name if user_name else "Ein Benutzer"
-
-    message = f"{user_name} {action} {details}"
-    send_message_to_bot(message)
-
-
 def handler404(request, exception):
     return render(request, "404.html", status=404)
 
@@ -162,7 +147,7 @@ def vertrieb_check(user):
 
 class VertriebCheckMixin(UserPassesTestMixin):
     def test_func(self):
-        return vertrieb_check(self.request.user)  
+        return vertrieb_check(self.request.user)
 
 
 def get_recent_activities(user):
@@ -747,27 +732,6 @@ def create_angebot(request):
     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
 
 
-class VertriebAutoFieldView(View, VertriebCheckMixin):
-    data = []
-
-    def get(self, request, *args, **kwargs):
-        profile, created = User.objects.get_or_create(zoho_id=request.user.zoho_id)
-        self.data = json.loads(profile.zoho_data_text)
-        try:
-            self.data != []
-            name = request.GET.get("name", None)
-            data = next((item for item in self.data if item["name"] == name), None)
-
-            return JsonResponse(data)
-        except:
-            name = request.GET.get("name", None)
-            data = next((item for item in self.data if item["name"] == name), None)
-
-            if data is None:
-                data = {}
-            return JsonResponse(data)
-
-
 def map_view(request, angebot_id, *args, **kwargs):
     vertrieb_angebot = VertriebAngebot.objects.get(
         angebot_id=angebot_id, user=request.user
@@ -778,520 +742,6 @@ def map_view(request, angebot_id, *args, **kwargs):
         "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
     }
     return render(request, "vertrieb/extra/map.html", context)
-
-
-class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
-    model = VertriebAngebot
-    form_class = VertriebAngebotForm
-    template_name = "vertrieb/edit_angebot.html"
-    context_object_name = "vertrieb_angebot"
-
-    def dispatch(self, request, *args, **kwargs):
-        angebot_id = kwargs.get("angebot_id")
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
-        # self.fetch_angebot_data(request, angebot_id, request.user)
-        self.handle_status_change(angebot_id)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_object(self):
-        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        vertrieb_angebot = self.get_object()
-
-        context["form"] = self.form_class(
-            instance=vertrieb_angebot,
-            user=self.request.user,
-        )
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def handle_status_change(self, angebot_id):
-        for angebot in self.model.objects.filter(
-            angebot_id=angebot_id, status="bekommen"
-        ):
-            if angebot.status_change_field:
-                if (
-                    timezone.now() - angebot.status_change_field
-                ).total_seconds() >= 14 * 24 * 60 * 60:
-                    angebot.status = "abgelaufen"
-                    angebot.save()
-
-                    CustomLogEntry.objects.log_action(
-                        user_id=angebot.user_id,
-                        content_type_id=ContentType.objects.get_for_model(angebot).pk,
-                        object_id=angebot.pk,
-                        object_repr=str(angebot),
-                        action_flag=CHANGE,
-                        status=angebot.status,
-                    )
-
-    def get(self, request, angebot_id, *args, **kwargs):
-        user = request.user
-        vertrieb_angebot = self.model.objects.get(
-            angebot_id=angebot_id, user=user
-        )
-        form = self.form_class(instance=vertrieb_angebot, user=user)  
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(
-            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-        )
-        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(
-            calc_image_suffix, start=settings.MEDIA_ROOT
-        )
-        context = self.get_context_data()
-        context = {
-            "countdown": vertrieb_angebot.countdown(),
-            "messages": messages.get_messages(request),
-            "user": user,
-            "vertrieb_angebot": vertrieb_angebot,
-            "form": form,
-            "calc_image": relative_path,
-            "calc_image_suffix": relative_path_suffix,
-            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-            "OWNER_ID": settings.OWNER_ID,
-            "STYLE_ID": settings.STYLE_ID,
-            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-        }
-
-        return render(request, self.template_name, context)
-            
-
-    def post(self, request, *args, **kwargs):
-        vertrieb_angebot = get_object_or_404(
-            self.model, angebot_id=self.kwargs.get("angebot_id")
-        )
-        user = request.user
-        user_zoho_id = user.zoho_id
-        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)
-        instance = form.instance
-        if request.method == "POST":
-            action_type = request.POST.get("action_type")
-            if action_type == "switch_to_bekommen":
-                if form.is_valid():
-                    instance.angebot_id_assigned = True
-                    instance.status = "bekommen"
-                    form.save()
-                    self.push_and_save_angebot(vertrieb_angebot, user_zoho_id, form, request)
-                    if TELEGRAM_LOGGING:
-                        send_message_to_bot(
-                            f"{user.first_name} {user.last_name} hat ein PDF Angebot für einen Kunden erstellt. Kunde: {vertrieb_angebot.name}"
-                        )
-                    return redirect(
-                        "vertrieb_interface:create_angebot_pdf_user",
-                        vertrieb_angebot.angebot_id,
-                    )
-            elif action_type == "switch_to_bekommen_pdf_plus_kalk":
-                if form.is_valid():
-                    instance.angebot_id_assigned = True
-                    instance.status = "bekommen"
-                    form.save()
-                    self.push_and_save_angebot(vertrieb_angebot, user_zoho_id, form, request)
-
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat ein PDF Angebot für einen Interessenten erstellt.",
-                            f"Kunde: {vertrieb_angebot.name} 📑",
-                        )
-                    return redirect(
-                        "vertrieb_interface:create_angebot_and_calc_pdf",
-                        vertrieb_angebot.angebot_id,
-                    )
-            elif action_type == "zahlungs":
-
-                if form.is_valid():
-                    instance.zahlungsbedingungen = form.cleaned_data[
-                        "zahlungsbedingungen"
-                    ]
-                    instance.save(update_fields=["zahlungsbedingungen"])
-
-                    return redirect(
-                        "vertrieb_interface:create_angebot_pdf_user",
-                        vertrieb_angebot.angebot_id,
-                    )
-            elif action_type == "kalkulation_erstellen":
-
-                if form.is_valid():
-                    form.save()
-                    return redirect(
-                        "vertrieb_interface:create_calc_pdf",
-                        vertrieb_angebot.angebot_id,
-                    )
-
-            elif action_type == "angebotsumme_rechnen":
-                if form.is_valid():
-                    form.save()
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat macht Angebotsumme_rechnen",
-                            f"Kunde: {vertrieb_angebot.name} 📑",
-                        )
-                    
-            elif action_type == "save":
-                if form.is_valid():
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat macht Speichern",
-                            f"Kunde: {vertrieb_angebot.name} 📑",
-                        )
-                    instance.angebot_id_assigned = True
-                    kundennumer = instance.zoho_kundennumer
-                    angebot_existing = self.model.objects.filter(
-                        user=user,
-                        angebot_id_assigned=True,
-                        status="",
-                        zoho_kundennumer=kundennumer,
-                    )
-
-                    if angebot_existing.count() != 0:
-                        extracted_part = (
-                            str(angebot_existing)
-                            .split("VertriebAngebot: ")[1]
-                            .split(">]")[0]
-                        )
-                        if vertrieb_angebot.angebot_id == extracted_part:
-                            instance.save()
-                            form.save()
-                            put_form_data_to_zoho_jpp(form)
-                            CustomLogEntry.objects.log_action(
-                                user_id=vertrieb_angebot.user_id,
-                                content_type_id=ContentType.objects.get_for_model(
-                                    vertrieb_angebot
-                                ).pk,
-                                object_id=vertrieb_angebot.pk,
-                                object_repr=str(vertrieb_angebot),
-                                action_flag=CHANGE,
-                                status=vertrieb_angebot.status,
-                            )
-                            return redirect(
-                                "vertrieb_interface:edit_angebot",
-                                vertrieb_angebot.angebot_id,
-                            )
-
-                        else:
-                            form.add_error(
-                                None,
-                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
-                            )
-                            return self.form_invalid(form, vertrieb_angebot, request)
-                    else:
-                        instance.save()
-                        form.save()
-                        put_form_data_to_zoho_jpp(form)
-
-                        CustomLogEntry.objects.log_action(
-                            user_id=vertrieb_angebot.user_id,
-                            content_type_id=ContentType.objects.get_for_model(
-                                vertrieb_angebot
-                            ).pk,
-                            object_id=vertrieb_angebot.pk,
-                            object_repr=str(vertrieb_angebot),
-                            action_flag=CHANGE,
-                            status=vertrieb_angebot.status,
-                        )
-                    return redirect(
-                        "vertrieb_interface:edit_angebot",
-                        vertrieb_angebot.angebot_id,
-                    )
-
-            return self.form_invalid(form, vertrieb_angebot, request)
-    
-    def push_and_save_angebot(self, vertrieb_angebot, user_zoho_id, form, request):
-        """
-        Attempts to push an Angebot to ZOHO and save the response.
-        In case of any exception, adds an error to the form and returns a form invalid response.
-
-        """
-        try:
-            response = pushAngebot(vertrieb_angebot, user_zoho_id)
-            response_data = response.json()
-            new_record_id = response_data["data"]["ID"]
-            vertrieb_angebot.angebot_zoho_id = new_record_id
-            vertrieb_angebot.save()
-        except Exception as e:
-            error_message = f"ZOHO connection Fehler: {str(e)}"
-            form.add_error(None, error_message)
-            return self.form_invalid(form, vertrieb_angebot, request)
-
-    def form_invalid(self, form, vertrieb_angebot, request, *args, **kwargs):
-        context = self.get_context_data()
-        context["status_change_field"] = vertrieb_angebot.status_change_field
-        context["countdown"] = vertrieb_angebot.countdown()
-        context["messages"] = messages.get_messages(request)
-        context["vertrieb_angebot"] = vertrieb_angebot
-        context["form"] = form
-        return render(self.request, self.template_name, context)
-
-    def load_data_from_zoho_to_angebot_id(self, request):
-        pass
-
-
-class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
-    model = VertriebAngebot
-    form_class = TicketForm
-    template_name = "vertrieb/edit_ticket.html"
-    context_object_name = "vertrieb_angebot"
-
-    def dispatch(self, request, *args, **kwargs):
-        angebot_id = kwargs.get("angebot_id")
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_object(self):
-        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        vertrieb_angebot = self.get_object()
-
-        context["form"] = self.form_class(
-            instance=vertrieb_angebot, user=self.request.user  
-        )
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def get(self, request, angebot_id, *args, **kwargs):
-        vertrieb_angebot = VertriebAngebot.objects.get(
-            angebot_id=angebot_id, user=request.user
-        )
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
-        user = request.user
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(
-            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-        )
-        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(
-            calc_image_suffix, start=settings.MEDIA_ROOT
-        )
-        context = self.get_context_data()
-
-        context = {
-            "user": user,
-            "vertrieb_angebot": vertrieb_angebot,
-            "form": form,
-            "calc_image": relative_path,
-            "calc_image_suffix": relative_path_suffix,
-            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-            "OWNER_ID": settings.OWNER_ID,
-            "STYLE_ID": settings.STYLE_ID,
-            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-        }
-
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        vertrieb_angebot = get_object_or_404(
-            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
-        )
-        user = request.user
-        user_zoho_id = user.zoho_id
-        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  
-        if "pdf_erstellen" in request.POST:
-            if form.is_valid():
-                vertrieb_angebot.angebot_id_assigned = True
-                vertrieb_angebot.save()
-                form.save()  # type:ignore
-                response = pushTicket(vertrieb_angebot, user_zoho_id)
-                if TELEGRAM_LOGGING:
-                    send_custom_message(
-                        user,
-                        "Response",
-                        f"{response} 🎟️",
-                    )
-                if TELEGRAM_LOGGING:
-                    send_custom_message(
-                        user,
-                        "hat ein PDF Ticket für einen Kunden erstellt.",
-                        f"Kunde: {vertrieb_angebot.name} 🎟️",
-                    )
-                return redirect(
-                    "vertrieb_interface:create_ticket_pdf", vertrieb_angebot.angebot_id
-                )
-
-        elif form.is_valid():
-            instance = form.instance
-
-            instance.save()
-            form.save()
-
-        return self.form_invalid(form, vertrieb_angebot)
-
-    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
-        context = self.get_context_data()
-
-        context["status_change_field"] = vertrieb_angebot.status_change_field
-
-        context["vertrieb_angebot"] = vertrieb_angebot
-        context["form"] = form
-
-        return render(self.request, self.template_name, context)
-
-    def load_data_from_zoho_to_angebot_id(self, request):
-        pass
-
-
-class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
-    model = VertriebAngebot
-    form_class = VertriebAngebotForm
-    template_name = "vertrieb/edit_calc.html"
-    context_object_name = "vertrieb_angebot"
-
-    def dispatch(self, request, *args, **kwargs):
-        angebot_id = kwargs.get("angebot_id")
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_object(self):
-        return get_object_or_404(self.model, angebot_id=self.kwargs.get("angebot_id"))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        vertrieb_angebot = self.get_object()
-
-        context["form"] = self.form_class(  
-            instance=vertrieb_angebot, user=self.request.user  
-        )
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def get(self, request, angebot_id, *args, **kwargs):
-        vertrieb_angebot = VertriebAngebot.objects.get(
-            angebot_id=angebot_id, user=request.user
-        )
-        zoho_id = vertrieb_angebot.zoho_id
-
-        vertrieb_angebot.vorname_nachname = vertrieb_angebot.name
-
-        form = self.form_class(instance=vertrieb_angebot, user=request.user)  
-        user = request.user
-
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        calc_image = os.path.join(user_folder, "tmp.png")
-        calc_image_suffix = os.path.join(
-            user_folder, "calc_tmp_" + f"{vertrieb_angebot.angebot_id}.png"
-        )
-        relative_path = os.path.relpath(calc_image, start=settings.MEDIA_ROOT)
-        relative_path_suffix = os.path.relpath(
-            calc_image_suffix, start=settings.MEDIA_ROOT
-        )
-        context = self.get_context_data()
-
-        context = {
-            "user": user,
-            "vertrieb_angebot": vertrieb_angebot,
-            "form": form,
-            "calc_image": relative_path,
-            "calc_image_suffix": relative_path_suffix,
-            "MAPBOX_TOKEN": settings.MAPBOX_TOKEN,
-            "OWNER_ID": settings.OWNER_ID,
-            "STYLE_ID": settings.STYLE_ID,
-            "LATITUDE": vertrieb_angebot.postanschrift_latitude,
-            "LONGITUDE": vertrieb_angebot.postanschrift_longitude,
-        }
-
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        vertrieb_angebot = get_object_or_404(
-            VertriebAngebot, angebot_id=self.kwargs.get("angebot_id")
-        )
-        user = request.user
-        form = self.form_class(request.POST, instance=vertrieb_angebot, user=user)  
-        if "pdf_erstellen" in request.POST:
-            if form.is_valid():
-                vertrieb_angebot.angebot_id_assigned = True
-
-                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
-                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-                name = form.cleaned_data["name"]
-                zoho_id = form.cleaned_data["zoho_id"]
-                kundennumer = name_to_kundennumer[name]
-
-                zoho_id = name_to_zoho_id[name]
-
-                vertrieb_angebot.zoho_kundennumer = kundennumer
-                vertrieb_angebot.zoho_id = int(zoho_id)
-                vertrieb_angebot.save()
-                form.save()  # type:ignore
-                if TELEGRAM_LOGGING:
-                    send_custom_message(
-                        user,
-                        "hat eine PDF Kalkulation für einen Interessenten erstellt.",
-                        f"Kunde: {vertrieb_angebot.name} 📊",
-                    )
-
-                return redirect(
-                    "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
-                )
-        elif form.is_valid():
-            vertrieb_angebot.angebot_id_assigned = True
-
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
-            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            name = form.cleaned_data["name"]
-            zoho_id = form.cleaned_data["zoho_id"]
-            kundennumer = name_to_kundennumer[name]
-
-            zoho_id = name_to_zoho_id[name]
-
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.zoho_id = int(zoho_id)
-            vertrieb_angebot.save()
-            form.save()  # type:ignore
-
-            return redirect("vertrieb_interface:edit_calc", vertrieb_angebot.angebot_id)
-        return self.form_invalid(form, vertrieb_angebot)
-
-    def form_invalid(self, form, vertrieb_angebot, *args, **kwargs):
-        context = self.get_context_data()
-
-        context["status_change_field"] = vertrieb_angebot.status_change_field
-
-        context["vertrieb_angebot"] = vertrieb_angebot
-        context["form"] = form
-
-        return render(self.request, self.template_name, context)
-
-    def load_data_from_zoho_to_angebot_id(self, request):
-        pass
 
 
 class DeleteAngebot(DeleteView):
@@ -1352,26 +802,6 @@ class DeleteUserAngebot(DeleteView):
         )
         self.object.delete()
         return redirect(self.get_success_url())
-
-
-class ViewOrders(LoginRequiredMixin, VertriebCheckMixin, ListView):
-    model = VertriebAngebot
-    template_name = "vertrieb/view_orders.html"
-    context_object_name = "angebots"
-
-    def get_queryset(self):
-        # Optimized query to directly exclude "angenommen" and "bekommen" statuses
-        return self.model.objects.filter(user=self.request.user).exclude(
-            status__in=["angenommen", "bekommen"]
-        )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if TELEGRAM_LOGGING:
-            send_custom_message(
-                self.request.user, "Accessed the offers list page.", "Info"
-            )
-        return context
 
 
 def set_angebot_id_assigned_false_for_user(request):
@@ -2269,7 +1699,9 @@ def PDFCalculationsListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    calc_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/")  
+    calc_path = os.path.join(
+        settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+    )
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
     calc_files = [
@@ -2340,7 +1772,9 @@ def PDFTicketListView(request, angebot_id):
         return page_not_found(request, Exception())
     user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    ticket_path = os.path.join(settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/")  
+    ticket_path = os.path.join(
+        settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/"
+    )
 
     ticket_files = [
         os.path.join(
