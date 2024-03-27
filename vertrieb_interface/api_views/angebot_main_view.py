@@ -231,12 +231,13 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             f"Kunde: {vertrieb_angebot.name} 📑",
                         )
                     instance.angebot_id_assigned = True
-                    kundennumer = instance.zoho_kundennumer
+                    
+                    zoho_id = instance.zoho_id
                     angebot_existing = self.model.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
                         status="",
-                        zoho_kundennumer=kundennumer,
+                        zoho_id=zoho_id,
                     )
 
                     if angebot_existing.count() != 0:
