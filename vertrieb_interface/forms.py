@@ -1,6 +1,6 @@
 # Standard library imports
 import decimal
-import json
+import json, requests
 import re
 
 # Related third-party imports
@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 # Local application/library specific imports
 from authentication.models import User
-from config.settings import ENV_FILE
+from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
@@ -1583,7 +1583,26 @@ class VertriebAngebotForm(ModelForm):
                 "Länge der Telefonnummer muss + und 10 Ziffern sein"
             )
         return telefon_mobil
+    
+    def fill_geo_coordinates(self):
+        address = f"{self.cleaned_data['strasse']}, {self.cleaned_data['ort']}"
+        api_key = GOOGLE_MAPS_API_KEY
+        base_url = "https://maps.googleapis.com/maps/api/geocode/json"
 
+        response = requests.get(base_url, params={'address': address, 'key': api_key})
+        if response.status_code == 200:
+            data = response.json()
+            if data['results']:
+                location = data['results'][0]['geometry']['location']
+                self.cleaned_data['postanschrift_latitude'] = location['lat']
+                self.cleaned_data['postanschrift_longitude'] = location['lng']
+                self.instance.postanschrift_latitude = location['lat']
+                self.instance.postanschrift_longitude = location['lng']
+            else:
+                print("Geocoding API did not return any results.")
+                
+        else:
+            print("Geocoding API request failed.")
 
 class VertriebAngebotRechnerForm(VertriebAngebotForm):
     name = forms.ChoiceField(

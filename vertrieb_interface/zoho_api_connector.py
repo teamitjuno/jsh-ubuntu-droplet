@@ -332,6 +332,8 @@ def put_form_data_to_zoho_jpp(form):
     name_first_name = form_data.get("name_first_name")
     name_suffix = form_data.get("name_suffix")
     name_last_name = form_data.get("name_last_name")
+    longitude = form.data.get("postanschrift_longitude")
+    latitude = form.data.get("postanschrift_latitude")
 
     postal_code = (" ".join(form_data.get("ort").split(" ")[:-1]),)
     district_city = (form_data.get("ort").split(" ")[1],)
@@ -353,6 +355,8 @@ def put_form_data_to_zoho_jpp(form):
                 "district_city": district_city[0],
                 "address_line_1": strasse[0],
                 "postal_code": postal_code[0],
+                "longitude" : longitude,
+                "latitude" : latitude,
             },
         }
     }

@@ -248,6 +248,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         )
                         if vertrieb_angebot.angebot_id == extracted_part:
                             # instance.save()
+                            form.fill_geo_coordinates()
                             form.save()
                             put_form_data_to_zoho_jpp(form)
                             CustomLogEntry.objects.log_action(
@@ -273,6 +274,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                             return self.form_invalid(form, vertrieb_angebot, request)
                     else:
                         instance.save()
+                        form.fill_geo_coordinates()
                         form.save()
                         put_form_data_to_zoho_jpp(form)
 
