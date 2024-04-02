@@ -827,8 +827,7 @@ class VertriebAngebotForm(ModelForm):
     wechselrichter_model = forms.ChoiceField(
         label="Wechselrichter",
         choices=WECHSELRICHTER_MODEL_CHOICES,
-        required=True,
-        initial="----",
+
         widget=forms.Select(
             attrs={"class": "form-select", "id": "wechselrichter_model"}
         ),
@@ -837,8 +836,7 @@ class VertriebAngebotForm(ModelForm):
     speicher_model = forms.ChoiceField(
         label="Batteriespeicher",
         choices=SPEICHER_MODEL_CHOICES,
-        required=True,
-        initial="----",
+        
         widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
     )
 
@@ -1311,6 +1309,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
         self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
         self.fields["status"].widget.attrs.update({"id": "id_status"})
+        self.fields["wechselrichter_model"].widget.attrs.update({"id": "wechselrichter_model"})
+        self.fields["speicher_model"].widget.attrs.update({"id": "speicher_model"})
+        self.fields["hersteller"].widget.attrs.update({"id": "hersteller"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
@@ -1390,6 +1391,7 @@ class VertriebAngebotForm(ModelForm):
 
         action = self.data.get("action_type")
         hersteller = cleaned_data.get("hersteller")
+        wechselrichter_model = cleaned_data.get("wechselrichter_model")
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
@@ -1600,7 +1602,7 @@ class VertriebAngebotForm(ModelForm):
                 self.instance.postanschrift_longitude = location['lng']
             else:
                 print("Geocoding API did not return any results.")
-                
+
         else:
             print("Geocoding API request failed.")
 

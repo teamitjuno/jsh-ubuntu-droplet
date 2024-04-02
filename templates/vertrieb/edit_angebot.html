@@ -1129,7 +1129,34 @@ function submitFormWithAction(actionType) {
 
     <!--- #############################################################################################-->
 
+<script>
+    // Filename: form_change_listener_exclusions_updated.js
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the selector to exclude the specified fields.
+    // This example assumes you're excluding based on the `name` attribute. Adjust as necessary.
+    const excludeSelector = ':not([name="hersteller"]):not([name="anrede"]):not([name="name_first_name"]):not([name="name_last_name"]):not([name="telefon_mobil"]):not([name="telefon_festnetz"]):not([name="email"]):not([name="strasse"]):not([name="ort"]):not([name="name_suffix"])';
+    const formFields = document.querySelectorAll('.table input' + excludeSelector + ', .table select' + excludeSelector + ', .table .custom-control-input' + excludeSelector);
+
+    // Function to be called when a change is detected
+    const onChange = () => {
+        submitFormWithAction('angebotsumme_rechnen');
+    };
+
+    // Attach change event listeners to each form field
+    formFields.forEach(field => {
+        field.addEventListener('change', onChange);
+    });
+});
+
+// Ensure this function exists and is correctly defined to perform the desired action
+function submitFormWithAction(action) {
+    // Example action, replace with the actual function logic
+    console.log(`Action to perform: ${action}`);
+    // Insert the logic to submit the form or any other action required
+}
+
+</script>
     {% else %}
         <form id="main-form" method="POST" onsubmit="updateDisplay();" action="{% url 'vertrieb_interface:edit_angebot' angebot_id=vertrieb_angebot.angebot_id %}">
             {% csrf_token %}
