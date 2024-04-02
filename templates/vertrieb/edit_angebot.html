@@ -989,7 +989,7 @@
 
         
         {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
-        <script>
+<script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     
@@ -2008,7 +2008,7 @@ $(document).ready(function() {
 });
 </script>
 
-       <script>
+<script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleBoolelwaRow($('#hersteller').val());
@@ -2231,12 +2231,6 @@ $(document).ready(function() {
     }
 });
 </script> 
-
-
-
-
-
-
 <script>
     let arbeitsListe = JSON.parse('{{ vertrieb_angebot.Arbeits_liste|escapejs }}');
     let restListe = JSON.parse('{{ vertrieb_angebot.Rest_liste|escapejs }}');

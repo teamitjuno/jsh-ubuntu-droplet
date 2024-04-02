@@ -215,12 +215,6 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "angebotsumme_rechnen":
                 if form.is_valid():
                     form.save()
-                    if TELEGRAM_LOGGING:
-                        send_custom_message(
-                            user,
-                            "hat macht Angebotsumme_rechnen",
-                            f"Kunde: {vertrieb_angebot.name} 📑",
-                        )
 
             elif action_type == "save":
                 if form.is_valid():
