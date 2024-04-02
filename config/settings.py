@@ -14,6 +14,7 @@ load_dotenv(ENV_FILE)
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
 ALLOWED_HOSTS = [
     "*",
     "jsh-home.app",
@@ -29,9 +30,8 @@ ALLOWED_HOSTS = [
 LOGIN_URL = "/login"
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
-DEVELOPMENT_MODE = os.getenv("DEVELOPEMENT_MODE", "FALSE") == "True"
 
-# Application definition
+DEVELOPMENT_MODE = os.getenv("DEVELOPEMENT_MODE", "FALSE") == "True"
 
 # Application definition
 PROJECT_APPS = [
@@ -266,33 +266,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #     'loggers': {
 #         'django': {
 #             'handlers': ['console', 'file'],
-#             'level': 'DEBUG',  # Установите уровень логирования на DEBUG для максимальной детализации
+#             'level': 'DEBUG', 
 #             'propagate': True,
 #         },
-#         # Для логирования запросов к Django
+#         
 #         'django.request': {
 #             'handlers': ['console', 'file'],
 #             'level': 'DEBUG',
 #             'propagate': False,
 #         },
-#         # Вы можете добавить другие логгеры для других частей вашего приложения
+#         
 #     },
 # }
 
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'juno.dyntcb.de'
-# EMAIL_PORT =  '8843'
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False
-# EMAIL_HOST_USER = 'si@juno-solar.com'
-# EMAIL_HOST_PASSWORD = '301c81Pq8'
-
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-# EMAIL_HOST = 'send.one.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'teamit@juno-solar.com'
-# EMAIL_HOST_PASSWORD = 'ef1869Zb3'
-# Credentials for the SMTP server
