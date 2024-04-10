@@ -1984,7 +1984,7 @@ unwirksam.""",  # regular_text19
         self.line(175, y + 35, 197, y + 35)
         self.line(175, y + 36, 197, y + 36)
 
-    def page8(self, data, user_folder, vertrieb_angebot):
+    def page8(self, data, vertrieb_angebot, user):
         self.add_page()
         self.set_fill_color(240)
         y = 20
@@ -2114,6 +2114,12 @@ unwirksam.""",  # regular_text19
         X = list(range(data["zeitraum"]))
         y1 = data["arbeitsListe"]
         y2 = data["restListe"]
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        if not os.path.exists(user_folder):
+            os.makedirs(user_folder)
+
         try:
             fig = Figure(figsize=(10, 5))
             ax = fig.add_subplot()
@@ -2151,11 +2157,6 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
-    user_folder = os.path.join(
-        settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-    )
-    if not os.path.exists(user_folder):
-        os.makedirs(user_folder)
 
     # create the offer-PDF
     eintrag = 0
@@ -2167,7 +2168,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     pdf.page6(certifikate, eintrag)
     pdf.page5(eintrag)
     pdf.page7(data)
-    pdf.page8(data, user_folder, vertrieb_angebot)
+    pdf.page8(data, vertrieb_angebot, user)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

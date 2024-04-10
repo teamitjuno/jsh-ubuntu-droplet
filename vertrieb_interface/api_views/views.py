@@ -1633,16 +1633,20 @@ def send_ticket_invoice(request, angebot_id):
 
 
 def get_angebots_and_urls(user_angebots):
-    """Generate a list of tuples containing angebot, URL, and name with underscores."""
-    return [
-        (
-            angebot,
-            reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
-            replace_spaces_with_underscores(angebot.name),
-        )
-        for angebot in user_angebots
-        if angebot.angebot_pdf
-    ]
+    """
+    Generate a list of tuples containing angebot, URL, and name with underscores.
+    """
+    result = []
+    for angebot in user_angebots:
+        if angebot.angebot_pdf:
+            url = reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id])
+        elif angebot.angebot_and_calc_pdf:
+            url = reverse("vertrieb_interface:serve_angebot_and_calc_pdf", args=[angebot.angebot_id])
+        else:
+            continue
+        name_with_underscores = replace_spaces_with_underscores(angebot.name)
+        result.append((angebot, url, name_with_underscores))
+    return result
 
 
 def filter_user_angebots_by_query(user_angebots, query):
