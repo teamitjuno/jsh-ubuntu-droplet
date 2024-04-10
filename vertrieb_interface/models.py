@@ -759,9 +759,9 @@ class VertriebAngebot(TimeStampMixin):
             return self._angennomenes_angebot_value_cache
 
         try:
-            data = json.loads(self.user.zoho_data_text or '[{"zoho_id": "default", "angebot": "default"}]')
+            data = json.loads(self.user.zoho_data_text or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]')
             zoho_id = str(self.zoho_id)
-            zoho_id_to_angebot = {item["zoho_id"]: item["angebot"] for item in data}
+            zoho_id_to_angebot = {item["zoho_id"]: item["angenommenes_angebot"] for item in data}
 
             self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(zoho_id, default_angennomenes_angebot_value)
             return self._angennomenes_angebot_value_cache
