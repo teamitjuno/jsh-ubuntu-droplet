@@ -918,7 +918,7 @@ class PDF(FPDF):
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
 
-        y += 10
+        y += 15
         # WALLBOX
         if data["wallboxVorh"]:
             if data["hersteller"] == "Huawei":
@@ -942,7 +942,7 @@ class PDF(FPDF):
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
                     0,
-                    6,
+                    5,
                     "∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre",
                     0,
                     0,
@@ -960,7 +960,7 @@ class PDF(FPDF):
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
 
-                y += 30
+                y += 40
 
             elif data["hersteller"] == "Viessmann":
 
@@ -998,10 +998,7 @@ class PDF(FPDF):
                 self.cell(0, 6, "inklusive", 0, 0, "R")
                 y += 20
 
-        else:
-
-            y += 20
-
+        y += 10
         # OPTIONALES ZUBEHÖR
         if (
             not data["optionVorh"]
@@ -1036,17 +1033,17 @@ class PDF(FPDF):
                 self.set_font("JUNO Solar Lt", "", 10)
                 self.multi_cell(
                     0,
-                    6,
+                    5,
                     "∙ Individuelle Schattenerkennung pro Modul\n∙ Produktgarantie: 25 Jahre\n",
                     0,
                     0,
                     "L",
                 )
-                self.set_y(y + 5)
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 5, str(data["anzOptimierer"]) + " Stk.", 0, "L")
-                self.set_y(y + 5)
+                self.multi_cell(0, 6, str(data["anzOptimierer"]) + " Stk.", 0, "L")
+                self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
                 y += 20
@@ -1068,7 +1065,7 @@ class PDF(FPDF):
 
                 self.multi_cell(
                     0,
-                    6,
+                    5,
                     "∙ Einphasige Stromversorgung über Notstromsteckdose\n∙ Produktgarantie: 2 Jahre",
                     0,
                     0,
@@ -1089,19 +1086,19 @@ class PDF(FPDF):
 
                 # Tabelle Eintrag Wandhalterung
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.set_y(y + 60)
+                self.set_y(y)
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
                 self.cell(0, 6, "Wandhalterung für Batteriespeicher", 0, 0, "L")
-                self.set_y(y + 60)
+                self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
                 self.multi_cell(0, 6, str(data["anzWandhalterungSpeicher"]), 0, 0, "L")  # type: ignore
-                self.set_y(y + 60)
+                self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y += 20
+                y += 10
 
             # Tabelle Eintrag Thor
             if data["thor"] == True:
