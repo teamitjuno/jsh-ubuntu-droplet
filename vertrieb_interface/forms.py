@@ -470,6 +470,16 @@ class VertriebAngebotForm(ModelForm):
         ),
         required=False,
     )
+    angenommenes_angebot = forms.CharField(
+        label="Angenommenes Angebot",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "angenommenes_angebot",
+            }
+        ),
+    )
     status_change_date = forms.CharField(
         label="Angebotstatus Änderungsdatum:",
         required=False,
@@ -1188,6 +1198,7 @@ class VertriebAngebotForm(ModelForm):
             "is_locked",
             "status",
             "status_pva",
+            "angenommenes_angebot",
             "anrede",
             "zoho_id",
             "telefon_festnetz",
@@ -1330,6 +1341,8 @@ class VertriebAngebotForm(ModelForm):
             {"id": "anz_wandhalterung_fuer_speicher"}
         )
         self.fields["zoho_kundennumer"].widget.attrs.update({"id": "zoho_kundennumer"})
+        
+        self.fields["angenommenes_angebot"].widget.attrs.update({"id": "angenommenes_angebot"})
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )

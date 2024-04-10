@@ -197,9 +197,16 @@ DATABASES = {
         "USER": os.getenv("POSTGRES_USER", default="support_1"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="support1234"),
         "HOST": os.getenv("POSTGRES_HOST", default="localhost"),
+        # "HOST": "",
         "PORT": int(os.getenv("POSTGRES_PORT", default="5433")),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",

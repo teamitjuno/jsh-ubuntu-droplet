@@ -12,6 +12,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "status_pva",
         "zoho_id",
         "angebot_zoho_id",
+        "angebot_display_value",
+        "angenommenes_angebot",
         "angebot_id_assigned",
         "zoho_kundennumer",
         "name",
@@ -19,7 +21,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "is_locked",
         "angebotsumme",
     )
-
+    
     search_fields = (
         "angebot_id",
         "name",
@@ -38,7 +40,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
-        "angebot_id",
+        
         "status_change_date",
         "solar_module_angebot_price",
         "batteriespeicher_angebot_price",

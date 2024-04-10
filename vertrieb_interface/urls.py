@@ -122,7 +122,7 @@ vertrieb_patterns = [
     ),
     path(
         "PDFTicketListView/<str:angebot_id>/",
-        views.PDFTicketListView,
+        views.pdfticket_list_view,
         name="PDFTicketListView",
     ),
     path("serve_pdf/<str:angebot_id>/", views.serve_pdf, name="serve_pdf"),

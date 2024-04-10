@@ -5,7 +5,7 @@ import json
 import os
 from time import sleep
 from urllib.parse import unquote
-
+from pprint import pprint
 # Django related imports
 from django.conf import settings
 from django.contrib import messages
@@ -15,7 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives, get_connection
-from django.db.models import Count, IntegerField, Q, Sum, Case, When, Value
+from django.db.models import Count, IntegerField, Q, Sum, Case, When, Value, F
 from django.db.models.functions import Cast
 from django.http import (
     FileResponse,
@@ -56,8 +56,6 @@ from vertrieb_interface.forms import (
     VertriebAngebotEmailForm,
 )
 from vertrieb_interface.zoho_api_connector import (
-    delete_redundant_angebot,
-    extract_values,
     fetch_angenommen_status,
     fetch_user_angebote_all,
 )
@@ -366,7 +364,9 @@ def home(request):
             else 0
         )
 
-    angenommen_count = vertriebangebots.filter(status="angenommen").count()
+    angenommen_criteria = Q(status="angenommen") & ~Q(status_pva='') & Q(angebot_id=F('angenommenes_angebot'))
+
+    angenommen_count = vertriebangebots.filter(angenommen_criteria).count()
     all_count = vertriebangebots.count()
     bekommen_count = vertriebangebots.filter(status="bekommen").count()
     in_kontakt_count = vertriebangebots.filter(status="in Kontakt").count()
@@ -428,11 +428,27 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+    
+    def get_instance(self, request, angebot_id):
+        vertrieb_angebot = get_object_or_404(VertriebAngebot, id=angebot_id)
+        return vertrieb_angebot
 
     def get_queryset(self):
+        # Assuming 'angennomenes_angebot' is a direct field in 'VertriebAngebot'
         queryset = self.model.objects.filter(
-            user=self.request.user, status="angenommen", angebot_id_assigned=True
+            user=self.request.user, 
+            status="angenommen", 
+            angebot_id_assigned=True,
+            angebot_id=F('angenommenes_angebot')  # Filters where 'angebot_id' matches 'angennomenes_angebot'
         )
+        
+        # If 'angennomenes_angebot' is part of a related model, use the related model's name in place of 'relatedmodelname'
+        # queryset = self.model.objects.filter(
+        #     user=self.request.user, 
+        #     status="angenommen", 
+        #     angebot_id_assigned=True,
+        #     angebot_id__in=Subquery(VertriebAngebot.objects.filter(id=F('relatedmodelname__angennomenes_angebot')).values('id'))
+        # )
 
         queryset = queryset.annotate(
             zoho_kundennumer_int=Case(
@@ -804,19 +820,6 @@ class DeleteUserAngebot(DeleteView):
         return redirect(self.get_success_url())
 
 
-def set_angebot_id_assigned_false_for_user(request):
-    user = request.user
-    angenommen_angebots = VertriebAngebot.objects.filter(user=user, status="angenommen")
-
-    for angebot in angenommen_angebots:
-        other_angebots = VertriebAngebot.objects.filter(
-            user=user, zoho_kundennumer=angebot.zoho_kundennumer
-        ).exclude(status="angenommen")
-
-        for other_angebot in other_angebots:
-            other_angebot.angebot_id_assigned = False
-            other_angebot.save()
-
 
 def process_vertrieb_angebot(request):
     user = request.user
@@ -824,27 +827,76 @@ def process_vertrieb_angebot(request):
     angenommen_angebote = VertriebAngebot.objects.filter(user=user, status="angenommen")
     for angebot in angenommen_angebote:
         zoho_kundennumer = angebot.zoho_kundennumer
-        bekommen_angebote = VertriebAngebot.objects.filter(
-            zoho_kundennumer=zoho_kundennumer, status="bekommen"
-        )
-        bek_ang_list.append(bekommen_angebote)
+        if angebot.angenommenes_angebot == angebot.angebot_id:
+            angenommenes_angebote = VertriebAngebot.objects.filter(
+                zoho_kundennumer=zoho_kundennumer, status="bekommen"
+            )
+            bek_ang_list.append(angenommenes_angebote)
 
     for queryset in bek_ang_list:
         for bekommen_angebot in queryset:
             angebot_zoho_id = bekommen_angebot.angebot_zoho_id
+            
 
             if angebot_zoho_id is not None:
-                delete_redundant_angebot(angebot_zoho_id)
+                
                 bekommen_angebot.angebot_id_assigned = False
                 bekommen_angebot.save()
             else:
                 pass
 
+def delete_unexisting_records(request):
+    user = request.user
+    
+    try:
+        user_data = json.loads(user.zoho_data_text) if user.zoho_data_text else []
+        if not user_data:  
+            return HttpResponse("No data found in user's Zoho data.", status=200)
 
-def update_status_to_angenommen(angebot_ids):
-    angebote = VertriebAngebot.objects.filter(angebot_id__in=angebot_ids)
-    angebote.update(status="angenommen")
-    return angebote.count()
+        user_zoho_ids = {item.get("zoho_id") for item in user_data}
+
+        # Query only once to get angebots that might need updating
+        vertrieb_angebots = VertriebAngebot.objects.filter(
+            user=user, angebot_id_assigned=True
+        )
+        
+        # Filter those that don't match the Zoho IDs to update
+        vertrieb_angebots_to_update = vertrieb_angebots.exclude(
+            zoho_id__in=user_zoho_ids
+        )
+        vertrieb_angebots_to_update.update(angebot_id_assigned=False)
+        
+        return HttpResponse(f"Updated {vertrieb_angebots_to_update.count()} records.", status=200)
+        
+    except json.JSONDecodeError:
+        return HttpResponse("Failed to decode JSON from user's Zoho data.", status=400)
+    except Exception as e:
+        return HttpResponse(f"An unexpected error occurred: {str(e)}", status=500)
+
+
+def update_status_to_angenommen(request):
+
+    user = request.user
+    user_data = json.loads(user.zoho_data_text)
+    user_zoho_ids = {item["zoho_id"] for item in user_data}
+    
+    zoho_id_to_status = {item["zoho_id"]: item["status"] for item in user_data}
+    zoho_id_to_status_PVA = {item["zoho_id"]: item["status_pva"] for item in user_data}
+    
+    vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
+        user=user, angebot_id_assigned=False
+    ).filter(zoho_id__in=user_zoho_ids)
+    
+    vertrieb_angebots_to_update.update(angebot_id_assigned=True)
+    
+    for angebot in vertrieb_angebots_to_update:
+        
+        if angebot.angenommenes_angebot == angebot.angebot_id:
+            angebot.status = zoho_id_to_status.get(angebot.zoho_id)
+            angebot.status_pva = zoho_id_to_status_PVA.get(angebot.zoho_id)
+            angebot.save()
+                
+
 
 
 def update_vertrieb_angebot_assignment(user):
@@ -861,39 +913,27 @@ def update_vertrieb_angebot_assignment(user):
 
 @user_passes_test(vertrieb_check)
 def load_user_angebots(request):
-    existing_angebot_ids = extract_values(request)
+
     user = request.user
 
-    try:
-        profile, created = User.objects.update_or_create(zoho_id=request.user.zoho_id)
-        user = get_object_or_404(User, zoho_id=request.user.zoho_id)
-        all_user_angebots_list = fetch_user_angebote_all(request)
-        profile.zoho_data_text = json.dumps(all_user_angebots_list)
-        profile.save()
-        user_data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-        if user_data != []:
-            zoho_id_to_status_pva = {
-                item["zoho_id"]: item["status_pva"] for item in user_data
-            }
-        for existing_angebot_id in existing_angebot_ids:
-            vertrieb_angebot, created = VertriebAngebot.objects.get_or_create(
-                user=user, angebot_id=existing_angebot_id
-            )
-            zoho_id = vertrieb_angebot.zoho_id
-            if zoho_id != None:
-                status_pva = zoho_id_to_status_pva[zoho_id]
-                vertrieb_angebot.status_pva = status_pva
-                vertrieb_angebot.save()
 
-        update_vertrieb_angebot_assignment(user)
-        update_status_to_angenommen(existing_angebot_ids)
-        process_vertrieb_angebot(request)
 
-        return JsonResponse({"status": "success"}, status=200)
-    except Exception:
-        return JsonResponse(
-            {"status": "failed", "error": "Not a POST request."}, status=400
-        )
+
+    all_user_angebots_list = fetch_user_angebote_all(request)
+    user.zoho_data_text = json.dumps(all_user_angebots_list)
+    user.save()
+    user_data = json.loads(user.zoho_data_text or '[["test", "test"]]')
+    pprint(user_data)
+    
+    delete_unexisting_records(request)
+    update_status_to_angenommen(request)
+
+    return JsonResponse({"status": "success"}, status=200)
+    # except Exception as e:
+    #     send_custom_message(user, "получилась хуйня", f"вот она : {e})")
+    #     return JsonResponse(
+    #         {"status": "failed", "error": "Not a POST request."}, status=400
+    #     )
 
 
 def replace_spaces_with_underscores(s: str) -> str:
@@ -1592,48 +1632,6 @@ def send_ticket_invoice(request, angebot_id):
         )
 
 
-from django.views.generic.list import ListView
-
-
-class PDFAngebotsListView(LoginRequiredMixin, VertriebCheckMixin, ListView):
-    model = VertriebAngebot
-    template_name = "vertrieb/pdf_angebot_created.html"
-    context_object_name = "angebots"
-
-    def get_queryset(self):
-        # Initial queryset filters
-        queryset = (
-            super()
-            .get_queryset()
-            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
-        )
-        query = self.request.GET.get("q")
-        if query:
-            queryset = filter_user_angebots_by_query(queryset, query)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user_angebots = context["angebots"]
-
-        angebots_and_urls = [
-            (
-                angebot,
-                reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id]),
-                replace_spaces_with_underscores(angebot.name),
-            )
-            for angebot in user_angebots
-            if angebot.angebot_pdf
-        ]
-
-        context.update(
-            {
-                "zipped_angebots": angebots_and_urls,
-            }
-        )
-        return context
-
-
 def get_angebots_and_urls(user_angebots):
     """Generate a list of tuples containing angebot, URL, and name with underscores."""
     return [
@@ -1653,8 +1651,7 @@ def filter_user_angebots_by_query(user_angebots, query):
         Q(zoho_kundennumer__icontains=query)
         | Q(angebot_id__icontains=query)
         | Q(status__icontains=query)
-        | Q(name__icontains=query)
-        | Q(anfrage_vom__icontains=query)
+
     )
     return user_angebots.filter(query_conditions)
 
@@ -1757,6 +1754,7 @@ def fetch_ticket_status_pva_data(self, request, angebot_id):
                 "display_value", ""
             ),
             "anfrage_vom": item.get("Anfrage_vom", ""),
+            "angenommenes_angebot": item.get("Angenommenes_Angebot", ""),
         }
         vertrieb_angebot.ag_fetched_data = json.dumps(fetched_data)
         vertrieb_angebot.save()
@@ -1764,38 +1762,68 @@ def fetch_ticket_status_pva_data(self, request, angebot_id):
         pass
 
 
-@user_passes_test(vertrieb_check)
-def PDFTicketListView(request, angebot_id):
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = vertrieb_angebot.user
-    if request.user != vertrieb_angebot.user and not request.user.is_staff:
-        return page_not_found(request, Exception())
-    user_angebots = VertriebAngebot.objects.filter(user=user)
 
-    ticket_path = os.path.join(
-        settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/"
+# def PDFTicketListView(request, angebot_id):
+#     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
+#     user = vertrieb_angebot.user
+#     if request.user != vertrieb_angebot.user and not request.user.is_staff:
+#         return page_not_found(request, Exception())
+#     user_angebots = VertriebAngebot.objects.filter(user=user, status="angenommen", angennommenes_angebot == angebot_id)
+
+#     ticket_path = os.path.join(
+#         settings.MEDIA_URL, f"pdf/usersangebots/{user.username}/Tickets/"
+#     )
+
+#     ticket_files = [
+#         os.path.join(
+#             ticket_path,
+#             f"Ticket_{vertrieb_angebot.name}_{vertrieb_angebot.angebot_id}.pdf",
+#         )
+#         for angebot in user_angebots
+#     ]
+
+#     zipped_tickets = zip(user_angebots, ticket_files)
+
+#     return render(
+#         request,
+#         "vertrieb/pdf_ticket_created.html",
+#         {
+#             "user": user,
+#             "zipped_tickets": zipped_tickets,
+#         },
+#     )
+
+@user_passes_test(vertrieb_check)
+def pdfticket_list_view(request, angebot_id):
+    # Fetch the specific VertriebAngebot instance or return 404
+    vertrieb_angebot = get_object_or_404(VertriebAngebot, id=angebot_id)
+
+    # Check user permission
+    if request.user != vertrieb_angebot.user and not request.user.is_staff:
+        raise PermissionDenied
+
+    # Filter accepted offers based on the criteria
+    accepted_offers = VertriebAngebot.objects.filter(
+        user=vertrieb_angebot.user,
+        id=vertrieb_angebot.angenommenes_angebot,
+        status="angenommen"
     )
 
+    # Prepare the URLs for the PDF tickets of accepted offers
+    ticket_url_base = f"{settings.MEDIA_URL}pdf/usersangebots/{vertrieb_angebot.user.username}/Tickets/"
     ticket_files = [
-        os.path.join(
-            ticket_path,
-            f"Ticket_{vertrieb_angebot.name}_{vertrieb_angebot.angebot_id}.pdf",
-        )
-        for angebot in user_angebots
+        f"{ticket_url_base}Ticket_{offer.name}_{offer.id}.pdf"
+        for offer in accepted_offers
     ]
 
-    zipped_tickets = zip(user_angebots, ticket_files)
+    # Pair each offer with its corresponding ticket file URL
+    zipped_tickets = zip(accepted_offers, ticket_files)
 
-    return render(
-        request,
-        "vertrieb/pdf_ticket_created.html",
-        {
-            "user": user,
-            "zipped_tickets": zipped_tickets,
-        },
-    )
-
-
+    # Render the PDF ticket list page
+    return render(request, "vertrieb/pdf_ticket_created.html", {
+        "user": vertrieb_angebot.user,
+        "zipped_tickets": zipped_tickets
+    })
 class UpdateAdminAngebot(AdminRequiredMixin, VertriebCheckMixin, UpdateView):
     model = VertriebAngebot
     template_name = "vertrieb/view_orders_admin.html"
