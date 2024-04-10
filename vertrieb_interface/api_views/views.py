@@ -1651,7 +1651,8 @@ def filter_user_angebots_by_query(user_angebots, query):
         Q(zoho_kundennumer__icontains=query)
         | Q(angebot_id__icontains=query)
         | Q(status__icontains=query)
-
+        | Q(name__icontains=query)
+        | Q(anfrage_vom__icontains=query)
     )
     return user_angebots.filter(query_conditions)
 
