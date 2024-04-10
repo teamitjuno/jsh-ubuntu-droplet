@@ -998,9 +998,9 @@ class PDF(FPDF):
                 self.cell(0, 6, "inklusive", 0, 0, "R")
                 y += 20
 
-            else:
+        else:
 
-                y += 20
+            y += 20
 
         # OPTIONALES ZUBEHÖR
         if (
