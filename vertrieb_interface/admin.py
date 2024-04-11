@@ -78,6 +78,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "zoho_kundennumer",
                     "zoho_id",
                     "angebot_zoho_id",
+                    'angenommenes_angebot',
                     "status",
                     "status_change_date",
                     "name_first_name",
