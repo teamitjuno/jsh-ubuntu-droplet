@@ -884,10 +884,10 @@ def update_status_to_angenommen(request):
     zoho_id_to_status_PVA = {item["zoho_id"]: item["status_pva"] for item in user_data}
     
     vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-        user=user, angebot_id_assigned=False
+        user=user, angebot_id_assigned=True
     ).filter(zoho_id__in=user_zoho_ids)
     
-    vertrieb_angebots_to_update.update(angebot_id_assigned=True)
+    
     
     for angebot in vertrieb_angebots_to_update:
         
@@ -921,9 +921,6 @@ def update_vertrieb_angebot_assignment(user):
 def load_user_angebots(request):
 
     user = request.user
-
-
-
 
     all_user_angebots_list = fetch_user_angebote_all(request)
     user.zoho_data_text = json.dumps(all_user_angebots_list)
