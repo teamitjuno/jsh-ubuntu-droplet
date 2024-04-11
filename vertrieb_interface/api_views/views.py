@@ -428,27 +428,11 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-    
-    def get_instance(self, request, angebot_id):
-        vertrieb_angebot = get_object_or_404(VertriebAngebot, id=angebot_id)
-        return vertrieb_angebot
 
     def get_queryset(self):
-        # Assuming 'angennomenes_angebot' is a direct field in 'VertriebAngebot'
         queryset = self.model.objects.filter(
-            user=self.request.user, 
-            status="angenommen", 
-            angebot_id_assigned=True,
-              # Filters where 'angebot_id' matches 'angennomenes_angebot'
+            user=self.request.user, status="angenommen", angebot_id_assigned=True
         )
-        
-        # If 'angennomenes_angebot' is part of a related model, use the related model's name in place of 'relatedmodelname'
-        # queryset = self.model.objects.filter(
-        #     user=self.request.user, 
-        #     status="angenommen", 
-        #     angebot_id_assigned=True,
-        #     angebot_id__in=Subquery(VertriebAngebot.objects.filter(id=F('relatedmodelname__angennomenes_angebot')).values('id'))
-        # )
 
         queryset = queryset.annotate(
             zoho_kundennumer_int=Case(
@@ -456,7 +440,7 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
                     zoho_kundennumer__isnull=False,
                     then=Cast("zoho_kundennumer", IntegerField()),
                 ),
-                default=Value(0),
+                default=Value(0),  # or another appropriate default value
                 output_field=IntegerField(),
             )
         )
