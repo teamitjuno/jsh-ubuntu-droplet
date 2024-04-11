@@ -37,7 +37,7 @@
                                     <tbody>
                                         {% for vertrieb_angebot in angebots %}
                                         
-                                        {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert" and vertrieb_angebot.status_pva != "Endabnahme erfolgt" and vertrieb_angebot.status_pva != "beauftragt" vertrieb_angebot.status_pva != ""%}
+                                        {% if vertrieb_angebot.angebot_id_assigned and vertrieb_angebot.status != "abgelehnt" and vertrieb_angebot.status != "abgelaufen" and vertrieb_angebot.name != "------" and vertrieb_angebot.status != "storniert" and vertrieb_angebot.status_pva != "Endabnahme erfolgt" and vertrieb_angebot.status_pva != "beauftragt" and vertrieb_angebot.status_pva != "" %}
                                         <tr>
                                             <td>{{ vertrieb_angebot.name }}</td>
                                             <td>{{ vertrieb_angebot.status_pva }}
