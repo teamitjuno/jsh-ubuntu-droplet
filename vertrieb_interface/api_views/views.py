@@ -884,15 +884,16 @@ def update_status_to_angenommen(request):
     zoho_id_to_status_PVA = {item["zoho_id"]: item["status_pva"] for item in user_data}
     
     vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-        user=user, angebot_id_assigned=True
+        user=user, angebot_id_assigned=True, status="bekommen",
     ).filter(zoho_id__in=user_zoho_ids)
     
     
     
     for angebot in vertrieb_angebots_to_update:
-        
+        angebot.status = zoho_id_to_status.get(angebot.zoho_id)
+        angebot.save()
         if angebot.angenommenes_angebot == angebot.angebot_id:
-            angebot.status = zoho_id_to_status.get(angebot.zoho_id)
+            
             angebot.status_pva = zoho_id_to_status_PVA.get(angebot.zoho_id)
             angebot.save()
         elif angebot.angenommenes_angebot != angebot.angebot_id and angebot.status == "angenommen":
