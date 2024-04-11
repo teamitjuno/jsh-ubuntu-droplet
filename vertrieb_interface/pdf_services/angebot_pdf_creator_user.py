@@ -279,13 +279,31 @@ class PDF(FPDF):
                 self.set_y(240)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                self.multi_cell(
-                    0,
-                    5,
-                    "∙ max. Lade-/Entladeleistung:5 kW \n∙ Produktgarantie: 10 Jahre",
-                    0,
-                    "L",
-                )
+                if str(data["batterieAnz"]) == '1':
+                    self.multi_cell(
+                        0,
+                        5,
+                        "∙ max. Lade-/Entladeleistung: 2,5 kW \n∙ Produktgarantie: 10 Jahre",
+                        0,
+                        "L",
+                    )
+                elif str(data["batterieAnz"]) == '2' or str(data["batterieAnz"]) == '3':
+                    self.multi_cell(
+                        0,
+                        5,
+                        "∙ max. Lade-/Entladeleistung: 5 kW \n∙ Produktgarantie: 10 Jahre",
+                        0,
+                        "L",
+                    )
+                else:
+                    self.multi_cell(
+                        0,
+                        5,
+                        "∙ max. Lade-/Entladeleistung: 10 kW \n∙ Produktgarantie: 10 Jahre",
+                        0,
+                        "L",
+                    )
+
                 self.set_y(230)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
@@ -449,7 +467,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "∙ Ausführung Außenbereich: Zink\n∙ Ausführung Innenbereich: Kunststoff",
+            "∙ Ausführung Außenbereich: verzinkter Stahl\n∙ Ausführung Innenbereich: Kunststoff",
             0,
             "L",
         )
@@ -491,7 +509,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "Gleichstrom-Elektroinstallation: Montage und Verlegung der\nModul-Unterkonstruktion sowie Solarmodule bis zu den Wechselrichtern.",
+            "Gleichstrom-Elektroinstallation: Montage und Verlegung der\nModul-Unterkonstruktion sowie Solarkabel bis zu den Wechselrichtern.",
             0,
             "L",
         )
@@ -574,7 +592,7 @@ class PDF(FPDF):
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
         self.multi_cell(
-            0, 5, "Kupferleitung, Leitungsquerschnitt entsprechend AC-Leitung", 0, "L"
+            0, 5, "Kupferleitung, Leitungsquerschnitt entsprechend AC-Leistung", 0, "L"
         )
         self.set_y(y)
         self.set_x(150)
@@ -649,21 +667,22 @@ class PDF(FPDF):
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "Integriertes Monitoring zur Anlagenüberwachung", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 10)
-        self.set_y(y + 5)
-        self.set_x(25)
-        self.multi_cell(
-            0,
-            5,
-            "mittels Viessmann ViCare App\nkompatibel mit Android und iOS",
-            0,
-            0,
-            "L",
-        )
-        self.set_y(y + 5)
-        self.set_x(25)
-        self.set_font("JUNO Solar Lt", "", 10)
-        if not data["hersteller"]:
+        if ["hersteller"] == 'Viessman':
+            self.set_font("JUNO Solar Lt", "", 10)
+            self.set_y(y + 5)
+            self.set_x(25)
+            self.multi_cell(
+                0,
+                5,
+                "mittels Viessmann ViCare App\nkompatibel mit Android und iOS",
+                0,
+                0,
+                "L",
+            )
+            self.set_y(y + 5)
+            self.set_x(25)
+            self.set_font("JUNO Solar Lt", "", 10)
+        if ["hersteller"] == 'Huawei':
             self.set_font("JUNO Solar Lt", "", 10)
             self.multi_cell(
                 0,

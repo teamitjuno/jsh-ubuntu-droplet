@@ -202,13 +202,13 @@ def validate_optimizer_ticket_anzahl(value):
 
 def validate_range(value, hersteller):
     # Update the maximum values for different hersteller, including Huawei
-    max_values = {"Viessmann": 3, "Huawei": 18, "default": 6}
+    max_values = {"Viessmann": 3, "Huawei": 6, "default": 6}
     max_value = max_values.get(hersteller, max_values["default"])
 
     # Update the error messages, including a specific message for Huawei
     error_messages = {
         "Viessmann": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
-        "Huawei": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 18 sein.",
+        "Huawei": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 6 sein.",
         "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
     }
 
