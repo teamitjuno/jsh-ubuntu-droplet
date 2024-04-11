@@ -871,7 +871,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             5,
-            "Die Frachtkosten beziehen sich auf die alle Materialien/Komponenten",
+            "Die Frachtkosten beziehen sich auf alle Materialien/Komponenten",
             0,
             "L",
         )
