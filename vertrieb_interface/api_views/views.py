@@ -439,7 +439,7 @@ class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
             user=self.request.user, 
             status="angenommen", 
             angebot_id_assigned=True,
-            angebot_id=F('angenommenes_angebot')  # Filters where 'angebot_id' matches 'angennomenes_angebot'
+              # Filters where 'angebot_id' matches 'angennomenes_angebot'
         )
         
         # If 'angennomenes_angebot' is part of a related model, use the related model's name in place of 'relatedmodelname'
