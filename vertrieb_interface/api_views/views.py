@@ -891,10 +891,11 @@ def update_status_to_angenommen(request):
     
     for angebot in vertrieb_angebots_to_update:
         angebot.status = zoho_id_to_status.get(angebot.zoho_id)
+        angebot.status_pva = zoho_id_to_status_PVA.get(angebot.zoho_id)
         angebot.save()
         if angebot.angenommenes_angebot == angebot.angebot_id:
+            angebot.angebot_id_assigned=True
             
-            angebot.status_pva = zoho_id_to_status_PVA.get(angebot.zoho_id)
             angebot.save()
         elif angebot.angenommenes_angebot != angebot.angebot_id and angebot.status == "angenommen":
             angebot.angebot_id_assigned=False
