@@ -1940,11 +1940,12 @@ function submitFormWithAction(action) {
         </form>
        
 {% endif %}
-
+<input type="hidden" id="ajax-url" value="{% url 'vertrieb_interface:vertrieb_autofield' %}">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 $(document).ready(function() {
+    var url = $("#ajax-url").val();
     // Cache selectors for efficiency
     var $anredeField = $("#id_anrede");
     var $firstNameField = $("#tr_first_name");
@@ -1967,8 +1968,8 @@ $(document).ready(function() {
 
     // Function to handle AJAX request for name field change
     function handleNameChange() {
-        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Ensure the URL is correct
         var name = $nameField.val();
+        var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Ensure the URL is correct and this script is processed by Django
 
         $.ajax({
             url: url,
@@ -2000,7 +2001,7 @@ $(document).ready(function() {
                 $("#id_nachname").val(name_last_name);
                 $("#id_zoho_id").val(zoho_id);
                 $anredeField.val(anrede);
-                $("#zoho_kundennumer").val(zoho_kundennumer);
+                $("#id_zoho_kundennumer").val(zoho_kundennumer);
                 $("#id_strasse").val(strasse);
                 $("#id_status_pva").val(status_pva);
                 $("#id_email").val(email);
@@ -2014,9 +2015,14 @@ $(document).ready(function() {
 
                 // Reflect any changes from AJAX response
                 updateFormFields();
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", error);
             }
         });
     }
+
+    // Initial update of form fields based on the current value of anrede field
     updateFormFields();
 
     // Event listener for changes in the anrede field

@@ -1284,11 +1284,11 @@ class VertriebAngebotForm(ModelForm):
             ]
             
             if filtered_data:
-                # Sort filtered data by 'name'
-                sorted_data = sorted(filtered_data, key=lambda x: x["name"])
-                # Prepare choices as tuples of (identifier, display_name)
-                choices = [(item["zoho_kundennumer"], item["name"]) for item in sorted_data]
-                self.fields["name"].choices += choices  # Append the valid choices
+                name_list = [(item["name"], item["name"]) for item in filtered_data]
+                name_list = sorted(name_list, key=lambda x: x[0])
+                self.fields["name"].choices = default_choice + name_list
+
+                
             else:
                 self.fields["name"].choices = default_choice  # Only default choice available
         except Exception as e:
