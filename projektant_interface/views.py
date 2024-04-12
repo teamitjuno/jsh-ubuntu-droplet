@@ -153,12 +153,14 @@ def create_project_bauplan_pdf(request, project_id):
         "kunden_plz_ort": kunden_plz_ort,
         "processed_besodersheiten": processed_besodersheiten,
         "bauplan_jpg_path": project.bauplan_img.path if project.bauplan_img else None,
-        "bauplan_jpg_secondary_path": project.bauplan_img_secondary.path
-        if project.bauplan_img_secondary
-        else None,
-        "bauplan_jpg_third_path": project.bauplan_img_third.path
-        if project.bauplan_img_third
-        else None,
+        "bauplan_jpg_secondary_path": (
+            project.bauplan_img_secondary.path
+            if project.bauplan_img_secondary
+            else None
+        ),
+        "bauplan_jpg_third_path": (
+            project.bauplan_img_third.path if project.bauplan_img_third else None
+        ),
         "font_size": font_size,
     }
 

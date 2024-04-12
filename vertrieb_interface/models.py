@@ -779,7 +779,6 @@ class VertriebAngebot(TimeStampMixin):
             longitude = float(self.postanschrift_longitude)
         else:
             latitude, longitude = self.coordinates_extractor
-        print(latitude, longitude)
         url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&requiredQuality={requiredQuality}&key={GOOGLE_MAPS_API_KEY}"
         response = requests.get(url)
         return response.json()

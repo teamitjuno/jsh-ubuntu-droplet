@@ -74,7 +74,6 @@ def refresh_access_token():
 
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{timestamp} - {message}")
     timelaps = f"{message} - {timestamp}"
     send_message_to_bot(f"{timelaps}")
 
