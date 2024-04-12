@@ -282,10 +282,7 @@ def get_icon_based_on_status(entry, status):
 def home(request):
     user = request.user
     load_user_angebots(request)
-    if TELEGRAM_LOGGING:
-        send_message_to_bot(
-            f"{user.first_name} {user.last_name}:  Der Benutzer befindet sich auf der Startseite 🏠"
-        )
+
     year, month = now.year, now.month
 
     users = (
