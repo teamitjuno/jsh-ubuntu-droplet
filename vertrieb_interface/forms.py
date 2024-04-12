@@ -1280,7 +1280,7 @@ class VertriebAngebotForm(ModelForm):
             
             filtered_data = [
                 item for item in data
-                if item["status"] not in ["abgelehnt", "angenommen"]
+                if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
             ]
             
             if filtered_data:
