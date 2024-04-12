@@ -68,7 +68,7 @@ class LoginView(APIView):
         if not user:
             log_and_notify(f"Authentication failed for email:, {email}")
         else:
-            log_and_notify(f"User authenticated:, {user}, {user.beruf}, {user.kuerzel}")
+            log_and_notify(f"User authenticated:, {user.beruf}, {user.kuerzel}")
 
         if user is not None and user.beruf == "Elektriker" and user.kuerzel == "TW":  # type: ignore
             login(request, user)
