@@ -782,7 +782,6 @@ class VertriebAngebot(TimeStampMixin):
         print(latitude, longitude)
         url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&requiredQuality={requiredQuality}&key={GOOGLE_MAPS_API_KEY}"
         response = requests.get(url)
-        print(response.json())
         return response.json()
 
     # @property

@@ -5,7 +5,6 @@ import json
 import os
 from time import sleep
 from urllib.parse import unquote
-from pprint import pprint
 
 # Django related imports
 from django.conf import settings
@@ -1448,11 +1447,7 @@ def send_invoice(request, angebot_id):
         subject = f"Angebot Photovoltaikanlage {angebot_id}"
         body = text_for_email
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
-        print(f"Subject: {subject}")
-        print(f"Body: {body}")
-        print(f"From: {user.smtp_username}")
-        print(f"To: si@juno-solar.com")
-        print(empfanger_email)
+
 
         connection = get_connection(
             backend=EMAIL_BACKEND,

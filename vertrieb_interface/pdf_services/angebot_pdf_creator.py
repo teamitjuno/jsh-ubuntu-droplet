@@ -241,7 +241,6 @@ class PDF(FPDF):
         # self.set_font('JUNO Solar Lt', '', 11)
         # self.cell(0, 6, "nach Auslegung", 0, 0, 'L')
         # self.set_x(170)
-        print(data)
         # self.cell(0, 6, "inklusive", 0, 0, 'R')
         return eintrag
 
@@ -1035,7 +1034,6 @@ class PDF(FPDF):
         )
         self.set_y(45)
         sum = data["angebotssumme"]
-        print(data["angebotssumme"])
         brutto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))

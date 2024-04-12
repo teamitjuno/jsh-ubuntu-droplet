@@ -1353,7 +1353,7 @@ class PDF(FPDF):
         )
         self.set_y(45)
         sum = data["angebotssumme"]
-        print(data["angebotssumme"])
+        
         brutto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))

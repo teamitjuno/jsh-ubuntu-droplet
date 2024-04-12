@@ -73,19 +73,19 @@ class CustomPDF(FPDF):
         self.set_xy(251, 179)
         self.set_font("JUNO Solar Lt", "", 9)
         item = f"{self.kunden_name}"
-        print(item)
+
         self.multi_cell(col_width, row_height, item, border=0)
 
         self.set_font("JUNO Solar Lt", "", 9)
         self.set_xy(251, 182.5)
         item = f"{self.kunden_strasse}"
-        print(item)
+
         self.multi_cell(col_width, row_height, item, border=0)
 
         self.set_font("JUNO Solar Lt", "", 9)
         self.set_xy(251, 186)
         item = f"{self.kunden_plz_ort}"
-        print(item)
+
         self.multi_cell(col_width, row_height, item, border=0)
 
     def add_right_top_table(self, processed_besodersheiten):
@@ -99,7 +99,7 @@ class CustomPDF(FPDF):
         self.set_xy(214, 4)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
         item = f"{processed_besodersheiten}"
-        print(item)
+
         self.multi_cell(col_width, row_height, item, border=1)
 
     def add_right_top_table2(self, processed_besodersheiten):
@@ -113,7 +113,7 @@ class CustomPDF(FPDF):
         self.set_xy(183, 105)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
         item = f"{processed_besodersheiten}"
-        print(item)
+        
         self.multi_cell(col_width, row_height, item, border=1)
 
     def add_right_top_table3(self, processed_besodersheiten):
@@ -127,7 +127,7 @@ class CustomPDF(FPDF):
         self.set_xy(143, 120)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
         item = f"{processed_besodersheiten}"
-        print(item)
+        
         self.multi_cell(col_width, row_height, item, border=1)
 
 

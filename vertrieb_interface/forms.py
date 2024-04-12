@@ -1293,7 +1293,7 @@ class VertriebAngebotForm(ModelForm):
                 self.fields["name"].choices = default_choice  # Only default choice available
         except Exception as e:
             # Handle other exceptions which could be related to data issues or fetching problems
-            print("Error setting form choices:", e)
+            
             self.fields["name"].choices = default_choice  # Fallback to default choice
 
 
