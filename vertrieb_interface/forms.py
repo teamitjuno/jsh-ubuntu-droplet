@@ -21,7 +21,7 @@ from vertrieb_interface.zoho_api_connector import (
     fetch_form_user_angebote_all,
     update_status,
 )
-
+from vertrieb_interface.api_views.common import load_json_data
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -837,7 +837,6 @@ class VertriebAngebotForm(ModelForm):
     wechselrichter_model = forms.ChoiceField(
         label="Wechselrichter",
         choices=WECHSELRICHTER_MODEL_CHOICES,
-
         widget=forms.Select(
             attrs={"class": "form-select", "id": "wechselrichter_model"}
         ),
@@ -846,7 +845,6 @@ class VertriebAngebotForm(ModelForm):
     speicher_model = forms.ChoiceField(
         label="Batteriespeicher",
         choices=SPEICHER_MODEL_CHOICES,
-        
         widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
     )
 
@@ -1271,30 +1269,33 @@ class VertriebAngebotForm(ModelForm):
     def __init__(self, *args, user, **kwargs):
         super(VertriebAngebotForm, self).__init__(*args, **kwargs)
         default_choice = [("", "--------")]
+        self.fields["name"].choices = default_choice  # Set default choice initially
+
         try:
             all_user_angebots_list = fetch_form_user_angebote_all(user)
-
             user.zoho_data_text = json.dumps(all_user_angebots_list)
             user.save()
 
-            data = json.loads(user.zoho_data_text or "[]")
-            data = [
-                item
-                for item in data
-                if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
+            data = load_json_data(user.zoho_data_text)
+            
+            filtered_data = [
+                item for item in data
+                if item["status"] not in ["abgelehnt", "angenommen"]
             ]
-
-            if data:
-                name_list = [(item["name"], item["name"]) for item in data]
-                name_list = sorted(name_list, key=lambda x: x[0])
-                self.fields["name"].choices = default_choice + name_list
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
+            
+            if filtered_data:
+                # Sort filtered data by 'name'
+                sorted_data = sorted(filtered_data, key=lambda x: x["name"])
+                # Prepare choices as tuples of (identifier, display_name)
+                choices = [(item["zoho_kundennumer"], item["name"]) for item in sorted_data]
+                self.fields["name"].choices += choices  # Append the valid choices
             else:
-                self.fields["name"].initial = "-----"
-        except User.DoesNotExist:
-            self.fields["name"].initial = "-----"
+                self.fields["name"].choices = default_choice  # Only default choice available
+        except Exception as e:
+            # Handle other exceptions which could be related to data issues or fetching problems
+            print("Error setting form choices:", e)
+            self.fields["name"].choices = default_choice  # Fallback to default choice
+
 
         self.fields["solar_module"].choices = [
             (module.name, module.name)
@@ -1320,7 +1321,9 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
         self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
         self.fields["status"].widget.attrs.update({"id": "id_status"})
-        self.fields["wechselrichter_model"].widget.attrs.update({"id": "wechselrichter_model"})
+        self.fields["wechselrichter_model"].widget.attrs.update(
+            {"id": "wechselrichter_model"}
+        )
         self.fields["speicher_model"].widget.attrs.update({"id": "speicher_model"})
         self.fields["hersteller"].widget.attrs.update({"id": "hersteller"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
@@ -1341,8 +1344,10 @@ class VertriebAngebotForm(ModelForm):
             {"id": "anz_wandhalterung_fuer_speicher"}
         )
         self.fields["zoho_kundennumer"].widget.attrs.update({"id": "zoho_kundennumer"})
-        
-        self.fields["angenommenes_angebot"].widget.attrs.update({"id": "angenommenes_angebot"})
+
+        self.fields["angenommenes_angebot"].widget.attrs.update(
+            {"id": "angenommenes_angebot"}
+        )
         self.fields["indiv_price_included"].widget.attrs.update(
             {"id": "indiv_price_included-checkbox"}
         )
@@ -1598,26 +1603,27 @@ class VertriebAngebotForm(ModelForm):
                 "Länge der Telefonnummer muss + und 10 Ziffern sein"
             )
         return telefon_mobil
-    
+
     def fill_geo_coordinates(self):
         address = f"{self.cleaned_data['strasse']}, {self.cleaned_data['ort']}"
         api_key = GOOGLE_MAPS_API_KEY
         base_url = "https://maps.googleapis.com/maps/api/geocode/json"
 
-        response = requests.get(base_url, params={'address': address, 'key': api_key})
+        response = requests.get(base_url, params={"address": address, "key": api_key})
         if response.status_code == 200:
             data = response.json()
-            if data['results']:
-                location = data['results'][0]['geometry']['location']
-                self.cleaned_data['postanschrift_latitude'] = location['lat']
-                self.cleaned_data['postanschrift_longitude'] = location['lng']
-                self.instance.postanschrift_latitude = location['lat']
-                self.instance.postanschrift_longitude = location['lng']
+            if data["results"]:
+                location = data["results"][0]["geometry"]["location"]
+                self.cleaned_data["postanschrift_latitude"] = location["lat"]
+                self.cleaned_data["postanschrift_longitude"] = location["lng"]
+                self.instance.postanschrift_latitude = location["lat"]
+                self.instance.postanschrift_longitude = location["lng"]
             else:
                 print("Geocoding API did not return any results.")
 
         else:
             print("Geocoding API request failed.")
+
 
 class VertriebAngebotRechnerForm(VertriebAngebotForm):
     name = forms.ChoiceField(
