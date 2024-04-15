@@ -21,14 +21,16 @@ from vertrieb_interface.forms import (
 )
 from vertrieb_interface.zoho_api_connector import (
     pushAngebot,
-    fetch_form_user_angebote_all,
     put_form_data_to_zoho_jpp,
+    fetch_form_user_angebote_limit,
+    fetch_user_form_angebote_all,
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.telegram_logs_sender import (
     send_message_to_bot,
     send_custom_message,
 )
+from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.api_views.auth_checkers import VertriebCheckMixin
 
 
@@ -90,10 +92,18 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         return kwargs
 
     def handle_status_change(self, angebot_id):
-        all_user_angebots_list = fetch_form_user_angebote_all(self.request.user)
-
-        self.request.user.zoho_data_text = json.dumps(all_user_angebots_list)
-        self.request.user.save()
+        user = self.request.user
+        user_data = load_json_data(user.zoho_data_text)
+        
+        if user_data == [] or user_data == "" or user_data == None:
+            all_user_angebots_list = fetch_user_form_angebote_all(user)
+            user.zoho_data_text = json.dumps(all_user_angebots_list)
+        else:
+            all_user_angebots_list = fetch_form_user_angebote_limit(user)
+            updated_data = update_list(user_data, all_user_angebots_list)
+            user.zoho_data_test = json.dumps(updated_data)
+        user.save()
+        
         for angebot in self.model.objects.filter(
             angebot_id=angebot_id, status="bekommen"
         ):
@@ -159,6 +169,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             if action_type == "switch_to_bekommen":
                 if form.is_valid():
                     instance.angebot_id_assigned = True
+                    instance.is_locked = True
                     instance.status = "bekommen"
                     form.save()
                     self.push_and_save_angebot(
@@ -175,6 +186,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             elif action_type == "switch_to_bekommen_pdf_plus_kalk":
                 if form.is_valid():
                     instance.angebot_id_assigned = True
+                    instance.is_locked = True
                     instance.status = "bekommen"
                     form.save()
                     self.push_and_save_angebot(

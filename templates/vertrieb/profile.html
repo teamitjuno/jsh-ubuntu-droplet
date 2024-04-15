@@ -10,6 +10,41 @@
 
         <!-- Start Content-->
         <div class="container-fluid">
+        {% if form.errors %}
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card m-3">
+                                <div class="card-body border-primary border">     
+                                    <div class="alert alert-danger">Fehler :
+                                        
+                                        {% if form.non_field_errors %}
+                                            <div class="error">
+                                                {% for error in form.non_field_errors %}
+                                                <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        <ul>
+                                            {% for field in form %}
+                                                {% if field.errors %}
+                                                    <li>{{ field.label }} - {{ field.errors.0 }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                        {% if messages %}
+                                                <ul class="messages">
+                                                    {% for message in messages %}
+                                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %} 
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
@@ -159,6 +194,12 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-custom-class="success-tooltip" data-bs-title="Der Standardwert ist 100. Das bedeutet, dass die 30 zuletzt hinzugefügten 'Interessente' aktualisiert werden. Dies kann für die Anwendungsgeschwindigkeit nützlich sein, falls Ihr JPP zu viele 'Interessente' hat.">
+                                            <th>{{ form.records_fetch_limit.label_tag }}</th>
+                                            <td>{{ form.records_fetch_limit }}</td>
+                                        </tr>
+                                        
                                         <tr>
                                             <th>{{ form.initial_solar_module.label_tag }}</th>
                                             <td>{{ form.initial_solar_module }}</td>
@@ -188,15 +229,7 @@
                                         
                                         
                                         
-                                        <tr>
-                                            <th>{{ form.initial_elwa.label_tag }}</th>
-                                            <td>
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="id_initial_elwa" {% if form.initial_elwa.value %}checked{% endif %} data-switch="success" name="{{ form.initial_elwa.html_name }}" />
-                                                    <label class="custom-control-label" for="id_initial_elwa" data-on-label="Ja" data-off-label="Nein"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        
                                         <tr>
                                             <th>{{ form.initial_thor.label_tag }}</th>
                                             <td>
@@ -299,7 +332,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6">
-                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                        <script>document.write(new Date().getFullYear())</script> © Juno Solar Home 
                     </div>
                     <div class="col-md-6">
                         <div class="text-md-end footer-links d-none d-md-block">

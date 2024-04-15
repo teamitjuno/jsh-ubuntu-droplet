@@ -18,10 +18,14 @@ from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
-    fetch_form_user_angebote_all,
+    fetch_form_user_angebote_limit,
+    fetch_user_form_angebote_all,
     update_status,
+    
 )
-from vertrieb_interface.api_views.common import load_json_data
+
+from vertrieb_interface.api_views.common import load_json_data, update_list
+from vertrieb_interface.api_views.zoho_operations_aktualisierung import load_user_angebots
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -1272,14 +1276,22 @@ class VertriebAngebotForm(ModelForm):
         self.fields["name"].choices = default_choice  # Set default choice initially
 
         try:
-            all_user_angebots_list = fetch_form_user_angebote_all(user)
-            user.zoho_data_text = json.dumps(all_user_angebots_list)
-            user.save()
+            # user_data = load_json_data(user.zoho_data_text)
 
-            data = load_json_data(user.zoho_data_text)
+            # if user_data == [] or user_data == "" or user_data == None:
+            #     all_user_angebots_list = fetch_form_user_angebote_all(request)
+            #     user.zoho_data_text = json.dumps(all_user_angebots_list)
+            # else:
+            #     all_user_angebots_list = fetch_form_user_angebote_limit(request, user.records_fetch_limit)
+            #     updated_data = update_list(user_data, all_user_angebots_list)
+            #     user.zoho_data_test = json.dumps(updated_data)
+
+            # user.save()
+
+
             
             filtered_data = [
-                item for item in data
+                item for item in load_json_data(user.zoho_data_test)
                 if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
             ]
             

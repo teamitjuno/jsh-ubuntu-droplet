@@ -1,4 +1,4 @@
-from vertrieb_interface.api_views.common import load_json_data
+from vertrieb_interface.api_views.common import load_json_data, update_list
 
 import json
 
@@ -10,7 +10,7 @@ from django.http import (
 
 
 from vertrieb_interface.zoho_api_connector import (
-    fetch_user_angebote_all,
+    fetch_user_angebote_all, fetch_user_angebote_limit
 )
 from vertrieb_interface.models import VertriebAngebot
 
@@ -38,6 +38,7 @@ def delete_unexisting_records(request):
 def update_status_to_angenommen(request):
     user = request.user
     user_data = load_json_data(user.zoho_data_text)
+
     
     if user_data is None:
         return HttpResponse("Failed to decode JSON from user's Zoho data.", status=400)
@@ -70,8 +71,16 @@ def update_status_to_angenommen(request):
 
 def load_user_angebots(request):
     user = request.user
-    all_user_angebots_list = fetch_user_angebote_all(request)
-    user.zoho_data_text = json.dumps(all_user_angebots_list)
+    user_data = load_json_data(user.zoho_data_text)
+
+    if user_data == [] or user_data == "" or user_data == None:
+        all_user_angebots_list = fetch_user_angebote_all(request)
+        user.zoho_data_text = json.dumps(all_user_angebots_list)
+    else:
+        all_user_angebots_list = fetch_user_angebote_limit(request, user.records_fetch_limit)
+        updated_data = update_list(user_data, all_user_angebots_list)
+        user.zoho_data_test = json.dumps(updated_data)
+
     user.save()
 
     response1 = delete_unexisting_records(request)

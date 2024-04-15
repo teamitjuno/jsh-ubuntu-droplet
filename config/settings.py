@@ -114,6 +114,10 @@ CSRF_TRUSTED_ORIGINS = [
     "https://159.89.22.211",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
 
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://159.89.22.211")
 CSP_FRAME_SRC = ("https://159.89.22.211",)

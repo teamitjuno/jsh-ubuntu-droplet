@@ -155,6 +155,21 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
+    records_fetch_limit = forms.IntegerField(
+        label="Anzahl der zuletzt aktualisierten Datensätze von JPP",
+        required=True,
+        # validators=[validate_integers],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_records_fetch_limit",
+                "style": "max-width: 100px",
+
+            }
+        ),
+    )
+        
+        
     initial_text_for_email = forms.CharField(
         label="Default Email-Text",
         required=False,
@@ -222,7 +237,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ],
         initial="10 Jahre",
         widget=forms.Select(
-            attrs={"class": "form-select", "id": "id_initial_garantieWR"}
+            attrs={"class": "form-select", "id": "id_initial_garantieWR", "style": "max-width: 300px",}
         ),
     )
 
@@ -272,7 +287,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "id": "id_initial_wallbox_anzahl",
                 "data-toggle": "touchspin",
                 "value": "0",
-                "style": "max-width: 300px",
+                "style": "max-width: 300px",    
             }
         ),
     )
@@ -288,17 +303,17 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    initial_elwa = forms.BooleanField(
-        label="AC-ELWA 2",
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={
-                "class": "form-check-input",
-                "id": "id_initial_elwa",
-                "style": "max-width: 70px",
-            }
-        ),
-    )
+    # initial_elwa = forms.BooleanField(
+    #     label="AC-ELWA 2",
+    #     required=False,
+    #     widget=forms.CheckboxInput(
+    #         attrs={
+    #             "class": "form-check-input",
+    #             "id": "id_initial_elwa",
+    #             "style": "max-width: 70px",
+    #         }
+    #     ),
+    # )
     initial_thor = forms.BooleanField(
         label="AC-THOR",
         required=False,
@@ -341,6 +356,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Strom Verbrauch [kWh]",
                 "id": "id_initial_verbrauch",
+                "style": "max-width: 300px",
             }
         ),  # include your new validator here
     )
@@ -353,6 +369,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Strom Grundpreis [€/Monat]",
                 "id": "id_initial_grundpreis",
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -366,6 +383,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Strom Arbeitspreis [ct/kWh]",
                 "id": "id_initial_arbeitspreis",
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -381,6 +399,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Prognose Strompreiserhöhung pro Jahr [%]",
                 "id": "id_initial_prognose",
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -393,6 +412,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Berechnungszeitraum [Jahre]",
                 "id": "id_initial_zeitraum",
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -404,7 +424,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         required=True,
         validators=[validate_two_decimal_places],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_initial_bis10kWp"}
+            attrs={"class": "form-control", "id": "id_initial_bis10kWp", "style": "max-width: 300px",}
         ),
     )
     initial_bis40kWp = forms.DecimalField(
@@ -415,7 +435,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         required=True,
         validators=[validate_two_decimal_places],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_initial_bis40kWp"}
+            attrs={"class": "form-control", "id": "id_initial_bis40kWp", "style": "max-width: 300px",}
         ),
     )
 
@@ -438,7 +458,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "initial_solar_module",
             "initial_modulanzahl",
             "initial_garantieWR",
-            "initial_elwa",
+            # "initial_elwa",
             "initial_thor",
             "initial_heizstab",
             "initial_notstrom",
@@ -453,6 +473,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "angebot_statusubersicht_view",
             "pv_rechner_view",
             "anzahl_sol_module_view",
+            "records_fetch_limit",
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -510,7 +531,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         self.fields["initial_garantieWR"].widget.attrs.update(
             {"id": "id_initial_garantieWR"}
         )
-        self.fields["initial_elwa"].widget.attrs.update({"id": "id_initial_elwa"})
+        # self.fields["initial_elwa"].widget.attrs.update({"id": "id_initial_elwa"})
         self.fields["initial_thor"].widget.attrs.update({"id": "id_initial_thor"})
         self.fields["initial_heizstab"].widget.attrs.update(
             {"id": "id_initial_heizstab"}
@@ -546,6 +567,8 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             {"id": "id_angebot_statusubersicht_view"}
         )
         self.fields["pv_rechner_view"].widget.attrs.update({"id": "id_pv_rechner_view"})
+        
+        self.fields["records_fetch_limit"].widget.attrs.update({"id": "id_records_fetch_limit"})
         self.fields["anzahl_sol_module_view"].widget.attrs.update(
             {"id": "id_anzahl_sol_module_view"}
         )

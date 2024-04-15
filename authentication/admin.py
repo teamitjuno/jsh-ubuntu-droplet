@@ -115,6 +115,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "kuerzel",
                     "phone",
                     "age",
+                    "records_fetch_limit",
                     "role",
                 ),
             },
