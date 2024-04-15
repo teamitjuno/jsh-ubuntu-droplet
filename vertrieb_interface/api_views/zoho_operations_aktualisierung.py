@@ -71,17 +71,23 @@ def update_status_to_angenommen(request):
 
 def load_user_angebots(request):
     user = request.user
-    user_data = load_json_data(user.zoho_data_text)
-
-    if user_data == [] or user_data == "" or user_data == None:
+    
+    try:
+        user_data = load_json_data(user.zoho_data_text)
+        if user_data == [] or user_data == "" or user_data == None:
+            all_user_angebots_list = fetch_user_angebote_all(request)
+            user.zoho_data_text = json.dumps(all_user_angebots_list)
+            user.save()
+        else:
+            all_user_angebots_list = fetch_user_angebote_limit(request, user.records_fetch_limit)
+            updated_data = update_list(user_data, all_user_angebots_list)
+            user.zoho_data_test = json.dumps(updated_data)
+            user.save()
+    except:
         all_user_angebots_list = fetch_user_angebote_all(request)
         user.zoho_data_text = json.dumps(all_user_angebots_list)
-    else:
-        all_user_angebots_list = fetch_user_angebote_limit(request, user.records_fetch_limit)
-        updated_data = update_list(user_data, all_user_angebots_list)
-        user.zoho_data_test = json.dumps(updated_data)
+        user.save()
 
-    user.save()
 
     response1 = delete_unexisting_records(request)
     response2 = update_status_to_angenommen(request)

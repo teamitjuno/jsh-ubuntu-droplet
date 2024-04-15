@@ -93,16 +93,21 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
 
     def handle_status_change(self, angebot_id):
         user = self.request.user
-        user_data = load_json_data(user.zoho_data_text)
-        
-        if user_data == [] or user_data == "" or user_data == None:
+        try:
+            user_data = load_json_data(user.zoho_data_text)
+            if user_data == [] or user_data == "" or user_data == None:
+                all_user_angebots_list = fetch_user_form_angebote_all(user)
+                user.zoho_data_text = json.dumps(all_user_angebots_list)
+                user.save()
+            else:
+                all_user_angebots_list = fetch_form_user_angebote_limit(user)
+                updated_data = update_list(user_data, all_user_angebots_list)
+                user.zoho_data_test = json.dumps(updated_data)
+                user.save()
+        except:
             all_user_angebots_list = fetch_user_form_angebote_all(user)
             user.zoho_data_text = json.dumps(all_user_angebots_list)
-        else:
-            all_user_angebots_list = fetch_form_user_angebote_limit(user)
-            updated_data = update_list(user_data, all_user_angebots_list)
-            user.zoho_data_test = json.dumps(updated_data)
-        user.save()
+            user.save()
         
         for angebot in self.model.objects.filter(
             angebot_id=angebot_id, status="bekommen"

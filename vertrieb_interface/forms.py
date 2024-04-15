@@ -1020,6 +1020,7 @@ class VertriebAngebotForm(ModelForm):
                 "id": "modulanzahl",
                 "data-toggle": "touchspin",
                 "value": "0",
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -1079,7 +1080,7 @@ class VertriebAngebotForm(ModelForm):
         label="Optimizer Anzahl",
         required=True,
         validators=[validate_integers],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "anzOptimizer"}),
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "anzOptimizer", "style": "max-width: 300px",}),
     )
     indiv_price_included = forms.BooleanField(
         label="Indiv. Preis",
