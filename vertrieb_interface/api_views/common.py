@@ -25,6 +25,6 @@ def update_list(list1, list2):
     
     for item in list2:
         if item['zoho_id'] not in existing_ids:
-            list1.append(item)
+            list1.append(existing_ids[item['zoho_id']])
 
     return list1
