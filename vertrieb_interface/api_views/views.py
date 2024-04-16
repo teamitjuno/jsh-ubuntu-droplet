@@ -372,7 +372,7 @@ def home(request):
 
     angenommen_count = vertriebangebots.filter(angenommen_criteria).count()
     all_count = vertriebangebots.count()
-    bekommen_count = vertriebangebots.filter(status="bekommen").count()
+    bekommen_count = vertriebangebots.filter(status="bekommen", is_locked=True).count()
     in_kontakt_count = vertriebangebots.filter(status="in Kontakt").count()
     kontaktversuch_count = vertriebangebots.filter(status="Kontaktversuch").count()
     abgelehnt_count = vertriebangebots.filter(status="abgelehnt").count()

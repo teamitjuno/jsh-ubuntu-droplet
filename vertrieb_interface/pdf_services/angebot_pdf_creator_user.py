@@ -60,21 +60,25 @@ class PDF(FPDF):
             self.set_text_color(128)
             self.set_y(-25)
             self.set_x(25)
+            # footer_1
             self.multi_cell(0, 3, "Amtsgericht Chemnitz\nHR-Nr.:HRB 34192\nUSt.-ID: DE345149530\nSteuer-Nr.:227/156/19508\nGeschäftsführung: Denny Schädlich", 0, 0, "")  # type: ignorehttp://127.0.0.1:8000/vertrieb/home/
             self.set_y(-25)
             self.set_x(85)
+            # footer_2
             centered_text1 = "Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX"
             self.multi_cell(0, 3, centered_text1, 0, "")
             self.set_y(-25)
             self.set_x(150)
+            # footer_3
             centered_text1 = "Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1"
             self.multi_cell(0, 3, centered_text1, 0, "")
 
     def page1(self, data, eintrag):
         self.add_page()
-        # Adresszeile
+        
         self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(128)
+        # adresszeile_1
         self.cell(
             0,
             10,
@@ -92,6 +96,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "B", 11)
         self.set_x(130)
         self.set_y(33)
+        # adresszeile_2
         self.multi_cell(
             0,
             5,
@@ -102,6 +107,7 @@ class PDF(FPDF):
         self.set_x(130)
         self.set_y(38)
         self.set_font("JUNO Solar Lt", "", 11)
+        # adresszeile_3
         self.multi_cell(
             0,
             5,
@@ -134,7 +140,7 @@ class PDF(FPDF):
         self.set_y(80)
         self.set_font("JUNO Solar Lt", "B", 17)
         self.cell(0, 6, title, 0, 0, "R")
-        # Überschrift und Text
+        
         self.set_font("JUNO Solar Lt", "B", 14)
         self.set_x(0)
         self.set_y(80)
@@ -145,6 +151,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_x(0)
         self.set_y(90)
+        # uberschrift_und_text_1
         self.multi_cell(0, 5, "Gesamtleistung der Anlage:\nStandort der Anlage:", 0, "")
         self.set_y(90)
         self.set_x(70)
@@ -160,6 +167,7 @@ class PDF(FPDF):
             )
         self.set_x(0)
         self.set_y(115)
+        # uberschrift_und_text_2
         self.multi_cell(
             0,
             5,
@@ -167,24 +175,30 @@ class PDF(FPDF):
             0,
             "",
         )
-        # Tabelle Beginn
+        
         self.set_font("JUNO Solar Lt", "B", 10)
         self.set_x(0)
         self.set_y(130)
+        # tabelle_beginn_1
         self.cell(0, 6, "Pos.", 0, 0, "L")
         self.set_x(37)
+        # tabelle_beginn_2
         self.cell(0, 6, "Bezeichnung", 0, 0, "L")
         self.set_x(150)
+        # tabelle_beginn_3
         self.cell(0, 6, "Menge", 0, 0, "L")
         self.set_x(170)
+        # tabelle_beginn_4
         self.cell(0, 6, "Gesamtpreis", 0, 0, "R")
-        # Gleichstromseitige Installation
+       
         self.line(18, 135, 196, 135)
         self.set_y(139)
         self.set_font("JUNO Solar Lt", "B", 12)
+        # tabelle_beginn_5
         self.cell(0, 6, "Bestandteile Photovoltaikanlage", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(140)
+        # tabelle_beginn_6
         self.multi_cell(
             0,
             5,
@@ -192,6 +206,7 @@ class PDF(FPDF):
             0,
             "L",
         )
+
         # Tabelle Eintrag 1
 
         self.set_font("JUNO Solar Lt", "", 11)
@@ -224,10 +239,12 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
+            # tabelle_eintrag_2_viessman_1
             self.cell(0, 5, "Viessmann Vitocharge VX3", 0, 0, "L")
             self.set_y(185)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
+            # tabelle_eintrag_2_viessman_2
             self.multi_cell(
                 0,
                 5,
@@ -248,10 +265,12 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
+            # tabelle_eintrag_3_viessman_1
             self.cell(0, 5, "Viessman Energiezähler", 0, 0, "L")
             self.set_y(215)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
+            # tabelle_eintrag_3_viessman_2
             self.multi_cell(
                 0,
                 5,
@@ -272,14 +291,17 @@ class PDF(FPDF):
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
+                # tabelle_eintrag_4_viessman_1
                 self.cell(0, 5, "Batteriespeicher: Viessmann Vitocharge VX3", 0, 0, "L")
                 self.set_y(235)
                 self.set_x(25)
+                # tabelle_eintrag_4_viessman_2
                 self.cell(0, 5, "Batteriemodule (je 5 kWh)", 0, 0, "L")
                 self.set_y(240)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
                 if str(data["batterieAnz"]) == '1':
+                    # tabelle_eintrag_4_viessman_3
                     self.multi_cell(
                         0,
                         5,
@@ -288,6 +310,7 @@ class PDF(FPDF):
                         "L",
                     )
                 elif str(data["batterieAnz"]) == '2' or str(data["batterieAnz"]) == '3':
+                    # tabelle_eintrag_4_viessman_4
                     self.multi_cell(
                         0,
                         5,
@@ -296,6 +319,7 @@ class PDF(FPDF):
                         "L",
                     )
                 else:
+                    # tabelle_eintrag_4_viessman_5
                     self.multi_cell(
                         0,
                         5,
@@ -319,10 +343,12 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
+            # tabelle_eintrag_2_huawei_1
             self.cell(0, 5, "Wechselrichter Huawei SUN2000", 0, 0, "L")
             self.set_y(185)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
+            # tabelle_eintrag_2_huawei_2
             self.multi_cell(
                 0,
                 5,
@@ -344,10 +370,12 @@ class PDF(FPDF):
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
+            # tabelle_eintrag_3_huawei_1
             self.cell(0, 5, "Huawei Smart Power Sensor DTSU666H", 0, 0, "L")
             self.set_y(215)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
+            # tabelle_eintrag_3_huawei_2
             self.multi_cell(
                 0,
                 5,
@@ -369,15 +397,18 @@ class PDF(FPDF):
                 eintrag += 1
                 self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
                 self.set_x(25)
+                # tabelle_eintrag_4_huawei_1
                 self.cell(0, 5, "Batteriespeicher: Huawei LUNA 2000", 0, 0, "L")
                 self.set_y(235)
                 self.set_x(25)
+                # tabelle_eintrag_4_huawei_2
                 self.multi_cell(
                     0, 5, "Leistungsmodule\nBatteriemodule (je 5 kWh)", 0, 0, "L"
                 )
                 self.set_y(245)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
+                # tabelle_eintrag_4_huawei_3
                 self.multi_cell(
                     0,
                     5,
@@ -404,10 +435,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_5_1
         self.cell(0, 5, "Unterkonstruktion", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_5_2
         self.multi_cell(0, 5, "Hersteller: S:FLEX oder gleichwertig", 0, "L")
         self.set_y(y)
         self.set_x(150)
@@ -422,10 +455,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_6_1
         self.cell(0, 5, "Solarleitung", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_6_2
         self.multi_cell(
             0,
             5,
@@ -446,6 +481,7 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_7_1
         self.cell(0, 5, "Stecker und Buchsen", 0, 0, "L")
         self.set_y(y)
         self.set_x(150)
@@ -460,10 +496,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_8_1
         self.cell(0, 5, "Kabelkanäle", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_8_2
         self.multi_cell(
             0,
             5,
@@ -483,10 +521,12 @@ class PDF(FPDF):
         self.line(18, y - 4, 200, y - 4)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
+        # gleichstromseitige_installation_1
         self.cell(0, 6, "Gleichstromseitige Installation", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         y += 5
         self.set_y(y)
+        # gleichstromseitige_installation_2
         self.multi_cell(
             0,
             5,
@@ -502,10 +542,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_9_1
         self.cell(0, 6, "DC-Installation", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_9_2
         self.multi_cell(
             0,
             5,
@@ -526,10 +568,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_10_1
         self.cell(0, 6, "Potentialausgleich", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_10_2
         self.multi_cell(
             0,
             5,
@@ -550,10 +594,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_11_1
         self.cell(0, 6, "Gerüst zur Absturzsicherung", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_11_2
         self.multi_cell(
             0, 5, "Gerüst wird entsprechend der Anfonderung vor Ort gewählt", 0, "L"
         )
@@ -568,11 +614,13 @@ class PDF(FPDF):
         self.line(18, y - 4, 200, y - 4)
         self.set_y(y - 1)
         self.set_font("JUNO Solar Lt", "B", 12)
+        # wechselstromseitige_installation_und_inbetriebnahme_1
         self.cell(
             0, 6, "Wechselstromseitige Installation und Inbetriebnahme", 0, 0, "L"
         )
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y)
+        # wechselstromseitige_installation_und_inbetriebnahme_2
         self.multi_cell(
             0,
             5,
@@ -587,10 +635,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_12_1
         self.cell(0, 6, "AC-Installation", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_12_2
         self.multi_cell(
             0, 5, "Kupferleitung, Leitungsquerschnitt entsprechend AC-Leistung", 0, "L"
         )
@@ -608,10 +658,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_13_1
         self.cell(0, 6, "Netzanschluss", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_13_2
         self.multi_cell(0, 5, "an den vorhanden Hausanschlusskasten", 0, "L")
         self.set_y(y)
         self.set_x(150)
@@ -627,6 +679,7 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_14
         self.cell(
             0, 6, "Installation und Parametrierung des Wechselrichters", 0, 0, "L"
         )
@@ -647,9 +700,11 @@ class PDF(FPDF):
         y = 25
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
+        # anlagenüberwachung_und_visualisierung_1
         self.cell(0, 6, "Anlagenüberwachung und Visualisierung", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y + 5)
+        # anlagenüberwachung_und_visualisierung_2
         self.multi_cell(
             0,
             5,
@@ -666,11 +721,13 @@ class PDF(FPDF):
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 11)
+        # tabelle_eintrag_15
         self.cell(0, 6, "Integriertes Monitoring zur Anlagenüberwachung", 0, 0, "L")
         if ["hersteller"] == 'Viessman':
             self.set_font("JUNO Solar Lt", "", 10)
             self.set_y(y + 5)
             self.set_x(25)
+            # tabelle_eintrag_15_viessman
             self.multi_cell(
                 0,
                 5,
@@ -684,6 +741,7 @@ class PDF(FPDF):
             self.set_font("JUNO Solar Lt", "", 10)
         if ["hersteller"] == 'Huawei':
             self.set_font("JUNO Solar Lt", "", 10)
+            # tabelle_eintrag_15_huawei
             self.multi_cell(
                 0,
                 5,
@@ -704,9 +762,11 @@ class PDF(FPDF):
         self.line(18, y - 4, 200, y - 4)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
+        # netzanschlussmanagement_1
         self.cell(0, 6, "Netzanschlussmanagement", 0, 0, "L")
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_y(y)
+        # netzanschlussmanagement_2
         self.multi_cell(
             0,
             5,
@@ -721,10 +781,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_16
         self.cell(0, 6, "Anmeldung zum Netzanschluss", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_16_1
         self.multi_cell(
             0,
             5,
@@ -746,10 +808,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_17
         self.cell(0, 6, "EEG-Fertigmeldung und -Inbetriebnahme", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_17_1
         self.multi_cell(
             0, 5, "Die Fertigmeldung erfolgt nach erfolgreichem Bauabschluss.", 0, "L"
         )
@@ -767,10 +831,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_18
         self.cell(0, 6, "Registrierung im Marktstammdatenregister", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_18_1
         self.multi_cell(
             0,
             5,
@@ -793,10 +859,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_19
         self.cell(0, 6, "Antrag zum Zählerwechsel", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_19_1
         self.multi_cell(
             0,
             5,
@@ -819,10 +887,12 @@ class PDF(FPDF):
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
+        # tabelle_eintrag_20
         self.cell(0, 6, "Bestellung FRE (bei Modulleistung ≥ 25 kWp)", 0, 0, "L")
         self.set_y(y + 5)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
+        # tabelle_eintrag_20_1
         self.multi_cell(
             0,
             5,
