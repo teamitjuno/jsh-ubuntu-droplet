@@ -280,7 +280,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         else:
                             form.add_error(
                                 None,
-                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits ein Angebot {extracted_part}  mit einem leeren Status für diesen Interessenten haben.\nEntweder Sie schließen die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie es.\n",
+                                f"Sie können dieses Angebot nicht speichern, da Sie in Ihrer Liste bereits das Angebot {extracted_part} mit einem leeren Status für diesen Interessenten haben.\nEntweder schließen Sie die Erstellung des Angebots ab, indem Sie ein PDF-Dokument erstellen.\nOder löschen Sie das unfertige Angebot.\n",
                             )
                             return self.form_invalid(form, vertrieb_angebot, request)
                     else:

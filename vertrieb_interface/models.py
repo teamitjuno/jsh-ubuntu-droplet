@@ -108,14 +108,14 @@ class CustomLogEntry(LogEntry):
 
     def get_change_message(self):
         if self.is_addition():
-            return f"Ein neues Angebot erstellt"
+            return f"Ein neues Angebot wurde erstellt"
         elif self.is_change():
             if self.get_vertrieb_angebot() is not None:
-                return f"Das Angebot aktualisiert -  {self.change_message}"
+                return f"Das Angebot wurde aktualisiert -  {self.change_message}"
             else:
-                return f"Das Angebot aktualisiert"
+                return f"Das Angebot wurde aktualisiert"
         elif self.is_deletion():
-            return f"Das Angebot aktualisiert"
+            return f"Das Angebot wurde aktualisiert"
         else:
             return "LogEntry Object"
 
