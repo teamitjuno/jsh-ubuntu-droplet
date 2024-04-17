@@ -108,7 +108,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             all_user_angebots_list = fetch_user_form_angebote_all(user)
             user.zoho_data_text = json.dumps(all_user_angebots_list)
             user.save()
-        
+
         for angebot in self.model.objects.filter(
             angebot_id=angebot_id, status="bekommen"
         ):

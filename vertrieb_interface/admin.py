@@ -21,7 +21,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "is_locked",
         "angebotsumme",
     )
-    
+
     search_fields = (
         "angebot_id",
         "name",
@@ -40,7 +40,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
-        
         "status_change_date",
         "solar_module_angebot_price",
         "batteriespeicher_angebot_price",
@@ -49,8 +48,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "eddi_angebot_price",
         "optimizer_angebot_price",
         "angebotsumme",
-                            "angebot_and_calc_pdf",
-                    "angebot_pdf",
+        "angebot_and_calc_pdf",
+        "angebot_pdf",
     )
     change_form_template = "admin/vertrieb_interface/VertriebAngebot/change_form.html"
 
@@ -65,7 +64,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "angebot_id_assigned",
                     "termine_text",
                     "termine_id",
-                                        "angebot_and_calc_pdf",
+                    "angebot_and_calc_pdf",
                     "angebot_pdf",
                 ),
                 "classes": ("collapse",),
@@ -78,7 +77,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "zoho_kundennumer",
                     "zoho_id",
                     "angebot_zoho_id",
-                    'angenommenes_angebot',
+                    "angenommenes_angebot",
                     "status",
                     "status_change_date",
                     "name_first_name",

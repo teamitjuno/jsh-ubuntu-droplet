@@ -281,7 +281,7 @@ class PDF(FPDF):
                 self.set_y(240)
                 self.set_x(25)
                 self.set_font("JUNO Solar Lt", "", 10)
-                if str(data["batterieAnz"]) == '1':
+                if str(data["batterieAnz"]) == "1":
                     self.multi_cell(
                         0,
                         5,
@@ -289,7 +289,7 @@ class PDF(FPDF):
                         0,
                         "L",
                     )
-                elif str(data["batterieAnz"]) == '2' or str(data["batterieAnz"]) == '3':
+                elif str(data["batterieAnz"]) == "2" or str(data["batterieAnz"]) == "3":
                     self.multi_cell(
                         0,
                         5,
@@ -669,7 +669,7 @@ class PDF(FPDF):
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, "Integriertes Monitoring zur Anlagenüberwachung", 0, 0, "L")
-        if ["hersteller"] == 'Viessman':
+        if ["hersteller"] == "Viessman":
             self.set_font("JUNO Solar Lt", "", 10)
             self.set_y(y + 5)
             self.set_x(25)
@@ -684,7 +684,7 @@ class PDF(FPDF):
             self.set_y(y + 5)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
-        if ["hersteller"] == 'Huawei':
+        if ["hersteller"] == "Huawei":
             self.set_font("JUNO Solar Lt", "", 10)
             self.multi_cell(
                 0,
@@ -1353,7 +1353,7 @@ class PDF(FPDF):
         )
         self.set_y(45)
         sum = data["angebotssumme"]
-        
+
         brutto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))

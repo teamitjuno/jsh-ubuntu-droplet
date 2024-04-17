@@ -1445,7 +1445,6 @@ def send_invoice(request, angebot_id):
         body = text_for_email
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
-
         connection = get_connection(
             backend=EMAIL_BACKEND,
             host=user.smtp_server,

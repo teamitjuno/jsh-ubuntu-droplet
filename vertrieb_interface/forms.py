@@ -21,11 +21,12 @@ from vertrieb_interface.zoho_api_connector import (
     fetch_form_user_angebote_limit,
     fetch_user_form_angebote_all,
     update_status,
-    
 )
 
 from vertrieb_interface.api_views.common import load_json_data, update_list
-from vertrieb_interface.api_views.zoho_operations_aktualisierung import load_user_angebots
+from vertrieb_interface.api_views.zoho_operations_aktualisierung import (
+    load_user_angebots,
+)
 
 now = timezone.now()
 now_localized = timezone.localtime(now)
@@ -1080,7 +1081,13 @@ class VertriebAngebotForm(ModelForm):
         label="Optimizer Anzahl",
         required=True,
         validators=[validate_integers],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "anzOptimizer", "style": "max-width: 300px",}),
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "anzOptimizer",
+                "style": "max-width: 300px",
+            }
+        ),
     )
     indiv_price_included = forms.BooleanField(
         label="Indiv. Preis",
@@ -1289,26 +1296,25 @@ class VertriebAngebotForm(ModelForm):
 
             # user.save()
 
-
-            
             filtered_data = [
-                item for item in load_json_data(user.zoho_data_test)
+                item
+                for item in load_json_data(user.zoho_data_test)
                 if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
             ]
-            
+
             if filtered_data:
                 name_list = [(item["name"], item["name"]) for item in filtered_data]
                 name_list = sorted(name_list, key=lambda x: x[0])
                 self.fields["name"].choices = default_choice + name_list
 
-                
             else:
-                self.fields["name"].choices = default_choice  # Only default choice available
+                self.fields["name"].choices = (
+                    default_choice  # Only default choice available
+                )
         except Exception as e:
             # Handle other exceptions which could be related to data issues or fetching problems
-            
-            self.fields["name"].choices = default_choice  # Fallback to default choice
 
+            self.fields["name"].choices = default_choice  # Fallback to default choice
 
         self.fields["solar_module"].choices = [
             (module.name, module.name)

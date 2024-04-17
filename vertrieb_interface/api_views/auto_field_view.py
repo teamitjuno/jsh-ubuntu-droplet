@@ -9,7 +9,10 @@ import json
 # Local application imports
 from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.api_views.auth_checkers import VertriebCheckMixin
-from vertrieb_interface.zoho_api_connector import fetch_user_angebote_all, fetch_user_angebote_limit
+from vertrieb_interface.zoho_api_connector import (
+    fetch_user_angebote_all,
+    fetch_user_angebote_limit,
+)
 from authentication.models import User
 
 
@@ -18,7 +21,7 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
     Eine Django-View, die eine API für das AutoVervollständigen von Vertriebsdaten bereitstellt.
     Nutzt die Zoho API, um Daten basierend auf Benutzereingaben zu holen und zu filtern.
     """
-    
+
     def get(self, request, *args, **kwargs):
         """
         Behandelt GET-Anfragen für die AutoVervollständigungsfunktion.
@@ -34,11 +37,15 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
         # Name extrahieren und Daten bereitstellen
         name = request.GET.get("name")
         if not name:
-            return JsonResponse({"error": "Kein Name-Parameter bereitgestellt"}, status=400)
+            return JsonResponse(
+                {"error": "Kein Name-Parameter bereitgestellt"}, status=400
+            )
 
         response_data = self.find_data_by_name(data, name)
         if response_data is None:
-            return JsonResponse({"error": "Keine Daten für den angegebenen Namen gefunden"}, status=404)
+            return JsonResponse(
+                {"error": "Keine Daten für den angegebenen Namen gefunden"}, status=404
+            )
 
         return JsonResponse(response_data, safe=False)
 
@@ -52,10 +59,7 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
         """
         try:
             data = load_json_data(user.zoho_data_text)
-            if not data:
-                data = self.fetch_and_save(user, request, fetch_user_angebote_all)
-            else:
-                data = self.fetch_and_save(user, request, fetch_user_angebote_limit, user.records_fetch_limit)
+            
             return data
         except json.JSONDecodeError:
             return self.fetch_and_save(user, request, fetch_user_angebote_all)

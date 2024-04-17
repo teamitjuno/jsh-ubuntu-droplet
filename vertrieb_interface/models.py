@@ -247,8 +247,12 @@ class VertriebAngebot(TimeStampMixin):
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
     angebot_zoho_id = models.CharField(max_length=255, blank=True, null=True)
     angebot_id_assigned = models.BooleanField(default=False)
-    angebot_display_value = models.CharField(max_length=255,default="", blank=True, null=True)
-    angenommenes_angebot = models.CharField(max_length=255,default="", blank=True, null=True)
+    angebot_display_value = models.CharField(
+        max_length=255, default="", blank=True, null=True
+    )
+    angenommenes_angebot = models.CharField(
+        max_length=255, default="", blank=True, null=True
+    )
     status = models.CharField(
         choices=ANGEBOT_STATUS_CHOICES,
         default="",
@@ -504,10 +508,6 @@ class VertriebAngebot(TimeStampMixin):
         else:
             action_flag = CHANGE
 
-        # (
-        #     self.postanschrift_latitude,
-        #     self.postanschrift_longitude,
-        # ) = self.coordinates_extractor
         self.angebot_display_value = self.angebot_display_value_finder
         self.angenommenes_angebot = self.angennomenes_angebot_value_finder
         self.modulleistungWp = self.extract_modulleistungWp_from_name
@@ -717,7 +717,6 @@ class VertriebAngebot(TimeStampMixin):
                 parts = str(self.name_last_name) + " " + str(self.name_first_name)
         return str(parts)
 
-
     @property
     def kundennumer_finder(self):
         if self.zoho_kundennumer:
@@ -727,43 +726,76 @@ class VertriebAngebot(TimeStampMixin):
             return ""
 
         try:
-            data = json.loads(self.user.zoho_data_text or '[{"zoho_id": "default", "zoho_kundennumer": "default"}]')
+            data = json.loads(
+                self.user.zoho_data_text
+                or '[{"zoho_id": "default", "zoho_kundennumer": "default"}]'
+            )
         except json.JSONDecodeError:
             return ""
 
         zoho_id = str(self.zoho_id)
-        return next((item["zoho_kundennumer"] for item in data if item.get("zoho_id") == zoho_id), "")
+        return next(
+            (
+                item["zoho_kundennumer"]
+                for item in data
+                if item.get("zoho_id") == zoho_id
+            ),
+            "",
+        )
 
-        
     @property
-    def angebot_display_value_finder(self):  # Changed method name for clarity and to avoid recursion
-        default_angebot_value = ""  # Define a default value to return in case of failure
-        if hasattr(self, '_angebot_display_value_cache'):  # Use cached value if exists
+    def angebot_display_value_finder(
+        self,
+    ):  # Changed method name for clarity and to avoid recursion
+        default_angebot_value = (
+            ""  # Define a default value to return in case of failure
+        )
+        if hasattr(self, "_angebot_display_value_cache"):  # Use cached value if exists
             return self._angebot_display_value_cache
 
         try:
-            data = json.loads(self.user.zoho_data_text or '[{"zoho_id": "default", "angebot": "default"}]')
+            data = json.loads(
+                self.user.zoho_data_text
+                or '[{"zoho_id": "default", "angebot": "default"}]'
+            )
             zoho_id = str(self.zoho_id)
             zoho_id_to_angebot = {item["zoho_id"]: item["angebot"] for item in data}
 
-            self._angebot_display_value_cache = zoho_id_to_angebot.get(zoho_id, default_angebot_value)
+            self._angebot_display_value_cache = zoho_id_to_angebot.get(
+                zoho_id, default_angebot_value
+            )
             return self._angebot_display_value_cache
         except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
             # Optionally, log the exception here
-            return default_angebot_value  # Return the default value in case of exception
+            return (
+                default_angebot_value  # Return the default value in case of exception
+            )
 
     @property
-    def angennomenes_angebot_value_finder(self):  # Changed method name for clarity and to avoid recursion
-        default_angennomenes_angebot_value = ""  # Define a default value to return in case of failure
-        if hasattr(self, '_angennomenes_angebot_value_cache'):  # Use cached value if exists
+    def angennomenes_angebot_value_finder(
+        self,
+    ):  # Changed method name for clarity and to avoid recursion
+        default_angennomenes_angebot_value = (
+            ""  # Define a default value to return in case of failure
+        )
+        if hasattr(
+            self, "_angennomenes_angebot_value_cache"
+        ):  # Use cached value if exists
             return self._angennomenes_angebot_value_cache
 
         try:
-            data = json.loads(self.user.zoho_data_text or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]')
+            data = json.loads(
+                self.user.zoho_data_text
+                or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]'
+            )
             zoho_id = str(self.zoho_id)
-            zoho_id_to_angebot = {item["zoho_id"]: item["angenommenes_angebot"] for item in data}
+            zoho_id_to_angebot = {
+                item["zoho_id"]: item["angenommenes_angebot"] for item in data
+            }
 
-            self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(zoho_id, default_angennomenes_angebot_value)
+            self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(
+                zoho_id, default_angennomenes_angebot_value
+            )
             return self._angennomenes_angebot_value_cache
         except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
             # Optionally, log the exception here

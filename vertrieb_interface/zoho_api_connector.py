@@ -114,8 +114,9 @@ def fetch_user_angebote_all(request):
 
     return all_user_angebots_list
 
+
 def fetch_user_form_angebote_all(user):
-    
+
     start_index = 1
     all_user_angebots_list = []
 
@@ -141,6 +142,7 @@ def fetch_user_form_angebote_all(user):
 
     return all_user_angebots_list
 
+
 def fetch_user_angebote_limit(request, records_fetch_limit):
     user = request.user
     params = {
@@ -156,7 +158,6 @@ def fetch_user_angebote_limit(request, records_fetch_limit):
         return process_all_user_data(data)
 
 
-
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     timelaps = f"{message} - {timestamp}"
@@ -164,7 +165,7 @@ def log_and_notify(message):
 
 
 def fetch_form_user_angebote_limit(user):
-    
+
     params = {
         "limit": user.records_fetch_limit,
         "criteria": f"Vertriebler.ID == {user.zoho_id}",
@@ -176,8 +177,6 @@ def fetch_form_user_angebote_limit(user):
         return []
     else:
         return process_all_user_data(data)
-
-
 
 
 def process_all_user_data(data):
@@ -222,7 +221,11 @@ def process_all_user_data(data):
                         "display_value", ""
                     ),
                     "anfrage_vom": item.get("Anfrage_vom", ""),
-                    "angebot": item.get("Angebot", [])[0].get("display_value", "") if item.get("Angebot") != "" else "",
+                    "angebot": (
+                        item.get("Angebot", [])[0].get("display_value", "")
+                        if item.get("Angebot") != ""
+                        else ""
+                    ),
                     "angenommenes_angebot": item.get("Angenommenes_Angebot", ""),
                 }
             )
@@ -265,7 +268,11 @@ def process_all_user_data(data):
                         "display_value", ""
                     ),
                     "anfrage_vom": item.get("Anfrage_vom", ""),
-                    "angebot": item.get("Angebot", [])[0].get("display_value", "") if item.get("Angebot") != "" else "",
+                    "angebot": (
+                        item.get("Angebot", [])[0].get("display_value", "")
+                        if item.get("Angebot") != ""
+                        else ""
+                    ),
                     "angenommenes_angebot": item.get("Angenommenes_Angebot", ""),
                 }
             )
@@ -389,8 +396,8 @@ def put_form_data_to_zoho_jpp(form):
                 "district_city": district_city[0],
                 "address_line_1": strasse[0],
                 "postal_code": postal_code[0],
-                "longitude" : longitude,
-                "latitude" : latitude,
+                "longitude": longitude,
+                "latitude": latitude,
             },
         }
     }
