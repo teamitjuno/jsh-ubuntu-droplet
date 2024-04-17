@@ -249,8 +249,8 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                         angebot_id_assigned=True,
                         
                         zoho_id=zoho_id,
-                    )
-                    print(angebot_existing)
+                    ).exclude(status="bekommen")
+                    
                     if angebot_existing.count() != 0:
                         extracted_part = (
                             str(angebot_existing)

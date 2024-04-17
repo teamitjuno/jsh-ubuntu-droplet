@@ -1,108 +1,107 @@
-from vertrieb_interface.api_views.common import load_json_data, update_list
-
+from django.http import HttpResponse, JsonResponse
 import json
 
-
-from django.http import (
-    HttpResponse,
-    JsonResponse,
-)
-
-
-from vertrieb_interface.zoho_api_connector import (
-    fetch_user_angebote_all,
-    fetch_user_angebote_limit,
-)
+# Importiere Hilfsfunktionen und Modelle aus dem vertrieb_interface Modul
+from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.models import VertriebAngebot
-
+from vertrieb_interface.zoho_api_connector import fetch_user_angebote_all, fetch_user_angebote_limit
 
 def delete_unexisting_records(request):
-    user = request.user
-    user_data = load_json_data(user.zoho_data_text)
+    """
+    Entfernt Datensätze, die nicht mehr in Zoho vorhanden sind, aus der VertriebAngebot Datenbank.
 
-    if user_data is None:
-        return HttpResponse("Failed to decode JSON from user's Zoho data.", status=400)
-    if not user_data:
-        return HttpResponse("No data found in user's Zoho data.", status=200)
+    Args:
+    request: Django HttpRequest-Objekt, das Daten des Benutzers enthält.
 
-    user_zoho_ids = {item.get("zoho_id") for item in user_data}
+    Returns:
+    HttpResponse: Gibt den Status der Operation zurück, einschließlich der Anzahl der aktualisierten Datensätze.
+    """
+    try:
+        # Lade Benutzerdaten aus der Anfrage
+        user_data = load_json_data(request)
+        user_zoho_ids = {item.get("zoho_id") for item in user_data}
 
-    vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-        user=user, angebot_id_assigned=True
-    ).exclude(zoho_id__in=user_zoho_ids)
+        # Filtere Angebote, die aktualisiert werden müssen
+        vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
+            user=request.user, angebot_id_assigned=True
+        ).exclude(zoho_id__in=user_zoho_ids)
 
-    updated_count = vertrieb_angebots_to_update.update(angebot_id_assigned=False)
-    return HttpResponse(f"Updated {updated_count} records.", status=200)
-
+        # Aktualisiere die gefilterten Angebote
+        updated_count = vertrieb_angebots_to_update.update(angebot_id_assigned=False)
+        return HttpResponse(f"Updated {updated_count} records.", status=200)
+    except ValueError as e:
+        return HttpResponse(str(e), status=400)
 
 def update_status_to_angenommen(request):
-    user = request.user
-    user_data = load_json_data(user.zoho_data_text)
+    """
+    Aktualisiert den Status von Angeboten auf 'angenommen', basierend auf den Daten von Zoho.
 
-    if user_data is None:
-        return HttpResponse("Failed to decode JSON from user's Zoho data.", status=400)
+    Args:
+    request: Django HttpRequest-Objekt, das Daten des Benutzers enthält.
 
-    zoho_id_to_attributes = {
-        item["zoho_id"]: {
-            "name": item["name"],
-            "name_first_name": item["name_first_name"],
-            "name_last_name": item["name_last_name"],
-            "name_suffix": item["name_suffix"],
-            "status": item["status"],
-            "status_pva": item["status_pva"],
-            "angenommenes_angebot": item["angenommenes_angebot"],
+    Returns:
+    HttpResponse: Gibt den Erfolg oder Fehler der Operation zurück.
+    """
+    try:
+        user_data = load_json_data(request)
+        zoho_id_to_attributes = {
+            item["zoho_id"]: {
+                "name": item["name"],
+                "name_first_name": item["name_first_name"],
+                "name_last_name": item["name_last_name"],
+                "name_suffix": item["name_suffix"],
+                "status": item["status"],
+                "status_pva": item["status_pva"],
+                "angenommenes_angebot": item["angenommenes_angebot"],
+            }
+            for item in user_data
         }
-        for item in user_data
-    }
 
-    vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-        user=user, angebot_id_assigned=True, zoho_id__in=zoho_id_to_attributes.keys()
-    )
+        vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
+            user=request.user, angebot_id_assigned=True, zoho_id__in=zoho_id_to_attributes.keys()
+        )
+        updates = [angebot for angebot in vertrieb_angebots_to_update if zoho_id_to_attributes.get(angebot.zoho_id)]
 
-    updates = []
-    for angebot in vertrieb_angebots_to_update:
-        attrs = zoho_id_to_attributes.get(angebot.zoho_id)
-        if attrs:
-            angebot.name = attrs["name"]
-            angebot.name_first_name = attrs["name_first_name"]
-            angebot.name_last_name = attrs["name_last_name"]
-            angebot.name_suffix = attrs["name_suffix"]
-            angebot.status = attrs["status"]
-            angebot.status_pva = attrs["status_pva"]
-            angebot.angenommenes_angebot = attrs["angenommenes_angebot"]
-
-            updates.append(angebot)
-
-    VertriebAngebot.objects.bulk_update(
-        updates, ["name", "name_first_name", "name_last_name", "name_suffix", "status", "status_pva", "angenommenes_angebot"]
-    )
-    return HttpResponse("Updated statuses successfully.", status=200)
-
+        # Führe eine Massenaktualisierung der relevanten Felder durch
+        VertriebAngebot.objects.bulk_update(
+            updates, ["name", "name_first_name", "name_last_name", "name_suffix", "status", "status_pva", "angenommenes_angebot"]
+        )
+        return HttpResponse("Updated statuses successfully.", status=200)
+    except ValueError as e:
+        return HttpResponse(str(e), status=400)
 
 def load_user_angebots(request):
-    user = request.user
+    """
+    Lädt Angebote für den Benutzer und führt erforderliche Aktualisierungen durch.
 
+    Args:
+    request: Django HttpRequest-Objekt, das Daten des Benutzers enthält.
+
+    Returns:
+    JsonResponse: Gibt das Ergebnis der Operation zurück, einschließlich Fehler- oder Erfolgsstatus.
+    """
     try:
-        user_data = load_json_data(user.zoho_data_text)
-        if user_data == [] or user_data == "" or user_data == None:
-            all_user_angebots_list = fetch_user_angebote_all(request)
-            user.zoho_data_text = json.dumps(all_user_angebots_list)
-            user.save()
-        else:
-            all_user_angebots_list = fetch_user_angebote_limit(
-                request, user.records_fetch_limit
-            )
-            updated_data = update_list(user_data, all_user_angebots_list)
-            user.zoho_data_text = json.dumps(updated_data)
-            user.save()
-    except:
-        all_user_angebots_list = fetch_user_angebote_all(request)
-        user.zoho_data_text = json.dumps(all_user_angebots_list)
-        user.save()
+        user_data = load_json_data(request.user.zoho_data_text)
 
+        if user_data == [] or user_data == "" or user_data is None:
+            all_user_angebots_list = fetch_user_angebote_all(request)
+            request.user.zoho_data_text = json.dumps(all_user_angebots_list)
+            request.user.save()
+        else:
+            all_user_angebots_list = fetch_user_angebote_limit(request, request.user.records_fetch_limit)
+            updated_data = update_list(user_data, all_user_angebots_list)
+            request.user.zoho_data_text = json.dumps(updated_data)
+            request.user.save()
+    except Exception:
+        all_user_angebots_list = fetch_user_angebote_all(request)
+        request.user.zoho_data_text = json.dumps(all_user_angebots_list)
+        request.user.save()
+
+    # Bearbeite Antworten von Hilfsfunktionen
     response1 = delete_unexisting_records(request)
     response2 = update_status_to_angenommen(request)
 
+    # Überprüfe die Antwortcodes und gebe entsprechend das Ergebnis zurück
     if response1.status_code != 200 or response2.status_code != 200:
         return JsonResponse({"status": "error"}, status=500)
 
