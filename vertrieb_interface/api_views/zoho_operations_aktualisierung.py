@@ -6,6 +6,14 @@ from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import fetch_user_angebote_all, fetch_user_angebote_limit
 
+
+def load_user_json_data(request):
+    user_data = load_json_data(request.user.zoho_data_text)
+    if user_data is None:
+        raise ValueError("Failed to decode JSON from user's Zoho data.")
+    if not user_data:
+        raise ValueError("No data found in user's Zoho data.")
+    return user_data
 def delete_unexisting_records(request):
     """
     Entfernt Datensätze, die nicht mehr in Zoho vorhanden sind, aus der VertriebAngebot Datenbank.
@@ -18,7 +26,7 @@ def delete_unexisting_records(request):
     """
     try:
         # Lade Benutzerdaten aus der Anfrage
-        user_data = load_json_data(request)
+        user_data = load_user_json_data(request)
         user_zoho_ids = {item.get("zoho_id") for item in user_data}
 
         # Filtere Angebote, die aktualisiert werden müssen
@@ -43,7 +51,7 @@ def update_status_to_angenommen(request):
     HttpResponse: Gibt den Erfolg oder Fehler der Operation zurück.
     """
     try:
-        user_data = load_json_data(request)
+        user_data = load_user_json_data(request)
         zoho_id_to_attributes = {
             item["zoho_id"]: {
                 "name": item["name"],
