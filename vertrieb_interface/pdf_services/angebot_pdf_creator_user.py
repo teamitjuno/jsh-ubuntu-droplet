@@ -1101,7 +1101,7 @@ class PDF(FPDF):
                 self.set_y(y + 25)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
-                y += 20
+                y += 40
 
         y += 10
         # OPTIONALES ZUBEHÖR
