@@ -102,7 +102,7 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             else:
                 all_user_angebots_list = fetch_form_user_angebote_limit(user)
                 updated_data = update_list(user_data, all_user_angebots_list)
-                user.zoho_data_test = json.dumps(updated_data)
+                user.zoho_data_text = json.dumps(updated_data)
                 user.save()
         except:
             all_user_angebots_list = fetch_user_form_angebote_all(user)
@@ -247,10 +247,10 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     angebot_existing = self.model.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
-                        status="",
+                        
                         zoho_id=zoho_id,
                     )
-
+                    print(angebot_existing)
                     if angebot_existing.count() != 0:
                         extracted_part = (
                             str(angebot_existing)

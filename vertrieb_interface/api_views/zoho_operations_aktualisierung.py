@@ -44,6 +44,10 @@ def update_status_to_angenommen(request):
 
     zoho_id_to_attributes = {
         item["zoho_id"]: {
+            "name": item["name"],
+            "name_first_name": item["name_first_name"],
+            "name_last_name": item["name_last_name"],
+            "name_suffix": item["name_suffix"],
             "status": item["status"],
             "status_pva": item["status_pva"],
             "angenommenes_angebot": item["angenommenes_angebot"],
@@ -59,13 +63,18 @@ def update_status_to_angenommen(request):
     for angebot in vertrieb_angebots_to_update:
         attrs = zoho_id_to_attributes.get(angebot.zoho_id)
         if attrs:
+            angebot.name = attrs["name"]
+            angebot.name_first_name = attrs["name_first_name"]
+            angebot.name_last_name = attrs["name_last_name"]
+            angebot.name_suffix = attrs["name_suffix"]
             angebot.status = attrs["status"]
             angebot.status_pva = attrs["status_pva"]
             angebot.angenommenes_angebot = attrs["angenommenes_angebot"]
+
             updates.append(angebot)
 
     VertriebAngebot.objects.bulk_update(
-        updates, ["status", "status_pva", "angenommenes_angebot"]
+        updates, ["name", "name_first_name", "name_last_name", "name_suffix", "status", "status_pva", "angenommenes_angebot"]
     )
     return HttpResponse("Updated statuses successfully.", status=200)
 
