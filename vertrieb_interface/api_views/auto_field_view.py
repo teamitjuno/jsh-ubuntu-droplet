@@ -59,7 +59,7 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
         """
         try:
             data = load_json_data(user.zoho_data_text)
-            
+
             return data
         except json.JSONDecodeError:
             return self.fetch_and_save(user, request, fetch_user_angebote_all)

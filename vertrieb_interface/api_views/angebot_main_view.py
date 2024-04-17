@@ -247,10 +247,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                     angebot_existing = self.model.objects.filter(
                         user=user,
                         angebot_id_assigned=True,
-                        
                         zoho_id=zoho_id,
                     ).exclude(status="bekommen")
-                    
+
                     if angebot_existing.count() != 0:
                         extracted_part = (
                             str(angebot_existing)

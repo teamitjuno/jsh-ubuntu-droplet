@@ -4,7 +4,10 @@ import json
 # Importiere Hilfsfunktionen und Modelle aus dem vertrieb_interface Modul
 from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.models import VertriebAngebot
-from vertrieb_interface.zoho_api_connector import fetch_user_angebote_all, fetch_user_angebote_limit
+from vertrieb_interface.zoho_api_connector import (
+    fetch_user_angebote_all,
+    fetch_user_angebote_limit,
+)
 
 
 def load_user_json_data(request):
@@ -14,6 +17,7 @@ def load_user_json_data(request):
     if not user_data:
         raise ValueError("No data found in user's Zoho data.")
     return user_data
+
 
 def delete_unexisting_records(request):
     """
@@ -36,12 +40,12 @@ def delete_unexisting_records(request):
             user=request.user, angebot_id_assigned=True
         ).exclude(zoho_id__in=user_zoho_ids)
 
-
         # Aktualisiere die gefilterten Angebote
         updated_count = vertrieb_angebots_to_update.update(angebot_id_assigned=False)
         return HttpResponse(f"Updated {updated_count} records.", status=200)
     except ValueError as e:
         return HttpResponse(str(e), status=400)
+
 
 def update_status_to_angenommen(request):
     """
@@ -69,9 +73,10 @@ def update_status_to_angenommen(request):
         }
 
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-            user=request.user, angebot_id_assigned=True,
+            user=request.user,
+            angebot_id_assigned=True,
         )
-        
+
         updates = []
         for angebot in vertrieb_angebots_to_update:
             attrs = zoho_id_to_attributes.get(angebot.zoho_id)
@@ -84,14 +89,24 @@ def update_status_to_angenommen(request):
                 angebot.status_pva = attrs["status_pva"]
                 angebot.angenommenes_angebot = attrs["angenommenes_angebot"]
                 updates.append(angebot)
-        
+
         # Führe eine Massenaktualisierung der relevanten Felder durch
         VertriebAngebot.objects.bulk_update(
-            updates, ["name", "name_first_name", "name_last_name", "name_suffix", "status", "status_pva", "angenommenes_angebot"]
+            updates,
+            [
+                "name",
+                "name_first_name",
+                "name_last_name",
+                "name_suffix",
+                "status",
+                "status_pva",
+                "angenommenes_angebot",
+            ],
         )
         return HttpResponse("Updated statuses successfully.", status=200)
     except ValueError as e:
         return HttpResponse(str(e), status=400)
+
 
 def load_user_angebots(request):
     """
@@ -104,14 +119,16 @@ def load_user_angebots(request):
     JsonResponse: Gibt das Ergebnis der Operation zurück, einschließlich Fehler- oder Erfolgsstatus.
     """
     try:
-        user_data = load_json_data(request.user.zoho_data_text)
+        user_data = load_user_json_data(request)
 
         if user_data == [] or user_data == "" or user_data is None:
             all_user_angebots_list = fetch_user_angebote_all(request)
             request.user.zoho_data_text = json.dumps(all_user_angebots_list)
             request.user.save()
         else:
-            all_user_angebots_list = fetch_user_angebote_limit(request, request.user.records_fetch_limit)
+            all_user_angebots_list = fetch_user_angebote_limit(
+                request, request.user.records_fetch_limit
+            )
             updated_data = update_list(user_data, all_user_angebots_list)
             request.user.zoho_data_text = json.dumps(updated_data)
             request.user.save()

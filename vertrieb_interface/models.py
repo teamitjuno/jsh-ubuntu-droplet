@@ -509,7 +509,7 @@ class VertriebAngebot(TimeStampMixin):
             action_flag = CHANGE
 
         self.angebot_display_value = self.angebot_display_value_finder
-        
+
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")

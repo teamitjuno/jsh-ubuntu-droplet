@@ -367,8 +367,9 @@ def home(request):
     angenommen_criteria = (
         Q(status="angenommen")
         & ~Q(status_pva="")
-        & Q(angebot_id=F("angenommenes_angebot"))
-    )
+        & Q(angenommenes_angebot=F("angebot_id"))
+        & Q(angebot_id_assigned=True))
+    
 
     angenommen_count = vertriebangebots.filter(angenommen_criteria).count()
     all_count = vertriebangebots.count()
