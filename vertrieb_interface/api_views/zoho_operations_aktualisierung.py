@@ -67,7 +67,7 @@ def update_status_to_angenommen(request):
         }
 
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
-            user=request.user, angebot_id_assigned=True, zoho_id__in=zoho_id_to_attributes.keys()
+            user=request.user, angebot_id_assigned=True,
         )
         updates = [angebot for angebot in vertrieb_angebots_to_update if zoho_id_to_attributes.get(angebot.zoho_id)]
 
