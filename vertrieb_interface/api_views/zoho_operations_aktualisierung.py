@@ -29,11 +29,13 @@ def delete_unexisting_records(request):
         # Lade Benutzerdaten aus der Anfrage
         user_data = load_user_json_data(request)
         user_zoho_ids = {item.get("zoho_id") for item in user_data}
+        print(user_zoho_ids)
 
         # Filtere Angebote, die aktualisiert werden müssen
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
             user=request.user, angebot_id_assigned=True
         ).exclude(zoho_id__in=user_zoho_ids)
+
 
         # Aktualisiere die gefilterten Angebote
         updated_count = vertrieb_angebots_to_update.update(angebot_id_assigned=False)
@@ -69,8 +71,20 @@ def update_status_to_angenommen(request):
         vertrieb_angebots_to_update = VertriebAngebot.objects.filter(
             user=request.user, angebot_id_assigned=True,
         )
-        updates = [angebot for angebot in vertrieb_angebots_to_update if zoho_id_to_attributes.get(angebot.zoho_id)]
-
+        
+        updates = []
+        for angebot in vertrieb_angebots_to_update:
+            attrs = zoho_id_to_attributes.get(angebot.zoho_id)
+            if attrs:
+                angebot.name = attrs["name"]
+                angebot.name_first_name = attrs["name_first_name"]
+                angebot.name_last_name = attrs["name_last_name"]
+                angebot.name_suffix = attrs["name_suffix"]
+                angebot.status = attrs["status"]
+                angebot.status_pva = attrs["status_pva"]
+                angebot.angenommenes_angebot = attrs["angenommenes_angebot"]
+                updates.append(angebot)
+        
         # Führe eine Massenaktualisierung der relevanten Felder durch
         VertriebAngebot.objects.bulk_update(
             updates, ["name", "name_first_name", "name_last_name", "name_suffix", "status", "status_pva", "angenommenes_angebot"]
