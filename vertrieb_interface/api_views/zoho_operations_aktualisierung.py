@@ -14,6 +14,7 @@ def load_user_json_data(request):
     if not user_data:
         raise ValueError("No data found in user's Zoho data.")
     return user_data
+
 def delete_unexisting_records(request):
     """
     Entfernt Datensätze, die nicht mehr in Zoho vorhanden sind, aus der VertriebAngebot Datenbank.

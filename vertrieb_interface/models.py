@@ -509,7 +509,7 @@ class VertriebAngebot(TimeStampMixin):
             action_flag = CHANGE
 
         self.angebot_display_value = self.angebot_display_value_finder
-        self.angenommenes_angebot = self.angennomenes_angebot_value_finder
+        
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -771,35 +771,36 @@ class VertriebAngebot(TimeStampMixin):
                 default_angebot_value  # Return the default value in case of exception
             )
 
-    @property
-    def angennomenes_angebot_value_finder(
-        self,
-    ):  # Changed method name for clarity and to avoid recursion
-        default_angennomenes_angebot_value = (
-            ""  # Define a default value to return in case of failure
-        )
-        if hasattr(
-            self, "_angennomenes_angebot_value_cache"
-        ):  # Use cached value if exists
-            return self._angennomenes_angebot_value_cache
+    # @property
+    # def angennomenes_angebot_value_finder(
+    #     self,
+    # ):  # Changed method name for clarity and to avoid recursion
 
-        try:
-            data = json.loads(
-                self.user.zoho_data_text
-                or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]'
-            )
-            zoho_id = str(self.zoho_id)
-            zoho_id_to_angebot = {
-                item["zoho_id"]: item["angenommenes_angebot"] for item in data
-            }
+    #     default_angennomenes_angebot_value = (
+    #         ""  # Define a default value to return in case of failure
+    #     )
+    #     if hasattr(
+    #         self, "_angennomenes_angebot_value_cache"
+    #     ):  # Use cached value if exists
+    #         return self._angennomenes_angebot_value_cache
 
-            self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(
-                zoho_id, default_angennomenes_angebot_value
-            )
-            return self._angennomenes_angebot_value_cache
-        except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
-            # Optionally, log the exception here
-            return default_angennomenes_angebot_value  # Return the default value in case of exception
+    #     try:
+    #         data = json.loads(
+    #             self.user.zoho_data_text
+    #             or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]'
+    #         )
+    #         zoho_id = str(self.zoho_id)
+    #         zoho_id_to_angebot = {
+    #             item["zoho_id"]: item["angenommenes_angebot"] for item in data
+    #         }
+
+    #         self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(
+    #             zoho_id, default_angennomenes_angebot_value
+    #         )
+    #         return self._angennomenes_angebot_value_cache
+    #     except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
+    #         # Optionally, log the exception here
+    #         return default_angennomenes_angebot_value  # Return the default value in case of exception
 
     @property
     def get_building_insights(
