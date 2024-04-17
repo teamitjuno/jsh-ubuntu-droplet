@@ -93,7 +93,7 @@ def load_user_angebots(request):
                 request, user.records_fetch_limit
             )
             updated_data = update_list(user_data, all_user_angebots_list)
-            user.zoho_data_test = json.dumps(updated_data)
+            user.zoho_data_text = json.dumps(updated_data)
             user.save()
     except:
         all_user_angebots_list = fetch_user_angebote_all(request)

@@ -1292,7 +1292,7 @@ class VertriebAngebotForm(ModelForm):
             # else:
             #     all_user_angebots_list = fetch_form_user_angebote_limit(request, user.records_fetch_limit)
             #     updated_data = update_list(user_data, all_user_angebots_list)
-            #     user.zoho_data_test = json.dumps(updated_data)
+            #     user.zoho_data_text = json.dumps(updated_data)
 
             # user.save()
 
