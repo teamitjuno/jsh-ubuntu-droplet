@@ -1944,8 +1944,7 @@ class TicketForm(forms.ModelForm):
         super(TicketForm, self).__init__(*args, **kwargs)
         self.fields["module_ticket"].choices = [
             (module.name, module.name)
-            for module in SolarModulePreise.objects.filter(in_stock=True)
-        ]
+            for module in SolarModulePreise.objects.all()]
         for field in self.fields:
             if self.initial.get(field):
                 self.fields[field].widget.attrs.update(
