@@ -80,6 +80,7 @@ fpdf = "*"
 pandas = "*"
 fitz = "*"
 pymupdf = "*"
+xlrd = "*"
 
 [dev-packages]
 
