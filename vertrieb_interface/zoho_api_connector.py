@@ -386,7 +386,7 @@ def put_form_data_to_zoho_jpp(form):
             "Telefon_Festnetz": form_data.get("telefon_festnetz"),
             "Telefon_mobil": form_data.get("telefon_mobil"),
             "Name": {
-                "display_value": f"{anrede} {name_first_name} {name_suffix} {name_last_name}",
+                "display_value": f"{anrede} {name_last_name} {name_suffix} {name_first_name}",
                 "prefix": f"{anrede}",
                 "last_name": f"{name_last_name}",
                 "suffix": f"{name_suffix}",
