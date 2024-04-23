@@ -154,6 +154,7 @@ class PDF(FPDF):
         # uberschrift_und_text_1
         self.multi_cell(0, 5, "Gesamtleistung der Anlage:\nStandort der Anlage:", 0, "")
         y = 90
+        self.set_y(y)
         self.set_x(70)
         self.multi_cell(0, 5, f'{str(data["kWp"])} kWp\n{data["standort"]}', 0, "L")
         y += 15
@@ -180,7 +181,7 @@ class PDF(FPDF):
 
         self.set_font("JUNO Solar Lt", "B", 10)
         self.set_x(0)
-        y + 15
+        y += 15
         self.set_y(y)
         # tabelle_beginn_1
         self.cell(0, 6, "Pos.", 0, 0, "L")
