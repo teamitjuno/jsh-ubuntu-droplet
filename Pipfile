@@ -81,6 +81,8 @@ pandas = "*"
 fitz = "*"
 pymupdf = "*"
 xlrd = "*"
+xlsxwriter = "*"
+celery = "*"
 
 [dev-packages]
 

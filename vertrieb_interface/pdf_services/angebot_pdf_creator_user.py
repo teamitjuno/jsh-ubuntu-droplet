@@ -153,10 +153,10 @@ class PDF(FPDF):
         self.set_y(90)
         # uberschrift_und_text_1
         self.multi_cell(0, 5, "Gesamtleistung der Anlage:\nStandort der Anlage:", 0, "")
-        y=90
+        y = 90
         self.set_x(70)
         self.multi_cell(0, 5, f'{str(data["kWp"])} kWp\n{data["standort"]}', 0, "L")
-        y+=15
+        y += 15
         self.set_y(y)
         if "Firma" in data["anrede"]:
             self.cell(0, 6, f"Sehr geehrte Damen und Herren", 0, 0, "L")
@@ -167,7 +167,7 @@ class PDF(FPDF):
                 0, 6, f'Sehr geehrte {data["anrede"]} {data["kunde"]},', 0, 0, "L"
             )
         self.set_x(0)
-        y+=10
+        y += 10
         self.set_y(y)
         # uberschrift_und_text_2
         self.multi_cell(
@@ -180,14 +180,14 @@ class PDF(FPDF):
 
         self.set_font("JUNO Solar Lt", "B", 10)
         self.set_x(0)
-        y+15
+        y + 15
         self.set_y(y)
         # tabelle_beginn_1
         self.cell(0, 6, "Pos.", 0, 0, "L")
         self.set_x(37)
         # tabelle_beginn_2
         self.cell(0, 6, "Bezeichnung", 0, 0, "L")
-        
+
         self.set_x(150)
         # tabelle_beginn_3
         self.cell(0, 6, "Menge", 0, 0, "L")
@@ -196,7 +196,7 @@ class PDF(FPDF):
         self.cell(0, 6, "Gesamtpreis", 0, 0, "R")
 
         self.line(18, 135, 196, 135)
-        y+=10
+        y += 10
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 12)
         # tabelle_beginn_5
@@ -215,13 +215,13 @@ class PDF(FPDF):
         # Tabelle Eintrag 1
 
         self.set_font("JUNO Solar Lt", "", 11)
-        y+=15
+        y += 15
         self.set_y(y)
         eintrag += 1
         self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
         self.set_x(25)
         self.cell(0, 5, data["module"], 0, 0, "L")
-        y+=5
+        y += 5
         self.set_y(y)
         self.set_x(25)
         self.set_font("JUNO Solar Lt", "", 10)
@@ -232,13 +232,13 @@ class PDF(FPDF):
             0,
             "L",
         )
-        self.set_y(y-5)
+        self.set_y(y - 5)
         self.set_x(150)
         self.set_font("JUNO Solar Lt", "", 11)
         self.cell(0, 6, f'{str(data["anzModule"])} Stk', 0, 0, "L")
         self.set_x(170)
         self.cell(0, 6, "inklusive", 0, 0, "R")
-        y=180
+        y = 180
         if data["hersteller"] == "Viessmann":
             # Tabelle Eintrag 2
             self.set_font("JUNO Solar Lt", "", 11)
@@ -248,7 +248,7 @@ class PDF(FPDF):
             self.set_x(25)
             # tabelle_eintrag_2_viessman_1
             self.cell(0, 5, "Viessmann Vitocharge VX3", 0, 0, "L")
-            y+=5
+            y += 5
             self.set_y(y)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
@@ -261,7 +261,7 @@ class PDF(FPDF):
                 0,
                 "L",
             )
-            self.set_y(y-5)
+            self.set_y(y - 5)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
             self.cell(0, 6, "nach Auslegung", 0, 0, "L")
@@ -269,14 +269,14 @@ class PDF(FPDF):
             self.cell(0, 6, "inklusive", 0, 0, "R")
             # Tabelle Eintrag 3
             self.set_font("JUNO Solar Lt", "", 11)
-            y+=25
+            y += 25
             self.set_y(y)
             eintrag += 1
             self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
             self.set_x(25)
             # tabelle_eintrag_3_viessman_1
             self.cell(0, 5, "Viessman Energiezähler", 0, 0, "L")
-            y+=5
+            y += 5
             self.set_y(y)
             self.set_x(25)
             self.set_font("JUNO Solar Lt", "", 10)
@@ -288,7 +288,7 @@ class PDF(FPDF):
                 0,
                 "L",
             )
-            self.set_y(y-5)
+            self.set_y(y - 5)
             self.set_x(150)
             self.set_font("JUNO Solar Lt", "", 11)
             self.cell(0, 6, "nach Auslegung", 0, 0, "L")

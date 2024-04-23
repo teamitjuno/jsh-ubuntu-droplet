@@ -707,7 +707,7 @@ class VertriebAngebot(TimeStampMixin):
         else:
             if self.name_suffix:
                 parts = (
-                    str(self.name_last_name) 
+                    str(self.name_last_name)
                     + " "
                     + str(self.name_suffix)
                     + " "
