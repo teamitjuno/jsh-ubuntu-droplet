@@ -116,7 +116,7 @@ CSRF_TRUSTED_ORIGINS = [
 # CORS_ALLOW_ALL_ORIGINS = True
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 FILE_UPLOAD_HANDLERS = [
-    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
 
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://159.89.22.211")
@@ -277,16 +277,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #     'loggers': {
 #         'django': {
 #             'handlers': ['console', 'file'],
-#             'level': 'DEBUG', 
+#             'level': 'DEBUG',
 #             'propagate': True,
 #         },
-#         
+#
 #         'django.request': {
 #             'handlers': ['console', 'file'],
 #             'level': 'DEBUG',
 #             'propagate': False,
 #         },
-#         
+#
 #     },
 # }
 

@@ -1,2 +1,5 @@
 .env
 .DS_Store
+db.sqlite3
+*.pyc
+vertrieb_interface/json_tests/current_vertriebler_angebot.json

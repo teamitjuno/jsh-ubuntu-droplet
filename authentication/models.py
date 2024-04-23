@@ -172,8 +172,8 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         ("Notizen", "Notizen"),
     ]
     is_home_page = models.BooleanField(default=True)
-    map_notizen_container_view = models.CharField(max_length=2000,
-        choices=MAP_NOTIZEN_CHOICES, default="Map"
+    map_notizen_container_view = models.CharField(
+        max_length=2000, choices=MAP_NOTIZEN_CHOICES, default="Map"
     )
     initial_text_for_email = models.TextField(blank=True, null=True)
     initial_verbrauch = models.FloatField(

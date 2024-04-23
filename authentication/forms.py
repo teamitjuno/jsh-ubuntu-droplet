@@ -164,12 +164,10 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "class": "form-control",
                 "id": "id_records_fetch_limit",
                 "style": "max-width: 100px",
-
             }
         ),
     )
-        
-        
+
     initial_text_for_email = forms.CharField(
         label="Default Email-Text",
         required=False,
@@ -237,7 +235,11 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ],
         initial="10 Jahre",
         widget=forms.Select(
-            attrs={"class": "form-select", "id": "id_initial_garantieWR", "style": "max-width: 300px",}
+            attrs={
+                "class": "form-select",
+                "id": "id_initial_garantieWR",
+                "style": "max-width: 300px",
+            }
         ),
     )
 
@@ -287,7 +289,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
                 "id": "id_initial_wallbox_anzahl",
                 "data-toggle": "touchspin",
                 "value": "0",
-                "style": "max-width: 300px",    
+                "style": "max-width: 300px",
             }
         ),
     )
@@ -424,7 +426,11 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         required=True,
         validators=[validate_two_decimal_places],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_initial_bis10kWp", "style": "max-width: 300px",}
+            attrs={
+                "class": "form-control",
+                "id": "id_initial_bis10kWp",
+                "style": "max-width: 300px",
+            }
         ),
     )
     initial_bis40kWp = forms.DecimalField(
@@ -435,7 +441,11 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         required=True,
         validators=[validate_two_decimal_places],
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_initial_bis40kWp", "style": "max-width: 300px",}
+            attrs={
+                "class": "form-control",
+                "id": "id_initial_bis40kWp",
+                "style": "max-width: 300px",
+            }
         ),
     )
 
@@ -567,8 +577,10 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             {"id": "id_angebot_statusubersicht_view"}
         )
         self.fields["pv_rechner_view"].widget.attrs.update({"id": "id_pv_rechner_view"})
-        
-        self.fields["records_fetch_limit"].widget.attrs.update({"id": "id_records_fetch_limit"})
+
+        self.fields["records_fetch_limit"].widget.attrs.update(
+            {"id": "id_records_fetch_limit"}
+        )
         self.fields["anzahl_sol_module_view"].widget.attrs.update(
             {"id": "id_anzahl_sol_module_view"}
         )
