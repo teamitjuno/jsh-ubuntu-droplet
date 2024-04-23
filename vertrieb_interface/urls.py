@@ -7,6 +7,11 @@ from vertrieb_interface.api_views.ticket_view import TicketEditView
 from vertrieb_interface.api_views.kalkulation_view import KalkulationEditView
 from vertrieb_interface.api_views.auto_field_view import VertriebAutoFieldView
 from vertrieb_interface.api_views.alle_angebote_view import ViewOrders
+from vertrieb_interface.api_views.document_PDF_view import DocumentView
+from vertrieb_interface.api_views.document_and_calculation_PDF_view import (
+    DocumentAndCalcView,
+)
+
 from django.views import defaults as default_views
 from adminfeautures.views import UpdateAdminAngebot
 
@@ -139,9 +144,7 @@ vertrieb_patterns = [
         views.serve_ticket_pdf,
         name="serve_ticket_pdf",
     ),
-    path(
-        "document/<str:angebot_id>/", views.DocumentView.as_view(), name="document_view"
-    ),
+    path("document/<str:angebot_id>/", DocumentView.as_view(), name="document_view"),
     path(
         "document_calc/<str:angebot_id>/",
         views.document_calc_view,
@@ -149,7 +152,7 @@ vertrieb_patterns = [
     ),
     path(
         "document_and_calc_view/<str:angebot_id>/",
-        views.DocumentAndCalcView.as_view(),
+        DocumentAndCalcView.as_view(),
         name="document_and_calc_view",
     ),
     path(

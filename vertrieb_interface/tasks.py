@@ -18,16 +18,20 @@ def delete_unassigned_vertriebangebot_week_old():
         one_week_ago = timezone.now() - timedelta(weeks=1)
         with transaction.atomic():
             to_delete = VertriebAngebot.objects.filter(
-                angebot_id_assigned=False,
-                updated_at__lte=one_week_ago
+                angebot_id_assigned=False, updated_at__lte=one_week_ago
             )
             count = to_delete.count()
             to_delete.delete()
-            logger.info(f"Deleted {count} unassigned VertriebAngebot instances not updated for over a week.")
+            logger.info(
+                f"Deleted {count} unassigned VertriebAngebot instances not updated for over a week."
+            )
     except DatabaseError as e:
-        logger.error(f"Failed to delete VertriebAngebot instances due to a database error: {e}")
+        logger.error(
+            f"Failed to delete VertriebAngebot instances due to a database error: {e}"
+        )
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
+
 
 @shared_task
 def delete_vertriebangebot_six_weeks_old():
@@ -37,16 +41,19 @@ def delete_vertriebangebot_six_weeks_old():
     try:
         six_weeks_ago = timezone.now() - timedelta(weeks=6)
         with transaction.atomic():
-            to_delete = VertriebAngebot.objects.filter(
-                updated_at__lte=six_weeks_ago
-            )
+            to_delete = VertriebAngebot.objects.filter(updated_at__lte=six_weeks_ago)
             count = to_delete.count()
             to_delete.delete()
-            logger.info(f"Deleted {count} VertriebAngebot instances not updated for over six weeks.")
+            logger.info(
+                f"Deleted {count} VertriebAngebot instances not updated for over six weeks."
+            )
     except DatabaseError as e:
-        logger.error(f"Failed to delete VertriebAngebot instances due to a database error: {e}")
+        logger.error(
+            f"Failed to delete VertriebAngebot instances due to a database error: {e}"
+        )
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
+
 
 @shared_task
 def delete_angenommen_vertriebangebot_two_months_old():
@@ -57,14 +64,18 @@ def delete_angenommen_vertriebangebot_two_months_old():
         two_months_ago = timezone.now() - timedelta(weeks=8)
         with transaction.atomic():
             to_delete = VertriebAngebot.objects.filter(
-                status='angenommen',
+                status="angenommen",
                 angebot_id_assigned=False,
-                updated_at__lte=two_months_ago
+                updated_at__lte=two_months_ago,
             )
             count = to_delete.count()
             to_delete.delete()
-            logger.info(f"Deleted {count} 'angenommen' VertriebAngebot instances unassigned and not updated for over two months.")
+            logger.info(
+                f"Deleted {count} 'angenommen' VertriebAngebot instances unassigned and not updated for over two months."
+            )
     except DatabaseError as e:
-        logger.error(f"Failed to delete VertriebAngebot instances due to a database error: {e}")
+        logger.error(
+            f"Failed to delete VertriebAngebot instances due to a database error: {e}"
+        )
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")

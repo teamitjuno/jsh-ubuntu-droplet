@@ -1,0 +1,217 @@
+# Django related imports
+
+from django.contrib import messages
+
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.core.mail import EmailMultiAlternatives, get_connection
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.generic import DetailView
+
+# Local imports from 'config'
+from config.settings import EMAIL_BACKEND
+
+# Local imports from 'datenblatter'
+from datenblatter.models import Datenblatter
+
+# Local imports from 'vertrieb_interface'
+from vertrieb_interface.forms import (
+    VertriebAngebotEmailForm,
+)
+from vertrieb_interface.models import VertriebAngebot
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class DocumentAndCalcView(LoginRequiredMixin, DetailView):
+    model = VertriebAngebot
+    template_name = "vertrieb/document_and_calc_view.html"
+    context_object_name = "vertrieb_angebot"
+    pk_url_kwarg = "angebot_id"
+    form_class = VertriebAngebotEmailForm
+
+    def dispatch(self, request, *args, **kwargs):
+        angebot_id = kwargs.get("angebot_id")
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        angebot_id = self.kwargs.get(self.pk_url_kwarg)
+        self.object = get_object_or_404(self.model, angebot_id=angebot_id)
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vertrieb_angebot = self.get_object()
+        angebot_id = self.kwargs.get("angebot_id")
+        pdf_url = reverse(
+            "vertrieb_interface:serve_angebot_and_calc_pdf", args=[angebot_id]
+        )
+        context["pdf_url"] = pdf_url
+        context["angebot_id"] = angebot_id
+        context["form"] = self.form_class(
+            instance=vertrieb_angebot, user=self.request.user
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(
+            request.POST, instance=self.get_object(), user=request.user
+        )
+
+        if form.is_valid():
+            form.save()
+            if self._send_email(form.instance):
+                messages.success(request, "Email sent successfully")
+                email_sent = True
+                return redirect(
+                    "vertrieb_interface:document_and_calc_view",
+                    form.instance.angebot_id,
+                )
+
+        return self.form_invalid(form)
+
+    def _send_email(self, vertrieb_angebot):
+        datenblatter = get_object_or_404(Datenblatter)
+        email_address = self.request.POST.get("email")
+        email_content = self.request.POST.get("text_for_email")
+        subject = f"Angebot Photovoltaikanlage {vertrieb_angebot.angebot_id}"
+
+        user = self.request.user
+        body = f"{email_content}\n\n{user.smtp_body}"
+        user_email = user.email
+
+        try:
+            connection = get_connection(
+                backend=EMAIL_BACKEND,
+                host=user.smtp_server,
+                port=user.smtp_port,
+                username=user.smtp_username,
+                password=user.smtp_password,
+                use_tls=True,
+                fail_silently=False,
+            )
+            email = EmailMultiAlternatives(
+                subject,
+                body,
+                user.smtp_username,
+                [email_address, user_email],
+                connection=connection,
+            )
+            self._attach_files(email, vertrieb_angebot, datenblatter)
+            email.send()
+            return True
+        except Exception as e:
+            messages.error(self.request, f"Failed to send email: {str(e)}")
+            return False
+
+    def _attach_files(self, email, vertrieb_angebot, datenblatter):
+        file_data = vertrieb_angebot.angebot_and_calc_pdf.tobytes()
+        name = replace_spaces_with_underscores(vertrieb_angebot.name)
+        email.attach(
+            f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
+        )
+
+        if vertrieb_angebot.datenblatter_solar_module:
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_1",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module
+                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_2",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
+                or "Phono Solar PS430M8GFH-18/VSH"
+            ):
+                self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
+
+        if vertrieb_angebot.datenblatter_speichermodule:
+            self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+
+        if vertrieb_angebot.datenblatter_wechselrichter:
+            self._attach_datenblatter(email, datenblatter, ["wechselrichter"])
+
+        if vertrieb_angebot.datenblatter_wallbox:
+            self._attach_datenblatter(email, datenblatter, ["wall_box"])
+
+        if vertrieb_angebot.datenblatter_backup_box:
+            self._attach_datenblatter(email, datenblatter, ["backup_box"])
+
+    def _attach_datenblatter(self, email, datenblatter, fields):
+        """
+        Anhängen von Datenblättern zu einer E-Mail.
+
+        Diese Methode geht durch die angegebenen Felder, liest die entsprechenden Datenblätter,
+        und fügt sie als PDF-Anhänge an die E-Mail an.
+
+        Args:
+            email: Das E-Mail-Objekt, zu dem die Anhänge hinzugefügt werden sollen.
+            datenblatter: Ein Objekt, das die Datenblätter enthält.
+            fields: Eine Liste von Feldnamen, die den Attributen in datenblatter entsprechen, deren
+                    Datenblätter angehängt werden sollen.
+
+        Raises:
+            AttributeError: Wenn ein angegebenes Feld nicht in datenblatter existiert.
+            IOError: Wenn das Datenblatt nicht geöffnet oder gelesen werden kann.
+            Exception: Allgemeine Ausnahmebehandlung für unerwartete Fehler.
+        """
+        for field in fields:
+            try:
+                datenblatt = getattr(datenblatter, field, None)
+                if not datenblatt:
+                    raise AttributeError(
+                        f"{field} attribute is missing in datenblatter object."
+                    )
+
+                with datenblatt.open("rb") as file:
+                    file_data = file.read()
+
+                email.attach(f"{field}.pdf", file_data, "application/pdf")
+
+            except AttributeError as e:
+                logger.error(f"Failed to process {field}: {e}")
+                raise e  # Optionally re-raise if you want the error to propagate.
+
+            except IOError as e:
+                logger.error(
+                    f"Failed to read or attach {field}.pdf due to a file error: {e}"
+                )
+                raise e  # Optionally re-raise if the process should not continue on error.
+
+            except Exception as e:
+                logger.error(
+                    f"An unexpected error occurred while processing {field}: {e}"
+                )
+                raise e  # Optionally re-raise to signify critical failure.
+
+    def form_invalid(self, form):
+        return render(
+            self.request, self.template_name, self.get_context_data(form=form)
+        )
+
+
+def replace_spaces_with_underscores(s: str) -> str:
+    return s.replace(" ", "_")
