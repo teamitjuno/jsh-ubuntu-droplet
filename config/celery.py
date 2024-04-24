@@ -1,7 +1,7 @@
 from celery import Celery
 from celery.schedules import crontab
 
-app = Celery("Auto_Löschung")
+app = Celery("Auto_Löschung", broker='amqp://guest:guest@rabbitmq:5672//')
 
 # Konfiguration der periodischen Aufgaben für Celery
 app.conf.beat_schedule = {

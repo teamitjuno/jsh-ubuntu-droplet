@@ -22,10 +22,32 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - rabbitmq
     env_file:
       - .env
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672" # Management console
+      - "${RABBITMQ_TCP_PORT}:5672" # AMQP protocol port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_TCP_LISTENERS: ${RABBITMQ_TCP_PORT}
+      RABBITMQ_MANAGEMENT_TCP_PORT: ${RABBITMQ_MANAGEMENT_PORT}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./config/definitions.json:/etc/rabbitmq/definitions.json
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   postgres_data: {}
   static_volume: {}
   media_volume: {}
+  rabbitmq_data: {}
