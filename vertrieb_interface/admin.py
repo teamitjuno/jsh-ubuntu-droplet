@@ -20,6 +20,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "termine_text",
         "is_locked",
         "angebotsumme",
+        "updated_at",
     )
 
     search_fields = (
