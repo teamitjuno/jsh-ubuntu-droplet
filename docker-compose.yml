@@ -46,6 +46,19 @@ services:
       timeout: 10s
       retries: 5
 
+  celeryworker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - ./:/app/
+    depends_on:
+      - web
+      - rabbitmq
+    env_file:
+      - .env
+
 volumes:
   postgres_data: {}
   static_volume: {}
