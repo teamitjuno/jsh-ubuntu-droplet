@@ -1,28 +1,34 @@
+# Verwenden des Python 3.11 Basisbildes
 FROM python:3.11
 
+# Verhindern, dass Python pyc-Dateien schreibt
 ENV PYTHONDONTWRITEBYTECODE 1
+# Setzen von Python Ausgabe auf ungebüffert, d.h. sie wird sofort auf der Konsole ausgegeben
 ENV PYTHONUNBUFFERED 1
+# Festlegen des Django Einstellungsmoduls
 ENV DJANGO_SETTINGS_MODULE=config.settings
 
+# Festlegen des Arbeitsverzeichnisses im Container
 WORKDIR /app
 
-# Installing dependencies
+# Installieren der Abhängigkeiten
 COPY Pipfile Pipfile.lock /app/
-RUN pip install --upgrade pip && \
-    pip install pipenv && \
-    pipenv install --system --deploy
+# Aktualisieren von pip
+RUN pip install --upgrade pip
+# Installieren von pipenv und Installieren der Abhängigkeiten im Systemkontext
+RUN pip install pipenv && pipenv install --system
 
-# Install supervisord
+# Installieren von Supervisord zur Prozessverwaltung
 RUN pip install supervisor
 
-# Copy the project files
+# Kopieren der Projektdateien in das Arbeitsverzeichnis
 COPY . /app/
 
-# Copy the supervisord configuration file
+# Kopieren der Supervisord-Konfigurationsdatei
 COPY supervisord.conf /etc/supervisord.conf
 
-# Expose the port the app runs on
+# Freigeben des Ports, auf dem die App läuft
 EXPOSE 8000
 
-# Set supervisord as the entry point
+# Festlegen von Supervisord als Startpunkt
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
