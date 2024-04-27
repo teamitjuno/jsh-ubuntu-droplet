@@ -83,6 +83,7 @@ pymupdf = "*"
 xlrd = "*"
 xlsxwriter = "*"
 celery = "*"
+django-celery-beat = "*"
 
 [dev-packages]
 

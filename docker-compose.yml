@@ -1,4 +1,5 @@
-version: '3.11'
+x-default-env: &default-env
+  r: "1.45"
 
 services:
   db:

@@ -69,6 +69,7 @@ SERVICE_APPS = [
     "storages",
     "channels",
     "corsheaders",
+    'django_celery_beat',
     "templatetags.custom_filters",
     "vertrieb_interface.templatetags.custom_filter",
 ]
