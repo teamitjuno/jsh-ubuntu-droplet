@@ -1,14 +1,15 @@
 from celery import Celery
 from celery.schedules import crontab
 
-app = Celery("Auto_Löschung", broker='amqp://guest:guest@rabbitmq:5672//')
+app = Celery("config")
+app.conf.beat_scheduler = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Konfiguration der periodischen Aufgaben für Celery
 app.conf.beat_schedule = {
     "delete_unassigned_vertriebangebot_week_old": {
-        # Task für die Löschung nicht zugewiesener Instanzen, die seit einer Woche nicht aktualisiert wurden
+        # Task für die Löschung nicht zugewiesener Instanzen, die alle 5 Minuten durchgeführt wird
         "task": "vertrieb_interface.tasks.delete_unassigned_vertriebangebot_week_old",
-        "schedule": crontab(hour=0, minute=0),  # Täglich um Mitternacht
+        "schedule": crontab(minute='*/5'),  # Jede 5 Minuten
     },
     "delete_vertriebangebot_six_weeks_old": {
         # Task für die Löschung aller Instanzen, die seit sechs Wochen nicht aktualisiert wurden
