@@ -6,15 +6,23 @@ ENV DJANGO_SETTINGS_MODULE=config.settings
 
 WORKDIR /app
 
+# Installing dependencies
 COPY Pipfile Pipfile.lock /app/
-RUN pip install --upgrade pip
-RUN pip install pipenv && pipenv install --system
+RUN pip install --upgrade pip && \
+    pip install pipenv && \
+    pipenv install --system --deploy
 
-# Copying your media files
-COPY ./media /app/media
+# Install supervisord
+RUN pip install supervisor
 
+# Copy the project files
 COPY . /app/
 
+# Copy the supervisord configuration file
+COPY supervisord.conf /etc/supervisord.conf
 
-# Use daphne or asgiref to run the application
-CMD ["daphne", "config.asgi:application", "-b", "0.0.0.0", "-p", "8000"]
+# Expose the port the app runs on
+EXPOSE 8000
+
+# Set supervisord as the entry point
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
