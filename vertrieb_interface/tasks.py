@@ -3,10 +3,12 @@ from django.utils import timezone
 from celery import shared_task
 from django.db import transaction, DatabaseError
 from vertrieb_interface.models import VertriebAngebot
+from celery.utils.log import get_task_logger
 import logging
 
 # Konfigurieren des Loggers für die Ausgabe von Log-Meldungen
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @shared_task
@@ -14,6 +16,7 @@ def delete_unassigned_vertriebangebot_week_old():
     """
     Löscht VertriebAngebot-Instanzen, die keine zugewiesene Angebot_ID haben und seit mindestens einer Woche nicht aktualisiert wurden.
     """
+    logger.info("Task - delete_unassigned_vertriebangebot_week_old  - starting")
     try:
         one_week_ago = timezone.now() - timedelta(weeks=1)
         with transaction.atomic():
@@ -38,6 +41,7 @@ def delete_vertriebangebot_six_weeks_old():
     """
     Löscht alle VertriebAngebot-Instanzen, die seit mindestens sechs Wochen nicht aktualisiert wurden.
     """
+    logger.info("Task - delete_vertriebangebot_six_weeks_old  - starting")
     try:
         six_weeks_ago = timezone.now() - timedelta(weeks=6)
         with transaction.atomic():
@@ -60,6 +64,7 @@ def delete_angenommen_vertriebangebot_two_months_old():
     """
     Löscht VertriebAngebot-Instanzen mit dem Status 'angenommen', die keine zugewiesene Angebot_ID haben und seit mindestens zwei Monaten nicht aktualisiert wurden.
     """
+    logger.info("Task - delete_angenommen_vertriebangebot_two_months_old  - starting")
     try:
         two_months_ago = timezone.now() - timedelta(weeks=8)
         with transaction.atomic():

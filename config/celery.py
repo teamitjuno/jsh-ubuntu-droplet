@@ -4,6 +4,7 @@ from celery import Celery
 
 from celery.schedules import crontab
 from django.conf import settings
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 username = settings.RABBITMQ_DEFAULT_USER
@@ -16,9 +17,9 @@ app.conf.beat_scheduler = 'django_celery_beat.schedulers:DatabaseScheduler'
 # Konfiguration der periodischen Aufgaben für Celery
 app.conf.beat_schedule = {
     "delete_unassigned_vertriebangebot_week_old": {
-        # Task für die Löschung nicht zugewiesener Instanzen, die alle 5 Minuten durchgeführt wird
+        # Task für die Löschung nicht zugewiesener Instanzen, die seit einer Woche nicht aktualisiert wurden
         "task": "vertrieb_interface.tasks.delete_unassigned_vertriebangebot_week_old",
-        "schedule": crontab(minute='*/5'),  # Jede 5 Minuten
+        "schedule": crontab(hour=0, minute=0),  # Täglich um Mitternacht
     },
     "delete_vertriebangebot_six_weeks_old": {
         # Task für die Löschung aller Instanzen, die seit sechs Wochen nicht aktualisiert wurden
