@@ -1,147 +1,49 @@
+# Standard library imports
+import datetime
 import hashlib
-import re, os, json
+import json
+import os
+import re
 import requests
+
+# Django imports
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.formats import date_format
+from django.utils.translation import gettext_lazy as _
+
+# Third-party imports
 from math import ceil
 from datetime import timedelta
-from django.core.exceptions import ValidationError
-import datetime
-from django.db import models
-from django.utils import timezone
-from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.validators import MinValueValidator
-from django.urls import reverse
-from django.utils.formats import date_format
-from django.contrib.auth import get_user_model
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
-from django.contrib.contenttypes.models import ContentType
 
-from shared.models import TimeStampMixin
+# Local application/library specific imports
+from config.settings import GOOGLE_MAPS_API_KEY
 from prices.models import (
+    AndereKonfigurationWerte,
     ModuleGarantiePreise,
     ModulePreise,
     OptionalAccessoriesPreise,
-    AndereKonfigurationWerte,
     SolarModulePreise,
     WallBoxPreise,
 )
-from django.utils.translation import gettext_lazy as _
-from config.settings import GOOGLE_MAPS_API_KEY
+from shared.models import TimeStampMixin
+from vertrieb_interface.utils import (
+    validate_range,
+    extract_modulleistungWp,
+    sanitize_cache_key,
+)
 
 now = timezone.now()
 now_german = date_format(now, "DATETIME_FORMAT")
 User = get_user_model()
 
-
-def validate_range(value):
-    if not isinstance(value, int):
-        if value < 0 or value > 6:
-            raise ValidationError(
-                ("Ungültige Eingabe: %(value)s. Der gültige Bereich ist 0-6."),
-                params={"value": value},
-            )
-
-
-def extract_modulleistungWp(model_name):
-    parts = model_name.split()
-    for part in parts:
-        if part.isdigit():
-            return int(part)
-    return None
-
-
-def get_modulleistungWp_from_map(module_name_map):
-    result = {}
-    for model_name, description in module_name_map.items():
-        power = extract_modulleistungWp(description)
-        if power:
-            result[model_name] = power
-    return result
-
-
-class LogEntryManager(models.Manager):
-    def log_action(
-        self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
-    ):
-        change_message = ""
-
-        if status:
-            if status == "angenommen":
-                change_message = f"<<Angenommen>>"
-            elif status == "bekommen":
-                change_message = f"Status geändert zu <<{status}>> "
-            elif status == "abgelaufen":
-                change_message = f"<<Abgelaufen>>"
-            elif status == "in Kontakt":
-                change_message = f"Status geändert zu <<{status}>>"
-            elif status == "Kontaktversuch":
-                change_message = f"Status geändert zu <<{status}>>"
-            else:
-                change_message = f"Status geändert zu <<{status}>>"
-
-        return self.model.objects.create(
-            action_time=timezone.now(),
-            user_id=user_id,
-            content_type_id=content_type_id,
-            object_id=object_id,
-            object_repr=object_repr,
-            action_flag=action_flag,
-            change_message=change_message,
-        )
-
-
-class CustomLogEntry(LogEntry):
-    class Meta:
-        proxy = True
-
-    objects = LogEntryManager()
-
-    def get_vertrieb_angebot(self):
-        from vertrieb_interface.models import VertriebAngebot
-
-        if self.content_type.model_class() == VertriebAngebot:
-            try:
-                return VertriebAngebot.objects.get(angebot_id=self.object_id)
-            except VertriebAngebot.DoesNotExist:
-                return VertriebAngebot.objects.filter(angebot_id=self.object_id).first()
-        return None
-
-    def get_change_message(self):
-        if self.is_addition():
-            return f"Ein neues Angebot wurde erstellt"
-        elif self.is_change():
-            if self.get_vertrieb_angebot() is not None:
-                return f"Das Angebot wurde aktualisiert -  {self.change_message}"
-            else:
-                return f"Das Angebot wurde aktualisiert"
-        elif self.is_deletion():
-            return f"Das Angebot wurde aktualisiert"
-        else:
-            return "LogEntry Object"
-
-
-def sanitize_cache_key(key):
-    sanitized_key = hashlib.md5(key.encode()).hexdigest()
-    return sanitized_key
-
-
-def get_price(model, name):
-    model_name = model.__name__
-    key = f"{model_name}_{name}"
-
-    sanitized_key = sanitize_cache_key(key)
-
-    price = cache.get(sanitized_key)
-    if price is None:
-        try:
-            price = model.objects.get(name=name).price
-        except ObjectDoesNotExist:
-            price = 0
-        cache.set(sanitized_key, price)
-    return price
-
-
-# Model properties
 MODULE_NAME_MAP = {
     "Phono Solar PS420M7GFH-18/VNH": "Phono Solar PS420M7GFH-18/VNH",
     "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
@@ -235,6 +137,92 @@ GARANTIE_WR_CHOICES = [
     ("20 Jahre", "20 Jahre"),
     ("25 Jahre", "25 Jahre"),
 ]
+
+
+def get_modulleistungWp_from_map(module_name_map):
+    result = {}
+    for model_name, description in module_name_map.items():
+        power = extract_modulleistungWp(description)
+        if power:
+            result[model_name] = power
+    return result
+
+
+def get_price(model, name):
+    model_name = model.__name__
+    key = f"{model_name}_{name}"
+
+    sanitized_key = sanitize_cache_key(key)
+
+    price = cache.get(sanitized_key)
+    if price is None:
+        try:
+            price = model.objects.get(name=name).price
+        except ObjectDoesNotExist:
+            price = 0
+        cache.set(sanitized_key, price)
+    return price
+
+
+class LogEntryManager(models.Manager):
+    def log_action(
+        self, user_id, content_type_id, object_id, object_repr, action_flag, status=None
+    ):
+        change_message = ""
+
+        if status:
+            if status == "angenommen":
+                change_message = f"<<Angenommen>>"
+            elif status == "bekommen":
+                change_message = f"Status geändert zu <<{status}>> "
+            elif status == "abgelaufen":
+                change_message = f"<<Abgelaufen>>"
+            elif status == "in Kontakt":
+                change_message = f"Status geändert zu <<{status}>>"
+            elif status == "Kontaktversuch":
+                change_message = f"Status geändert zu <<{status}>>"
+            else:
+                change_message = f"Status geändert zu <<{status}>>"
+
+        return self.model.objects.create(
+            action_time=timezone.now(),
+            user_id=user_id,
+            content_type_id=content_type_id,
+            object_id=object_id,
+            object_repr=object_repr,
+            action_flag=action_flag,
+            change_message=change_message,
+        )
+
+
+class CustomLogEntry(LogEntry):
+    class Meta:
+        proxy = True
+
+    objects = LogEntryManager()
+
+    def get_vertrieb_angebot(self):
+        from vertrieb_interface.models import VertriebAngebot
+
+        if self.content_type.model_class() == VertriebAngebot:
+            try:
+                return VertriebAngebot.objects.get(angebot_id=self.object_id)
+            except VertriebAngebot.DoesNotExist:
+                return VertriebAngebot.objects.filter(angebot_id=self.object_id).first()
+        return None
+
+    def get_change_message(self):
+        if self.is_addition():
+            return f"Ein neues Angebot wurde erstellt"
+        elif self.is_change():
+            if self.get_vertrieb_angebot() is not None:
+                return f"Das Angebot wurde aktualisiert -  {self.change_message}"
+            else:
+                return f"Das Angebot wurde aktualisiert"
+        elif self.is_deletion():
+            return f"Das Angebot wurde aktualisiert"
+        else:
+            return "LogEntry Object"
 
 
 class VertriebAngebot(TimeStampMixin):
@@ -516,7 +504,7 @@ class VertriebAngebot(TimeStampMixin):
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
         self.name = self.swap_name_order
-        self.name_display_value = self.swap_name_order
+        self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
@@ -636,68 +624,6 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return None
 
-    # @property
-    # def coordinates_extractor(self):
-    #     # Return "0.0", "0.0" if strasse or ort is None
-    #     if self.strasse is None or self.ort is None:
-    #         return "0.0", "0.0"
-
-    #     # Load variables from .env
-    #     OWNER_ID = os.getenv("OWNER_ID")
-    #     STYLE_ID = os.getenv("STYLE_ID")
-    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
-
-    #     # Prepare the query string
-    #     query = f"{self.strasse}, {self.ort}"
-
-    #     # You might need to adjust this URL to match the Mapbox API version/documentation you're using
-    #     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={MAPBOX_TOKEN}"
-
-    #     # Make the API call
-    #     response = requests.get(url)
-    #     data = response.json()
-
-    #     # Extracting latitude and longitude from the response
-    #     try:
-    #         longitude, latitude = data["features"][0]["geometry"]["coordinates"]
-    #         return latitude, longitude
-    #     except (IndexError, KeyError):
-    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
-    #         return 0.0, 0.0
-
-    # @property
-    # def coordinates_extractor(self):
-    #     if self.strasse is None or self.ort is None:
-    #         return "0.0", "0.0"
-
-    #     query = f"{self.strasse}, {self.ort}"
-
-    #     # Using the Google Maps Geocoding API
-    #     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={query}&key={GOOGLE_MAPS_API_KEY}"
-
-    #     response = requests.get(url)
-    #     data = response.json()
-
-    #     # Extracting latitude and longitude from the response
-    #     try:
-    #         location = data['results'][0]['geometry']['location']
-    #         return location['lat'], location['lng']
-    #     except (IndexError, KeyError):
-    #         # Handle cases where the address isn't found or the API response structure has unexpected changes
-    #         return 0.0, 0.0
-
-    # @property
-    # def mapbox_data(self):
-    #     # Replace with your Solar API key if different
-    #     latitude, longitude = self.coordinates_extractor
-    #     print(latitude, longitude)
-
-    #     url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&key={GOOGLE_MAPS_API_KEY}"
-
-    #     response = requests.get(url)
-    #     print(response.json())
-    #     return response.json()
-
     @property
     def swap_name_order(self):
         if self.anrede == "Firma":
@@ -715,6 +641,25 @@ class VertriebAngebot(TimeStampMixin):
                 )
             else:
                 parts = str(self.name_last_name) + " " + str(self.name_first_name)
+        return str(parts)
+
+    @property
+    def swap_name_order_PDF(self):
+        if self.anrede == "Firma":
+            parts = self.name_last_name
+        elif self.anrede == "Familie":
+            parts = self.name_last_name
+        else:
+            if self.name_suffix:
+                parts = (
+                    str(self.name_suffix)
+                    + " "
+                    + str(self.name_first_name)
+                    + " "
+                    + str(self.name_last_name)
+                )
+            else:
+                parts = str(self.name_first_name) + " " + str(self.name_last_name)
         return str(parts)
 
     @property
@@ -771,37 +716,6 @@ class VertriebAngebot(TimeStampMixin):
                 default_angebot_value  # Return the default value in case of exception
             )
 
-    # @property
-    # def angennomenes_angebot_value_finder(
-    #     self,
-    # ):  # Changed method name for clarity and to avoid recursion
-
-    #     default_angennomenes_angebot_value = (
-    #         ""  # Define a default value to return in case of failure
-    #     )
-    #     if hasattr(
-    #         self, "_angennomenes_angebot_value_cache"
-    #     ):  # Use cached value if exists
-    #         return self._angennomenes_angebot_value_cache
-
-    #     try:
-    #         data = json.loads(
-    #             self.user.zoho_data_text
-    #             or '[{"zoho_id": "default", "angenommenes_angebot": "default"}]'
-    #         )
-    #         zoho_id = str(self.zoho_id)
-    #         zoho_id_to_angebot = {
-    #             item["zoho_id"]: item["angenommenes_angebot"] for item in data
-    #         }
-
-    #         self._angennomenes_angebot_value_cache = zoho_id_to_angebot.get(
-    #             zoho_id, default_angennomenes_angebot_value
-    #         )
-    #         return self._angennomenes_angebot_value_cache
-    #     except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
-    #         # Optionally, log the exception here
-    #         return default_angennomenes_angebot_value  # Return the default value in case of exception
-
     @property
     def get_building_insights(
         self, latitude=None, longitude=None, requiredQuality="HIGH"
@@ -815,29 +729,6 @@ class VertriebAngebot(TimeStampMixin):
         url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&requiredQuality={requiredQuality}&key={GOOGLE_MAPS_API_KEY}"
         response = requests.get(url)
         return response.json()
-
-    # @property
-    # def mapbox_data(self):
-    #     MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
-    #     OWNER_ID = os.getenv("OWNER_ID")
-    #     STYLE_ID = os.getenv("STYLE_ID")
-
-    #     data = {"token": MAPBOX_TOKEN, "latitude": None, "longitude": None}
-
-    #     if self.postanschrift_latitude and self.postanschrift_longitude:
-    #         data["latitude"] = float(self.postanschrift_latitude)
-    #         data["longitude"] = float(self.postanschrift_longitude)
-
-    #     url_template = "https://api.mapbox.com/styles/v1/{owner}/{style}.html?title=false&access_token={token}&zoomwheel=false#11/{lat}/{lon}"
-    #     url = url_template.format(
-    #         owner=OWNER_ID,
-    #         style=STYLE_ID,
-    #         token=MAPBOX_TOKEN,
-    #         lat=data["latitude"] if data["latitude"] is not None else "48.138",
-    #         lon=data["longitude"] if data["longitude"] is not None else "11.575",
-    #     )
-
-    #     return url
 
     @property
     def google_maps_url(self):
@@ -1588,3 +1479,46 @@ class VertriebAngebot(TimeStampMixin):
             "restListe": self.rest_liste,
         }
         return dt
+
+
+class Editierbarer_Text(models.Model):
+    """
+    Modell, das einen bearbeitbaren Textblock in einem PDF-Dokument darstellt.
+    """
+
+    identifier = models.CharField(max_length=255, unique=True)
+    content = models.TextField(help_text="Inhalt", default="<<kein editierbarer text>>")
+    font = models.CharField(
+        help_text="Schrift", max_length=100, default="JUNO Solar Lt"
+    )
+    font_size = models.IntegerField(help_text="Schriftgröße", default=11)
+    x = models.FloatField(help_text="x-Koordinate", default=0.00)
+    y = models.FloatField(help_text="y-Koordinate", default=0.00)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    # def __str__(self):
+    #     return f"{self.identifier}   -   X={self.x}; Y={self.y}; Schriftgröße: {self.font_size}pt;"
+    def __str__(self):
+        return f"""
+Editierbarer_Text.objects.create(
+    identifier="{self.identifier}", 
+    content="{self.content}", 
+    font="{self.font}", 
+    x={self.x},
+    y={self.y},
+    font_size={self.font_size}
+)"""
+
+
+class Dokument_PDF(models.Model):
+    """
+    Modell, das ein PDF-Dokument darstellt, das mehrere bearbeitbare Texte enthalten kann.
+    """
+
+    title = models.CharField(max_length=255, default="Dokument PDF Vertrieb")
+    editable_texts = models.ManyToManyField(Editierbarer_Text)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import VertriebAngebot
 from django.contrib import admin
 from .models import VertriebAngebot
+from .models import Editierbarer_Text, Dokument_PDF
 
 
 class VertriebAngebotAdmin(admin.ModelAdmin):
@@ -198,5 +199,72 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             formfield.label = "Bearbeitung gesperrt"  # type: ignore
         return formfield
 
+
+class EditierbarerTextInline(admin.TabularInline):
+    """
+    Defines an inline admin descriptor for Editierbarer_Text model.
+    This is used for displaying editable text within the Dokument_PDF admin view.
+    """
+
+    model = (
+        Dokument_PDF.editable_texts.through
+    )  # This accesses the through model of the ManyToMany relation
+    extra = 1  # Specifies the number of extra forms in the inline formset.
+
+
+@admin.register(Editierbarer_Text)
+class EditierbarerTextAdmin(admin.ModelAdmin):
+    list_display = ("identifier", "content", "x", "y", "font_size", "last_updated")
+    list_filter = ("font_size", "last_updated")
+    search_fields = ("identifier", "content")
+    fieldsets = (
+        ("Allgemein", {"fields": ("identifier", "content")}),
+        (
+            "Schriftart-Einstellungen",
+            {
+                "fields": ("font", "font_size"),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Position",
+            {
+                "fields": ("x", "y"),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Update-Informationen",
+            {
+                "fields": ("last_updated",),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+    readonly_fields = ("last_updated", "identifier")
+
+
+@admin.register(Dokument_PDF)
+class DokumentPDFAdmin(admin.ModelAdmin):
+    list_display = ("title", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("title",)
+    inlines = [EditierbarerTextInline]
+    fieldsets = (
+        (None, {"fields": ("title",)}),
+        (
+            "Date Information",
+            {
+                "fields": ("created_at", "last_modified"),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+    readonly_fields = ("created_at", "last_modified")
+
+
+# Check if the model is registered
+if Dokument_PDF.editable_texts.through in admin.site._registry:
+    admin.site.unregister(Dokument_PDF.editable_texts.through)
 
 admin.site.register(VertriebAngebot, VertriebAngebotAdmin)

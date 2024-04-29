@@ -175,8 +175,7 @@ def PDFInvoicesListView(request, invoice_id):
 
 
 @api_view(["POST"])
-def create_excel(request, invoice_id):
-    ...
+def create_excel(request, invoice_id): ...
 
 
 @api_view(["GET"])

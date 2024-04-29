@@ -60,14 +60,12 @@ def user_required(
 class RoleRequired(UserPassesTestMixin):
     """Mixin used for views that checks that the user is logged in and has the specified role."""
 
-    login_url = reverse_lazy("login")  # replace 'login' with your login view name
+    login_url = reverse_lazy("login")
     allowed_roles = []
 
     def test_func(self):
-        if (
-            self.request.user.is_authenticated and self.request.user.role is not None
-        ):  # type:ignore
-            return self.request.user.role.name in self.allowed_roles  # type:ignore
+        if self.request.user.is_authenticated and self.request.user.role is not None:
+            return self.request.user.role.name in self.allowed_roles
         return False
 
 

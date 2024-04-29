@@ -113,7 +113,7 @@ class CustomPDF(FPDF):
         self.set_xy(183, 105)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
         item = f"{processed_besodersheiten}"
-        
+
         self.multi_cell(col_width, row_height, item, border=1)
 
     def add_right_top_table3(self, processed_besodersheiten):
@@ -127,7 +127,7 @@ class CustomPDF(FPDF):
         self.set_xy(143, 120)
         self.set_font("JUNO Solar Lt", "B", self.font_size)
         item = f"{processed_besodersheiten}"
-        
+
         self.multi_cell(col_width, row_height, item, border=1)
 
 

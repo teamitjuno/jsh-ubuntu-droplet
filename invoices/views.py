@@ -122,9 +122,9 @@ def tom(request):
             response = HttpResponse(
                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-            response[
-                "Content-Disposition"
-            ] = 'attachment; filename="processed_file.xlsx"'
+            response["Content-Disposition"] = (
+                'attachment; filename="processed_file.xlsx"'
+            )
             processed_file.seek(0)
             response.write(processed_file.read())
 
@@ -558,9 +558,9 @@ def create_pdf(request, invoice_id):
     pdf_content = pdf_creator2.createOfferPdf(invoice, eintrag, user, mats, k_data)
 
     response = HttpResponse(pdf_content, content_type="application/pdf")
-    response[
-        "Content-Disposition"
-    ] = f"attachment; filename=Angebot_{invoice.invoice_id}.pdf"
+    response["Content-Disposition"] = (
+        f"attachment; filename=Angebot_{invoice.invoice_id}.pdf"
+    )
     return response
 
 

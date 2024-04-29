@@ -32,15 +32,11 @@ class PDF(FPDF):
             w=30,
             h=15,
         )
-        # Line break
         self.ln(15)
 
     def footer(self):
-        # Arial italic 8
         self.set_font("JUNO Solar Lt", "", 8)
-        # Text color in gray
         self.set_text_color(128)
-        # Position at 1.5 cm from bottom
         self.set_y(-30)
         self.multi_cell(0, 5, "Geschäftsführer: Denny Schädlich\npersönlich haftender Gesellschaftler: Juno Solar Home Verwaltungs GmbH\nSitz Werdau ∙ Amtsgericht Chemnitz HRB 34192 ∙ Steuernummer 227/156/19508 ∙ Ust-IdNr DE 34514953", 0, 0, "L")  # type: ignore
         self.set_y(-30)
@@ -70,7 +66,6 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 11)
         self.set_text_color(0)
         self.multi_cell(0, 5, f'{data["firma"]}\n{data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
-        # self.line(10,65,80,65) #unter Adresse
         self.set_x(130)
         self.set_y(33)
         self.multi_cell(
