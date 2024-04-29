@@ -197,7 +197,7 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     x=25,
     y=-25,
-    font_size=11
+    font_size=8
 )
 
 # Create 'footer_2' entry
@@ -205,6 +205,8 @@ Editierbarer_Text.objects.create(
     identifier='footer_2', 
     content="Commerzbank Chemnitz\nIBAN: DE94 8704 0000 0770 0909 00\nBIC: COBADEFFXXX", 
     font='JUNO Solar Lt', 
+    x=85,
+    y=-25,    
     font_size=8
 )
 
@@ -213,6 +215,8 @@ Editierbarer_Text.objects.create(
     identifier='footer_3', 
     content="Volksbank Chemnitz\nIBAN: DE51 8709 6214 0321 1008 13\nBIC: GENODEF1CH1", 
     font='JUNO Solar Lt', 
+    x=150,
+    y=-25,
     font_size=8
 )
 
@@ -221,7 +225,7 @@ Editierbarer_Text.objects.create(
     identifier='kundendatei_variable', 
     content="<<<variable>>", 
     font='JUNO Solar Lt',
-    x=130,
+    x=0,
     y=33, 
     font_size=11
 )
@@ -269,7 +273,7 @@ Editierbarer_Text.objects.create(
     identifier='kWp_und_standort', 
     content="<<<variable>>>", 
     font='JUNO Solar Lt', 
-    y=70, 
+    y=86, 
     x=70,
     font_size=11
 )
