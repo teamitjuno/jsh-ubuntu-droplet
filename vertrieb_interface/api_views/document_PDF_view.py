@@ -152,7 +152,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
 
         if vertrieb_angebot.datenblatter_speichermodule:
             if vertrieb_angebot.hersteller == "Huawei":
-                self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+                if vertrieb_angebot.speicher_model == "LUNA 2000-5-S0":
+                    self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+                elif vertrieb_angebot.speicher_model == "LUNA 2000-7-S1":
+                    self._attach_datenblatter(email, datenblatter, ["speicher_module_huawei7"])
             else:
                 self._attach_datenblatter(
                     email, datenblatter, ["speicher_module_viessmann"]

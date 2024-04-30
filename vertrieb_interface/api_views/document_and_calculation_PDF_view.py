@@ -149,7 +149,10 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
                 self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
 
         if vertrieb_angebot.datenblatter_speichermodule:
-            self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+            if vertrieb_angebot.speicher_model == "LUNA 2000-5-S0":
+                self._attach_datenblatter(email, datenblatter, ["speicher_module"])
+            elif vertrieb_angebot.speicher_model == "LUNA 2000-7-S1":
+                self._attach_datenblatter(email, datenblatter, ["speicher_module_huawei7"])
 
         if vertrieb_angebot.datenblatter_wechselrichter:
             self._attach_datenblatter(email, datenblatter, ["wechselrichter"])

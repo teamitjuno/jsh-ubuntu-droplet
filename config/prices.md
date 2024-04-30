@@ -482,20 +482,38 @@ Editierbarer_Text.objects.create(
 
 # Create 'tabelle_eintrag_4_huawei_1' to 'tabelle_eintrag_4_huawei_3' entries
 Editierbarer_Text.objects.create(
-    identifier='tabelle_eintrag_4_huawei_1', 
-    content="Batteriespeicher: Huawei LUNA 2000", 
+    identifier='tabelle_eintrag_4_huawei5_1', 
+    content="Batteriespeicher: Huawei LUNA 2000-5-S0", 
     font='JUNO Solar Lt', 
     font_size=11
 )
 Editierbarer_Text.objects.create(
-    identifier='tabelle_eintrag_4_huawei_2', 
-    content="Leistungsmodule\nBatteriemodule (je 5 kWh)", 
+    identifier='tabelle_eintrag_4_huawei5_2', 
+    content="Batteriemodule (je 5 kWh)", 
     font='JUNO Solar Lt', 
     font_size=10
 )
 Editierbarer_Text.objects.create(
-    identifier='tabelle_eintrag_4_huawei_3', 
+    identifier='tabelle_eintrag_4_huawei5_3', 
     content="∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 10 Jahre", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_huawei7_1', 
+    content="Batteriespeicher: Huawei LUNA 2000-7-S1", 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_huawei7_2', 
+    content="Batteriemodule (je 6.9 kWh)", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_huawei7_3', 
+    content="∙ max. Lade-/Entladeleistung: 3,5 kW je Modul\n∙ Produktgarantie: 10 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )

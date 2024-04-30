@@ -528,7 +528,7 @@ class VertriebAngebot(TimeStampMixin):
             self.datenblatter_solar_module = True
         if self.anzOptimizer > 0:
             self.datenblatter_optimizer = True
-        if self.speicher_model == "LUNA 2000" and self.anz_speicher != 0:
+        if (self.speicher_model == "LUNA 2000-5-S0" or self.speicher_model == "LUNA 2000-7-S1") and self.anz_speicher != 0:
             self.datenblatter_speichermodule = True
         if self.wechselrichter_model == "SUN 2000" and self.anz_speicher != 0:
             self.datenblatter_wechselrichter = True
@@ -1405,6 +1405,7 @@ class VertriebAngebot(TimeStampMixin):
             "standort": self.anlagen_standort,
             "garantieJahre": self.garantieWR,
             "batterieVorh": self.batteriespeicher_preis,
+            "batterieModell": self.speicher_model,
             "wandhalterungSpeicher": self.wandhalterung_fuer_speicher,
             "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,

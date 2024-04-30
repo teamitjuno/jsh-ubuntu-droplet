@@ -43,6 +43,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
                     "optimizer_viessmann",
                     "viessmann_tigo",
                     "speicher_module",
+                    "speicher_module_huawei7",
                     "speicher_module_viessmann",
                     "wall_box",
                     "wall_box_viessman",

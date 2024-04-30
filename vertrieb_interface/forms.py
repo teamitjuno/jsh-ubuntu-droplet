@@ -827,7 +827,8 @@ class VertriebAngebotForm(ModelForm):
 
     SPEICHER_MODEL_CHOICES = [
         ("----", "----"),
-        ("LUNA 2000", "LUNA 2000"),
+        ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
+        ("LUNA 2000-7-S1", "LUNA 2000-7-S1"),
         ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
     ]
 
@@ -1420,7 +1421,8 @@ class VertriebAngebotForm(ModelForm):
         incompatible_combinations = {
             ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
             ("Viessmann", "SUN 2000"): "wechselrichter_model",
-            ("Viessmann", "LUNA 2000"): "speicher_model",
+            ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
+            ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
             ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
             ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
             ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",

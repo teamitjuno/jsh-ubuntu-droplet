@@ -450,28 +450,50 @@ class PDF(FPDF):
             if data["batterieVorh"]:
                 eintrag += 1
                 tab4_eintrag_nummer = str(eintrag) + "."
-                tab4_batterie_speicher = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei_1", "content"
-                )
-                tab4_content2 = str(data["batterieAnz"])
-                tab4_additional_content2 = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei_2", "content"
-                )
-                tab4_additional_content = "Leistungsmodule"
-                tab4_batterie_speicher_props = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei_3", "content"
-                )
-                self.setup_eintrag_text(
-                    "tabelle_eintrag_4_huawei_3",
-                    tab4_eintrag_nummer,
-                    tab4_batterie_speicher,
-                    content_2=tab4_content2,
-                    content_4=tab4_batterie_speicher_props,
-                    additional_content=tab4_additional_content,
-                    additional_content_2=tab4_additional_content2,
-                    alignment="",
-                )
-
+                if data["batterieModell"] == "LUNA 2000-5-S0":
+                    tab4_batterie_speicher = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei5_1", "content"
+                    )
+                    tab4_content2 = str(data["batterieAnz"])
+                    tab4_additional_content2 = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei5_2", "content"
+                    )
+                    tab4_additional_content = "Leistungsmodule"
+                    tab4_batterie_speicher_props = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei5_3", "content"
+                    )
+                    self.setup_eintrag_text(
+                        "tabelle_eintrag_4_huawei5_3",
+                        tab4_eintrag_nummer,
+                        tab4_batterie_speicher,
+                        content_2=tab4_content2,
+                        content_4=tab4_batterie_speicher_props,
+                        additional_content=tab4_additional_content,
+                        additional_content_2=tab4_additional_content2,
+                        alignment="",
+                    )
+                elif data["batterieModell"] == "LUNA 2000-7-S1":
+                    tab4_batterie_speicher = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei7_1", "content"
+                    )
+                    tab4_content2 = str(data["batterieAnz"])
+                    tab4_additional_content2 = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei7_2", "content"
+                    )
+                    tab4_additional_content = "Leistungsmodule"
+                    tab4_batterie_speicher_props = self.get_attribute_by_identifier(
+                        "tabelle_eintrag_4_huawei7_3", "content"
+                    )
+                    self.setup_eintrag_text(
+                        "tabelle_eintrag_4_huawei7_3",
+                        tab4_eintrag_nummer,
+                        tab4_batterie_speicher,
+                        content_2=tab4_content2,
+                        content_4=tab4_batterie_speicher_props,
+                        additional_content=tab4_additional_content,
+                        additional_content_2=tab4_additional_content2,
+                        alignment="",
+                    )
         return eintrag
 
     def page2(self, data, eintrag):

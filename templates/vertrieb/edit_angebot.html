@@ -1011,7 +1011,7 @@ $(document).ready(function() {
             wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
         } else if(hersteller == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+            speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
         } else {
             wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
@@ -1039,9 +1039,12 @@ function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
     var hersteller = $('#hersteller').val(); // Correctly get the value as a string
     var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
+    var modell = $('#speicher_model').val();
 
-    if (hersteller === 'Huawei') {
+    if (modell === 'LUNA 2000-5-S0') {
         gesamtkapazitat = anz_speicher * 5;
+    } else if (modell === 'LUNA 2000-7-S1') {
+        gesamtkapazitat = anz_speicher * 6.9;
     } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
         gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
     }
@@ -2055,7 +2058,7 @@ $(document).ready(function() {
             wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
         } else if(hersteller == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
+            speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
         } else {
             wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
@@ -2087,9 +2090,12 @@ function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
     var hersteller = $('#hersteller').val(); // Correctly get the value as a string
     var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
+    var modell = $('#speicher_model').val();
 
-    if (hersteller === 'Huawei') {
+    if (modell === 'LUNA 2000-5-S0') {
         gesamtkapazitat = anz_speicher * 5;
+    } else if (modell === 'LUNA 2000-7-S1') {
+        gesamtkapazitat = anz_speicher * 6.9;
     } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
         gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
     }
