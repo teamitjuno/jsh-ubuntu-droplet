@@ -226,7 +226,7 @@ Editierbarer_Text.objects.create(
     content="<<<variable>>", 
     font='JUNO Solar Lt',
     x=0,
-    y=33, 
+    y=43, 
     font_size=11
 )
 # Create 'vertriebdatei_variable' entry
@@ -303,7 +303,7 @@ Editierbarer_Text.objects.create(
     content="Ziegelstraße 1a\nD-08412 Werdau", 
     font='JUNO Solar Lt', 
     x=130,
-    y=38
+    y=38,
     font_size=11
 )
 
@@ -328,30 +328,40 @@ Editierbarer_Text.objects.create(
     identifier='tabelle_beginn_1', 
     content="Pos.", 
     font='JUNO Solar Lt', 
+    x=0,
+    y=130,
     font_size=11
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_beginn_2', 
     content="Bezeichnung", 
     font='JUNO Solar Lt', 
+    x=37,
+    y=130,
     font_size=11
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_beginn_3', 
     content="Menge", 
     font='JUNO Solar Lt', 
+    x=150,
+    y=130,
     font_size=11
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_beginn_4', 
     content="Gesamtpreis", 
     font='JUNO Solar Lt', 
+    x=170,
+    y=130,
     font_size=11
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_beginn_5', 
     content="Bestandteile Photovoltaikanlage", 
     font='JUNO Solar Lt', 
+    x=0,
+    y=140,
     font_size=12
 )
 Editierbarer_Text.objects.create(
@@ -444,7 +454,7 @@ Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_2_huawei_1', 
     content="Wechselrichter Huawei SUN2000", 
     font='JUNO Solar Lt', 
-    y=210, 
+    y=180, 
     x=25,
     font_size=11
 )
@@ -452,7 +462,7 @@ Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_2_huawei_2', 
     content="""∙ Modell nach Auslegung\n∙ inkl. Smart Dongle Wlan + Ethernet\n∙ inkl. Überspannungsschutz AC/DC\n∙ Produktgarantie: """,
     font='JUNO Solar Lt',
-    y=210, 
+    y=180, 
     x=25,
     font_size=10
 )
@@ -544,6 +554,7 @@ Editierbarer_Text.objects.create(
     identifier='gleichstromseitige_installation_1', 
     content="Gleichstromseitige Installation", 
     font='JUNO Solar Lt', 
+    y=100,
     font_size=12
 )
 Editierbarer_Text.objects.create(
@@ -599,6 +610,7 @@ Editierbarer_Text.objects.create(
     identifier='wechselstromseitige_installation_und_inbetriebnahme_1', 
     content="Wechselstromseitige Installation und Inbetriebnahme", 
     font='JUNO Solar Lt', 
+    y=180,
     font_size=12
 )
 Editierbarer_Text.objects.create(
@@ -685,6 +697,7 @@ Editierbarer_Text.objects.create(
     identifier='netzanschlussmanagement_1', 
     content="Netzanschlussmanagement", 
     font='JUNO Solar Lt', 
+    y=75,
     font_size=12
 )
 Editierbarer_Text.objects.create(
@@ -767,6 +780,7 @@ Editierbarer_Text.objects.create(
     identifier='zusätzliche_leistungen_1', 
     content="Zusätzliche Leistungen", 
     font='JUNO Solar Lt', 
+    y = 205,
     font_size=12
 )
 Editierbarer_Text.objects.create(
@@ -1033,8 +1047,9 @@ Editierbarer_Text.objects.create(
 
 Editierbarer_Text.objects.create(
     identifier='verbindlichkeiten_1', 
-    content="Verbindlichkeiten", 
+    content="Verbindlichkeiten",
     font='JUNO Solar Lt', 
+    y=80,
     font_size=12
 )
 

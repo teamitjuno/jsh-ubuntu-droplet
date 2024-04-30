@@ -156,6 +156,10 @@ class PDF(FPDF):
             self.cell(0, 6, f"Sehr geehrte Damen und Herren", 0, 0, "L")
         elif "Familie" in data["anrede"]:
             self.cell(0, 6, f"Sehr geehrte Damen und Herren", 0, 0, "L")
+        elif "Herr" in data["anrede"]:
+            self.cell(
+                0, 6, f'Sehr geehrter {data["anrede"]} {data["kunde"]},', 0, 0, "L"
+            )
         else:
             self.cell(
                 0, 6, f'Sehr geehrte {data["anrede"]} {data["kunde"]},', 0, 0, "L"

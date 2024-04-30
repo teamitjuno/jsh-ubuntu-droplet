@@ -135,6 +135,8 @@ class PDF(FPDF):
         """
         if "Firma" in data["anrede"] or "Familie" in data["anrede"]:
             anrede_content = "Sehr geehrte Damen und Herren"
+        elif "Herr" in data["anrede"]:
+            anrede_content = f'Sehr geehrter {data["anrede"]} {data["kunde"]},'
         else:
             anrede_content = f'Sehr geehrte {data["anrede"]} {data["kunde"]},'
 
@@ -905,11 +907,6 @@ class PDF(FPDF):
             content_4=tab21_content_4,
         )
 
-        return eintrag
-
-    def page4(self, data, eintrag):
-        self.add_page()
-
         # Tabelle Eintrag 22
         eintrag += 1
         tab22_eintrag_nummer = str(eintrag) + "."
@@ -926,6 +923,12 @@ class PDF(FPDF):
             content_2="1",
             content_4=tab22_content_4,
         )
+
+        return eintrag
+
+    def page4(self, data, eintrag):
+        self.add_page()
+
 
         # Tabelle Eintrag 23
         eintrag += 1
@@ -944,14 +947,16 @@ class PDF(FPDF):
             content_4=tab23_content_4,
         )
 
-        self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
-
-        # WALLBOX
-        wallbox_1 = self.get_attribute_by_identifier("wallbox_1", "content")
-        self.setup_text("wallbox_1", wallbox_1, bold=True, alignment="L")
-        wallbox_2 = self.get_attribute_by_identifier("wallbox_2", "content")
-        self.setup_text("wallbox_2", wallbox_2, alignment="L")
         if data["wallboxVorh"]:
+            self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
+            self.set_y(self.get_y() + 10)
+
+            # WALLBOX
+            wallbox_1 = self.get_attribute_by_identifier("wallbox_1", "content")
+            self.setup_text("wallbox_1", wallbox_1, bold=True, alignment="L")
+            wallbox_2 = self.get_attribute_by_identifier("wallbox_2", "content")
+            self.setup_text("wallbox_2", wallbox_2, alignment="L")
+
             if data["hersteller"] == "Huawei":
 
                 # Tabelle Eintrag 24
@@ -1006,6 +1011,7 @@ class PDF(FPDF):
         else:
 
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
+            self.set_y(self.get_y() + 10)
 
             optionales_zubehoer_1 = self.get_attribute_by_identifier(
                 "optionales_zubehoer_1", "content"
