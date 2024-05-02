@@ -963,12 +963,24 @@ class VertriebAngebot(TimeStampMixin):
         if self.anz_speicher != 0:
             leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
-            batteriePreis = self.calculate_price(
-                OptionalAccessoriesPreise, "batteriemodul", anz_speicher
-            )
-            batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
-                leistungsmodulePreis
-            )
+            if self.speicher_model == "LUNA 2000-5-S0":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_huawei5", anz_speicher
+                )
+                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
+                    leistungsmodulePreis
+                )
+            elif self.speicher_model == "LUNA 2000-7-S1":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_huawei7", anz_speicher
+                )
+                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
+                    leistungsmodulePreis
+                )
+            elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_viessmann", anz_speicher
+                )
             return batteriePreis
         elif self.anz_speicher == 0:
             batteriePreis = 0
@@ -1145,9 +1157,19 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def batterie_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "batteriemodul", int(self.batteriemodule_ticket)
-        )
+        if self.speicher_model == "LUNA 2000-5-S0":
+            return self.calculate_price(
+                OptionalAccessoriesPreise, "batteriemodul_huawei5", int(self.batteriemodule_ticket)
+            )
+        elif self.speicher_model == "LUNA 2000-7-S1":
+            return self.calculate_price(
+                OptionalAccessoriesPreise, "batteriemodul_huawei7", int(self.batteriemodule_ticket)
+            )
+        elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
+            return self.calculate_price(
+                OptionalAccessoriesPreise, "batteriemodul_viessmann", int(self.batteriemodule_ticket)
+            )
+        return 0.0
 
     @property
     def leistungsmodule(self):
