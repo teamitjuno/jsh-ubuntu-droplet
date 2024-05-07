@@ -1283,17 +1283,17 @@ class VertriebAngebot(TimeStampMixin):
     def full_accessories_price(self):
         accessories_price = 0
         if self.full_optimizer_preis:
-            accessories_price += self.full_optimizer_preis
+            accessories_price += float(self.full_optimizer_preis)
         if self.full_wallbox_preis:
-            accessories_price += self.full_wallbox_preis
+            accessories_price += float(self.full_wallbox_preis)
         if self.batteriespeicher_angebot_price:
-            accessories_price += self.batteriespeicher_angebot_price
+            accessories_price += float(self.batteriespeicher_angebot_price)
         if self.eddi:
-            accessories_price += self.get_optional_accessory_price("eddi")
+            accessories_price += float(self.get_optional_accessory_price("eddi"))
         if self.notstrom:
-            accessories_price += self.get_optional_accessory_price("backup_box")
+            accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.hub_included == True:
-            accessories_price += self.get_optional_accessory_price("hub")
+            accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
             accessories_price += float(self.wandhalterung_fuer_speicher_preis)
         if self.elwa:
