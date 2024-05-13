@@ -99,41 +99,41 @@ import time
 
 assistant_id = ASSISTANT_ID
 
-client = OpenAI(api_key=OPENAI_API_KEY)
-my_assistant = client.beta.assistants.retrieve(assistant_id)
+#client = OpenAI(api_key=OPENAI_API_KEY)
+#my_assistant = client.beta.assistants.retrieve(assistant_id)
 
 
 def handle_message(message, thread_id=None):
-
     try:
-        my_assistant = client.beta.assistants.retrieve(assistant_id)
-
-        if thread_id is None:
-
-            thread = client.beta.threads.create(
-                messages=[{"role": "user", "content": message}]
-            )
-            thread_id = thread.id
-        else:
-
-            client.beta.threads.messages.create(
-                thread_id=thread_id, role="user", content=message
-            )
-
-        run = client.beta.threads.runs.create(
-            thread_id=thread_id, assistant_id=my_assistant.id
-        )
-
-        while run.status != "completed":
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
-            time.sleep(5)
-
-        thread_messages = client.beta.threads.messages.list(thread_id)
-
-        for msg in thread_messages.data:
-            if msg.role == "assistant":
-
-                return msg.content[0].text.value, thread_id
+    #     my_assistant = client.beta.assistants.retrieve(assistant_id)
+    #
+    #     if thread_id is None:
+    #
+    #         thread = client.beta.threads.create(
+    #             messages=[{"role": "user", "content": message}]
+    #         )
+    #         thread_id = thread.id
+    #     else:
+    #
+    #         client.beta.threads.messages.create(
+    #             thread_id=thread_id, role="user", content=message
+    #         )
+    #
+    #     run = client.beta.threads.runs.create(
+    #         thread_id=thread_id, assistant_id=my_assistant.id
+    #     )
+    #
+    #     while run.status != "completed":
+    #         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+    #         time.sleep(5)
+    #
+    #     thread_messages = client.beta.threads.messages.list(thread_id)
+    #
+    #     for msg in thread_messages.data:
+    #         if msg.role == "assistant":
+    #
+    #             return msg.content[0].text.value, thread_id
+        return "Chatbot ist deaktiviert.", thread_id
 
     except Exception as e:
         # Log the exception here if necessary, e.g., print(e) or logging.error(e)
