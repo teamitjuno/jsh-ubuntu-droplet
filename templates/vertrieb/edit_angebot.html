@@ -321,10 +321,7 @@
                                                                         <th>{{ form.speicher_model.label_tag }}</th>
                                                                         <td>{{ form.speicher_model }}</td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.smartmeter_model.label_tag }}</th>
-                                                                        <td>{{ form.smartmeter_model }}</td>
-                                                                    </tr>
+
                                                                     <tr>
                                                                         <th>{{ form.anz_speicher.label_tag }}</th>
                                                                         <td>{{ form.anz_speicher }}</td>
@@ -333,8 +330,10 @@
                                                                     <tr>
                                                                         <th>{{ form.gesamtkapazitat.label_tag }}kWh</th>
                                                                         <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }}"></td>
-                                                                        
-                                                                        
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.smartmeter_model.label_tag }}</th>
+                                                                        <td>{{ form.smartmeter_model }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
