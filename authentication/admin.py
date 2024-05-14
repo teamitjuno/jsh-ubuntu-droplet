@@ -113,6 +113,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "users_aufschlag",
                     "typ",
                     "kuerzel",
+                    "zoho_id",
                     "phone",
                     "age",
                     "records_fetch_limit",
