@@ -115,8 +115,8 @@ class DocumentView(LoginRequiredMixin, DetailView):
 
         if vertrieb_angebot.datenblatter_solar_module:
             if (
-                vertrieb_angebot.solar_module
-                == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B"
+                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B" or
+                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM430N-54HL4R-B"
             ):
                 self._attach_datenblatter(
                     email,
@@ -126,14 +126,23 @@ class DocumentView(LoginRequiredMixin, DetailView):
                     ],
                 )
             if (
-                vertrieb_angebot.solar_module
-                == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
+                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
             ):
                 self._attach_datenblatter(
                     email,
                     datenblatter,
                     [
                         "solar_module_2",
+                    ],
+                )
+            if (
+                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM-440N-54HL4R-BDB"
+            ):
+                self._attach_datenblatter(
+                    email,
+                    datenblatter,
+                    [
+                        "solar_module_4",
                     ],
                 )
             if (
