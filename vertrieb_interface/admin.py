@@ -129,6 +129,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "wechselrichter_model",
                     "speicher_model",
                     "anz_speicher",
+                    "smartmeter_model",
                     "wallboxtyp",
                     "wallbox_anzahl",
                     "kabelanschluss",

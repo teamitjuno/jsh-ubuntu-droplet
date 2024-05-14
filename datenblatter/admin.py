@@ -38,7 +38,8 @@ class DatenblatterAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "optimizer",
-                    "huawei_power_sensor",
+                    "huawei_smartmeter_dtsu",
+                    "huawei_smartmeter_emma",
                     "huawei_smart_energie_controller",
                     "optimizer_viessmann",
                     "viessmann_tigo",

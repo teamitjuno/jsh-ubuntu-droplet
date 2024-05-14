@@ -401,15 +401,7 @@ Editierbarer_Text.objects.create(
     x=25,
     font_size=10
 )
-# Create 'tabelle_eintrag_3_viessman_1' and 'tabelle_eintrag_3_viessman_2' entries
-Editierbarer_Text.objects.create(
-    identifier='tabelle_eintrag_3_viessman_1', 
-    content="Viessman Energiezähler", 
-    font='JUNO Solar Lt', 
-    y=210, 
-    x=25,
-    font_size=11
-)
+# Create 'tabelle_eintrag_3_viessman_2' entries
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_3_viessman_2', 
     content="∙ Smart-Meter zur Strommessung im Haushalt\n∙ Produktgarantie: 2 Jahre", 
@@ -468,13 +460,7 @@ Editierbarer_Text.objects.create(
     x=25,
     font_size=10
 )
-# Create 'tabelle_eintrag_3_huawei_1' and 'tabelle_eintrag_3_huawei_2' entries
-Editierbarer_Text.objects.create(
-    identifier='tabelle_eintrag_3_huawei_1', 
-    content="Huawei Smart Power Sensor DTSU666H", 
-    font='JUNO Solar Lt', 
-    font_size=11
-)
+# Create 'tabelle_eintrag_3_huawei_2' entries
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_3_huawei_2', 
     content="∙ Smart-Meter zur Strommessung im Haushalt\n∙ Produktgarantie: 2 Jahre", 

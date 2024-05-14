@@ -358,6 +358,10 @@ class VertriebAngebot(TimeStampMixin):
         max_length=100,
         default="----",
     )
+    smartmeter_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
     gesamtkapazitat = models.PositiveIntegerField(default=0)
     speicher = models.BooleanField(default=False)
     anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
@@ -458,6 +462,7 @@ class VertriebAngebot(TimeStampMixin):
     # Files and other fields:
     datenblatter_solar_module = models.BooleanField(default=False)
     datenblatter_speichermodule = models.BooleanField(default=False)
+    datenblatter_smartmeter = models.BooleanField(default=False)
     datenblatter_wechselrichter = models.BooleanField(default=False)
     datenblatter_wallbox = models.BooleanField(default=False)
     datenblatter_backup_box = models.BooleanField(default=False)
@@ -1397,6 +1402,7 @@ class VertriebAngebot(TimeStampMixin):
             "garantieJahre": self.garantieWR,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,
+            "smartmeterModell": self.smartmeter_model,
             "wandhalterungSpeicher": self.wandhalterung_fuer_speicher,
             "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,

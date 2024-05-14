@@ -440,6 +440,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "GarantieWR": str(vertrieb_angebot.garantieWR),
             "Wechselrichter": str(vertrieb_angebot.wechselrichter_model),
             "Speicher_Typ": str(vertrieb_angebot.speicher_model),
+            "Smartmeter_Typ":str(vertrieb_angebot.smartmeter_model),
             "Wandhalterung_Anzahl": int(
                 vertrieb_angebot.anz_wandhalterung_fuer_speicher
             ),

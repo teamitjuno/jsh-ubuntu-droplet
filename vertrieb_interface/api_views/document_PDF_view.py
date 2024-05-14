@@ -161,6 +161,12 @@ class DocumentView(LoginRequiredMixin, DetailView):
                     email, datenblatter, ["speicher_module_viessmann"]
                 )
 
+        if vertrieb_angebot.datenblatter_smartmeter:
+            if vertrieb_angebot.smartmeter_model == "Smart Power Sensor DTSU666H":
+                self._attach_datenblatter(email, datenblatter, ["huawei_smartmeter_dtsu"])
+            elif vertrieb_angebot.smartmeter_model == "EMMA-A02":
+                self._attach_datenblatter(email, datenblatter, ["huawei_smartmeter_emma"])
+
         if vertrieb_angebot.datenblatter_wechselrichter:
             if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, ["wechselrichter"])

@@ -371,9 +371,7 @@ class PDF(FPDF):
             # Tabelle Eintrag 3
             eintrag += 1
             tab3_eintrag_nummer = str(eintrag) + "."
-            tab3_energiezahler = self.get_attribute_by_identifier(
-                "tabelle_eintrag_3_viessman_1", "content"
-            )
+            tab3_energiezahler = data["smartmeterModell"]
             garantie = str(data["garantieJahre"])
             tab3_energiezahler_props = f'{self.get_attribute_by_identifier("tabelle_eintrag_3_viessman_2", "content")}'
 
@@ -432,9 +430,7 @@ class PDF(FPDF):
 
             eintrag += 1
             tab3_eintrag_nummer = str(eintrag) + "."
-            tab3_energiezahler = self.get_attribute_by_identifier(
-                "tabelle_eintrag_3_huawei_1", "content"
-            )
+            tab3_energiezahler = "Huawei " + data["smartmeterModell"]
             tab3_energiezahler_props = self.get_attribute_by_identifier(
                 "tabelle_eintrag_3_huawei_2", "content"
             )

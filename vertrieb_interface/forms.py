@@ -297,6 +297,16 @@ class VertriebAngebotEmailForm(ModelForm):
             }
         ),
     )
+    datenblatter_smartmeter = forms.BooleanField(
+        label="Datenblatter Smart Meter",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "datenblatter_smartmeter",
+            }
+        ),
+    )
     datenblatter_wechselrichter = forms.BooleanField(
         label="Datenblatter Wechselrichter",
         required=False,
@@ -355,6 +365,7 @@ class VertriebAngebotEmailForm(ModelForm):
             "text_for_email",
             "datenblatter_solar_module",
             "datenblatter_speichermodule",
+            "datenblatter_smartmeter",
             "datenblatter_wechselrichter",
             "datenblatter_wallbox",
             "datenblatter_backup_box",
@@ -373,6 +384,9 @@ class VertriebAngebotEmailForm(ModelForm):
             )
             self.fields["datenblatter_speichermodule"].initial = (
                 self.instance.datenblatter_speichermodule
+            )
+            self.fields["datenblatter_smartmeter"].initial = (
+                self.instance.datenblatter_smartmeter
             )
             self.fields["datenblatter_wechselrichter"].initial = (
                 self.instance.datenblatter_wechselrichter
@@ -832,6 +846,13 @@ class VertriebAngebotForm(ModelForm):
         ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
     ]
 
+    SMARTMETER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
+        ("EMMA-A02", "EMMA-A02"),
+        ("Viessmann Energiezähler", "Viessmann Energiezähler"),
+    ]
+
     hersteller = forms.ChoiceField(
         label="Hersteller",
         required=True,
@@ -852,6 +873,12 @@ class VertriebAngebotForm(ModelForm):
         label="Batteriespeicher",
         choices=SPEICHER_MODEL_CHOICES,
         widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
+    )
+
+    smartmeter_model = forms.ChoiceField(
+        label="Smart Meter",
+        choices=SMARTMETER_MODEL_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select", "id": "smartmeter_model"}),
     )
 
     gesamtkapazitat = forms.IntegerField(
@@ -1248,6 +1275,7 @@ class VertriebAngebotForm(ModelForm):
             "speicher_model",
             "speicher",
             "anz_speicher",
+            "smartmeter_model",
             "wandhalterung_fuer_speicher",
             "anz_wandhalterung_fuer_speicher",
             "wallbox",
@@ -1345,6 +1373,7 @@ class VertriebAngebotForm(ModelForm):
             {"id": "wechselrichter_model"}
         )
         self.fields["speicher_model"].widget.attrs.update({"id": "speicher_model"})
+        self.fields["smartmeter_model"].widget.attrs.update({"id": "smartmeter_model"})
         self.fields["hersteller"].widget.attrs.update({"id": "hersteller"})
         self.fields["verbrauch"].widget.attrs.update({"id": "id_verbrauch"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
@@ -1423,9 +1452,12 @@ class VertriebAngebotForm(ModelForm):
             ("Viessmann", "SUN 2000"): "wechselrichter_model",
             ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
             ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
+            ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",
+            ("Viessmann", "EMMA-A02"): "smartmeter_model",
             ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
             ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
             ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",
+            ("Huawei", "Viessmann Energiezähler"): "smartmeter_model",
         }
 
         action = self.data.get("action_type")
