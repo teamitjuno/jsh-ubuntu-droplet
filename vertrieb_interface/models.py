@@ -235,9 +235,6 @@ class VertriebAngebot(TimeStampMixin):
     zoho_id = models.CharField(max_length=255, blank=True, null=True)
     angebot_zoho_id = models.CharField(max_length=255, blank=True, null=True)
     angebot_id_assigned = models.BooleanField(default=False)
-    angebot_display_value = models.CharField(
-        max_length=255, default="", blank=True, null=True
-    )
     angenommenes_angebot = models.CharField(
         max_length=255, default="", blank=True, null=True
     )
@@ -496,7 +493,6 @@ class VertriebAngebot(TimeStampMixin):
         else:
             action_flag = CHANGE
 
-        self.angebot_display_value = self.angebot_display_value_finder
 
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
@@ -688,33 +684,6 @@ class VertriebAngebot(TimeStampMixin):
             "",
         )
 
-    @property
-    def angebot_display_value_finder(
-        self,
-    ):  # Changed method name for clarity and to avoid recursion
-        default_angebot_value = (
-            ""  # Define a default value to return in case of failure
-        )
-        if hasattr(self, "_angebot_display_value_cache"):  # Use cached value if exists
-            return self._angebot_display_value_cache
-
-        try:
-            data = json.loads(
-                self.user.zoho_data_text
-                or '[{"zoho_id": "default", "angebot": "default"}]'
-            )
-            zoho_id = str(self.zoho_id)
-            zoho_id_to_angebot = {item["zoho_id"]: item["angebot"] for item in data}
-
-            self._angebot_display_value_cache = zoho_id_to_angebot.get(
-                zoho_id, default_angebot_value
-            )
-            return self._angebot_display_value_cache
-        except (json.JSONDecodeError, KeyError) as e:  # Catch specific exceptions
-            # Optionally, log the exception here
-            return (
-                default_angebot_value  # Return the default value in case of exception
-            )
 
     @property
     def get_building_insights(
