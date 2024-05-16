@@ -8,6 +8,7 @@ from django.forms import FileInput
 from django.db import models
 from django import forms
 from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 import base64, binascii
 
 
@@ -43,6 +44,9 @@ class Base64Field(forms.Field):
 def update_users(modeladmin, request, queryset):
     call_command("update_users")
 
+def change_password(modeladmin, request, queryset):
+    for user in queryset:
+        return redirect(f"{user.id}/password")
 
 update_users.short_description = "Update Users"
 
@@ -58,7 +62,7 @@ class ReadOnlyFieldsMixin:
 
 class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
     form = CustomUserChangeForm
-    actions = [update_users]
+    actions = [update_users, change_password]
     search_fields = ["username", "first_name", "last_name", "email"]
     list_display = [
         "id",
