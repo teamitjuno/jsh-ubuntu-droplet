@@ -151,7 +151,7 @@ class PDF(FPDF):
                 "tabelle_eintrag_4_viessman_3", "content"
             )
 
-        elif str(data["batterieAnz"]) == "2" or str(data["batterieAnz"]) == "3":
+        elif str(data["batterieAnz"]) == "2":
             entladeleistung = self.get_attribute_by_identifier(
                 "tabelle_eintrag_4_viessman_4", "content"
             )

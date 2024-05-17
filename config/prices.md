@@ -426,19 +426,19 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_viessman_3', 
-    content="∙ max. Lade-/Entladeleistung: 2,5 kW \n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 1,92 kW \n∙ Produktgarantie: 10 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_viessman_4', 
-    content="∙ max. Lade-/Entladeleistung: 5 kW \n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 3,84 kW \n∙ Produktgarantie: 10 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_viessman_5', 
-    content="∙ max. Lade-/Entladeleistung: 10 kW \n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Ladeleistung: 5,76 kW \n∙ max. Entladeleistung: 4,6 kW \n∙ Produktgarantie: 10 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
