@@ -146,20 +146,32 @@ class PDF(FPDF):
         """
         Ruft die Lade/Entladeleistung basierend auf der Anzahl der Batterien ab.
         """
-        if str(data["batterieAnz"]) == "1":
-            entladeleistung = self.get_attribute_by_identifier(
-                "tabelle_eintrag_4_viessman_3", "content"
-            )
-
-        elif str(data["batterieAnz"]) == "2":
-            entladeleistung = self.get_attribute_by_identifier(
-                "tabelle_eintrag_4_viessman_4", "content"
-            )
-
-        else:
-            entladeleistung = self.get_attribute_by_identifier(
-                "tabelle_eintrag_4_viessman_5", "content"
-            )
+        if str(data["hersteller"]) == "Viessmann":
+            if str(data["batterieAnz"]) == "1":
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_3", "content"
+                )
+            elif str(data["batterieAnz"]) == "2":
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_4", "content"
+                )
+            else:
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_5", "content"
+                )
+        elif str(data["hersteller"]) == "Huawei":
+            if str(data["batterieAnz"]) == "1":
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei5_3", "content"
+                )
+            elif data["batterieAnz"] >= 2 and data["batterieAnz"] <= 3:
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei5_4", "content"
+                )
+            else:
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei5_5", "content"
+                )
         return entladeleistung
 
     def header(self):
@@ -455,9 +467,7 @@ class PDF(FPDF):
                         "tabelle_eintrag_4_huawei5_2", "content"
                     )
                     tab4_additional_content = "Leistungsmodule"
-                    tab4_batterie_speicher_props = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei5_3", "content"
-                    )
+                    tab4_batterie_speicher_props = self.get_entladeleistung(data)
                     self.setup_eintrag_text(
                         "tabelle_eintrag_4_huawei5_3",
                         tab4_eintrag_nummer,

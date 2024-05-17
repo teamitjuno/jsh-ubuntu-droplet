@@ -483,7 +483,19 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_huawei5_3', 
+    content="∙ max. Lade-/Entladeleistung: 2,5 kW\n∙ Produktgarantie: 10 Jahre", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_huawei5_4', 
     content="∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 10 Jahre", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_huawei5_5', 
+    content="∙ max. Lade-/Entladeleistung: 10 kW\n∙ Produktgarantie: 10 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
