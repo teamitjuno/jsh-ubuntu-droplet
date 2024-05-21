@@ -348,7 +348,7 @@ class VertriebAngebot(TimeStampMixin):
     # Module & Zubehör
     hersteller = models.CharField(
         max_length=100,
-        default="----",
+        default="Huawei",
     )
     wechselrichter_model = models.CharField(
         max_length=100,
