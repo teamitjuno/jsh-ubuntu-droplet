@@ -181,6 +181,9 @@ class Calculator(models.Model):
     def get_module_garantie_preis(self, name):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
 
+    def get_leistungs_garantie(self, name):
+        return str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
+
     def save(self, *args, **kwargs):
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -248,15 +251,6 @@ class Calculator(models.Model):
             ).price
         else:
             return 0.00
-
-    @property
-    def get_leistungsgarantie(self):
-        if str(self.solar_module) == "Phono Solar PS420M7GFH-18/VNH":
-            return "30 Jahre"
-        elif str(self.solar_module) == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B":
-            return "0,4 % Jährliche Degradation"
-        else:
-            return "0,4 % Jährliche Degradation"
 
     @property
     def get_komplexity(self):

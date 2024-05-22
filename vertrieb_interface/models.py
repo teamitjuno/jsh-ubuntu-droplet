@@ -491,6 +491,9 @@ class VertriebAngebot(TimeStampMixin):
     def get_module_garantie_preis(self, name):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
 
+    def get_leistungs_garantie(self, name):
+        return str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
+
     def save(self, *args, **kwargs):
         if not self.angebot_id:
             self.angebot_id = self.generate_angebot_id()
@@ -814,25 +817,6 @@ class VertriebAngebot(TimeStampMixin):
         else:
             return 0.00
 
-    @property
-    def get_leistungsgarantie(self):
-        if "Phono Solar" in str(self.solar_module):
-            return "30 Jahre"
-        elif "Jinko Solar" in str(self.solar_module):
-            return f"0,4 % Jährliche Degradation\n                                     über 30 Jahre"
-        else:
-            return "0,4 % Jährliche Degradation\n                                     über 30 Jahre"
-
-    @property
-    def get_produktgarantie(self):
-        if "Phono Solar PS430M8GF-18/VNH" in str(self.solar_module):
-            return "25 Jahre"
-        if "Phono Solar PS430M8GFH-18/VSH" in str(self.solar_module):
-            return "25 Jahre"
-        elif "Jinko Solar Tiger Neo N-type JKM430N-54HL4R-B" in str(self.solar_module):
-            return f"25 Jahre"
-        else:
-            return "15 Jahre"
 
     @property
     def get_komplexity(self):
@@ -1395,7 +1379,7 @@ class VertriebAngebot(TimeStampMixin):
             "wpModule": self.modulleistungWp,
             "anzModule": self.modulanzahl,
             "produktGarantie": self.get_module_garantie(self.solar_module),
-            "leistungsGarantie": self.get_leistungsgarantie,
+            "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
             "kWp": self.modulsumme_kWp,
             "kWpOhneRundung": self.modulsumme_kWp,
             "standort": self.anlagen_standort,

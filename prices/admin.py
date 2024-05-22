@@ -58,6 +58,7 @@ class SolarModulePreisAdmin(admin.ModelAdmin):
         "name",
         "price",
         "module_garantie",
+        "leistungs_garantie",
         "actual_price",
         "old_price",
         "in_stock",
