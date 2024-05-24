@@ -127,7 +127,7 @@ def validate_name_format(value):
         r"^[A-ZÄÖÜ][a-zäöüß]+ [A-ZÄÖÜ][a-zäöüß]+(?: [A-ZÄÖÜ][a-zäöüß]+)?$", value
     ):
         raise ValidationError(
-            "Format 'Nachname Vorname Mittelname (optional)', wobei jeder Name mit einem Großbuchstaben beginnt und deutsche Sonderzeichen enthält."
+            "Format 'Nachname, Vorname Mittelname (optional)', wobei jeder Name mit einem Großbuchstaben beginnt und deutsche Sonderzeichen enthält."
         )
 
 

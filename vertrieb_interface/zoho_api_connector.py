@@ -253,7 +253,7 @@ def process_all_user_data(data):
                     "email": item.get("Email", ""),
                     "notizen": item.get("Notizen", ""),
                     "name": item.get("Name", {}).get("last_name", "")
-                    + " "
+                    + ", "
                     + item.get("Name", {}).get("suffix", "")
                     + ""
                     + item.get("Name", {}).get("first_name", ""),

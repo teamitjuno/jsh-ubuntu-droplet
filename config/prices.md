@@ -321,7 +321,8 @@ Editierbarer_Text.objects.create(
 Editierbarer_Text.objects.create(
     identifier='uberschrift_und_text_2', 
     content="vielen Dank für Ihre Anfrage. Wir bieten Ihnen hiermit die komplette Lieferung und Montage folgender Photovoltaikanlage an:", 
-    font='JUNO Solar Lt', 
+    font='JUNO Solar Lt',
+    y=115,
     font_size=11
 )
 
