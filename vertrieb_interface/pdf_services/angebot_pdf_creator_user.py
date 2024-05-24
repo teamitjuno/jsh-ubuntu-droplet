@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from math import ceil
 from fpdf import FPDF
 from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
@@ -72,6 +73,8 @@ class PDF(FPDF):
         eintrag_nummer,
         content_1,
         content_2="nach Auslegung",
+        content_2_sub_1=None,
+        content_2_sub_2=None,
         content_3="inklusive",
         content_4=None,
         additional_content=None,
@@ -101,6 +104,16 @@ class PDF(FPDF):
             self.set_xy(x, y)
             self.cell(0, 6, content, 0, 0, align)
 
+        tmp_y = y
+        sub_contents = [(content_2_sub_1, None), (content_2_sub_2, None)]
+        for content, _ in sub_contents:
+            if content:
+                y += 5
+                x = 150
+                self.set_xy(x, y)
+                self.cell(0, 6, content, 0, 0, "L")
+
+        y = tmp_y
         additional_contents = [(additional_content, None), (additional_content_2, None)]
         for content, _ in additional_contents:
             if content:
@@ -414,9 +427,10 @@ class PDF(FPDF):
                     "tabelle_eintrag_4_viessman_3",
                     tab4_eintrag_nummer,
                     tab4_batterie_speicher,
-                    content_2=tab4_content2,
+                    content_2="",
                     content_4=tab4_entladeleistung,
                     additional_content=tab4_additional_content,
+                    content_2_sub_1=tab4_content2,
                     alignment="",
                 )
 
@@ -458,11 +472,12 @@ class PDF(FPDF):
             if data["batterieVorh"]:
                 eintrag += 1
                 tab4_eintrag_nummer = str(eintrag) + "."
+                tab4_content2_sub1 = str(ceil(data["batterieAnz"] / 3))
+                tab4_content2_sub2 = str(data["batterieAnz"])
                 if data["batterieModell"] == "LUNA 2000-5-S0":
                     tab4_batterie_speicher = self.get_attribute_by_identifier(
                         "tabelle_eintrag_4_huawei5_1", "content"
                     )
-                    tab4_content2 = str(data["batterieAnz"])
                     tab4_additional_content2 = self.get_attribute_by_identifier(
                         "tabelle_eintrag_4_huawei5_2", "content"
                     )
@@ -472,8 +487,10 @@ class PDF(FPDF):
                         "tabelle_eintrag_4_huawei5_3",
                         tab4_eintrag_nummer,
                         tab4_batterie_speicher,
-                        content_2=tab4_content2,
+                        content_2="",
                         content_4=tab4_batterie_speicher_props,
+                        content_2_sub_1=tab4_content2_sub1,
+                        content_2_sub_2=tab4_content2_sub2,
                         additional_content=tab4_additional_content,
                         additional_content_2=tab4_additional_content2,
                         alignment="",
@@ -482,7 +499,6 @@ class PDF(FPDF):
                     tab4_batterie_speicher = self.get_attribute_by_identifier(
                         "tabelle_eintrag_4_huawei7_1", "content"
                     )
-                    tab4_content2 = str(data["batterieAnz"])
                     tab4_additional_content2 = self.get_attribute_by_identifier(
                         "tabelle_eintrag_4_huawei7_2", "content"
                     )
@@ -494,8 +510,10 @@ class PDF(FPDF):
                         "tabelle_eintrag_4_huawei7_3",
                         tab4_eintrag_nummer,
                         tab4_batterie_speicher,
-                        content_2=tab4_content2,
+                        content_2="",
                         content_4=tab4_batterie_speicher_props,
+                        content_2_sub_1=tab4_content2_sub1,
+                        content_2_sub_2=tab4_content2_sub2,
                         additional_content=tab4_additional_content,
                         additional_content_2=tab4_additional_content2,
                         alignment="",
