@@ -878,7 +878,7 @@ def update_status_to_angenommen(request):
 
 
 def replace_spaces_with_underscores(s: str) -> str:
-    return s.replace(" ", "_")
+    return s.replace(" ", "_").replace(",","")
 
 
 @admin_required

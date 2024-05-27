@@ -217,4 +217,4 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
 
 
 def replace_spaces_with_underscores(s: str) -> str:
-    return s.replace(" ", "_")
+    return s.replace(" ", "_").replace(",","")

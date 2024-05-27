@@ -1637,7 +1637,7 @@ class PDF(FPDF):
 
 
 def replace_spaces_with_underscores(s: str) -> str:
-    return s.replace(" ", "_")
+    return s.replace(" ", "_").replace(",","")
 
 
 def createOfferPdf(data, vertrieb_angebot, certifikate, user):
