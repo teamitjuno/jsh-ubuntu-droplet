@@ -442,6 +442,9 @@ class VertriebAngebot(TimeStampMixin):
     batteriespeicher_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
+    smartmeter_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
     wallbox_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
@@ -511,6 +514,7 @@ class VertriebAngebot(TimeStampMixin):
         self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
+        self.smartmeter_angebot_price = self.smartmeter_preis
         self.angebotsumme = round(self.angebots_summe, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
         self.fullticketpreis = self.full_ticket_preis
@@ -941,8 +945,26 @@ class VertriebAngebot(TimeStampMixin):
                 )
             return batteriePreis
         elif self.anz_speicher == 0:
-            batteriePreis = 0
             return batteriePreis
+
+    @property
+    def smartmeter_preis(self):
+        smartmeterPreis = smartmeterPreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
+                )
+        if self.smartmeter_model == "Smart Power Sensor DTSU666H":
+            smartmeterPreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
+                )
+        elif self.smartmeter_model == "EMMA-A02":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_emma", 1
+            )
+        elif self.smartmeter_model == "Viessmann Energiezähler":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_viessmann", 1
+            )
+        return smartmeterPreis
 
     @property
     def modulsumme_kWp(self):
@@ -1246,6 +1268,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.full_wallbox_preis)
         if self.batteriespeicher_angebot_price:
             accessories_price += float(self.batteriespeicher_angebot_price)
+        if self.smartmeter_angebot_price:
+            accessories_price += float(self.smartmeter_angebot_price)
         if self.eddi:
             accessories_price += float(self.get_optional_accessory_price("eddi"))
         if self.notstrom:
