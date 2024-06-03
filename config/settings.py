@@ -19,6 +19,8 @@ ALLOWED_HOSTS = [
     "*",
     "jsh-home.app",
     "www.jsh-home.app",
+    "juno-solar.com",
+    "verkaufstool.juno-solar.com",
     "46.101.104.229",
     "138.68.100.101",
     "127.0.0.1",
