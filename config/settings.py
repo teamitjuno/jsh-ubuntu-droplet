@@ -104,6 +104,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "https://jsh-home.app",
     "https://www.jsh-home.app",
+    "https://verkaufstool.juno-solar.com/login/",
     "https://138.68.100.101",
     "https://159.89.22.211",
 ]
@@ -113,6 +114,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "https://jsh-home.app",
     "https://www.jsh-home.app",
+    "https://verkaufstool.juno-solar.com/login/",
     "https://138.68.100.101",
     "https://159.89.22.211",
 ]
