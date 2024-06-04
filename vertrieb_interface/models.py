@@ -993,7 +993,7 @@ class VertriebAngebot(TimeStampMixin):
         # Return value based on module_name's prefix
         if module_name.startswith("jinko solar"):
             return values.get(
-                "jinko_solar", 1.06
+                "jinko_solar", 1.0
             )  # return 1.06 as default if not found in values
 
         if module_name.startswith("phono solar"):

@@ -484,6 +484,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "pv_rechner_view",
             "anzahl_sol_module_view",
             "records_fetch_limit",
+            "smtp_body",
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -563,6 +564,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         )
         self.fields["initial_text_for_email"].widget.attrs.update(
             {"id": "id_initial_text_for_email"}
+        )
+        self.fields["smtp_body"].widget.attrs.update(
+            {"id": "smtp_body"}
         )
         self.fields["top_verkaufer_container_view"].widget.attrs.update(
             {"id": "id_top_verkaufer_container_view"}

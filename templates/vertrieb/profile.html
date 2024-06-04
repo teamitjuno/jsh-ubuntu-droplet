@@ -315,6 +315,10 @@
                                             <th>{{ form.initial_text_for_email.label_tag }}</th>
                                             <td>{{ form.initial_text_for_email }}</td>
                                         </tr>
+                                        <tr>
+                                            <th>{{ form.smtp_body.label_tag }}</th>
+                                            <td>{{ form.smtp_body }}</td>
+                                        </tr>
 
                                     </tbody>
                                 </table>
@@ -350,7 +354,7 @@
                             <div class="modal-body p-4">
                                 <div class="text-center">
                                     <i class="ri-check-line h1"></i>
-                                    <h4 class="mt-2">Gut gemacht!</h4>
+                                    <h4 class="mt-2">Erfolgreich!</h4>
                                     <p class="mt-3">Email support message wurde erfolgreich versendet!</p>
                                     <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Weiter</button>
                                 </div>

@@ -173,8 +173,6 @@ WallBoxPreise.objects.create(name='Commander 2', price=1900.00, actual_price=0.0
 WallBoxPreise.objects.create(name='Commander 2 Inkl. Power Boost', price=2300.00, actual_price=0.00,old_price=0.00)
 
 from prices.models import AndereKonfigurationWerte
-AndereKonfigurationWerte.objects.create(name='Phono-Solar_leistung', value=420.00)
-AndereKonfigurationWerte.objects.create(name='Jinko-Solar_leistung', value=420.00)
 AndereKonfigurationWerte.objects.create(name='steuersatz', value=0.00)
 AndereKonfigurationWerte.objects.create(name='einfach_einfach_erreichbar', value=1.00)
 AndereKonfigurationWerte.objects.create(name='einfach_schwer_erreichbar', value=1.025)

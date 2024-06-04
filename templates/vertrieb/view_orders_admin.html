@@ -61,6 +61,7 @@
                                             <table id="scroll-horizontal-datatable" class="table w-100 nowrap">
                                             <thead>
                                                 <tr>
+                                                    <th>Select</th>
                                                     <th>Kundennumer</th>
                                                     <th>Angebot ID</th>
                                                     <th>Zugang</th>
@@ -69,19 +70,18 @@
                                                     <th>Kunde</th>
                                                     <th>Datum</th>
                                                     <th>Entfernen</th>
-                                                    <th>Benutzer Ang PDF</th>
-                                                    <th>Admin Ang PDF</th>
+                                                    <th>Angebot PDF</th>
                                                     <th>Ticket PDF</th>
                                                     <th>Kalkulation PDF</th>
-                                                    <th>Select</th>
-                                                    
-
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for vertrieb_angebot in angebots %}
                                                 
                                                     <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="angebot-checkbox" value="{{ vertrieb_angebot.angebot_id }}">
+                                                        </td>
                                                         <td>{{ vertrieb_angebot.zoho_kundennumer }}</td>
                                                         
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
@@ -206,11 +206,6 @@
                                                             <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF erstellen</a>
                                                             {% endif %}                 
                                                         </td>
-                                                        <td>
-                                                            {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF erstellen</a>
-                                                            {% endif %}
-                                                        </td>
                                                         <td> 
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
                                                             <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
@@ -221,9 +216,7 @@
                                                             <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
                                                             {% endif %}
                                                         </td>
-                                                        <td>
-                                                            <input type="checkbox" class="angebot-checkbox" value="{{ vertrieb_angebot.angebot_id }}">
-                                                        </td>
+                                                        
 
                                                     </tr>
                                                 
