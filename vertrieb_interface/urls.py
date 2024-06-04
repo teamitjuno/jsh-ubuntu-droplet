@@ -41,7 +41,6 @@ vertrieb_patterns = [
         name="create_angebot_redirect",
     ),
     path("vertrieb/help/", views.help, name="help"),
-    path("vertrieb/chat_bot/", views.chat_bot, name="chat_bot"),
     path(
         "vertrieb/calc_graph_display/",
         views.calc_graph_display,

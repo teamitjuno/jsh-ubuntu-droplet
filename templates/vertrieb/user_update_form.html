@@ -237,10 +237,10 @@
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="mb-3">
-                                                                        <label for="{{ form.password.id_for_label }}" class="form-label">Passworte</label>
+                                                                        <label for="{{ form.password.id_for_label }}" class="form-label">Passwort</label>
                                                                         <div class="text-info">{{ form.password }}
                                                                         <span class="form-text text-muted">
-                                                                            <small>Wenn Sie Ihr Passwort ändern möchten, wenden Sie sich bitte an <a href="{% url 'adminfeautures:change_password' user.pk %}">klicken Sie bitte hier</a>.</small>
+                                                                            <small>Wenn Sie Ihr Passwort ändern möchten, <a href="{% url 'adminfeautures:change_password' user.pk %}">klicken Sie bitte hier</a>.</small>
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -255,7 +255,7 @@
                                                                         <label for="{{ form.role.id_for_label }}" class="form-label">Benutzerrolle</label>
                                                                         {{ form.role }}
                                                                         <span class="form-text text-muted">
-                                                                            <small class="text-warning">Achten Sie darauf, die Benutzerrolle zu wählen! Dies ist für den korrekten Betrieb des AngebotsTools erforderlich.</small>
+                                                                            <small class="text-warning">Achten Sie darauf, eine Benutzerrolle zu wählen! Dies ist für den korrekten Betrieb des AngebotsTools erforderlich.</small>
                                                                         </span>
                                                                     </div>
                                                                 </div>

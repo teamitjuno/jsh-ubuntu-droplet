@@ -21,7 +21,6 @@ from django.http import (
 import re, logging
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
-from shared.chat_bot import handle_message
 from projektant_interface.pdf_generators.pdf_template_processor_v3 import (
     generate_pdf_bauplan,
 )
@@ -91,19 +90,6 @@ def profile(request):
 @user_passes_test(projektant_check)
 def help(request):
     return render(request, "projektant/help.html")
-
-
-@user_passes_test(projektant_check)
-@csrf_exempt
-def chat_bot(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        question = data.get("question", "")
-        response = handle_message(question)
-        logging.error(f"Response : {response}")
-        return JsonResponse({"response": response})
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
 class ViewOrders(LoginRequiredMixin, ListView):

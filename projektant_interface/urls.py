@@ -9,7 +9,6 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("profile/", views.profile, name="profile"),
     path("help/", views.help, name="help"),
-    path("chat_bot/", views.chat_bot, name="chat_bot"),
     path("populate_projects/", views.populate_projects_view, name="populate_projects"),
     path("view_orders/", views.ViewOrders.as_view(), name="view_orders"),
     path(

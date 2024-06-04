@@ -11,7 +11,6 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("view_orders/", views.ViewOrders.as_view(), name="view_orders"),
     path("help/", views.help, name="help"),
-    path("invoices/chat_bot/", views.chat_bot, name="chat_bot"),
     path("create_invoice/", views.create_invoice, name="create_invoice"),
     path("api/sync_data", views.sync_data, name="sync_data"),
     path(

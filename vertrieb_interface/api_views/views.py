@@ -47,8 +47,6 @@ from calculator.forms import CalculatorForm
 # Local imports from 'datenblatter'
 from datenblatter.models import Datenblatter
 
-# Local imports from 'shared'
-from shared.chat_bot import handle_message
 
 # Local imports from 'vertrieb_interface'
 from vertrieb_interface.forms import (
@@ -498,27 +496,6 @@ def profile(request, *args, **kwargs):
 @user_passes_test(vertrieb_check)
 def help(request):
     return render(request, "vertrieb/help.html")
-
-
-@user_passes_test(vertrieb_check)
-@csrf_exempt
-def chat_bot(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        question = data.get("question", "")
-
-        # Retrieve the thread_id from the session if it exists, else None
-        thread_id = request.session.get("thread_id", None)
-
-        # Pass the question and thread_id to the handle_message function
-        response, thread_id = handle_message(question, thread_id)
-
-        # Update the thread_id in the session
-        request.session["thread_id"] = thread_id
-
-        return JsonResponse({"response": response})
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
 @user_passes_test(vertrieb_check)

@@ -4,7 +4,6 @@ from projektant_interface.models import (
     Project,
 )
 from django.contrib.auth import get_user_model
-from shared.projektant_text_processing import handle_message
 from config.settings import (
     ENV_FILE,
     ACCESS_TOKEN_URL,
@@ -119,9 +118,6 @@ def create_project_instances_from_zoho():
             try:
                 record.get("Besonderheiten") != ""
                 project.Processed_Besonderheiten == "keine Beschreibung"
-                project.Processed_Besonderheiten = handle_message(
-                    str(record.get("Besonderheiten"))
-                )
             except:
                 pass
             project.Elektriktermin = str(

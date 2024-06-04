@@ -45,8 +45,6 @@ from invoices import excel_generator, pdf_creator2
 from invoices.utils import process_xlsx
 from invoices.forms import UploadXlsxForm
 
-from shared.chat_bot import handle_message
-
 logger = logging.getLogger(__name__)
 
 
@@ -160,18 +158,6 @@ def help(request):
 @user_passes_test(elektriker_check)
 def elektriker_kalender(request):
     return render(request, "invoices/elektriker_kalender.html")
-
-
-@user_passes_test(elektriker_check)
-@csrf_exempt
-def chat_bot(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        question = data.get("question", "")
-        response = handle_message(question)
-        return JsonResponse({"response": response})
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
 @csrf_exempt
