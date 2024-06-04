@@ -23,13 +23,7 @@ with open("Ger.json", "r") as f:
 # Create a mapping of JSON keys to User model fields
 json_to_model_fields = {
     "K\u00fcrzel": "kuerzel",
-    "Ger\u00e4t": "gerat",
-    "IMei": "imei",
     "Handynummer": "phone",
-    "Anbieter": "anbieter",
-    "Mail ": "google_account",
-    "Passwort ": "google_passwort",
-    "Sim Pin ": "sim_pin",
 }
 
 # Start a transaction

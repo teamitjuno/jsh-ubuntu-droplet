@@ -124,35 +124,12 @@ class UserForm(forms.ModelForm):
         required=False,
     )
 
-    google_account = forms.EmailField(
-        label="Google Account",
-        required=False,
-        widget=forms.EmailInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Google Email Address",
-                "id": "google_account",
-            }
-        ),
-    )
     role = forms.ModelChoiceField(
         queryset=Role.objects.all(),
         widget=forms.Select(
             attrs={"class": "form-select"}
         ),  # Add a CSS class to the select widget
         label="User's Role",  # Custom label for the role field
-    )
-
-    age = forms.IntegerField(
-        label="Age",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Age",
-                "id": "age",
-            }
-        ),
     )
 
     avatar = forms.ImageField(
@@ -178,53 +155,6 @@ class UserForm(forms.ModelForm):
         ),
     )
 
-    gerat = forms.CharField(
-        label="Gerät",
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Gerät",
-                "id": "gerat",
-            }
-        ),
-    )
-
-    anbieter = forms.CharField(
-        label="Anbieter",
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Anbieter",
-                "id": "anbieter",
-            }
-        ),
-    )
-
-    google_passwort = forms.CharField(
-        label="Google Password",
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Google Password",
-                "id": "google_passwort",
-            }
-        ),
-    )
-
-    sim_pin = forms.CharField(
-        label="SIM PIN",
-        required=False,
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "SIM PIN",
-                "id": "sim_pin",
-            }
-        ),
-    )
 
     zoho_data_text = forms.CharField(
         label="Zoho Data Text",

@@ -31,7 +31,6 @@ def create_users(zoho_users_list):
                 username=username,
                 first_name=first_name,
                 last_name=last_name,
-                age=30,
                 phone=phone,
                 is_staff=False,
                 beruf="Vertrieb",

@@ -6,13 +6,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 
 class UserAdminCreationForm(forms.ModelForm):
-    gerat = forms.CharField(required=False)
     is_staff = forms.BooleanField(required=False)
-    imei = forms.IntegerField(required=False)
-    anbieter = forms.CharField(required=False)
-    google_account = forms.EmailField(required=False)
-    google_passwort = forms.CharField(required=False)
-    sim_pin = forms.IntegerField(required=False)
     is_superuser = forms.BooleanField(required=False)
     zoho_data = forms.JSONField(required=False)
     sonstiges = forms.CharField(widget=forms.Textarea, required=False)

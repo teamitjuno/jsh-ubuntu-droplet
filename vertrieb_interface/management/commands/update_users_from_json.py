@@ -23,13 +23,6 @@ class Command(BaseCommand):
 
         json_to_model_fields = {
             "K\u00fcrzel": "kuerzel",
-            "Ger\u00e4t": "gerat",
-            "IMei": "imei",
-            "Handynummer": "phone",
-            "Anbieter": "anbieter",
-            "Mail": "google_account",
-            "Passwort": "google_passwort",
-            "Sim Pin": "sim_pin",
             "SMTP_PASS": "smtp_password",
             "SMTP_USER": "smtp_username",
         }

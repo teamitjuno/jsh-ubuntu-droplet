@@ -69,7 +69,6 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     username = models.CharField(unique=True, max_length=100, null=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
-    age = models.PositiveSmallIntegerField(null=True, default=2)
     phone = models.CharField(
         ("phone"), max_length=15, unique=True, null=True, blank=True
     )
@@ -81,9 +80,9 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     beruf = models.CharField(
         max_length=30,
         choices=[
-            ("Elektriker", "Elektriker"),
             ("Vertrieb", "Vertrieb"),
             ("Projektant", "Projektant"),
+            ("Elektriker", "Elektriker"),
         ],
         null=True,
         default=None,
@@ -101,15 +100,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         default=None,
     )
     kuerzel = models.CharField(max_length=3, null=True, unique=True)
-    gerat = models.CharField(max_length=30, null=True, blank=True, unique=False)
     is_active = models.BooleanField(default=True)
-    imei = models.BigIntegerField(null=True, blank=True, unique=True)
-    anbieter = models.CharField(max_length=30, null=True, blank=True, unique=False)
-    google_account = models.EmailField(null=True, blank=True, unique=True)
-    google_passwort = models.CharField(
-        max_length=30, null=True, blank=True, unique=False
-    )
-    sim_pin = models.SmallIntegerField(null=True, blank=True, unique=False)
     is_superuser = models.BooleanField(default=False)
     zoho_data = models.JSONField(default=dict, blank=True)
     zoho_data_text = models.TextField(default="", blank=True)
