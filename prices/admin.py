@@ -21,8 +21,6 @@ class ElektrikPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
-        "actual_price",
-        "old_price",
     )
     search_fields = ("name",)
     inlines = [PricesInline]
@@ -33,8 +31,6 @@ class ModuleGarantiePreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
-        "actual_price",
-        "old_price",
     )
     search_fields = ("name",)
     inlines = [PricesInline]
@@ -45,8 +41,6 @@ class ModulePreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
-        "actual_price",
-        "old_price",
     )
     search_fields = ("name",)
     inlines = [PricesInline]
@@ -59,8 +53,6 @@ class SolarModulePreisAdmin(admin.ModelAdmin):
         "price",
         "module_garantie",
         "leistungs_garantie",
-        "actual_price",
-        "old_price",
         "in_stock",
     )
     search_fields = ("name",)
@@ -71,8 +63,6 @@ class WallBoxPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
-        "actual_price",
-        "old_price",
         "in_stock",
     )
     search_fields = ("name",)
@@ -83,8 +73,6 @@ class OptionalAccessoriesPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
-        "actual_price",
-        "old_price",
     )
     search_fields = ("name",)
     inlines = [PricesInline]

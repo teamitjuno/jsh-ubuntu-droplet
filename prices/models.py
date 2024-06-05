@@ -4,16 +4,14 @@ from django.db import models
 class ElektrikPreis(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.price}"
 
     @staticmethod
-    def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
+    def add_position(name, price=0.00):
         new_position = ElektrikPreis.objects.create(
-            name=name, price=price, actual_price=actual_price, old_price=old_price
+            name=name, price=price
         )
         new_position.save()
 
@@ -21,16 +19,14 @@ class ElektrikPreis(models.Model):
 class ModuleGarantiePreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.price}"
 
     @staticmethod
-    def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
+    def add_position(name, price=0.00):
         new_position = ModuleGarantiePreise.objects.create(
-            name=name, price=price, actual_price=actual_price, old_price=old_price
+            name=name, price=price
         )
         new_position.save()
 
@@ -38,16 +34,14 @@ class ModuleGarantiePreise(models.Model):
 class ModulePreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.price}"
 
     @staticmethod
-    def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
+    def add_position(name, price=0.00):
         new_position = ModulePreise.objects.create(
-            name=name, price=price, actual_price=actual_price, old_price=old_price
+            name=name, price=price
         )
         new_position.save()
 
@@ -57,8 +51,6 @@ class SolarModulePreise(models.Model):
     module_garantie = models.CharField(max_length=100, blank=True, null=True)
     leistungs_garantie = models.CharField(max_length=100, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField(blank=True, null=True)
     in_stock = models.BooleanField(default=True)
 
@@ -66,9 +58,9 @@ class SolarModulePreise(models.Model):
         return f"{self.price}"
 
     @staticmethod
-    def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
+    def add_position(name, price=0.00):
         new_position = SolarModulePreise.objects.create(
-            name=name, price=price, actual_price=actual_price, old_price=old_price
+            name=name, price=price
         )
         new_position.save()
 
@@ -76,8 +68,6 @@ class SolarModulePreise(models.Model):
 class WallBoxPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
     in_stock = models.BooleanField(default=True, null=True, blank=True)
 
     def __str__(self) -> str:
@@ -85,13 +75,11 @@ class WallBoxPreise(models.Model):
 
     @staticmethod
     def add_position(
-        name, price=0.00, actual_price=0.00, old_price=0.00, in_stock=True
+        name, price=0.00, in_stock=True
     ):
         new_position = WallBoxPreise.objects.create(
             name=name,
             price=price,
-            actual_price=actual_price,
-            old_price=old_price,
             in_stock=in_stock,
         )
         new_position.save()
@@ -100,16 +88,14 @@ class WallBoxPreise(models.Model):
 class OptionalAccessoriesPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.price}"
 
     @staticmethod
-    def add_position(name, price=0.00, actual_price=0.00, old_price=0.00):
+    def add_position(name, price=0.00):
         new_position = OptionalAccessoriesPreise.objects.create(
-            name=name, price=price, actual_price=actual_price, old_price=old_price
+            name=name, price=price
         )
         new_position.save()
 

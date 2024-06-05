@@ -43,31 +43,10 @@ class OptionalAccessoriesPreiseForm(forms.ModelForm):
             attrs={"class": "form-control", "id": "id_optional_accessories_price"}
         ),
     )
-    actual_price = forms.DecimalField(
-        required=False,
-        initial=0.00,
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "id_optional_accessories_actual_price",
-            }
-        ),
-    )
-    old_price = forms.DecimalField(
-        required=False,
-        initial=0.00,
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_optional_accessories_old_price"}
-        ),
-    )
 
     class Meta:
         model = OptionalAccessoriesPreise
-        fields = ["name", "price", "actual_price", "old_price"]
+        fields = ["name", "price"]
 
 
 class SolarModulePreiseForm(forms.ModelForm):
@@ -86,18 +65,6 @@ class SolarModulePreiseForm(forms.ModelForm):
         initial=0,
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "id_price"}),
     )
-    actual_price = forms.IntegerField(
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_actual_price"}
-        ),
-    )
-    old_price = forms.IntegerField(
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "id_old_price"}),
-    )
     quantity = forms.IntegerField(
         required=False,
         initial=0,
@@ -112,7 +79,7 @@ class SolarModulePreiseForm(forms.ModelForm):
 
     class Meta:
         model = SolarModulePreise
-        fields = ["name", "price", "actual_price", "old_price", "in_stock", "quantity"]
+        fields = ["name", "price", "in_stock", "quantity"]
 
 
 class WallBoxPreiseForm(forms.ModelForm):
@@ -131,24 +98,6 @@ class WallBoxPreiseForm(forms.ModelForm):
             attrs={"class": "form-control", "id": "id_wallbox_price"}
         ),
     )
-    actual_price = forms.DecimalField(
-        required=False,
-        initial=0.00,
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_wallbox_actual_price"}
-        ),
-    )
-    old_price = forms.DecimalField(
-        required=False,
-        initial=0.00,
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "id_wallbox_old_price"}
-        ),
-    )
     in_stock = forms.BooleanField(
         required=False,
         initial=True,
@@ -159,4 +108,4 @@ class WallBoxPreiseForm(forms.ModelForm):
 
     class Meta:
         model = WallBoxPreise
-        fields = ["name", "price", "actual_price", "old_price", "in_stock"]
+        fields = ["name", "price", "in_stock"]
