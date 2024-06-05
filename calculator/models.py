@@ -277,7 +277,7 @@ class Calculator(models.Model):
 
     @staticmethod
     def get_values():
-        return {obj.name: obj.value for obj in AndereKonfigurationWerte.objects.all()}
+        return {obj.name: obj.zuschlag for obj in SolarModulePreise.objects.all()}
 
     @staticmethod
     def get_prices():
@@ -344,29 +344,20 @@ class Calculator(models.Model):
     def modulsumme_kWp(self):
         return self.modulleistungWp * self.modulanzahl / 1000
 
-    @property
-    def modulsumme(self):
-        values = self.get_values()
-        module_name = (
-            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
-        )
-        if module_name and (value := values.get(module_name + "_leistung")):
-            return int(value * int(self.modulanzahl)) / 1000
-        else:
-            return 0
 
     @property
     def get_zuschlag(self):
+        # Fetch all the values
         values = self.get_values()
-        module_name = (
-            self.solar_module.lower()
-            if self.solar_module
-            else ("Phono Solar PS420M7GFH-18/VNH").lower()
-        )
 
-        return values.get(
-            module_name, "Phono Solar PS420M7GFH-18/VNH"
-        )  # Add default value
+        # Check if 'self.solar_module' is not None, else assign the default module name
+        module_name = (
+            self.solar_module
+            if self.solar_module
+            else ("Phono Solar PS420M7GFH-18/VNH")
+        )
+        # Return value based on module_name
+        return float(values.get(module_name))
 
     @property
     def nutz_energie(self):
@@ -508,7 +499,10 @@ class Calculator(models.Model):
         def get_price(prefix, kw):
             name = prefix + str(kw)
 
-            return float(ModulePreise.objects.get(name=name).price)
+            #return float(ModulePreise.objects.get(name=name).price)
+            return (float(ModulePreise.objects.get(name=name).price)) * float(
+                self.get_zuschlag
+            )
 
         def get_garantie_price(kw, years):
             name = f"garantie{kw}_{years}"

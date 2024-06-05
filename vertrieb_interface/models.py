@@ -847,7 +847,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @staticmethod
     def get_values():
-        return {obj.name: obj.value for obj in AndereKonfigurationWerte.objects.all()}
+        return {obj.name: obj.zuschlag for obj in SolarModulePreise.objects.all()}
 
     @staticmethod
     def get_prices():
@@ -970,16 +970,6 @@ class VertriebAngebot(TimeStampMixin):
     def modulsumme_kWp(self):
         return self.modulleistungWp * self.modulanzahl / 1000
 
-    @property
-    def modulsumme(self):
-        values = self.get_values()
-        module_name = (
-            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
-        )
-        if module_name and (value := values.get(module_name + "_leistung")):
-            return int(value * int(self.modulanzahl)) / 1000
-        else:
-            return 0
 
     @property
     def get_zuschlag(self):
@@ -987,22 +977,13 @@ class VertriebAngebot(TimeStampMixin):
         values = self.get_values()
 
         # Check if 'self.solar_module' is not None, else assign the default module name
-        module_name = self.solar_module or "Phono Solar PS420M7GFH-18/VNH"
-        module_name = module_name.lower()
-
-        # Return value based on module_name's prefix
-        if module_name.startswith("jinko solar"):
-            return values.get(
-                "jinko_solar", 1.0
-            )  # return 1.06 as default if not found in values
-
-        if module_name.startswith("phono solar"):
-            return values.get(
-                "phono_solar", 1.075
-            )  # return 1.075 as default if not found in values
-
-        # Return a default value if no conditions are met (you can adjust this as per your requirements)
-        return 1.075  # This is arbitrary; modify as needed
+        module_name = (
+            self.solar_module
+            if self.solar_module
+            else ("Phono Solar PS420M7GFH-18/VNH")
+        )
+        # Return value based on module_name
+        return float(values.get(module_name))
 
     @property
     def gesamtkapazitat_rechnung(self):

@@ -177,8 +177,6 @@ AndereKonfigurationWerte.objects.create(name='einfach_schwer_erreichbar', value=
 AndereKonfigurationWerte.objects.create(name='komplex_einfach_erreichbar', value=1.05)
 AndereKonfigurationWerte.objects.create(name='komplex_schwer_erreichbar', value=1.075)
 AndereKonfigurationWerte.objects.create(name='sehr_komplex', value=1.10)
-AndereKonfigurationWerte.objects.create(name='phono_solar', value=1.075)
-AndereKonfigurationWerte.objects.create(name='jinko_solar', value=1.06)
 
 
 from vertrieb_interface.models import Dokument_PDF

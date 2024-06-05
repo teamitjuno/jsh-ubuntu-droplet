@@ -54,6 +54,7 @@ class SolarModulePreisAdmin(admin.ModelAdmin):
         "module_garantie",
         "leistungs_garantie",
         "in_stock",
+        "zuschlag",
     )
     search_fields = ("name",)
 

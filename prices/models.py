@@ -51,6 +51,7 @@ class SolarModulePreise(models.Model):
     module_garantie = models.CharField(max_length=100, blank=True, null=True)
     leistungs_garantie = models.CharField(max_length=100, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    zuschlag = models.DecimalField(max_digits=10, decimal_places=3, default=1.00)
     quantity = models.IntegerField(blank=True, null=True)
     in_stock = models.BooleanField(default=True)
 
