@@ -5,10 +5,6 @@ from .models import Datenblatter
 class DatenblatterAdmin(admin.ModelAdmin):
     list_display = [
         "id",
-        "solar_module_1",
-        "solar_module_2",
-        "solar_module_3",
-        "solar_module_4",
         "speicher_module",
         "speicher_module_viessmann",
         "wall_box",
@@ -22,17 +18,6 @@ class DatenblatterAdmin(admin.ModelAdmin):
     ]
 
     fieldsets = (
-        (
-            "Solar Modules",
-            {
-                "fields": (
-                    "solar_module_1",
-                    "solar_module_2",
-                    "solar_module_3",
-                    "solar_module_4",
-                )
-            },
-        ),
         (
             "Other Components",
             {

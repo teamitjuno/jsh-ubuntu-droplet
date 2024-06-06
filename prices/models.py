@@ -54,6 +54,7 @@ class SolarModulePreise(models.Model):
     zuschlag = models.DecimalField(max_digits=10, decimal_places=3, default=1.00)
     quantity = models.IntegerField(blank=True, null=True)
     in_stock = models.BooleanField(default=True)
+    datenblatt = models.FileField(upload_to="uploads/", blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.price}"

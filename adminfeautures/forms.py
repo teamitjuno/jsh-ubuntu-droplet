@@ -9,7 +9,7 @@ from django.contrib.auth.forms import SetPasswordForm, ReadOnlyPasswordHashField
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        exclude = ["zoho_id", "date_joined", "sim_pin", "imei"]
+        exclude = ["zoho_id", "date_joined"]
 
     email = forms.EmailField(
         label="E-Mail",

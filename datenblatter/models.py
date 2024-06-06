@@ -2,10 +2,6 @@ from django.db import models
 
 
 class Datenblatter(models.Model):
-    solar_module_1 = models.FileField(upload_to="uploads/", blank=True, null=True)
-    solar_module_2 = models.FileField(upload_to="uploads/", blank=True, null=True)
-    solar_module_3 = models.FileField(upload_to="uploads/", blank=True, null=True)
-    solar_module_4 = models.FileField(upload_to="uploads/", blank=True, null=True)
     speicher_module = models.FileField(upload_to="uploads/", blank=True, null=True)
     speicher_module_huawei7 = models.FileField(upload_to="uploads/", blank=True, null=True)
     speicher_module_viessmann = models.FileField(

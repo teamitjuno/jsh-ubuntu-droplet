@@ -16,6 +16,7 @@ from config.settings import EMAIL_BACKEND
 
 # Local imports from 'datenblatter'
 from datenblatter.models import Datenblatter
+from prices.models import SolarModulePreise
 
 # Local imports from 'vertrieb_interface'
 from vertrieb_interface.forms import (
@@ -114,43 +115,10 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            if (
-                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM420N-54HL4-B" or
-                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM430N-54HL4R-B"
-            ):
-                self._attach_datenblatter(
-                    email,
-                    datenblatter,
-                    [
-                        "solar_module_1",
-                    ],
-                )
-            if (
-                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM425N-54HL4-(V)"
-            ):
-                self._attach_datenblatter(
-                    email,
-                    datenblatter,
-                    [
-                        "solar_module_2",
-                    ],
-                )
-            if (
-                vertrieb_angebot.solar_module == "Jinko Solar Tiger Neo N-type JKM-440N-54HL4R-BDB"
-            ):
-                self._attach_datenblatter(
-                    email,
-                    datenblatter,
-                    [
-                        "solar_module_4",
-                    ],
-                )
-            if (
-                vertrieb_angebot.solar_module == "Phono Solar PS420M7GFH-18/VNH"
-                or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VNH"
-                or vertrieb_angebot.solar_module == "Phono Solar PS430M8GFH-18/VSH"
-            ):
-                self._attach_datenblatter(email, datenblatter, ["solar_module_3"])
+            self._attach_datenblatt_module(
+                email,
+                SolarModulePreise.objects.get(name=vertrieb_angebot.solar_module).datenblatt,
+            )
 
         if vertrieb_angebot.datenblatter_optimizer:
             if vertrieb_angebot.hersteller == "Huawei":
@@ -242,6 +210,50 @@ class DocumentView(LoginRequiredMixin, DetailView):
                     f"An unexpected error occurred while processing {field}: {e}"
                 )
                 raise e  # Optionally re-raise to signify critical failure.
+
+    def _attach_datenblatt_module(self, email, solarmodul):
+        """
+        Anhängen von Datenblättern zu einer E-Mail.
+
+        Diese Methode geht durch die angegebenen Felder, liest die entsprechenden Datenblätter,
+        und fügt sie als PDF-Anhänge an die E-Mail an.
+
+        Args:
+            email: Das E-Mail-Objekt, zu dem die Anhänge hinzugefügt werden sollen.
+            solarmodul: Das Datenblatt.
+
+        Raises:
+            AttributeError: Wenn ein angegebenes Feld nicht in datenblatter existiert.
+            IOError: Wenn das Datenblatt nicht geöffnet oder gelesen werden kann.
+            Exception: Allgemeine Ausnahmebehandlung für unerwartete Fehler.
+        """
+        try:
+            datenblatt = solarmodul
+            if not datenblatt:
+                raise AttributeError(
+                    f"{solarmodul} is missing."
+                )
+
+            with datenblatt.open("rb") as file:
+                file_data = file.read()
+
+            email.attach(f"Solarmodule.pdf", file_data, "application/pdf")
+
+        except AttributeError as e:
+            logger.error(f"Failed to process {solarmodul}: {e}")
+            raise e  # Optionally re-raise if you want the error to propagate.
+
+        except IOError as e:
+            logger.error(
+                f"Failed to read or attach {solarmodul}.pdf due to a file error: {e}"
+            )
+            raise e  # Optionally re-raise if the process should not continue on error.
+
+        except Exception as e:
+            logger.error(
+                f"An unexpected error occurred while processing {solarmodul}: {e}"
+            )
+            raise e  # Optionally re-raise to signify critical failure.
 
     def form_invalid(self, form):
         return render(
