@@ -883,11 +883,12 @@ def create_angebot_and_calc_pdf(request, angebot_id):
     data = vertrieb_angebot.data
     certifikate = user.user_certifikate
 
-    pdf_content = angebot_plus_calc_pdf.createOfferPdf(
+    pdf_content = angebot_pdf_creator_user.createOfferPdf(
         data,
         vertrieb_angebot,
         certifikate,
         user,
+        True,
     )
     vertrieb_angebot.angebot_and_calc_pdf = pdf_content
     vertrieb_angebot.save()

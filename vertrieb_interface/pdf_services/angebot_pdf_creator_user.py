@@ -4,6 +4,7 @@ from fpdf import FPDF
 from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
 from vertrieb_interface.models import Editierbarer_Text
+from vertrieb_interface.pdf_services.calc_pdf_creator import calcPage1, calcPage2
 import os
 
 title = ""
@@ -1640,17 +1641,18 @@ def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_").replace(",","")
 
 
-def createOfferPdf(data, vertrieb_angebot, certifikate, user):
+def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     global title, pages
     title1 = f"{vertrieb_angebot.angebot_id}"
+    pages = 7
     if certifikate:
         pages += 1
-
+    if withCalc:
+        pages += 2
     pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
     pdf.set_creator(f"{user.first_name} {user.last_name})")
-
     # create the offer-PDF
     eintrag = 0
     eintrag = pdf.page1(data, eintrag)
@@ -1662,6 +1664,15 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     pdf.lastPage(data, eintrag)
     pdf.page6(certifikate)
     pdf.page5(eintrag)
+
+    if withCalc:
+        user_folder = os.path.join(
+            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
+        )
+        if not os.path.exists(user_folder):
+            os.makedirs(user_folder)
+        pdf = calcPage1(pdf, data)
+        pdf = calcPage2(pdf, data, user_folder, vertrieb_angebot)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
