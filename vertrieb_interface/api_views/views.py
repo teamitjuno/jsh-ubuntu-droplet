@@ -62,7 +62,6 @@ from vertrieb_interface.zoho_api_connector import (
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.pdf_services import (
-    angebot_pdf_creator,
     angebot_pdf_creator_user,
     angebot_plus_calc_pdf,
     calc_pdf_creator,
@@ -858,24 +857,6 @@ def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_").replace(",","")
 
 
-@admin_required
-def create_angebot_pdf(request, angebot_id):
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = vertrieb_angebot.user
-    data = vertrieb_angebot.data
-    name = replace_spaces_with_underscores(vertrieb_angebot.name)
-    if vertrieb_angebot.angebot_pdf_admin is None:
-        pdf_content = angebot_pdf_creator.createOfferPdf(data, vertrieb_angebot, user)
-        vertrieb_angebot.angebot_pdf_admin = pdf_content
-        vertrieb_angebot.save()
-    async_iterator = AsyncBytesIter(vertrieb_angebot.angebot_pdf_admin)
-    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
-    response["Content-Disposition"] = (
-        f"inline; filename={name}_{vertrieb_angebot.angebot_id}.pdf"
-    )
-    return response
-
-
 @login_required
 def create_angebot_pdf_user(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
@@ -921,7 +902,7 @@ def create_calc_pdf(request, angebot_id):
     data = vertrieb_angebot.data
     name = replace_spaces_with_underscores(vertrieb_angebot.name)
 
-    pdf_content = calc_pdf_creator.createCalcPdf2(
+    pdf_content = calc_pdf_creator.createCalcPdf(
         data,
         vertrieb_angebot,
         user,

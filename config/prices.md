@@ -511,7 +511,7 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_huawei7_3', 
-    content="∙ max. Lade-/Entladeleistung: 3,5 kW je Modul\n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 3,5 kW je Modul\n∙ Produktgarantie: 15 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )

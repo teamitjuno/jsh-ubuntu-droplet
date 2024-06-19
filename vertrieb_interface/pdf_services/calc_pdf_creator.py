@@ -9,7 +9,7 @@ from vertrieb_interface.pdf_services.helper_functions import printFloat
 from fpdf import FPDF
 
 title = ""
-pages = "2"
+pages = 2
 
 
 class PDF(FPDF):
@@ -44,7 +44,7 @@ class PDF(FPDF):
     def footer(self):
         pass
 
-    def page1(self, data):
+    def calcPage1(self, data):
         self.add_page()
         self.set_fill_color(240)
         # Adresszeile
@@ -96,7 +96,7 @@ class PDF(FPDF):
         )
         # Ausgangsdaten
         y += 35
-        self.line(18, y + 5, 48, y + 5)
+        self.line(19, y + 5, 48, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(0, 6, "Ausgangsdaten", 0, 0, "L")
@@ -156,7 +156,7 @@ class PDF(FPDF):
         self.cell(0, 5, f"{data['ausrichtung']}", 0, 0, "R")
         # Einspeisevergütung
         y += 10
-        self.line(18, y + 5, 52, y + 5)
+        self.line(19, y + 5, 56, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(0, 6, "Einspeisevergütung", 0, 0, "L")
@@ -172,12 +172,12 @@ class PDF(FPDF):
             0, 5, f"{data['10bis40kWp']} ct/kWh".replace(".", ","), 0, 0, "R", fill=True
         )
 
-    def page2(self, data, user_folder, vertrieb_angebot):
+    def calcPage2(self, data, user_folder, vertrieb_angebot):
         self.add_page()
         self.set_fill_color(240)
         # Kostenkalkulation ohne Photovoltaikanlage anhand der Ausgangsdaten
         y = 35
-        self.line(18, y + 5, 136, y + 5)
+        self.line(19, y + 5, 148, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(
@@ -235,11 +235,11 @@ class PDF(FPDF):
             "R",
             fill=True,
         )
-        self.line(170, y + 35, 200, y + 35)
-        self.line(170, y + 36, 200, y + 36)
+        self.line(177, y + 35, 195, y + 35)
+        self.line(177, y + 36, 195, y + 36)
         # Kostenkalkulation mit Photovoltaikanlage anhand der Ausgangsdaten
         y += 40
-        self.line(18, y + 5, 135, y + 5)
+        self.line(19, y + 5, 145, y + 5)
         self.set_y(y)
         self.set_font("JUNO Solar Lt", "B", 13)
         self.cell(
@@ -357,8 +357,8 @@ class PDF(FPDF):
         self.cell(
             0, 5, f"{printFloat(data['ersparnis'])} €".replace(".", ","), 0, 0, "R"
         )
-        self.line(170, y + 35, 200, y + 35)
-        self.line(170, y + 36, 200, y + 36)
+        self.line(177, y + 35, 195, y + 35)
+        self.line(177, y + 36, 195, y + 36)
         # Grafik der Amortisationszeit
         X = list(range(data["zeitraum"]))
         y1 = data["arbeitsListe"]
@@ -390,38 +390,7 @@ class PDF(FPDF):
 
 def createCalcPdf(data, vertrieb_angebot, user):
     global title, pages
-    title = f"Kalkulation-{data['kunde']}"
-
-    pdf = PDF()
-    pdf.set_title(title)
-    pdf.set_author("JUNO Solar Home GmbH")
-
-    user_folder = os.path.join(
-        settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-    )
-    if not os.path.exists(user_folder):
-        os.makedirs(user_folder)
-    # create the calc-PDF
-    pdf.page1(data)
-    pdf.page2(data, user_folder, vertrieb_angebot)
-
-    output_file = os.path.join(
-        user_folder, f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf"
-    )
-
-    # create the directory if needed
-    if not os.path.exists(user_folder):
-        os.makedirs(user_folder)
-        outputPath = os.path.join(
-            user_folder, f"Kalkulation_{vertrieb_angebot.angebot_id}.pdf"
-        )
-    pdf.output(output_file, "F")
-
-
-def createCalcPdf2(data, vertrieb_angebot, user):
-    global title, pages
     title = f"{vertrieb_angebot.angebot_id}"
-    pages = "5"
     pdf = PDF()
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
@@ -431,8 +400,8 @@ def createCalcPdf2(data, vertrieb_angebot, user):
     if not os.path.exists(user_folder):
         os.makedirs(user_folder)
     # create the offer-PDF
-    pdf.page1(data)
-    pdf.page2(data, user_folder, vertrieb_angebot)
+    pdf.calcPage1(data)
+    pdf.calcPage2(data, user_folder, vertrieb_angebot)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

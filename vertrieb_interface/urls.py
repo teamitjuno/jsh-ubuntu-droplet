@@ -85,11 +85,6 @@ vertrieb_patterns = [
         name="update_admin_angebot",
     ),
     path(
-        "vertrieb/create_angebot_pdf/<str:angebot_id>",
-        views.create_angebot_pdf,
-        name="create_angebot_pdf",
-    ),
-    path(
         "vertrieb/create_angebot_pdf_user/<str:angebot_id>",
         views.create_angebot_pdf_user,
         name="create_angebot_pdf_user",

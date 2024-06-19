@@ -7,7 +7,7 @@ from vertrieb_interface.models import Editierbarer_Text
 import os
 
 title = ""
-pages = "6"
+pages = 7
 
 
 class PDF(FPDF):
@@ -1622,7 +1622,7 @@ class PDF(FPDF):
         # Set the font size
         self.set_font_size(font_size)
 
-    def page6(self, certifikate, eintrag):
+    def page6(self, certifikate):
         self.is_last_page = True
         if certifikate:
             self.add_page()
@@ -1643,8 +1643,9 @@ def replace_spaces_with_underscores(s: str) -> str:
 def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     global title, pages
     title1 = f"{vertrieb_angebot.angebot_id}"
+    if certifikate:
+        pages += 1
 
-    pages = "7"
     pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
@@ -1659,7 +1660,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user):
     # eintrag = pdf.page4_durchgestrichen(data, eintrag)
 
     pdf.lastPage(data, eintrag)
-    pdf.page6(certifikate, eintrag)
+    pdf.page6(certifikate)
     pdf.page5(eintrag)
 
     # Generate the PDF and return it
