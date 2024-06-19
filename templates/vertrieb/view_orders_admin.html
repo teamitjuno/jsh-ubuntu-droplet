@@ -203,21 +203,34 @@
 
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">AN erstellen</a>
                                                             {% endif %}                 
                                                         </td>
-                                                        <td> 
+                                                        <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:serve_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">AN ansehen</a>
+                                                            {% endif %}                 
+                                                        </td>
+                                                        <td>
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Kalkulation erstellen</a>
                                                             {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">erstellen</a>
+                                                            <a href="{% url 'vertrieb_interface:serve_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Kalkulation ansehen</a>
                                                             {% endif %}
                                                         </td>
-                                                        
-
+                                                        <td> 
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Ticket erstellen</a>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td> 
+                                                            {% if vertrieb_angebot.angebot_id_assigned %}
+                                                            <a href="{% url 'vertrieb_interface:serve_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Ticket ansehen</a>
+                                                            {% endif %}
+                                                        </td>
                                                     </tr>
                                                 
                                                 {% endfor %}

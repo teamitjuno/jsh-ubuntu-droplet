@@ -7,5 +7,10 @@
     <a href="{% url 'vertrieb_interface:create_calc_pdf' original.angebot_id %}" class="btn btn-primary submit-btn">PDF Kalkulation erstellen</a>
     <a href="{% url 'vertrieb_interface:create_ticket_pdf' original.angebot_id %}" class="btn btn-primary submit-btn">PDF Ticket erstellen</a>
 </div>
+<div class="submit-row">
+    <a href="{% url 'vertrieb_interface:serve_pdf' original.angebot_id %}" class="btn btn-primary submit-btn">PDF Angebot ansehen</a>
+    <a href="{% url 'vertrieb_interface:serve_calc_pdf' original.angebot_id %}" class="btn btn-primary submit-btn">PDF Kalkulation ansehen</a>
+    <a href="{% url 'vertrieb_interface:serve_ticket_pdf' original.angebot_id %}" class="btn btn-primary submit-btn">PDF Ticket ansehen</a>
+</div>
 {{ block.super }}
 {% endblock %}
