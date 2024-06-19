@@ -129,11 +129,6 @@ vertrieb_patterns = [
         "serve_calc_pdf/<str:angebot_id>/", views.serve_calc_pdf, name="serve_calc_pdf"
     ),
     path(
-        "serve_angebot_and_calc_pdf/<str:angebot_id>/",
-        views.serve_angebot_and_calc_pdf,
-        name="serve_angebot_and_calc_pdf",
-    ),
-    path(
         "serve_ticket_pdf/<str:angebot_id>/",
         views.serve_ticket_pdf,
         name="serve_ticket_pdf",

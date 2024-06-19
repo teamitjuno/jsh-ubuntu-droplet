@@ -63,7 +63,6 @@ from vertrieb_interface.zoho_api_connector import (
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator_user,
-    angebot_plus_calc_pdf,
     calc_pdf_creator,
     ticket_pdf_creator,
 )
@@ -890,10 +889,10 @@ def create_angebot_and_calc_pdf(request, angebot_id):
         user,
         True,
     )
-    vertrieb_angebot.angebot_and_calc_pdf = pdf_content
+    vertrieb_angebot.angebot_pdf = pdf_content
     vertrieb_angebot.save()
 
-    return redirect("vertrieb_interface:document_and_calc_view", angebot_id=angebot_id)
+    return redirect("vertrieb_interface:document_view", angebot_id=angebot_id)
 
 
 @login_required
@@ -952,25 +951,6 @@ def serve_pdf(request, angebot_id):
         return StreamingHttpResponse("File not found.", status=404)
 
     async_iterator = AsyncFileIter(vertrieb_angebot.angebot_pdf)
-
-    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
-    response["Content-Disposition"] = f"inline; filename={filename}"
-
-    return response
-
-
-@login_required
-def serve_angebot_and_calc_pdf(request, angebot_id):
-    decoded_angebot_id = unquote(angebot_id)
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-    name = replace_spaces_with_underscores(vertrieb_angebot.name)
-    filename = f"{name}_{vertrieb_angebot.angebot_id}.pdf"
-    sleep(0.5)
-
-    if not vertrieb_angebot.angebot_and_calc_pdf:
-        return StreamingHttpResponse("File not found.", status=404)
-
-    async_iterator = AsyncFileIter(vertrieb_angebot.angebot_and_calc_pdf)
 
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
@@ -1226,11 +1206,6 @@ def get_angebots_and_urls(user_angebots):
     for angebot in user_angebots:
         if angebot.angebot_pdf:
             url = reverse("vertrieb_interface:serve_pdf", args=[angebot.angebot_id])
-        elif angebot.angebot_and_calc_pdf:
-            url = reverse(
-                "vertrieb_interface:serve_angebot_and_calc_pdf",
-                args=[angebot.angebot_id],
-            )
         else:
             continue
         name_with_underscores = replace_spaces_with_underscores(angebot.name)

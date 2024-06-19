@@ -49,7 +49,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "eddi_angebot_price",
         "optimizer_angebot_price",
         "angebotsumme",
-        "angebot_and_calc_pdf",
         "angebot_pdf",
     )
     change_form_template = "admin/vertrieb_interface/VertriebAngebot/change_form.html"
@@ -65,7 +64,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "angebot_id_assigned",
                     "termine_text",
                     "termine_id",
-                    "angebot_and_calc_pdf",
                     "angebot_pdf",
                 ),
                 "classes": ("collapse",),

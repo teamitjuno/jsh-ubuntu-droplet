@@ -473,8 +473,6 @@ class VertriebAngebot(TimeStampMixin):
     datenblatter_thor = models.BooleanField(default=False)
     profile_foto = models.BinaryField(blank=True, null=True)
     angebot_pdf = models.BinaryField(blank=True, null=True)
-    angebot_pdf_admin = models.BinaryField(blank=True, null=True)
-    angebot_and_calc_pdf = models.BinaryField(blank=True, null=True)
     calc_pdf = models.BinaryField(blank=True, null=True)
     calc_graph_img = models.ImageField(null=True, blank=True)
     ticket_pdf = models.BinaryField(blank=True, null=True)

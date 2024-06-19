@@ -53,7 +53,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
         vertrieb_angebot = self.get_object()
         angebot_id = self.kwargs.get("angebot_id")
         pdf_url = reverse(
-            "vertrieb_interface:serve_angebot_and_calc_pdf", args=[angebot_id]
+            "vertrieb_interface:serve_pdf", args=[angebot_id]
         )
         context["pdf_url"] = pdf_url
         context["angebot_id"] = angebot_id
@@ -114,7 +114,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             return False
 
     def _attach_files(self, email, vertrieb_angebot, datenblatter):
-        file_data = vertrieb_angebot.angebot_and_calc_pdf.tobytes()
+        file_data = vertrieb_angebot.angebot_pdf.tobytes()
         name = replace_spaces_with_underscores(vertrieb_angebot.name)
         email.attach(
             f"{name}_{vertrieb_angebot.angebot_id}.pdf", file_data, "application/pdf"
