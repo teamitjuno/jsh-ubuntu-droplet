@@ -1670,6 +1670,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
         )
         if not os.path.exists(user_folder):
             os.makedirs(user_folder)
+        pdf.is_last_page = False
         pdf = calcPage1(pdf, data)
         pdf = calcPage2(pdf, data, user_folder, vertrieb_angebot)
 
