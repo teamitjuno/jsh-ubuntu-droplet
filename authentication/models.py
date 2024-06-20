@@ -104,7 +104,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     is_superuser = models.BooleanField(default=False)
     zoho_data = models.JSONField(default=dict, blank=True)
     zoho_data_text = models.TextField(default="", blank=True)
-    records_fetch_limit = models.PositiveIntegerField(default=30)
+    records_fetch_limit = models.PositiveIntegerField(default=100)
     sonstiges = models.TextField(blank=True, null=True)
     role = models.ForeignKey(
         Role,

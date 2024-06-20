@@ -18,8 +18,6 @@ from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
 from prices.models import SolarModulePreise, WallBoxPreise
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
-    fetch_form_user_angebote_limit,
-    fetch_user_form_angebote_all,
     update_status,
 )
 
@@ -1316,10 +1314,10 @@ class VertriebAngebotForm(ModelForm):
             # user_data = load_json_data(user.zoho_data_text)
 
             # if user_data == [] or user_data == "" or user_data == None:
-            #     all_user_angebots_list = fetch_form_user_angebote_all(request)
+            #     all_user_angebots_list = fetch_user_angebote_all(request)
             #     user.zoho_data_text = json.dumps(all_user_angebots_list)
             # else:
-            #     all_user_angebots_list = fetch_form_user_angebote_limit(request, user.records_fetch_limit)
+            #     all_user_angebots_list = fetch_user_angebote_limit(request, user.records_fetch_limit)
             #     updated_data = update_list(user_data, all_user_angebots_list)
             #     user.zoho_data_text = json.dumps(updated_data)
 

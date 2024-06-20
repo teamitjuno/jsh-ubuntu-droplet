@@ -115,34 +115,6 @@ def fetch_user_angebote_all(request):
     return all_user_angebots_list
 
 
-def fetch_user_form_angebote_all(user):
-
-    start_index = 1
-    all_user_angebots_list = []
-
-    while True:
-        params = {
-            "from": start_index,
-            "limit": LIMIT_ALL,
-            "criteria": f"Vertriebler.ID == {user.zoho_id}",
-        }
-
-        data = fetch_data_from_api(VERTRIEB_URL, params)
-
-        if data is None or not data.get("data"):
-
-            break
-        else:
-
-            all_user_angebots_list.extend(process_all_user_data(data))
-
-            start_index += LIMIT_ALL
-            if len(data.get("data")) < LIMIT_ALL:
-                break
-
-    return all_user_angebots_list
-
-
 def fetch_user_angebote_limit(request, records_fetch_limit):
     user = request.user
     params = {
@@ -162,21 +134,6 @@ def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     timelaps = f"{message} - {timestamp}"
     send_message_to_bot(f"{timelaps}")
-
-
-def fetch_form_user_angebote_limit(user):
-
-    params = {
-        "limit": user.records_fetch_limit,
-        "criteria": f"Vertriebler.ID == {user.zoho_id}",
-    }
-
-    data = fetch_data_from_api(VERTRIEB_URL, params)
-
-    if data is None or not data.get("data"):
-        return []
-    else:
-        return process_all_user_data(data)
 
 
 def process_all_user_data(data):

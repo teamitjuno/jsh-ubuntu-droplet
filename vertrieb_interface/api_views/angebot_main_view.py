@@ -22,8 +22,8 @@ from vertrieb_interface.forms import (
 from vertrieb_interface.zoho_api_connector import (
     pushAngebot,
     put_form_data_to_zoho_jpp,
-    fetch_form_user_angebote_limit,
-    fetch_user_form_angebote_all,
+    fetch_user_angebote_limit,
+    fetch_user_angebote_all,
 )
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.telegram_logs_sender import (
@@ -96,16 +96,16 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         try:
             user_data = load_json_data(user.zoho_data_text)
             if user_data == [] or user_data == "" or user_data == None:
-                all_user_angebots_list = fetch_user_form_angebote_all(user)
+                all_user_angebots_list = fetch_user_angebote_all(self.request)
                 user.zoho_data_text = json.dumps(all_user_angebots_list)
                 user.save()
             else:
-                all_user_angebots_list = fetch_form_user_angebote_limit(user)
+                all_user_angebots_list = fetch_user_angebote_limit(self.request, self.request.user.records_fetch_limit)
                 updated_data = update_list(user_data, all_user_angebots_list)
                 user.zoho_data_text = json.dumps(updated_data)
                 user.save()
         except:
-            all_user_angebots_list = fetch_user_form_angebote_all(user)
+            all_user_angebots_list = fetch_user_angebote_all(self.request)
             user.zoho_data_text = json.dumps(all_user_angebots_list)
             user.save()
 
