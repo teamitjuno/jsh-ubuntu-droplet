@@ -2,41 +2,172 @@ from config import settings
 from math import ceil
 from datetime import datetime, date
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
+from vertrieb_interface.models import Editierbarer_Text
 from fpdf import FPDF
 import os
 
 
 title = ""
-pages = "2"
+pages = 4
 
 
 class PDF(FPDF):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title1, *args, **kwargs):
+        """
+        Initialisiert das PDF-Objekt mit spezifischen Margen und Linienbreiten.
+        """
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
+        self.title1 = title1
+        self.set_left_margin(18.875)
+        self.set_right_margin(12.875)
+        self.set_line_width(0.5)
+
+
+    def get_attribute_by_identifier(self, identifier, attribute):
+        """
+        Ruft ein Attribut eines editierbaren Textes ab, wobei Standardwerte zurückgegeben werden, falls nicht vorhanden.
+        """
+        try:
+            text_instance = Editierbarer_Text.objects.get(identifier=identifier)
+            return getattr(text_instance, attribute)
+        except Editierbarer_Text.DoesNotExist:
+            defaults = {
+                "content": "Kein Text gefunden",
+                "font": "JUNO Solar Lt",
+                "font_size": 11,
+                "x": 0,
+                "y": 0,
+            }
+            return defaults.get(attribute, None)
+
+    def fetch_x(self, identifier):
+        x = self.get_attribute_by_identifier(identifier, "x")
+        if x == 0:
+            return self.l_margin
+        return x
+
+    def fetch_y(self, identifier):
+        y = self.get_attribute_by_identifier(identifier, "y")
+        if y == 0:
+            y = self.get_y()
+            return y
+        return y
+
+
+    def setup_text(self, identifier, content, h=5, bold=False, alignment="L"):
+        """
+        Richtet Text basierend auf einem Identifikator mit gegebenen Attributen im PDF aus.
+        """
+        font = self.get_attribute_by_identifier(identifier, "font")
+        font_size = self.get_attribute_by_identifier(identifier, "font_size")
+        self.set_font(font, "B" if bold else "", font_size)
+        self.set_xy(self.fetch_x(identifier), self.fetch_y(identifier))
+        self.multi_cell(0, h, content, 0, alignment)
+
+    def setup_eintrag_text(
+        self,
+        identifier,
+        eintrag_nummer,
+        content_1,
+        content_2="nach Auslegung",
+        content_2_sub_1=None,
+        content_2_sub_2=None,
+        content_3="inklusive",
+        content_4=None,
+        additional_content=None,
+        additional_content_2=None,
+        h=5,
+        bold=False,
+        alignment="L",
+    ):
+        """
+        Richtet mehrere Texteinheiten in einer Reihe basierend auf einem Identifikator aus.
+        """
+        font = self.get_attribute_by_identifier(identifier, "font")
+        font_size = 11
+        self.set_font(font, "B" if bold else "", font_size)
+
+        x_initial = self.l_margin
+        y = self.fetch_y(identifier) + 4
+
+        content_settings = [
+            (eintrag_nummer, x_initial, "L"),
+            (content_1, 25, "L"),
+            (content_2, 150, "L"),
+            (content_3, 170, "R"),
+        ]
+
+        for content, x, align in content_settings:
+            self.set_xy(x, y)
+            self.cell(0, 6, content, 0, 0, align)
+
+        tmp_y = y
+        sub_contents = [(content_2_sub_1, None), (content_2_sub_2, None)]
+        for content, _ in sub_contents:
+            if content:
+                y += 5
+                x = 150
+                self.set_xy(x, y)
+                self.cell(0, 6, content, 0, 0, "L")
+
+        y = tmp_y
+        additional_contents = [(additional_content, None), (additional_content_2, None)]
+        for content, _ in additional_contents:
+            if content:
+                y += 5
+                x = (
+                    self.fetch_x(identifier)
+                    if self.get_attribute_by_identifier(identifier, "x") != 0
+                    else 25
+                )
+                self.set_xy(x, y)
+                self.cell(0, 6, content, 0, 0, "L")
+
+        if content_4:
+            font_size = self.get_attribute_by_identifier(identifier, "font_size")
+            self.set_font(font, "B" if bold else "", font_size)
+            y += 6
+            x = (
+                self.fetch_x(identifier)
+                if self.get_attribute_by_identifier(identifier, "x") != 0
+                else 25
+            )
+            self.set_xy(x, y)
+            self.multi_cell(0, h, content_4, 0, alignment)
+
+        if not content_4:
+            y += 6
+            self.set_y(y)
 
     def header(self):
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
-        self.add_font("JUNO Solar Lt", "", font_path, uni=True)
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
-        self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
+        """
+        Stellt das Kopfzeilen-Layout für jede Seite des PDFs bereit.
+        """
+        if "JUNO Solar Lt" not in self.fonts:
+            regular_font_path = os.path.join(
+                settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf"
+            )
+            bold_font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
+            self.add_font("JUNO Solar Lt", "", regular_font_path, uni=True)
+            self.add_font("JUNO Solar Lt", "B", bold_font_path, uni=True)
 
-        # Position at 1.5 cm from bottom
-        self.set_y(15)
-        self.set_font("JUNO Solar Lt", "", 12)
+        self.set_y(0)
+        self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(0)
-        # Page number
-        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
-        self.set_x(40)
-        self.image(
-            os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg"),
-            x=170,
-            y=10,
-            w=30,
-            h=15,
-        )
-        # Line break
-        self.ln(15)
+        header_text = f"Seite {self.page_no()}/{pages}       {self.title1}"
+        self.cell(0, 10, header_text, 0, 0, "")
+
+        if not self.is_last_page:
+            self.set_y(15)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_x(40)
+            if self.page_no() != 1:
+                self.cell(0, 10, title, 0, 0, "")
+
+            logo_path = os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg")
+            self.image(logo_path, x=167, y=10, w=30, h=15)
+            self.ln(15)
 
     def footer(self):
         if not self.is_last_page:
@@ -59,37 +190,46 @@ class PDF(FPDF):
 
     def page1(self, data):
         self.add_page()
-        self.set_fill_color(240)
-        # Adresszeile
-        self.set_font("JUNO Solar Lt", "", 8)
+
+        # adresszeile_1
+        adresszeile_1_content = self.get_attribute_by_identifier(
+            "adresszeile_1", "content"
+        )
         self.set_text_color(128)
-        self.cell(
-            0,
-            10,
-            "JUNO SOLAR Home GmbH & Co. KG ∙ Ziegelstraße 1a ∙ D-08412 Werdau",
-            0,
-            0,
-            "",
-        )
+        self.setup_text("adresszeile_1", adresszeile_1_content)
+
+        # #############################
         self.ln(15)
-        self.set_font("JUNO Solar Lt", "", 11)
         self.set_text_color(0)
-        self.multi_cell(0, 5, f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
-        # self.line(10,65,80,65) #unter Adresse
-        self.set_x(130)
-        self.set_y(33)
-        self.multi_cell(
-            0,
-            5,
-            "JUNO SOLAR Home GmbH & Co. KG\nZiegelstraße 1a\nD-08412 Werdau",
-            0,
-            "R",
+        # #############################
+
+        # kundendatei_variable
+        kundendatei_variable_content = (
+            f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}'
         )
-        self.set_x(130)
-        self.set_y(53)
-        self.multi_cell(0, 5, f'{data["vertriebler"]}\n\nwww.juno-solar.com', 0, "R")
+        self.setup_text("kundendatei_variable", kundendatei_variable_content)
+
+        # adresszeile_2
+        adresszeile_2_content = self.get_attribute_by_identifier(
+            "adresszeile_2", "content"
+        )
+        self.setup_text(
+            "adresszeile_2", adresszeile_2_content, bold=True, alignment="R"
+        )
+
+        # adresszeile_3
+        adresszeile_3_content = self.get_attribute_by_identifier(
+            "adresszeile_3", "content"
+        )
+        self.setup_text("adresszeile_3", adresszeile_3_content, alignment="R")
+
+        # vertriebdatei_variable
+        vertriebdatei_variable_content = f'{data["vertriebler"]}\nDatum: {date.today().strftime("%d.%m.%Y")}\nwww.juno-solar.com'
+        self.setup_text(
+            "vertriebdatei_variable", vertriebdatei_variable_content, alignment="R"
+        )
         # Überschrift und Text
-        y = 105
+        y = 100
         self.set_font("JUNO Solar Lt", "B", 17)
         self.set_x(0)
         self.set_y(y)
@@ -108,52 +248,83 @@ class PDF(FPDF):
             "",
         )
         # Tabelle Beginn
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.set_x(0)
-        self.set_y(135)
-        self.cell(0, 6, "Pos.", 0, 0, "L")
-        self.set_x(25)
-        self.cell(0, 6, "Bezeichnung", 0, 0, "L")
-        self.set_x(150)
-        self.cell(0, 6, "Menge", 0, 0, "L")
-        self.set_x(170)
-        self.cell(0, 6, "Gesamtpreis", 0, 0, "R")
-        self.line(10, 141, 200, 141)
+        # self.set_font("JUNO Solar Lt", "B", 12)
+        # self.set_x(0)
+        # self.set_y(135)
+        # self.cell(0, 6, "Pos.", 0, 0, "L")
+        # self.set_x(25)
+        # self.cell(0, 6, "Bezeichnung", 0, 0, "L")
+        # self.set_x(150)
+        # self.cell(0, 6, "Menge", 0, 0, "L")
+        # self.set_x(170)
+        # self.cell(0, 6, "Gesamtpreis", 0, 0, "R")
+        # self.line(10, 141, 200, 141)
+
+        # tabelle_beginn_1
+        tabelle_beginn_1 = self.get_attribute_by_identifier(
+            "tabelle_beginn_1", "content"
+        )
+        self.setup_text(
+            "tabelle_beginn_1", tabelle_beginn_1, h=6, bold=True, alignment="L"
+        )
+
+        # tabelle_beginn_2
+        tabelle_beginn_2 = self.get_attribute_by_identifier(
+            "tabelle_beginn_2", "content"
+        )
+        self.setup_text(
+            "tabelle_beginn_2", tabelle_beginn_2, h=6, bold=True, alignment="L"
+        )
+
+        # tabelle_beginn_3
+        tabelle_beginn_3 = self.get_attribute_by_identifier(
+            "tabelle_beginn_3", "content"
+        )
+        self.setup_text(
+            "tabelle_beginn_3", tabelle_beginn_3, h=6, bold=True, alignment="L"
+        )
+
+        # tabelle_beginn_4
+        tabelle_beginn_4 = self.get_attribute_by_identifier(
+            "tabelle_beginn_4", "content"
+        )
+        self.setup_text(
+            "tabelle_beginn_4", tabelle_beginn_4, h=6, bold=True, alignment="R"
+        )
+
+        # #############################
+        # line_1_page_1
+        self.line(self.l_margin, self.get_y() + 0.5, 196.5, self.get_y() + 0.5)
+        # #############################
+        # Bestandteile Photovoltaikanlage
+        tabelle_beginn_5 = self.get_attribute_by_identifier(
+            "tabelle_beginn_5", "content"
+        )
+        self.setup_text(
+            "tabelle_beginn_5", tabelle_beginn_5, h=6, bold=True, alignment="L"
+        )
+        tabelle_beginn_6 = self.get_attribute_by_identifier(
+            "tabelle_beginn_6", "content"
+        )
+        self.setup_text("tabelle_beginn_6", tabelle_beginn_6, h=2, alignment="L")
         eintrag = 0
         y = 145
-
-        # Tabelle Eintrag 1
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(y)
+        # Tabelle Eintrag 1 NEU
         eintrag += 1
-        self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-        self.set_x(25)
-        self.cell(0, 5, data["module"], 0, 0, "L")
-        self.set_y(y + 5)
-        self.set_x(25)
-        self.set_font("JUNO Solar Lt", "", 10)
-        self.multi_cell(
-            0,
-            5,
-            f'∙ Leistung pro Modul: {data["wpModule"]} Wp\n∙ Produktgarantie: {data["produktGarantie"]}\n∙ Leistungsgarantie: {data["leistungsGarantie"]}',
-            0,
-            "L",
-        )
-        self.set_y(y)
-        self.set_x(150)
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.cell(0, 6, f'{str(data["modulTicket"])} Stk', 0, 0, "L")
-        self.set_x(170)
-        self.cell(
-            0,
-            6,
-            convertCurrency("{:,.2f} €".format(data["modulTicketpreis"])),
-            0,
-            0,
-            "R",
+        tab1_eintrag_nummer = str(eintrag) + "."
+        tab1_module = data["modulTicketArt"]
+        tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModuleTicket"])} Wp\n∙ Produktgarantie: {str(data["produktGarantieTicket"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantieTicket"])}'
+        tab1_module_anzahl = f'{str(data["modulTicket"])} Stk'
+        self.setup_eintrag_text(
+            "tabelle_eintrag_1",
+            tab1_eintrag_nummer,
+            content_1=tab1_module,
+            content_2=tab1_module_anzahl,
+            content_3=convertCurrency("{:,.2f} €".format(data["modulTicketpreis"])),
+            content_4=tab1_module_props,
         )
 
-        y += 21
+        y += 36
         # Tabelle Eintrag Optimierer
         if data["hersteller"] == "Huawei":
             if data["optimizerTicket"] > 0:
@@ -239,35 +410,6 @@ class PDF(FPDF):
                     "R",
                 )
                 y += 27
-            # if
-            #     self.set_y(y + 5)
-            #     self.set_font("JUNO Solar Lt", "B", 12)
-            #     self.cell(0, 6, "Ladestation für E-Fahrzeug (Wallbox)", 0, 0, "L")
-            #     self.set_y(y + 10)
-            #     self.set_font("JUNO Solar Lt", "", 11)
-            #     self.multi_cell(0, 6, "Mit einer Wallbox können Sie die Energie Ihrer Photovoltaikanlage zum Laden Ihres Elektrofahrzeugs nutzen. Eine intelligente Steuerung (opt. Zubehör) kann den Ladestrom kontinuierlich der aktuellen Energieerzeugung anpassen.", 0, 0, "L")  # type: ignore
-            #     # Tabelle Eintrag 2X
-            #     self.set_font("JUNO Solar Lt", "", 11)
-            #     self.set_y(y + 25)
-            #     eintrag += 1
-            #     self.cell(0, 6, str(eintrag) + ".", 0, 0, "L")
-            #     self.set_x(25)
-            #     self.cell(0, 6, "Huawei Fusion Charge AC", 0, 0, "L")
-            #     self.set_y(y + 30)
-            #     self.set_x(25)
-            #     self.set_font("JUNO Solar Lt", "", 10)
-            #     self.multi_cell(0, 6, "∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre", 0, 0, "L")
-            #     self.set_y(y + 25)
-            #     self.set_x(25)
-            #     # self.set_font('JUNO Solar Lt', '', 10)
-            #     self.multi_cell(0, 5, data["wallboxText"], 0, "L")
-            #     self.set_y(y + 25)
-            #     self.set_x(150)
-            #     self.set_font("JUNO Solar Lt", "", 11)
-            #     self.multi_cell(0, 5, str(data["wallboxAnz"]), 0, "L")
-            #     self.set_y(y + 25)
-            #     self.set_x(170)
-            #     self.cell(0, 6, "inklusive", 0, 0, "R")
 
             # Wand halterung
             if data["wandhalterungTicket"] > 0:
@@ -611,7 +753,7 @@ class PDF(FPDF):
         self.multi_cell(
             0,
             6,
-            "Leistung bisher \nLeistungsgewinn \nGesamtleistung\n \nNetto\nMwSt. "
+            "Anlagengröße\n \nNetto\nMwSt. "
             + str(int(round(steuer * 100, 0)))
             + "%\nBrutto",
             0,
@@ -620,64 +762,72 @@ class PDF(FPDF):
         )
         self.set_y(45)
         sum = float(data["ticketPreis"])
-        brutto = convertCurrency("{:,.2f} €".format(sum))
+        netto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
-        netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
+        brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
         self.multi_cell(
             0,
             6,
-            f'{str(data["kWp"])} kWp \n{str(data["gewinnTicket"])} kwp \n{str(round(data["kWp"] + data["gewinnTicket"],2))} kWp \n \n{brutto}\n{mwst}',
+            f'{str(data["kWp"])} kWp + {str(data["gewinnTicket"])} kwp = {str(round(data["kWp"] + data["gewinnTicket"],2))} kWp \n \n{netto}\n{mwst}',
             0,
             "R",
         )
-        self.set_y(80)
+        self.set_y(70)
         self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, netto, 0, 0, "R")
-        self.line(175, 80, 200, 80)
+        self.cell(0, 6, brutto, 0, 0, "R")
+        self.line(175, 70, 197, 70)
         # Verbindlichkeiten
-        self.set_y(90)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Verbindlichkeiten", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(95)
-        self.cell(0, 6, "Das vorliegende Angebot ist gültig bis zum:", 0, 0, "L")
-        self.set_x(115)
+        verbindlichkeiten_1 = self.get_attribute_by_identifier(
+            "verbindlichkeiten_1", "content"
+        )
+        self.setup_text(
+            "verbindlichkeiten_1", verbindlichkeiten_1, bold=True, alignment="L"
+        )
+        verbindlichkeiten_2 = self.get_attribute_by_identifier(
+            "verbindlichkeiten_2", "content"
+        )
+        self.setup_text("verbindlichkeiten_2", verbindlichkeiten_2, alignment="L")
+        y = self.get_y()
+        self.set_xy(105, y - 5)
         self.cell(0, 6, data["gueltig"], 0, 0, "L")
+        self.set_y(y + 5)
+
         # Vollmacht
-        self.set_y(105)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Vollmacht", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(110)
-        self.multi_cell(0, 6, "Zur Realisierung des Projektes, zur Anmeldung der Photovoltaik-Anlage beim Netzbetreiber, zur Registrierung der Photovoltaik-Anlage bei der Bundesnetzagentur, etc. erteilt der Auftraggeber dem Auftragnehmer eine Vollmacht gem. Anlage.", 0, 0, "L")  # type: ignore
+        vollmacht_1 = self.get_attribute_by_identifier("vollmacht_1", "content")
+        self.setup_text("vollmacht_1", vollmacht_1, bold=True, alignment="L")
+        vollmacht_2 = self.get_attribute_by_identifier("vollmacht_2", "content")
+        self.setup_text("vollmacht_2", vollmacht_2, alignment="L")
+        y = self.get_y()
+        self.set_y(y + 5)
         # Garantiebediungen
-        self.set_y(125)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Garantiebedingungen", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(130)
-        self.multi_cell(0, 6, "Die Garantie der Hardware richtet sich nach den gültigen Garantiebedingungen des jeweiligen Herstellers.", 0, 0, "L")  # type: ignore
+        garantiebedingungen_1 = self.get_attribute_by_identifier(
+            "garantiebedingungen_1", "content"
+        )
+        self.setup_text(
+            "garantiebedingungen_1", garantiebedingungen_1, bold=True, alignment="L"
+        )
+        garantiebedingungen_2 = self.get_attribute_by_identifier(
+            "garantiebedingungen_2", "content"
+        )
+        self.setup_text("garantiebedingungen_2", garantiebedingungen_2, alignment="L")
+        y = self.get_y()
+        self.set_y(y + 5)
         # Auftragserteilung
-        self.set_y(140)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Auftragserteilung", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(145)
-        self.multi_cell(0, 6, "Die oben stehenden Angebotsdetails werden akzeptiert und der Auftrag nach Prüfung der technischen Machbarkeit erteilt. Bis zur vollständigen Zahlung verbleibt das Eigentum an der Photovoltaik-Anlage beim Auftragnehmer. Der Auftraggeber tritt bis dahin die Ansprüche aus der Einspeisevergütung an den Auftragnehmer ab. Des Weiteren gestattet der Auftragnehmer bis zur vollständigen Zahlung dem Auftraggeber, die Photovoltaik-Anlage kostenfrei auf den Dachflächen zu belassen und zu betreiben.", 0, 0, "L")  # type: ignore
-        self.set_y(175)
-        self.multi_cell(0, 6, "Die Installation der Photovoltaikanlage erfolgt an einem Zählpunkt. Besitzt der Auftraggeber mehrere Stromzähler bzw. Zählpunkte (z.B. für eine Wärmepumpe) und möchte diese zusammenlegen, bietet der Auftragnehmer die Abmeldung verschiedener Zählpunkte beim Netzbetreiber an. Nach dem Ausbau der abgemeldeten Stromzähler durch den Netzbetreiber bleiben die dort installierten Verbraucher stromlos! Das erneute Verdrahten der stromlosen Verbraucher ist kein Bestandteil des hier vorliegenden Auftrags. Der Auftraggeber organisiert eigenständig Fachpersonal, welches die Verdrahtung durchführt.", 0, 0, "L")  # type: ignore
-        # # Zahlungsmodalitäten
-        # self.set_y(210)
-        # self.set_font('JUNO Solar Lt', 'B', 12)
-        # self.cell(0, 6, "Zahlungsmodalitäten", 0, 0, 'L')
-        # self.set_font('JUNO Solar Lt', '', 11)
-        # self.set_y(215)
-        # self.multi_cell(0, 6,"20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss",0, 0, 'L')
+        auftragserteilung_1 = self.get_attribute_by_identifier(
+            "auftragserteilung_1", "content"
+        )
+        self.setup_text(
+            "auftragserteilung_1", auftragserteilung_1, bold=True, alignment="L"
+        )
+        auftragserteilung_2 = self.get_attribute_by_identifier(
+            "auftragserteilung_2", "content"
+        )
+        self.setup_text("auftragserteilung_2", auftragserteilung_2, alignment="L")
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(255)
         self.cell(0, 6, "Datum", 0, 0, "L")
-        self.line(11, 255, 88, 255)
+        self.line(self.l_margin, 255, 88, 255)
         self.set_x(46)
         self.cell(0, 6, "Unterschrift Auftraggeber", 0, 0, "L")
         self.set_x(120)
@@ -695,18 +845,225 @@ class PDF(FPDF):
             h=24,
         )
 
+    def page5(self):
+        self.is_last_page = True
+        self.add_page()
+        self.set_text_color(0)
+        self.set_auto_page_break(auto=True, margin=15)
+
+        bold_texts = [
+            # allgemeine_geschäftsbedingungen_bold_text_1
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_1", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_2
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_2", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_3
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_3", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_4
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_4", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_5
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_5", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_6
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_6", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_7
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_7", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_8
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_8", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_9
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_9", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_10
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_10", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_11
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_11", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_12
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_12", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_13
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_13", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_14
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_14", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_15
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_15", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_16
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_16", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_17
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_17", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_18
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_18", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_19
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_19", "content"
+            ),
+            # allgemeine_geschäftsbedingungen_bold_text_20
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_bold_text_20", "content"
+            ),
+        ]
+
+        regular_texts = [
+            # allgemeine_geschäftsbedingungen_regular_text_1
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_1", "content"
+            ),
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_2", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_2
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_3", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_3
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_4", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_4
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_5", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_5
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_6", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_6
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_7", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_7
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_8", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_8
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_9", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_9
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_10", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_10
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_11", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_11
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_12", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_12
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_13", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_13
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_14", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_14
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_15", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_15
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_16", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_16
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_17", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_17
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_18", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_18
+            self.get_attribute_by_identifier(
+                "allgemeine_geschäftsbedingungen_regular_text_19", "content"
+            ),  # allgemeine_geschäftsbedingungen_regular_text_19
+        ]
+
+        column_width = 1000
+        columns_start_x = [
+            15,
+            self.w / 2 + 5,
+        ]  # assuming two columns with the page split in the middle
+        column = 0
+        self.set_y(10)
+
+        line_counter = 0
+
+        for bold, regular in zip(bold_texts, regular_texts):
+            # Check if adding more strings would exceed the 200-string limit
+            bold_lines = len(bold.split("\n"))
+            regular_lines = len(regular.split("\n"))
+
+            if line_counter + bold_lines + regular_lines > 96:
+                if column == 1:  # If it's the second column, we add a new page.
+                    self.add_page()
+                    column = 0  # Reset to first column
+                else:
+                    column += 1  # Move to the next column
+                self.set_y(10)  # Reset y to top
+                line_counter = 0  # Reset line counter for new column/columns
+
+            # Set x position based on column
+            self.set_x(columns_start_x[column])
+
+            # Print bold text
+            self.set_font("JUNO Solar Lt", "B", 8)
+            self.set_font_size_to_fit(bold, column_width)
+            self.multi_cell(column_width, 3.2, txt=bold)
+            line_counter += bold_lines
+
+            self.set_x(columns_start_x[column])
+            # Print regular text
+            self.set_font("JUNO Solar Lt", "", 8)
+            self.set_font_size_to_fit(regular, column_width)
+            self.multi_cell(column_width, 3.2, txt=regular)
+            line_counter += regular_lines
+
+    def set_font_size_to_fit(self, text, width=1000):
+        # Current size and width of the text
+        current_size = self.font_size_pt
+        current_width = 1000
+
+        # Check if the text is already smaller than the width
+        if current_width <= width:
+            return
+
+        # Calculate required font size
+        font_size = current_size * width / current_width
+
+        # Set the font size
+        self.set_font_size(font_size)
+
 
 def createTicketPdf(data):
     global title, pages
-    title = f"Kalkulation-{data['kunde']}"
+    title1 = ""
+    pages = 4
 
-    pdf = PDF()
+    pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
 
     # create the ticket-PDF
     pdf.page1(data)
     pdf.lastPage(data)
+    pdf.page5()
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

@@ -487,13 +487,21 @@ class VertriebAngebot(TimeStampMixin):
         return float(SolarModulePreise.objects.get(name=name).price)
 
     def get_module_garantie(self, name):
-        return str(SolarModulePreise.objects.get(name=name).module_garantie)
+        try:
+            out = str(SolarModulePreise.objects.get(name=name).module_garantie)
+        except:
+            out = ""
+        return out
 
     def get_module_garantie_preis(self, name):
         return float(ModuleGarantiePreise.objects.get(name=name).price)
 
     def get_leistungs_garantie(self, name):
-        return str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
+        try:
+            out = str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
+        except:
+            out = ""
+        return out
 
     def save(self, *args, **kwargs):
         if not self.angebot_id:
@@ -757,6 +765,13 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def extract_modulleistungWp_from_name(self):
         match = re.search(r"(\d+)", str(self.solar_module))
+        if match:
+            return int(match.group(1))
+        return 420
+
+    @property
+    def extract_modulleistungWp_from_ticket(self):
+        match = re.search(r"(\d+)", str(self.module_ticket))
         if match:
             return int(match.group(1))
         return 420
@@ -1421,6 +1436,10 @@ class VertriebAngebot(TimeStampMixin):
             "hersteller": self.hersteller,
             "version": 1.0,
             "modulTicket": int(self.modul_anzahl_ticket),
+            "modulTicketArt":self.module_ticket,
+            "wpModuleTicket": self.extract_modulleistungWp_from_ticket,
+            "produktGarantieTicket": self.get_module_garantie(self.module_ticket),
+            "leistungsGarantieTicket": self.get_leistungs_garantie(self.module_ticket),
             "optimizerTicket": int(self.optimizer_ticket),
             "batterieTicket": int(self.batteriemodule_ticket),
             "notstromTicket": int(self.notstrom_ticket),

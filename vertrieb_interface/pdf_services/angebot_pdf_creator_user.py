@@ -1277,7 +1277,7 @@ class PDF(FPDF):
 
         return eintrag
 
-    def lastPage(self, data, eintrag):
+    def lastPage(self, data):
         self.add_page()
         self.is_last_page = False
         # Angebotssumme
@@ -1300,13 +1300,13 @@ class PDF(FPDF):
         )
         self.set_y(45)
         sum = data["angebotssumme"]
-        brutto = convertCurrency("{:,.2f} €".format(sum))
+        netto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
-        netto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
-        self.multi_cell(0, 6, f'{str(data["kWp"])} kWp\n \n{brutto}\n{mwst}', 0, "R")
+        brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
+        self.multi_cell(0, 6, f'{str(data["kWp"])} kWp\n \n{netto}\n{mwst}', 0, "R")
         self.set_y(70)
         self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, netto, 0, 0, "R")
+        self.cell(0, 6, brutto, 0, 0, "R")
         self.line(175, 70, 197, 70)
         # Verbindlichkeiten
         verbindlichkeiten_1 = self.get_attribute_by_identifier(
@@ -1418,7 +1418,7 @@ class PDF(FPDF):
             h=24,
         )
 
-    def page5(self, eintrag):
+    def page5(self):
         self.is_last_page = True
         self.add_page()
         self.set_text_color(0)
@@ -1659,11 +1659,10 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     eintrag = pdf.page2(data, eintrag)
     eintrag = pdf.page3(data, eintrag)
     eintrag = pdf.page4(data, eintrag)
-    # eintrag = pdf.page4_durchgestrichen(data, eintrag)
 
-    pdf.lastPage(data, eintrag)
+    pdf.lastPage(data)
     pdf.page6(certifikate)
-    pdf.page5(eintrag)
+    pdf.page5()
 
     if withCalc:
         user_folder = os.path.join(

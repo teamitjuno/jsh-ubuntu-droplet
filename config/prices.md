@@ -1106,7 +1106,7 @@ Editierbarer_Text.objects.create(
 
 Editierbarer_Text.objects.create(
     identifier='auftragserteilung_1', 
-    content="Garantiebedingungen", 
+    content="Auftragserteilung", 
     font='JUNO Solar Lt', 
     font_size=12
 )

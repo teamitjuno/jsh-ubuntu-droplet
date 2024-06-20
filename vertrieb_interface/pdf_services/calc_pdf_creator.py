@@ -13,33 +13,45 @@ pages = 2
 
 
 class PDF(FPDF):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title1, *args, **kwargs):
+        """
+        Initialisiert das PDF-Objekt mit spezifischen Margen und Linienbreiten.
+        """
         super(PDF, self).__init__(*args, **kwargs)
+        self.is_last_page = False
+        self.title1 = title1
         self.set_left_margin(18.875)
         self.set_right_margin(12.875)
+        self.set_line_width(0.5)
 
     def header(self):
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf")
-        self.add_font("JUNO Solar Lt", "", font_path, uni=True)
-        font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
-        self.add_font("JUNO Solar Lt", "B", font_path, uni=True)
+        """
+        Stellt das Kopfzeilen-Layout für jede Seite des PDFs bereit.
+        """
+        if "JUNO Solar Lt" not in self.fonts:
+            regular_font_path = os.path.join(
+                settings.STATIC_ROOT, "fonts/JUNOSolarLt.ttf"
+            )
+            bold_font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
+            self.add_font("JUNO Solar Lt", "", regular_font_path, uni=True)
+            self.add_font("JUNO Solar Lt", "B", bold_font_path, uni=True)
 
-        # Position at 1.5 cm from bottom
-        self.set_y(15)
-        self.set_font("JUNO Solar Lt", "", 12)
+        self.set_y(0)
+        self.set_font("JUNO Solar Lt", "", 8)
         self.set_text_color(0)
-        # Page number
-        self.cell(0, 10, f"Seite {str(self.page_no())}/{pages}", 0, 0, "")
-        self.set_x(40)
-        self.image(
-            os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg"),
-            x=170,
-            y=10,
-            w=30,
-            h=15,
-        )
-        # Line break
-        self.ln(15)
+        header_text = f"Seite {self.page_no()}/{pages}       {self.title1}"
+        self.cell(0, 10, header_text, 0, 0, "")
+
+        if not self.is_last_page:
+            self.set_y(15)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_x(40)
+            if self.page_no() != 1:
+                self.cell(0, 10, title, 0, 0, "")
+
+            logo_path = os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg")
+            self.image(logo_path, x=167, y=10, w=30, h=15)
+            self.ln(15)
 
     def footer(self):
         pass
@@ -394,9 +406,10 @@ def calcPage2(pdf, data, user_folder, vertrieb_angebot):
 
 def createCalcPdf(data, vertrieb_angebot, user):
     global title, pages
-    title = f"{vertrieb_angebot.angebot_id}"
+    title = f""
+    title1 = f"Kalkulation {vertrieb_angebot.angebot_id}"
     pages = 2
-    pdf = PDF()
+    pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
     pdf.set_creator(f"{user.first_name} {user.last_name})")
