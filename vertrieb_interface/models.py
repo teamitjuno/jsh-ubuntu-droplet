@@ -27,7 +27,7 @@ from datetime import timedelta
 from config.settings import GOOGLE_MAPS_API_KEY
 from prices.models import (
     AndereKonfigurationWerte,
-    ModuleGarantiePreise,
+    WrGarantiePreise,
     ModulePreise,
     OptionalAccessoriesPreise,
     SolarModulePreise,
@@ -493,8 +493,8 @@ class VertriebAngebot(TimeStampMixin):
             out = ""
         return out
 
-    def get_module_garantie_preis(self, name):
-        return float(ModuleGarantiePreise.objects.get(name=name).price)
+    def get_wr_garantie_preis(self, name):
+        return float(WrGarantiePreise.objects.get(name=name).price)
 
     def get_leistungs_garantie(self, name):
         try:
@@ -1291,7 +1291,7 @@ class VertriebAngebot(TimeStampMixin):
 
         def get_garantie_price(kw, years):
             name = f"garantie{kw}_{years}"
-            return float(ModuleGarantiePreise.objects.get(name=name).price)
+            return float(WrGarantiePreise.objects.get(name=name).price)
 
         limits = [5, 7, 10, 12, 15, 20, 25]
         ranges = (
@@ -1312,14 +1312,15 @@ class VertriebAngebot(TimeStampMixin):
         angebotsSumme *= float(self.get_komplexity)
         angebotsSumme += float(self.full_accessories_price)
 
-        if self.garantieWR != "keine":
+        if self.hersteller == "Huawei" and self.garantieWR != "keine":
+            garantie_faktor = float(AndereKonfigurationWerte.objects.get(name="garantiefaktor").value)
             garantie_years = int(self.garantieWR.split(" ")[0])
             garantie_kw = next(
                 kw
                 for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30, 35]
                 if self.modulsumme_kWp <= kw
             )
-            angebotsSumme += get_garantie_price(garantie_kw, garantie_years)
+            angebotsSumme += get_garantie_price(garantie_kw, garantie_years) * garantie_faktor
 
         if self.indiv_price_included:
             if self.user.typ == "Evolti":  # type: ignore

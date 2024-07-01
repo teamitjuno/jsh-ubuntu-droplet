@@ -1,7 +1,7 @@
 from django.contrib import admin
 from prices.models import (
     ElektrikPreis,
-    ModuleGarantiePreise,
+    WrGarantiePreise,
     ModulePreise,
     WallBoxPreise,
     SolarModulePreise,
@@ -26,7 +26,7 @@ class ElektrikPreisAdmin(admin.ModelAdmin):
     inlines = [PricesInline]
 
 
-@admin.register(ModuleGarantiePreise)
+@admin.register(WrGarantiePreise)
 class ModuleGarantiePreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",

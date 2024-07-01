@@ -231,7 +231,6 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         choices=[
             ("10 Jahre", "10 Jahre"),
             ("15 Jahre", "15 Jahre"),
-            ("20 Jahre", "20 Jahre"),
         ],
         initial="10 Jahre",
         widget=forms.Select(

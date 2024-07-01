@@ -16,7 +16,7 @@ class ElektrikPreis(models.Model):
         new_position.save()
 
 
-class ModuleGarantiePreise(models.Model):
+class WrGarantiePreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -25,7 +25,7 @@ class ModuleGarantiePreise(models.Model):
 
     @staticmethod
     def add_position(name, price=0.00):
-        new_position = ModuleGarantiePreise.objects.create(
+        new_position = WrGarantiePreise.objects.create(
             name=name, price=price
         )
         new_position.save()
@@ -119,7 +119,7 @@ class Prices(models.Model):
     elektrik_prices = models.ForeignKey(ElektrikPreis, on_delete=models.CASCADE)
     modul_prices = models.ForeignKey(ModulePreise, on_delete=models.CASCADE)
     modul_garantie_preise = models.ForeignKey(
-        ModuleGarantiePreise, on_delete=models.CASCADE
+        WrGarantiePreise, on_delete=models.CASCADE
     )
     wallbox_prices = models.ForeignKey(WallBoxPreise, on_delete=models.CASCADE)
     optional_accessories_prices = models.ForeignKey(

@@ -374,7 +374,7 @@
                                                                             {{ form.modulanzahl }}
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr {% if not form.hersteller.value == "Huawei" %}hidden{% endif %}>
                                                                         <th>{{ form.garantieWR.label_tag }}</th>
                                                                         <td>{{ form.garantieWR }}</td>
                                                                     </tr>

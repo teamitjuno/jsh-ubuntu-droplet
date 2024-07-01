@@ -1055,8 +1055,6 @@ class VertriebAngebotForm(ModelForm):
         choices=[
             ("10 Jahre", "10 Jahre"),
             ("15 Jahre", "15 Jahre"),
-            ("20 Jahre", "20 Jahre"),
-            ("25 Jahre", "25 Jahre"),
         ],
         initial="10 Jahre",
         widget=forms.Select(attrs={"class": "form-select", "id": "garantieWR"}),

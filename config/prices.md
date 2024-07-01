@@ -70,51 +70,29 @@ ElektrikPreis.objects.create(name='Hutschienenhalter Installationsklemmen', pric
 ElektrikPreis.objects.create(name='Aufputz-Abzweigdosen', price=7.00)
 ElektrikPreis.objects.create(name='Hauptleitungsabzweigklemmen 35mm', price=7.00)
 
-from prices.models import ModuleGarantiePreise
-ModuleGarantiePreise.objects.create(name='garantie3_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie4_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie5_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie6_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie8_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie10_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie15_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie16_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie20_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie25_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie30_10', price=0.00)
-ModuleGarantiePreise.objects.create(name='garantie3_15', price=350.00)
-ModuleGarantiePreise.objects.create(name='garantie4_15', price=370.00)
-ModuleGarantiePreise.objects.create(name='garantie5_15', price=410.00)
-ModuleGarantiePreise.objects.create(name='garantie6_15', price=460.00)
-ModuleGarantiePreise.objects.create(name='garantie8_15', price=510.00)
-ModuleGarantiePreise.objects.create(name='garantie10_15', price=580.00)
-ModuleGarantiePreise.objects.create(name='garantie15_15', price=950.00)
-ModuleGarantiePreise.objects.create(name='garantie16_15', price=990.00)
-ModuleGarantiePreise.objects.create(name='garantie20_15', price=1090.00)
-ModuleGarantiePreise.objects.create(name='garantie25_15', price=1160.00)
-ModuleGarantiePreise.objects.create(name='garantie30_15', price=1200.00)
-ModuleGarantiePreise.objects.create(name='garantie3_20', price=510.00)
-ModuleGarantiePreise.objects.create(name='garantie4_20', price=550.00)
-ModuleGarantiePreise.objects.create(name='garantie5_20', price=610.00)
-ModuleGarantiePreise.objects.create(name='garantie6_20', price=690.00)
-ModuleGarantiePreise.objects.create(name='garantie8_20', price=770.00)
-ModuleGarantiePreise.objects.create(name='garantie10_20', price=850.00)
-ModuleGarantiePreise.objects.create(name='garantie15_20', price=1400.00)
-ModuleGarantiePreise.objects.create(name='garantie16_20', price=1460.00)
-ModuleGarantiePreise.objects.create(name='garantie20_20', price=1620.00)
-ModuleGarantiePreise.objects.create(name='garantie25_20', price=1700.00)
-ModuleGarantiePreise.objects.create(name='garantie30_20', price=1780.00)
-ModuleGarantiePreise.objects.create(name='garantie3_25', price=510.00)
-ModuleGarantiePreise.objects.create(name='garantie4_25', price=550.00)
-ModuleGarantiePreise.objects.create(name='garantie5_25', price=610.00)
-ModuleGarantiePreise.objects.create(name='garantie6_25', price=690.00)
-ModuleGarantiePreise.objects.create(name='garantie8_25', price=770.00)
-ModuleGarantiePreise.objects.create(name='garantie10_25', price=850.00)
-ModuleGarantiePreise.objects.create(name='garantie15_25', price=1400.00)
-ModuleGarantiePreise.objects.create(name='garantie16_25', price=1460.00)
-ModuleGarantiePreise.objects.create(name='garantie20_25', price=1620.00)
-ModuleGarantiePreise.objects.create(name='garantie25_25', price=1700.00)
-ModuleGarantiePreise.objects.create(name='garantie30_25', price=1780.00)
+from prices.models import WrGarantiePreise
+WrGarantiePreise.objects.create(name='garantie3_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie4_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie5_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie6_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie8_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie10_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie15_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie16_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie20_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie25_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie30_10', price=0.00)
+WrGarantiePreise.objects.create(name='garantie3_15', price=350.00)
+WrGarantiePreise.objects.create(name='garantie4_15', price=370.00)
+WrGarantiePreise.objects.create(name='garantie5_15', price=410.00)
+WrGarantiePreise.objects.create(name='garantie6_15', price=460.00)
+WrGarantiePreise.objects.create(name='garantie8_15', price=510.00)
+WrGarantiePreise.objects.create(name='garantie10_15', price=580.00)
+WrGarantiePreise.objects.create(name='garantie15_15', price=950.00)
+WrGarantiePreise.objects.create(name='garantie16_15', price=990.00)
+WrGarantiePreise.objects.create(name='garantie20_15', price=1090.00)
+WrGarantiePreise.objects.create(name='garantie25_15', price=1160.00)
+WrGarantiePreise.objects.create(name='garantie30_15', price=1200.00)
 
 from prices.models import ModulePreise
 
@@ -172,6 +150,7 @@ WallBoxPreise.objects.create(name='Commander 2 Inkl. Power Boost', price=2300.00
 
 from prices.models import AndereKonfigurationWerte
 AndereKonfigurationWerte.objects.create(name='steuersatz', value=0.00)
+AndereKonfigurationWerte.objects.create(name='garantiefaktor', value=0.00)
 AndereKonfigurationWerte.objects.create(name='einfach_einfach_erreichbar', value=1.00)
 AndereKonfigurationWerte.objects.create(name='einfach_schwer_erreichbar', value=1.025)
 AndereKonfigurationWerte.objects.create(name='komplex_einfach_erreichbar', value=1.05)
@@ -481,19 +460,19 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_huawei5_3', 
-    content="∙ max. Lade-/Entladeleistung: 2,5 kW\n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 2,5 kW\n∙ Produktgarantie: 15 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_huawei5_4', 
-    content="∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 5 kW\n∙ Produktgarantie: 15 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_4_huawei5_5', 
-    content="∙ max. Lade-/Entladeleistung: 10 kW\n∙ Produktgarantie: 10 Jahre", 
+    content="∙ max. Lade-/Entladeleistung: 10 kW\n∙ Produktgarantie: 15 Jahre", 
     font='JUNO Solar Lt', 
     font_size=10
 )

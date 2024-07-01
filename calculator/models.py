@@ -2,7 +2,7 @@ from django.db import models
 from authentication.models import User
 from django.core.validators import MinValueValidator
 from prices.models import (
-    ModuleGarantiePreise,
+    WrGarantiePreise,
     ModulePreise,
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
@@ -79,6 +79,10 @@ class Calculator(models.Model):
     )
     speicher = models.BooleanField(default=False)
     anz_speicher = models.PositiveIntegerField(default=0)
+    speicher_model = models.CharField(
+        max_length=100,
+        default="LUNA 2000-7-S1",
+    )
     wallbox = models.BooleanField(default=False)
     ausrichtung = models.CharField(
         max_length=10, choices=AUSRICHTUNG_CHOICES, default="Ost/West"
@@ -90,7 +94,6 @@ class Calculator(models.Model):
     GARANTIE_WR_CHOICES = [
         ("keine", "keine"),
         ("15 Jahre", "15 Jahre"),
-        ("20 Jahre", "20 Jahre"),
     ]
     solar_module = models.CharField(
         max_length=100,
@@ -178,8 +181,8 @@ class Calculator(models.Model):
     def get_module_preis(self, name):
         return float(SolarModulePreise.objects.get(name=name).price)
 
-    def get_module_garantie_preis(self, name):
-        return float(ModuleGarantiePreise.objects.get(name=name).price)
+    def get_wr_garantie_preis(self, name):
+        return float(WrGarantiePreise.objects.get(name=name).price)
 
     def get_leistungs_garantie(self, name):
         return str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
@@ -506,7 +509,7 @@ class Calculator(models.Model):
 
         def get_garantie_price(kw, years):
             name = f"garantie{kw}_{years}"
-            return float(ModuleGarantiePreise.objects.get(name=name).price)
+            return float(WrGarantiePreise.objects.get(name=name).price)
 
         limits = [5, 7, 10, 12, 15, 20, 25]
         ranges = (
@@ -528,13 +531,14 @@ class Calculator(models.Model):
         angebotsSumme += float(self.full_accessories_price)
 
         if self.garantieWR != "keine":
+            garantie_faktor = float(AndereKonfigurationWerte.objects.get(name="garantiefaktor").value)
             garantie_years = int(self.garantieWR.split(" ")[0])
             garantie_kw = next(
                 kw
                 for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30]
                 if self.modulsumme_kWp <= kw
             )
-            angebotsSumme += get_garantie_price(garantie_kw, garantie_years)
+            angebotsSumme += get_garantie_price(garantie_kw, garantie_years) * garantie_faktor
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag

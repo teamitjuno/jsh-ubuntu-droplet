@@ -39,7 +39,7 @@ from authentication.forms import AvatarUploadForm, InitialAngebotDataViewForm
 from prices.models import (
     SolarModulePreise,
     ElektrikPreis,
-    ModuleGarantiePreise,
+    WrGarantiePreise,
     ModulePreise,
     WallBoxPreise,
     OptionalAccessoriesPreise,
@@ -214,7 +214,7 @@ def user_list_view(request):
 
     # Getting all the instances of your models
     elektrik_preis = ElektrikPreis.objects.all()
-    module_garantie_preise = ModuleGarantiePreise.objects.all()
+    module_garantie_preise = WrGarantiePreise.objects.all()
     module_preise = ModulePreise.objects.all()
     solar_module_preise = SolarModulePreise.objects.all()
     wall_box_preise = WallBoxPreise.objects.all()
