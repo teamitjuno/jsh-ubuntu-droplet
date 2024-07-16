@@ -134,8 +134,6 @@ GARANTIE_WR_CHOICES = [
     ("keine", "keine"),
     ("10 Jahre", "10 Jahre"),
     ("15 Jahre", "15 Jahre"),
-    ("20 Jahre", "20 Jahre"),
-    ("25 Jahre", "25 Jahre"),
 ]
 
 

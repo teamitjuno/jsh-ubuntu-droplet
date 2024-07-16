@@ -125,7 +125,6 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ("keine", "keine"),
         ("10 Jahre", "10 Jahre"),
         ("15 Jahre", "15 Jahre"),
-        ("20 Jahre", "20 Jahre"),
     ]
     MAP_NOTIZEN_CHOICES = [
         ("Map", "Map"),
