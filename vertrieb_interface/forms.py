@@ -1328,8 +1328,8 @@ class VertriebAngebotForm(ModelForm):
             ]
 
             if filtered_data:
-                name_list = [(item["name"], item["name"]) for item in filtered_data]
-                name_list = sorted(name_list, key=lambda x: x[0])
+                name_list = [(item["zoho_id"], item["name"]) for item in filtered_data]
+                name_list = sorted(name_list, key=lambda x: x[1])
                 self.fields["name"].choices = default_choice + name_list
 
             else:
@@ -1536,7 +1536,7 @@ class VertriebAngebotForm(ModelForm):
 
         if not name_last_name or name_last_name == "":
             raise ValidationError(
-                ("Nachname Feld ist erforderlich und kann nicht lee sein"),
+                ("Nachname Feld ist erforderlich und darf nicht leer sein"),
                 params={"name_last_name": name_last_name},
             )
 

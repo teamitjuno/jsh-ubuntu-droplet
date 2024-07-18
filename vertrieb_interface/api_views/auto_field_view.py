@@ -41,7 +41,7 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
                 {"error": "Kein Name-Parameter bereitgestellt"}, status=400
             )
 
-        response_data = self.find_data_by_name(data, name)
+        response_data = self.find_data_by_zoho_id(data, name)
         if response_data is None:
             return JsonResponse(
                 {"error": "Keine Daten für den angegebenen Namen gefunden"}, status=404
@@ -79,12 +79,12 @@ class VertriebAutoFieldView(View, VertriebCheckMixin):
         user.save()
         return load_json_data(user.zoho_data_text)
 
-    def find_data_by_name(self, data, name):
+    def find_data_by_zoho_id(self, data, zohoID):
         """
-        Durchsucht die Daten nach einem Eintrag mit dem spezifizierten Namen.
+        Durchsucht die Daten nach einem Eintrag mit der spezifizierten Zoho ID.
 
         :param data: Die Liste der Datenobjekte.
-        :param name: Der Name, nach dem gesucht wird.
+        :param zohoID: Die Zoho ID, nach der gesucht wird.
         :returns: Das gefundene Datenobjekt oder None.
         """
-        return next((item for item in data if item.get("name") == name), None)
+        return next((item for item in data if item.get("zoho_id") == zohoID), None)
