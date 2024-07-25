@@ -1127,17 +1127,17 @@ Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bo
 
 Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_13', content="""§ 13 Höhere Gewalt""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_14', content="""§ 14 Widerrufsbelehrung""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_14', content="""§ 14 Widerrufsbelehrung\nWiderrufsrecht""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_15', content="""Widerrufsbelehrung\nWiderrufsrecht""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_15', content="""Folgen des Widerrufs""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_16', content="""Folgen des Widerrufs""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_16', content="""Muster-Widerrufsformular""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_17', content="""Muster-Widerrufsformular""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_17', content="""§ 15 Online-Streitbeilegung""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_18', content="""§ 15 Online-Streitbeilegung""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_18', content="""§ 16 Datenschutz""", font='JUNO Solar Lt', font_size=12)
 
-Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_19', content="""§ 16 Datenschutz""", font='JUNO Solar Lt', font_size=12)
+Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_19', content="""§ 17 Schlussbestimmungen""", font='JUNO Solar Lt', font_size=12)
 
 Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_20', content="""§ 17 Schlussbestimmungen""", font='JUNO Solar Lt', font_size=12)
 

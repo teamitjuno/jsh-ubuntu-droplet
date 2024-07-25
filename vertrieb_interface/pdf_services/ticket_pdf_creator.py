@@ -151,6 +151,13 @@ class PDF(FPDF):
             bold_font_path = os.path.join(settings.STATIC_ROOT, "fonts/JUNOSolarRg.ttf")
             self.add_font("JUNO Solar Lt", "", regular_font_path, uni=True)
             self.add_font("JUNO Solar Lt", "B", bold_font_path, uni=True)
+        if "Poppins" not in self.fonts:
+            regular_font_path = os.path.join(
+                settings.STATIC_ROOT, "fonts/Poppins-Regular.ttf"
+            )
+            bold_font_path = os.path.join(settings.STATIC_ROOT, "fonts/Poppins-Bold.ttf")
+            self.add_font("Poppins", "", regular_font_path, uni=True)
+            self.add_font("Poppins", "B", bold_font_path, uni=True)
 
         self.set_y(0)
         self.set_font("JUNO Solar Lt", "", 8)
