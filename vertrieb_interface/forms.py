@@ -964,7 +964,7 @@ class VertriebAngebotForm(ModelForm):
 
     komplex = forms.ChoiceField(
         initial="sehr komplex",
-        label="Komlexität",
+        label="Komplexität",
         choices=komplex_choices,
         required=True,
         widget=forms.Select(

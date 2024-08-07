@@ -61,7 +61,7 @@
                                 <div class="card-body border-primary border">
                                         <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
                                             <li class="nav-item" role="presentation">
-                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="fakse" role="tab">
+                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="false" role="tab">
                                                     <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Info</span>
                                                 </a>
@@ -69,7 +69,13 @@
                                             <li class="nav-item" role="presentation">
                                                 <a href="#module" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block h4">Module & Zubehör</span>
+                                                    <span class="d-none d-md-block h4">PV-Anlage</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a href="#zubehoer" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
+                                                    <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
+                                                    <span class="d-none d-md-block h4">Zubehör</span>
                                                 </a>
                                             </li>
                                             {% if vertrieb_angebot.status == "angenommen" %}
@@ -302,7 +308,7 @@
                                         <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
                                                             <div class="card-body">
@@ -344,6 +350,14 @@
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
+                                                                        <th>{{ form.komplex.label_tag }}</th>
+                                                                        <td id="komplex" name="komplex">{{ form.komplex }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Zahlungsmodalitäten</th>
+                                                                        <td>{{ form.zahlungsbedingungen }}</td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -352,14 +366,10 @@
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                 </table>
-                                                               
-                                                                <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
-                                                                
-
                                                             </div>
                                                         </div>
                                                     </div> 
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
                                                             <div class="card-body">
@@ -414,76 +424,9 @@
                                                                         <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }}</td>
                                                                     </tr>
                                                                 </table>
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Zahlungsmodalitäten</th>
-                                                                        <td>{{ form.zahlungsbedingungen }}</td>
-                                                                    </tr>
-                                                                </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        {% include 'vertrieb/extra/wand_content.html' %}
-                                                                        {% include 'vertrieb/extra/elwa_2_content.html' %}
-                                                                        {% include 'vertrieb/extra/thor_2_content.html' %}
-                                                                        {% include 'vertrieb/extra/wallbox_content.html' %}
-                                                                        {% include 'vertrieb/extra/komplex_content.html' %}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>kosten für Restenegie [€]</th>
-                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Einspreisevergütung gesamt [€]</th>
-                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage [€]</th>
-                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis abzgl Vergütung und inkl. Restrom [€]</th>
-                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Ersparnis [€]</th>
-                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row"> 
-                                                    {% if user.role.name == "admin" %}
-                                                    <div class="col-lg-3">
+                                                        {% if user.role.name == "admin" %}
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
                                                             <div class="card-body">
@@ -524,11 +467,74 @@
                                                                 </script>
                                                             </div>
                                                         </div>
+                                                        {% endif %}
                                                     </div>
-                                                    {% endif %}
+                                                    <div class="col-lg-4">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Nutzbare PV-Energie [kWh]</th>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Benögte Restenegie [kWh]</th>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>kosten für Restenegie [€]</th>
+                                                                        <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Einspreisevergütung gesamt [€]</th>
+                                                                        <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Stromkosten ohne PV-Anlage [€]</th>
+                                                                        <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Preis abzgl Vergütung und inkl. Restrom [€]</th>
+                                                                        <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Ersparnis [€]</th>
+                                                                        <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div> 
                                             </div>
                                         </div>
+                                        <div class="tab-pane" id="zubehoer" role="presentation">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tbody>
+                                                                        {% include 'vertrieb/extra/wand_content.html' %}
+                                                                        {% include 'vertrieb/extra/elwa_2_content.html' %}
+                                                                        {% include 'vertrieb/extra/thor_2_content.html' %}
+                                                                        {% include 'vertrieb/extra/wallbox_content.html' %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         {% if vertrieb_angebot.status == "angenommen" %}
                                         <div hidden class="tab-pane" id="ticket" role="presentation">
                                             <div class="card-body">
@@ -837,7 +843,9 @@
                                                             }
                                                         }
                                                     </script>
-
+                                                    <div class="row m-2">
+                                                        <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
+                                                    </div>
                                                     <div class="row m-2">
                                                         
                                                         <button type="submit" onclick=submitFormWithAction('save') class="btn btn-soft-success rounded-pill">Speichern</button>
@@ -963,6 +971,22 @@
 
                                                         </script>
                                                     </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <table class="table table-sm table-hover">
+                                                <tr>
+                                                    <th>Preis Netto</th>
+                                                    <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Preis Brutto</th>
+                                                    <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -1206,7 +1230,7 @@ function submitFormWithAction(action) {
                                 <div class="card-body">
                                         <ul class="nav nav-tabs nav-justified nav-bordered mb-4" role="tablist">
                                             <li class="nav-item" role="presentation">
-                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="fakse" role="tab">
+                                                <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="false" role="tab">
                                                     <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Info</span>
                                                 </a>
@@ -1316,7 +1340,7 @@ function submitFormWithAction(action) {
                                         <div class="tab-pane" id="module" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
                                                             <div class="card-body">
@@ -1353,6 +1377,14 @@ function submitFormWithAction(action) {
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
+                                                                        <th>{{ form.komplex.label_tag }}</th>
+                                                                        <td id="komplex" name="komplex">{{ form.komplex }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Zahlungsmodalitäten</th>
+                                                                        <td>{{ form.zahlungsbedingungen }}</td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -1369,7 +1401,7 @@ function submitFormWithAction(action) {
                                                             </div>
                                                         </div>
                                                     </div> 
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
                                                             <div class="card-body">
@@ -1424,32 +1456,52 @@ function submitFormWithAction(action) {
                                                                         <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }}</td>
                                                                     </tr>
                                                                 </table>
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Zahlungsmodalitäten</th>
-                                                                        <td>{{ form.zahlungsbedingungen }}</td>
-                                                                    </tr>
-                                                                </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
+                                                        {% if user.role.name == "admin" %}
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        {% include 'vertrieb/extra/wand_content_readonly.html' %}
-                                                                        {% include 'vertrieb/extra/elwa_2_content_readonly.html' %}
-                                                                        {% include 'vertrieb/extra/thor_2_content_readonly.html' %}
-                                                                        {% include 'vertrieb/extra/wallbox_content_readonly.html' %}
-                                                                        {% include 'vertrieb/extra/komplex_content_readonly.html' %}
-                                                                    </tbody>
+                                                                    <tr>
+                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="indiv_price_row">
+                                                                        <th>{{form.indiv_price.label_tag }}</th>
+                                                                        <td>{{ form.indiv_price }}</td>
+                                                                    </tr>
                                                                 </table>
+                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                                                <script type="text/javascript">
+                                                                    $(document).ready(function() {
+                                                                        // Initial state of 'Inddiv Preis' row
+                                                                        updateIndivPreisRow();
+                                                                        // On 'Indiv Preis inkl.' checkbox state change
+                                                                        $('#switch_indiv_price_included').change(function() {
+                                                                            updateIndivPreisRow();
+                                                                        });
+                                                                        function updateIndivPreisRow() {
+                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
+                                                                                // If checkbox is checked, show 'Inddiv Preis' row
+                                                                                $('#indiv_price_row').show();
+                                                                            } else {
+                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                                $('#indiv_price_row').hide();
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                </script>
                                                             </div>
                                                         </div>
+                                                        {% endif %}
                                                     </div>
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
@@ -1491,54 +1543,27 @@ function submitFormWithAction(action) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row"> 
-                                                    {% if user.role.name == "admin" %}
-                                                    <div class="col-lg-3">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="zubehoer" role="presentation">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="indiv_price_row">
-                                                                        <th>{{form.indiv_price.label_tag }}</th>
-                                                                        <td>{{ form.indiv_price }}</td>
-                                                                    </tr>
+                                                                    <tbody>
+                                                                        {% include 'vertrieb/extra/wand_content.html' %}
+                                                                        {% include 'vertrieb/extra/elwa_2_content.html' %}
+                                                                        {% include 'vertrieb/extra/thor_2_content.html' %}
+                                                                        {% include 'vertrieb/extra/wallbox_content.html' %}
+                                                                    </tbody>
                                                                 </table>
-                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                                                                <script type="text/javascript">
-                                                                    $(document).ready(function() {
-                                                                        // Initial state of 'Inddiv Preis' row
-                                                                        updateIndivPreisRow();
-                                                                
-                                                                        // On 'Indiv Preis inkl.' checkbox state change
-                                                                        $('#switch_indiv_price_included').change(function() {
-                                                                            updateIndivPreisRow();
-                                                                        });
-                                                                
-                                                                        function updateIndivPreisRow() {
-                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                </script>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {% endif %}
-                                                </div> 
+                                                </div>
                                             </div>
                                         </div>
                                         {% if vertrieb_angebot.status == "angenommen" %}

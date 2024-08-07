@@ -194,7 +194,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
 
     initial_komplex = forms.ChoiceField(
         initial="sehr komplex",
-        label="Komlexität",
+        label="Komplexität",
         choices=INITIAL_KOMPLEX_CHOICES,
         required=True,
         widget=forms.Select(
