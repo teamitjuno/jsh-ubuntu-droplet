@@ -397,7 +397,7 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                
+
                                                                     <tr>
                                                                         <th>{{ form.anzOptimizer.label_tag }}</th>
                                                                         <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
@@ -519,7 +519,7 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr id="bool_elwa_row">
                                                                         <th>{{ form.elwa.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -537,7 +537,7 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr hidden>
+                                                                    <tr id="heizstab_row" class="conditional-row">
                                                                         <th>{{ form.heizstab.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1074,7 +1074,7 @@
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
-    
+    toggleHeizstab(document.getElementById('thor').checked);
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
 
@@ -1087,6 +1087,15 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
+
+function toggleHeizstab(value){
+    if (value === true) {
+        $('#heizstab_row').show();
+    } else {
+        $('#heizstab_row').hide();
+    }
+
+}
 
 function setFieldOptions(value) {
     var wechselrichterOptions, speicherOptions, smartmeterOptions;
@@ -1605,7 +1614,7 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr id="bool_elwa_row">
                                                                         <th>{{ form.elwa.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1623,7 +1632,7 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr hidden>
+                                                                    <tr id="heizstab_row" class="conditional-row">
                                                                         <th>{{ form.heizstab.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1668,7 +1677,7 @@ function submitFormWithAction(action) {
                                                                         <th>{{ form.kabelanschluss.label_tag }}</th>
                                                                         <td>{{ form.kabelanschluss }}</td>
                                                                     </tr>
-                                                                 </table>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2195,6 +2204,7 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
+    toggleHeizstab(document.getElementById('thor').checked);
     toggleBoolelwaRow($('#hersteller').val());
     setFieldOptions($('#hersteller').val());
     calculateGesamtkapazitat();
@@ -2209,6 +2219,15 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
+
+function toggleHeizstab(value){
+    if (value === true) {
+        $('#heizstab_row').show();
+    } else {
+        $('#heizstab_row').hide();
+    }
+
+}
 
 function toggleAnzWandhalterung(value) {
     if (value === 'Viessmann') {
