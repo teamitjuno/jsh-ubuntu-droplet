@@ -1054,16 +1054,12 @@ class PDF(FPDF):
                 )
 
         # OPTIONALES ZUBEHÖR
-        if (
+        if not (
             not data["optionVorh"]
             and not data["elwa"]
             and not data["thor"]
             and not data["anzOptimierer"] > 0
         ):
-            self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
-
-        else:
-
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
             self.set_y(self.get_y() + 10)
 
@@ -1246,7 +1242,6 @@ class PDF(FPDF):
                 )
 
             # GRIDBOX
-            y = 200
             if data["wallboxAnz"] >= 2:
 
                 eintrag += 1

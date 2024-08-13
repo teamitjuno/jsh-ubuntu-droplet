@@ -1034,14 +1034,13 @@ $(document).ready(function() {
 });
 
 function setFieldOptions(value) {
-    var wechselrichterOptions, speicherOptions, smartmeterOptions, wallboxtypOptions;
+    var wechselrichterOptions, speicherOptions, smartmeterOptions;
 
         if(value == "Viessmann") {
             limitModulanzahl(28);
             wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
             speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
             smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
-            wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
@@ -1057,16 +1056,14 @@ function setFieldOptions(value) {
             else {
                 smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
             }
-            wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
             $('#garantieWR_row').show();
         } else {
-            wechselrichterOptions = speicherOptions = smartmeterOptions = wallboxtypOptions = '<option value="">-----</option>';
+            wechselrichterOptions = speicherOptions = smartmeterOptions = '<option value="">-----</option>';
         }
 
         $("#wechselrichter_model").html(wechselrichterOptions);
         $("#speicher_model").html(speicherOptions);
         $("#smartmeter_model").html(smartmeterOptions);
-        $("#wallboxtyp").html(wallboxtypOptions);
 }
 
 function toggleAnzWandhalterung(value) {
@@ -2110,14 +2107,13 @@ function toggleAnzWandhalterung(value) {
 }
 
 function setFieldOptions(value) {
-    var wechselrichterOptions, speicherOptions, smartmeterOptions, wallboxtypOptions;
+    var wechselrichterOptions, speicherOptions, smartmeterOptions;
 
         if(value == "Viessmann") {
             limitModulanzahl(28);
             wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
             speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
             smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
-            wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
@@ -2133,16 +2129,14 @@ function setFieldOptions(value) {
             else {
                 smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
             }
-            wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
             $('#garantieWR_row').show();
         } else {
-            wechselrichterOptions = speicherOptions = smartmeterOptions = wallboxtypOptions = '<option value="">-----</option>';
+            wechselrichterOptions = speicherOptions = smartmeterOptions = '<option value="">-----</option>';
         }
-
+    
         $("#wechselrichter_model").html(wechselrichterOptions);
         $("#speicher_model").html(speicherOptions);
         $("#smartmeter_model").html(smartmeterOptions);
-        $("#wallboxtyp").html(wallboxtypOptions);
 }
 
 function toggleBoolelwaRow(value) {

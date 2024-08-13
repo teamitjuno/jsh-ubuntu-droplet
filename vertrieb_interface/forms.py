@@ -826,10 +826,10 @@ class VertriebAngebotForm(ModelForm):
     ]
 
     WALLBOXTYP_CHOICES = [
-        ("----", "----"),
         ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
         ("Viessmann Charging Station", "Viessmann Charging Station"),
     ]
+
 
     WECHSELRICHTER_MODEL_CHOICES = [
         ("----", "----"),
@@ -1349,8 +1349,12 @@ class VertriebAngebotForm(ModelForm):
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
         ]
-
+        self.fields["wallboxtyp"].choices = [
+            (module.name, module.name)
+            for module in WallBoxPreise.objects.filter(in_stock=True)
+        ]
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+
         self.fields["angebot_id_assigned"].widget.attrs.update(
             {"id": "angebot_id_assigned"}
         )
