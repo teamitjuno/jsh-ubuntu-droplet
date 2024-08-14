@@ -104,7 +104,6 @@ KwpPreise.objects.create(name='Preis15', price=1276.00)
 KwpPreise.objects.create(name='Preis20', price=990.00)
 KwpPreise.objects.create(name='Preis25', price=880.00)
 KwpPreise.objects.create(name='Preis30', price=660.00)
-KwpPreise.objects.create(name='Preis30.0', price=660.00)
 
 from prices.models import OptionalAccessoriesPreise
 OptionalAccessoriesPreise.objects.create(name='elwa_2', price=1250.00)
