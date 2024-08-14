@@ -1274,6 +1274,7 @@ class VertriebAngebotForm(ModelForm):
             "zahlungsbedingungen",
             "elwa",
             "thor",
+            "heizstab",
             "notstrom",
             "anzOptimizer",
             "indiv_price_included",
