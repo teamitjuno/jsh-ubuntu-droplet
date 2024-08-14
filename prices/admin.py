@@ -2,7 +2,7 @@ from django.contrib import admin
 from prices.models import (
     ElektrikPreis,
     WrGarantiePreise,
-    ModulePreise,
+    KwpPreise,
     WallBoxPreise,
     SolarModulePreise,
     OptionalAccessoriesPreise,
@@ -36,8 +36,8 @@ class ModuleGarantiePreisAdmin(admin.ModelAdmin):
     inlines = [PricesInline]
 
 
-@admin.register(ModulePreise)
-class ModulePreisAdmin(admin.ModelAdmin):
+@admin.register(KwpPreise)
+class KwpPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
@@ -55,6 +55,7 @@ class SolarModulePreisAdmin(admin.ModelAdmin):
         "leistungs_garantie",
         "in_stock",
         "zuschlag",
+        "filename",
         "datenblatt",
     )
     search_fields = ("name",)
@@ -66,6 +67,8 @@ class WallBoxPreisAdmin(admin.ModelAdmin):
         "name",
         "price",
         "in_stock",
+        "filename",
+        "datenblatt",
     )
     search_fields = ("name",)
 

@@ -32,7 +32,7 @@ now_german = date_format(now_localized, "DATETIME_FORMAT")
 load_dotenv(ENV_FILE)
 
 
-class ModulePreiseChoiceField(forms.ModelChoiceField):
+class KwpPreiseChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.name}"  # type: ignore
 

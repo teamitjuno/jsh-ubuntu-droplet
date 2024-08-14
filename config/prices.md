@@ -94,17 +94,17 @@ WrGarantiePreise.objects.create(name='garantie20_15', price=1090.00)
 WrGarantiePreise.objects.create(name='garantie25_15', price=1160.00)
 WrGarantiePreise.objects.create(name='garantie30_15', price=1200.00)
 
-from prices.models import ModulePreise
+from prices.models import KwpPreise
 
-ModulePreise.objects.create(name='Preis5', price=1925.00)
-ModulePreise.objects.create(name='Preis7', price=1771.00)
-ModulePreise.objects.create(name='Preis10', price=1672.00)
-ModulePreise.objects.create(name='Preis12', price=1474.00)
-ModulePreise.objects.create(name='Preis15', price=1276.00)
-ModulePreise.objects.create(name='Preis20', price=990.00)
-ModulePreise.objects.create(name='Preis25', price=880.00)
-ModulePreise.objects.create(name='Preis30', price=660.00)
-ModulePreise.objects.create(name='Preis30.0', price=660.00)
+KwpPreise.objects.create(name='Preis5', price=1925.00)
+KwpPreise.objects.create(name='Preis7', price=1771.00)
+KwpPreise.objects.create(name='Preis10', price=1672.00)
+KwpPreise.objects.create(name='Preis12', price=1474.00)
+KwpPreise.objects.create(name='Preis15', price=1276.00)
+KwpPreise.objects.create(name='Preis20', price=990.00)
+KwpPreise.objects.create(name='Preis25', price=880.00)
+KwpPreise.objects.create(name='Preis30', price=660.00)
+KwpPreise.objects.create(name='Preis30.0', price=660.00)
 
 from prices.models import OptionalAccessoriesPreise
 OptionalAccessoriesPreise.objects.create(name='elwa_2', price=1250.00)

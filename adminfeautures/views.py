@@ -40,7 +40,7 @@ from prices.models import (
     SolarModulePreise,
     ElektrikPreis,
     WrGarantiePreise,
-    ModulePreise,
+    KwpPreise,
     WallBoxPreise,
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
@@ -215,7 +215,7 @@ def user_list_view(request):
     # Getting all the instances of your models
     elektrik_preis = ElektrikPreis.objects.all()
     module_garantie_preise = WrGarantiePreise.objects.all()
-    module_preise = ModulePreise.objects.all()
+    module_preise = KwpPreise.objects.all()
     solar_module_preise = SolarModulePreise.objects.all()
     wall_box_preise = WallBoxPreise.objects.all()
     optional_accessories_preise = OptionalAccessoriesPreise.objects.all()

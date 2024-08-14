@@ -3,7 +3,7 @@ from authentication.models import User
 from django.core.validators import MinValueValidator
 from prices.models import (
     WrGarantiePreise,
-    ModulePreise,
+    KwpPreise,
     OptionalAccessoriesPreise,
     AndereKonfigurationWerte,
     SolarModulePreise,
@@ -485,8 +485,8 @@ class Calculator(models.Model):
         def get_price(prefix, kw):
             name = prefix + str(kw)
 
-            #return float(ModulePreise.objects.get(name=name).price)
-            return (float(ModulePreise.objects.get(name=name).price)) * float(
+            #return float(KwpPreise.objects.get(name=name).price)
+            return (float(KwpPreise.objects.get(name=name).price)) * float(
                 self.get_zuschlag
             )
 
@@ -494,17 +494,18 @@ class Calculator(models.Model):
             name = f"garantie{kw}_{years}"
             return float(WrGarantiePreise.objects.get(name=name).price)
 
-        limits = [5, 7, 10, 12, 15, 20, 25]
+        limits = [5, 7, 10, 12, 15, 20, 25, 30]
         ranges = (
             [(0, limits[0])]
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
 
+        kwp = min(30, self.modulsumme_kWp)
         angebotsSumme = sum(
             (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
             for lower, upper in ranges
-            if lower < self.modulsumme_kWp
+            if lower < kwp
         )
 
         if self.user.typ == "Evolti":  # type: ignore
@@ -519,7 +520,7 @@ class Calculator(models.Model):
             garantie_kw = next(
                 kw
                 for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30]
-                if self.modulsumme_kWp <= kw
+                if kwp <= kw
             )
             angebotsSumme += get_garantie_price(garantie_kw, garantie_years) * garantie_faktor
 
