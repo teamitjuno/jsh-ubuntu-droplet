@@ -384,19 +384,8 @@ class VertriebAngebot(TimeStampMixin):
     garantieWR = models.CharField(
         max_length=10, choices=GARANTIE_WR_CHOICES, default="10 Jahre"
     )
-    eddi = models.BooleanField(default=False)
     elwa = models.BooleanField(default=False)
-    elwa_typ = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-    )
     thor = models.BooleanField(default=False)
-    thor_typ = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-    )
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
@@ -428,7 +417,6 @@ class VertriebAngebot(TimeStampMixin):
     wandhalterung_fuer_speicher_ticket = models.IntegerField(default=0)
     batteriemodule_ticket = models.IntegerField(default=0)
     notstrom_ticket = models.IntegerField(default=0)
-    eddi_ticket = models.IntegerField(default=0)
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     total_anzahl = models.IntegerField(blank=True, null=True)
@@ -447,9 +435,6 @@ class VertriebAngebot(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     notstrom_angebot_price = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    eddi_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
     optimizer_angebot_price = models.FloatField(
@@ -513,7 +498,6 @@ class VertriebAngebot(TimeStampMixin):
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
-        self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
@@ -1167,12 +1151,6 @@ class VertriebAngebot(TimeStampMixin):
         )
 
     @property
-    def eddi_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "eddi", int(self.eddi_ticket)
-        )
-
-    @property
     def elwa_ticket_preis(self):
         return self.calculate_price(
             OptionalAccessoriesPreise, "elwa_2", int(self.elwa_ticket)
@@ -1219,7 +1197,6 @@ class VertriebAngebot(TimeStampMixin):
                     self.batterie_ticket_preis,
                     self.leistung_ticket_preis,
                     self.notstrom_ticket_preis,
-                    self.eddi_ticket_preis,
                     self.elwa_ticket_preis,
                     self.thor_ticket_preis,
                     self.heizstab_ticket_preis,
@@ -1262,8 +1239,6 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.batteriespeicher_angebot_price)
         if self.smartmeter_angebot_price:
             accessories_price += float(self.smartmeter_angebot_price)
-        if self.eddi:
-            accessories_price += float(self.get_optional_accessory_price("eddi"))
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.hub_included == True:
@@ -1413,7 +1388,6 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxText": self.wallbox_text,
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
-            "eddi": self.eddi,
             "elwa": self.elwa,
             "thor": self.thor,
             "heizstab": self.heizstab,
@@ -1425,7 +1399,6 @@ class VertriebAngebot(TimeStampMixin):
             "notstromPreis": self.get_optional_accessory_price("backup_box"),
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
-            "eddiPreis": self.get_optional_accessory_price("eddi"),
             "zahlungs_bedingungen": self.zahlungsbedingungen,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
@@ -1442,7 +1415,6 @@ class VertriebAngebot(TimeStampMixin):
             "optimizerTicket": int(self.optimizer_ticket),
             "batterieTicket": int(self.batteriemodule_ticket),
             "notstromTicket": int(self.notstrom_ticket),
-            "eddiTicket": int(self.eddi_ticket),
             "wandhalterungTicket": int(self.wandhalterung_fuer_speicher_ticket),
             "elwaTicket": int(self.elwa_ticket),
             "thorTicket": int(self.thor_ticket),
@@ -1453,7 +1425,6 @@ class VertriebAngebot(TimeStampMixin):
             "batterieTicketpreis": round(self.batterie_ticket_preis, 2),
             "leistungTicketpreis": round(self.leistung_ticket_preis, 2),
             "notstromTicketpreis": round(self.notstrom_ticket_preis, 2),
-            "eddiTicketpreis": round(self.eddi_ticket_preis, 2),
             "elwaTicketpreis": self.elwa_ticket_preis,
             "thorTicketpreis": self.thor_ticket_preis,
             "heizstabTicketpreis": self.heizstab_ticket_preis,

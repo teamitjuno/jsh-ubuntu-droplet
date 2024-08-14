@@ -388,16 +388,6 @@
                                                                         <th>{{ form.garantieWR.label_tag }}</th>
                                                                         <td>{{ form.garantieWR }}</td>
                                                                     </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.eddi.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch03" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-
                                                                     <tr>
                                                                         <th>{{ form.anzOptimizer.label_tag }}</th>
                                                                         <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
@@ -630,10 +620,6 @@
                                                                         <tr>
                                                                             <th>{{ form.notstrom_ticket.label_tag }}</th>
                                                                             <td>{{ form.notstrom_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.eddi_ticket.label_tag }}</th>
-                                                                            <td>{{ form.eddi_ticket }}</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -1482,16 +1468,6 @@ function submitFormWithAction(action) {
                                                                         <td><input type="text" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
                                                                     </tr>
 
-                                                                    <tr hidden>
-                                                                        <th>{{ form.eddi.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch03" {% if form.eddi.value %}checked{% endif %} data-switch="success" name="{{ form.eddi.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch03" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-
                                                                     <tr>
                                                                         <th>{{ form.anzOptimizer.label_tag }}</th>
                                                                         <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
@@ -1724,10 +1700,6 @@ function submitFormWithAction(action) {
                                                                         <tr>
                                                                             <th>{{ form.notstrom_ticket.label_tag }}</th>
                                                                             <td>{{ form.notstrom_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr hidden>
-                                                                            <th>{{ form.eddi_ticket.label_tag }}</th>
-                                                                            <td>{{ form.eddi_ticket }}</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>

@@ -106,19 +106,8 @@ class Calculator(models.Model):
     garantieWR = models.CharField(
         max_length=10, choices=GARANTIE_WR_CHOICES, default="keine"
     )
-    eddi = models.BooleanField(default=False)
     elwa = models.BooleanField(default=False)
-    elwa_typ = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-    )
     thor = models.BooleanField(default=False)
-    thor_typ = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-    )
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
@@ -143,9 +132,6 @@ class Calculator(models.Model):
         default=0.00, validators=[MinValueValidator(0)]
     )
     notstrom_angebot_price = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    eddi_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
     optimizer_angebot_price = models.FloatField(
@@ -191,7 +177,6 @@ class Calculator(models.Model):
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
-        self.eddi_angebot_price = float(self.get_optional_accessory_price("eddi"))
         if self.batteriespeicher_preis:
             self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.angebotsumme = round(self.angebots_summe, 2)
@@ -483,8 +468,6 @@ class Calculator(models.Model):
             accessories_price += float(self.full_wallbox_preis)
         if self.batteriespeicher_angebot_price:
             accessories_price += float(self.batteriespeicher_angebot_price)
-        if self.eddi:
-            accessories_price += float(self.get_optional_accessory_price("eddi"))
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.hub_included == True:

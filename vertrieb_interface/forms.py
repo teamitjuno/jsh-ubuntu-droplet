@@ -1059,11 +1059,6 @@ class VertriebAngebotForm(ModelForm):
         initial="10 Jahre",
         widget=forms.Select(attrs={"class": "form-select", "id": "garantieWR"}),
     )
-    eddi = forms.BooleanField(
-        label="Eddi",
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "eddi"}),
-    )
     elwa = forms.BooleanField(
         label="AC-ELWA 2",
         required=False,
@@ -1218,13 +1213,6 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-    eddi_ticket = forms.IntegerField(
-        label="Eddi ",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
-    )
 
     class Meta:
         model = VertriebAngebot
@@ -1286,7 +1274,6 @@ class VertriebAngebotForm(ModelForm):
             "zahlungsbedingungen",
             "elwa",
             "thor",
-            "eddi",
             "notstrom",
             "anzOptimizer",
             "indiv_price_included",
@@ -1300,7 +1287,6 @@ class VertriebAngebotForm(ModelForm):
             "optimizer_ticket",
             "batteriemodule_ticket",
             "notstrom_ticket",
-            "eddi_ticket",
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -1948,13 +1934,6 @@ class TicketForm(forms.ModelForm):
             attrs={"class": "form-control", "id": "notstrom_ticket"}
         ),
     )
-    eddi_ticket = forms.IntegerField(
-        label="Eddi Ticket-Anzahl",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "eddi_ticket"}),
-    )
 
     class Meta:
         model = VertriebAngebot
@@ -1971,7 +1950,6 @@ class TicketForm(forms.ModelForm):
             "optimizer_ticket",
             "batteriemodule_ticket",
             "notstrom_ticket",
-            "eddi_ticket",
         ]
 
     def __init__(self, *args, user, **kwargs):
