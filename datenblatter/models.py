@@ -7,8 +7,6 @@ class Datenblatter(models.Model):
     speicher_module_viessmann = models.FileField(
         upload_to="uploads/", blank=True, null=True
     )
-    wall_box = models.FileField(upload_to="uploads/", blank=True, null=True)
-    wall_box_viessman = models.FileField(upload_to="uploads/", blank=True, null=True)
     wechselrichter = models.FileField(upload_to="uploads/", blank=True, null=True)
     wechselrichter_viessman = models.FileField(
         upload_to="uploads/", blank=True, null=True

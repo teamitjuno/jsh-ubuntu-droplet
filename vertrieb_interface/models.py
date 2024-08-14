@@ -527,20 +527,20 @@ class VertriebAngebot(TimeStampMixin):
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
         self.gesamtkapazitat = self.gesamtkapazitat_rechnung
-        if self.solar_module:
-            self.datenblatter_solar_module = True
-        if self.anzOptimizer > 0:
-            self.datenblatter_optimizer = True
-        if (self.speicher_model == "LUNA 2000-5-S0" or self.speicher_model == "LUNA 2000-7-S1") and self.anz_speicher != 0:
-            self.datenblatter_speichermodule = True
-        if self.wechselrichter_model == "SUN 2000" and self.anz_speicher != 0:
-            self.datenblatter_wechselrichter = True
-        if self.wallboxtyp == "Huawei FusionCharge AC" and self.wallbox_anzahl != 0:
-            self.datenblatter_wallbox = True
-        if self.notstrom == True:
-            self.datenblatter_backup_box = True
-        if self.thor == True:
-            self.datenblatter_thor = True
+        # if self.solar_module:
+        #     self.datenblatter_solar_module = True
+        # if self.anzOptimizer > 0:
+        #     self.datenblatter_optimizer = True
+        # if (self.speicher_model == "LUNA 2000-5-S0" or self.speicher_model == "LUNA 2000-7-S1") and self.anz_speicher != 0:
+        #     self.datenblatter_speichermodule = True
+        # if self.wechselrichter_model == "SUN 2000" and self.anz_speicher != 0:
+        #     self.datenblatter_wechselrichter = True
+        # if self.wallboxtyp == "Huawei FusionCharge AC" and self.wallbox_anzahl != 0:
+        #     self.datenblatter_wallbox = True
+        # if self.notstrom == True:
+        #     self.datenblatter_backup_box = True
+        # if self.thor == True:
+        #     self.datenblatter_thor = True
         super(VertriebAngebot, self).save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(
