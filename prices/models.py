@@ -71,6 +71,7 @@ class SolarModulePreise(models.Model):
 class WallBoxPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    pdf_text = models.TextField(help_text="Inhalt", default="<<kein editierbarer text>>")
     in_stock = models.BooleanField(default=True, null=True, blank=True)
     filename = models.CharField(max_length=255, default="Wallbox")
     datenblatt = models.FileField(upload_to="uploads/", blank=True, null=True)

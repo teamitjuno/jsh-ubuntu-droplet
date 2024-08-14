@@ -16,7 +16,7 @@ from config.settings import EMAIL_BACKEND
 
 # Local imports from 'datenblatter'
 from datenblatter.models import Datenblatter
-from prices.models import SolarModulePreise
+from prices.models import SolarModulePreise, WallBoxPreise
 
 # Local imports from 'vertrieb_interface'
 from vertrieb_interface.forms import (
@@ -115,7 +115,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
         )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            self._attach_datenblatt_module(
+            self._attach_datenblatt_from_prices(
                 email,
                 SolarModulePreise.objects.get(name=vertrieb_angebot.solar_module).datenblatt,
                 SolarModulePreise.objects.get(name=vertrieb_angebot.solar_module).filename,
@@ -150,8 +150,11 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 self._attach_datenblatter(email, datenblatter, "wechselrichter", "Huawei Wechselrichter")
 
         if vertrieb_angebot.datenblatter_wallbox:
-            if vertrieb_angebot.hersteller == "Huawei":
-                self._attach_datenblatter(email, datenblatter, "wall_box", "Huawei WB")
+            self._attach_datenblatt_from_prices(
+                email,
+                WallBoxPreise.objects.get(name=vertrieb_angebot.wallboxtyp).datenblatt,
+                WallBoxPreise.objects.get(name=vertrieb_angebot.wallboxtyp).filename,
+            )
 
         if vertrieb_angebot.datenblatter_backup_box:
             if vertrieb_angebot.hersteller == "Huawei":
@@ -212,7 +215,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
             )
             raise e  # Optionally re-raise to signify critical failure.
 
-    def _attach_datenblatt_module(self, email, solarmodul, filename):
+    def _attach_datenblatt_from_prices(self, email, datenblatt, filename):
         """
         Anhängen von Datenblättern zu einer E-Mail.
 
@@ -222,6 +225,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
         Args:
             email: Das E-Mail-Objekt, zu dem die Anhänge hinzugefügt werden sollen.
             solarmodul: Das Datenblatt.
+            filename: Eine Name, den die angehängte Datei erhalten soll
 
         Raises:
             AttributeError: Wenn ein angegebenes Feld nicht in datenblatter existiert.
@@ -229,7 +233,6 @@ class DocumentView(LoginRequiredMixin, DetailView):
             Exception: Allgemeine Ausnahmebehandlung für unerwartete Fehler.
         """
         try:
-            datenblatt = solarmodul
             if not datenblatt:
                 raise AttributeError(
                     f"{solarmodul} is missing."

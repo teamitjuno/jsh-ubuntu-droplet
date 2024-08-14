@@ -1011,47 +1011,62 @@ class PDF(FPDF):
             wallbox_2 = self.get_attribute_by_identifier("wallbox_2", "content")
             self.setup_text("wallbox_2", wallbox_2, alignment="L")
 
-            if data["hersteller"] == "Huawei":
-
-                # Tabelle Eintrag 24
-                # Wallbox Huawei
-                eintrag += 1
-                tab24_eintrag_nummer = str(eintrag) + "."
-                tab24_content_1 = self.get_attribute_by_identifier(
-                    "huawei_wallbox", "content"
-                )
-                tab24_content_2 = str(data["wallboxAnz"])
-                tab24_content_4 = self.get_attribute_by_identifier(
-                    "huawei_wallbox_1", "content"
-                )
-                self.setup_eintrag_text(
-                    "huawei_wallbox_1",
-                    tab24_eintrag_nummer,
-                    tab24_content_1,
-                    content_2=tab24_content_2,
-                    content_4=tab24_content_4,
-                )
-
-            elif data["hersteller"] == "Viessmann":
-
-                # Tabelle Eintrag 24
-                # Wallbox Viessmann
-                eintrag += 1
-                tab24_eintrag_nummer = str(eintrag) + "."
-                tab24_content_1 = self.get_attribute_by_identifier(
-                    "viessmann_wallbox", "content"
-                )
-                tab24_content_2 = str(data["wallboxAnz"])
-                tab24_content_4 = self.get_attribute_by_identifier(
-                    "viessmann_wallbox_1", "content"
-                )
-                self.setup_eintrag_text(
-                    "viessmann_wallbox_1",
-                    tab24_eintrag_nummer,
-                    tab24_content_1,
-                    content_2=tab24_content_2,
-                    content_4=tab24_content_4,
-                )
+            eintrag += 1
+            tab24_eintrag_nummer = str(eintrag) + "."
+            tab24_content_1 = str(data["wallboxTyp"])
+            tab24_content_2 = str(data["wallboxAnz"])
+            tab24_content_4 =  str(data["wallboxText"])
+            self.setup_eintrag_text(
+                "wallbox_typ",
+                tab24_eintrag_nummer,
+                content_1=tab24_content_1,
+                content_2=tab24_content_2,
+                content_4=tab24_content_4,
+            )
+            # tab1_module = data["module"]
+            # tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModule"])} Wp\n∙ Produktgarantie: {str(data["produktGarantie"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantie"])}'
+            # tab1_module_anzahl = f'{str(data["anzModule"])} Stk'
+            # if data["hersteller"] == "Huawei":
+            #
+            #     # Tabelle Eintrag 24
+            #     # Wallbox Huawei
+            #     eintrag += 1
+            #     tab24_eintrag_nummer = str(eintrag) + "."
+            #     tab24_content_1 = self.get_attribute_by_identifier(
+            #         "huawei_wallbox", "content"
+            #     )
+            #     tab24_content_2 = str(data["wallboxAnz"])
+            #     tab24_content_4 = self.get_attribute_by_identifier(
+            #         "huawei_wallbox_1", "content"
+            #     )
+            #     self.setup_eintrag_text(
+            #         "huawei_wallbox_1",
+            #         tab24_eintrag_nummer,
+            #         tab24_content_1,
+            #         content_2=tab24_content_2,
+            #         content_4=tab24_content_4,
+            #     )
+            #
+            # elif data["hersteller"] == "Viessmann":
+            #
+            #     # Tabelle Eintrag 24
+            #     # Wallbox Viessmann
+            #     eintrag += 1
+            #     tab24_eintrag_nummer = str(eintrag) + "."
+            #     tab24_content_1 = self.get_attribute_by_identifier(
+            #         "viessmann_wallbox", "content"
+            #     )
+            #     tab24_content_2 = str(data["wallboxAnz"])
+            #     tab24_content_4 = self.get_attribute_by_identifier(
+            #         "viessmann_wallbox_1", "content"
+            #     )
+            #     self.setup_eintrag_text(
+            #         "viessmann_wallbox_1",
+            #         tab24_eintrag_nummer,
+            #         tab24_content_1,
+            #         content_2=tab24_content_2,
+            #         content_4=tab24_content_4,
+            #     )
 
         # OPTIONALES ZUBEHÖR
         if not (

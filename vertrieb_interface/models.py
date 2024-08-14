@@ -486,6 +486,13 @@ class VertriebAngebot(TimeStampMixin):
             out = ""
         return out
 
+    def get_wallbox_text(self, name):
+        try:
+            out = str(WallBoxPreise.objects.get(name=name).pdf_text)
+        except:
+            out = ""
+        return out
+
     def save(self, *args, **kwargs):
         if not self.angebot_id:
             self.angebot_id = self.generate_angebot_id()
@@ -1056,15 +1063,6 @@ class VertriebAngebot(TimeStampMixin):
     """
 
     @property
-    def wallbox_text(self):
-        text = (
-            "\nHarvi\nHub"
-            if "Zappi" in str(self.wallboxtyp)
-            else "Inkl. Power Boost" if "Power Boost" in str(self.wallboxtyp) else ""
-        )
-        return text
-
-    @property
     def wallbox_anzahl_pdf(self):
         if self.wallbox_anzahl and self.wallbox_anzahl > 3:
             raise ValueError(
@@ -1385,7 +1383,7 @@ class VertriebAngebot(TimeStampMixin):
             "batterieAnz": self.anz_speicher,
             "wallboxVorh": self.full_wallbox_preis,
             "wallboxTyp": self.wallboxtyp,
-            "wallboxText": self.wallbox_text,
+            "wallboxText": self.get_wallbox_text(self.wallboxtyp),
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "elwa": self.elwa,

@@ -824,7 +824,7 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     font_size=10
 )
-# Create 'wallbox_1' and 'wallbox_2' common entries (common text for wallbox section)
+# Create 'wallbox_1' and 'wallbox_2' and 'wallbox_typ' common entries (common text for wallbox section)
 Editierbarer_Text.objects.create(
     identifier='wallbox_1', 
     content="Ladestation für E-Fahrzeug (Wallbox)", 
@@ -837,34 +837,9 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     font_size=11
 )
-
-# Create Huawei specific wallbox entry
 Editierbarer_Text.objects.create(
-    identifier='huawei_wallbox_1', 
-    content="Huawei Fusion Charge AC\n∙ inkl. Lade- und Lastmanagement\n∙ maximale Ladeleistung: 22 kW\n∙ Parametrierbar auf 11 kW (für KfW Förderung)\n∙ Produktgarantie: 3 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
-)
-
-# Create Viessmann specific wallbox entry
-Editierbarer_Text.objects.create(
-    identifier='viessmann_wallbox_1', 
-    content="∙ inkl Lade- und Lastmanagement\n∙ maximale Ladeleistung: 11 kW\n∙ inkl Ladekabel mit 7,5 m Kabellänge\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
-)
-# Create Viessmann specific wallbox entry
-Editierbarer_Text.objects.create(
-    identifier='viessmann_wallbox', 
-    content="Viessmann Charging Station", 
-    font='JUNO Solar Lt', 
-    font_size=11
-)
-
-# Create Huawei specific wallbox entry
-Editierbarer_Text.objects.create(
-    identifier='huawei_wallbox', 
-    content="Huawei Fusion Charge AC", 
+    identifier='wallbox_typ', 
+    content="<<variable>>", 
     font='JUNO Solar Lt', 
     font_size=11
 )

@@ -240,7 +240,7 @@ class EditierbarerTextAdmin(admin.ModelAdmin):
             },
         ),
     )
-    readonly_fields = ("last_updated", "identifier")
+    readonly_fields = ("last_updated",)
 
 
 @admin.register(Dokument_PDF)
