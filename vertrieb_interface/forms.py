@@ -174,6 +174,12 @@ def validate_integers_ticket(value):
             params={"value": value},
         )
 
+def validate_rabatt(value):
+    if not isinstance(value, int) or not (0 <= value <= 10):
+        raise ValidationError(
+            "Ungültige Eingabe: %(value)s. Die Höhe des Rabatts sollte zwischen 0% und 10% liegen.",
+            params={"value": value},
+        )
 
 def validate_solar_module_anzahl(value):
     if not isinstance(value, int) or not (6 <= value <= 69):
@@ -433,6 +439,7 @@ class VertriebAngebotEmptyForm(ModelForm):
             "wallboxtyp",
             "wallbox_anzahl",
             "kabelanschluss",
+            "rabatt"
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1095,6 +1102,25 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-select", "id": "zahlungsbedingungen"}
         ),
     )
+    rabatt = forms.IntegerField(
+        initial=0,
+        validators=[validate_rabatt],
+        label="Rabatt in %",
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "rabatt",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    genehmigung_rabatt = forms.BooleanField(
+        label="Genehmigung Rabatt",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "genehmigung_rabatt"}),
+    )
 
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
@@ -1271,7 +1297,6 @@ class VertriebAngebotForm(ModelForm):
             "solar_module",
             "modulanzahl",
             "garantieWR",
-            "zahlungsbedingungen",
             "elwa",
             "thor",
             "heizstab",
@@ -1279,6 +1304,9 @@ class VertriebAngebotForm(ModelForm):
             "anzOptimizer",
             "indiv_price_included",
             "indiv_price",
+            "zahlungsbedingungen",
+            "rabatt",
+            "genehmigung_rabatt",
             "module_ticket",
             "modul_anzahl_ticket",
             "elwa_ticket",
@@ -1347,6 +1375,9 @@ class VertriebAngebotForm(ModelForm):
         )
         self.fields["zahlungsbedingungen"].widget.attrs.update(
             {"id": "zahlungsbedingungen"}
+        )
+        self.fields["rabatt"].widget.attrs.update(
+            {"id": "rabatt"}
         )
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
@@ -1495,7 +1526,6 @@ class VertriebAngebotForm(ModelForm):
         interessent = cleaned_data.get("name")
         modulanzahl = cleaned_data.get("modulanzahl")
         name_last_name = cleaned_data.get("name_last_name")
-
         anzOptimizer = cleaned_data.get("anzOptimizer")
 
         if anzOptimizer is not None and modulanzahl is not None:

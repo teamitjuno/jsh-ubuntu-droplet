@@ -295,11 +295,6 @@ class VertriebAngebot(TimeStampMixin):
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
     anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
-    zahlungsbedingungen = models.CharField(
-        max_length=25,
-        blank=True,
-        null=True,
-    )
 
     # Kalkulations
     verbrauch = models.FloatField(
@@ -420,6 +415,13 @@ class VertriebAngebot(TimeStampMixin):
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     total_anzahl = models.IntegerField(blank=True, null=True)
+    zahlungsbedingungen = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+    )
+    rabatt = models.IntegerField(default=0)
+    genehmigung_rabatt = models.BooleanField(default=False)
 
     # Result Prices :
     solar_module_angebot_price = models.FloatField(
@@ -1298,6 +1300,8 @@ class VertriebAngebot(TimeStampMixin):
                 angebotsSumme *= 1.07
             angebotsSumme = self.indiv_price
 
+        angebotsSumme *= (1-(self.rabatt/100))
+
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
 
@@ -1398,6 +1402,8 @@ class VertriebAngebot(TimeStampMixin):
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "zahlungs_bedingungen": self.zahlungsbedingungen,
+            "rabatt": self.rabatt,
+            "genehmigung_rabatt": self.genehmigung_rabatt,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

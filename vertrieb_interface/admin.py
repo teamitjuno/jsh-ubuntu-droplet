@@ -177,6 +177,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "wallbox_angebot_price",
                     "notstrom_angebot_price",
                     "optimizer_angebot_price",
+                    "rabatt",
+                    "genehmigung_rabatt",
                     "angebotsumme",
                 ),
                 "classes": ("collapse",),

@@ -358,6 +358,21 @@
                                                                         <td>{{ form.zahlungsbedingungen }}</td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="genehmigung_row" class="conditional-row">
+                                                                        <th>{{ form.genehmigung_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="genehmigung_rabatt" {% if form.genehmigung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.genehmigung_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="genehmigung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -1060,6 +1075,7 @@
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
+    toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
@@ -1073,6 +1089,15 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
+
+function toggleGenehmigung(value){
+    if (value >= 6) {
+        $('#genehmigung_row').show();
+    } else {
+        $('#genehmigung_row').hide();
+    }
+
+}
 
 function toggleHeizstab(value){
     if (value === true) {
@@ -1430,6 +1455,21 @@ function submitFormWithAction(action) {
                                                                     <tr>
                                                                         <th>Zahlungsmodalitäten</th>
                                                                         <td>{{ form.zahlungsbedingungen }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="genehmigung_row" class="conditional-row">
+                                                                        <th>{{ form.genehmigung_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="genehmigung_rabatt" {% if form.genehmigung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.genehmigung_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="genehmigung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Netto</th>
@@ -2176,6 +2216,7 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
+    toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
     toggleBoolelwaRow($('#hersteller').val());
     setFieldOptions($('#hersteller').val());
@@ -2191,6 +2232,15 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
+
+function toggleGenehmigung(value){
+    if (value >= 6) {
+        $('#genehmigung_row').show();
+    } else {
+        $('#genehmigung_row').hide();
+    }
+
+}
 
 function toggleHeizstab(value){
     if (value === true) {
