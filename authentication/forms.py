@@ -242,7 +242,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
     )
 
     initial_wallboxtyp = forms.ChoiceField(
-        label="WallboxTyp",
+        label="Wallbox",
         choices=[],
         required=False,
         widget=forms.Select(
@@ -254,7 +254,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ),
     )
     initial_anz_speicher = forms.IntegerField(
-        label="Anzahl Speichermodule",
+        label="Speichermodule Anzahl",
         required=False,
         initial=0,
         validators=[validate_range],

@@ -814,7 +814,7 @@ class VertriebAngebotForm(ModelForm):
     )
 
     anz_speicher = forms.IntegerField(
-        label="Anzahl Speichermodule",
+        label="Speichermodule Anzahl",
         required=False,
         initial=0,
         validators=[],
@@ -881,7 +881,7 @@ class VertriebAngebotForm(ModelForm):
     )
 
     smartmeter_model = forms.ChoiceField(
-        label="Smart Meter",
+        label="EMS / Smart Meter",
         choices=SMARTMETER_MODEL_CHOICES,
         widget=forms.Select(attrs={"class": "form-select", "id": "smartmeter_model"}),
     )
@@ -920,7 +920,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     anz_wandhalterung_fuer_speicher = forms.IntegerField(
-        label="Anzahl Wandhalterung",
+        label="Wandhalterung Anzahl",
         required=False,
         initial=0,
         validators=[validate_integers],
@@ -1004,6 +1004,7 @@ class VertriebAngebotForm(ModelForm):
     )
     wallboxtyp = forms.ChoiceField(
         required=False,
+        label="Wallbox",
         initial="----",
         choices=WALLBOXTYP_CHOICES,
         widget=forms.Select(
@@ -1016,7 +1017,7 @@ class VertriebAngebotForm(ModelForm):
     )
     wallbox_anzahl = forms.IntegerField(
         initial=0,
-        label="Anzahl",
+        label="Wallbox Anzahl",
         required=False,
         widget=forms.NumberInput(
             attrs={
@@ -1059,6 +1060,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     garantieWR = forms.ChoiceField(
+        label="Garantie WR",
         choices=[
             ("10 Jahre", "10 Jahre"),
             ("15 Jahre", "15 Jahre"),

@@ -323,6 +323,16 @@
                                                                             {{ form.wechselrichter_model }}
                                                                         </td>
                                                                     </tr>
+                                                                    <tr id="garantieWR_row" class="conditional-row">
+                                                                        <th>{{ form.garantieWR.label_tag }}</th>
+                                                                        <td>{{ form.garantieWR }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
+                                                                            {{ form.anzOptimizer }}
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr>
                                                                         <th>{{ form.speicher_model.label_tag }}</th>
                                                                         <td>{{ form.speicher_model }}</td>
@@ -399,16 +409,6 @@
                                                                             {{ form.modulanzahl }}
                                                                         </td>
                                                                     </tr>
-                                                                    <tr id="garantieWR_row" class="conditional-row">
-                                                                        <th>{{ form.garantieWR.label_tag }}</th>
-                                                                        <td>{{ form.garantieWR }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            {{ form.anzOptimizer }}
-                                                                        </td>
-                                                                    </tr>
                                                                     <tr>
                                                                         <th>Modulleistung [Wp]</th>
                                                                         <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }}</td>
@@ -467,37 +467,37 @@
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
-                                                                <table class="table table-sm table-hover">
+                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} </td>
+                                                                        <th>Erzeugte Energie pro Jahr</th>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} </td>
+                                                                        <th>Nutzbare PV-Energie</th>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} </td>
+                                                                        <th>Benögte Restenegie</th>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>kosten für Restenegie [€]</th>
+                                                                        <th>kosten für Restenegie</th>
                                                                         <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Einspreisevergütung gesamt [€]</th>
+                                                                        <th>Einspreisevergütung gesamt</th>
                                                                         <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage [€]</th>
+                                                                        <th>Stromkosten ohne PV-Anlage</th>
                                                                         <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Preis abzgl Vergütung und inkl. Restrom [€]</th>
+                                                                        <th>Preis abzgl Vergütung und inkl. Restrom</th>
                                                                         <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Ersparnis [€]</th>
+                                                                        <th>Ersparnis</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
@@ -749,19 +749,19 @@
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
+                                                                        <th>Erzeugte Energie pro Jahr</th>
                                                                         <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Nutzbare PV-Energie [kWh]</th>
+                                                                        <th>Nutzbare PV-Energie</th>
                                                                         <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Benögte Restenegie [kWh]</th>
+                                                                        <th>Benögte Restenegie</th>
                                                                         <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
@@ -769,7 +769,7 @@
                                                                         <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Einspreisevergütung gesamt [€]</th>
+                                                                        <th>Einspreisevergütung gesamt</th>
                                                                         <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
@@ -781,7 +781,7 @@
                                                                         <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Ersparnis [€]</th>
+                                                                        <th>Ersparnis</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
@@ -1573,37 +1573,37 @@ function submitFormWithAction(action) {
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
-                                                                <table class="table table-sm table-hover">
+                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} </td>
+                                                                        <th>Erzeugte Energie pro Jahr</th>
+                                                                        <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Nutzbare PV-Energie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} </td>
+                                                                        <th>Nutzbare PV-Energie</th>
+                                                                        <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Benögte Restenegie [kWh]</th>
-                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} </td>
+                                                                        <th>Benögte Restenegie</th>
+                                                                        <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>kosten für Restenegie [€]</th>
+                                                                        <th>kosten für Restenegie</th>
                                                                         <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Einspreisevergütung gesamt [€]</th>
+                                                                        <th>Einspreisevergütung gesamt</th>
                                                                         <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage [€]</th>
+                                                                        <th>Stromkosten ohne PV-Anlage</th>
                                                                         <td>{{ vertrieb_angebot.strom_ohne|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Preis abzgl Vergütung und inkl. Restrom [€]</th>
+                                                                        <th>Preis abzgl Vergütung und inkl. Restrom</th>
                                                                         <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Ersparnis [€]</th>
+                                                                        <th>Ersparnis</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
@@ -1854,19 +1854,19 @@ function submitFormWithAction(action) {
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energy Details</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>Erzeugte Energie pro Jahr [kWh]</th>
+                                                                        <th>Erzeugte Energie pro Jahr</th>
                                                                         <td>{{ vertrieb_angebot.erzeugte_energie_pro_jahr|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Nutzbare PV-Energie [kWh]</th>
+                                                                        <th>Nutzbare PV-Energie</th>
                                                                         <td>{{ vertrieb_angebot.nutzbare_nutzenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Benögte Restenegie [kWh]</th>
+                                                                        <th>Benögte Restenegie</th>
                                                                         <td>{{ vertrieb_angebot.benotigte_restenergie|format_number }} kWh</td>
                                                                     </tr>
                                                                     <tr>
@@ -1874,7 +1874,7 @@ function submitFormWithAction(action) {
                                                                         <td>{{ vertrieb_angebot.kosten_fur_restenergie|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Einspreisevergütung gesamt [€]</th>
+                                                                        <th>Einspreisevergütung gesamt</th>
                                                                         <td>{{ vertrieb_angebot.einspreisevergütung_gesamt|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
@@ -1886,7 +1886,7 @@ function submitFormWithAction(action) {
                                                                         <td>{{ vertrieb_angebot.abzug_vergutung|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Ersparnis [€]</th>
+                                                                        <th>Ersparnis</th>
                                                                         <td>{{ vertrieb_angebot.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>

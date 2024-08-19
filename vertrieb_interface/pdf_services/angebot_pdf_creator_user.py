@@ -22,6 +22,7 @@ class PDF(FPDF):
         """
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
+        self.skip_logo = False
         self.title1 = title1
         self.set_left_margin(18.875)
         self.set_right_margin(12.875)
@@ -213,7 +214,7 @@ class PDF(FPDF):
         header_text = f"Seite {self.page_no()}/{pages}       {self.title1}"
         self.cell(0, 10, header_text, 0, 0, "")
 
-        if not self.is_last_page:
+        if not self.skip_logo:
             self.set_y(15)
             self.set_font("JUNO Solar Lt", "", 12)
             self.set_x(40)
@@ -1436,8 +1437,9 @@ class PDF(FPDF):
         )
 
     def page5(self):
-        self.is_last_page = True
+        self.skip_logo = True
         self.add_page()
+        self.is_last_page = True
         self.set_text_color(0)
         self.set_auto_page_break(auto=True, margin=15)
 
@@ -1641,9 +1643,9 @@ class PDF(FPDF):
         self.set_font_size(font_size)
 
     def page6(self, certifikate):
-        self.is_last_page = True
         if certifikate:
             self.add_page()
+            self.is_last_page = True
             self.image(
                 certifikate.path,
                 x=5,
@@ -1687,7 +1689,6 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
         )
         if not os.path.exists(user_folder):
             os.makedirs(user_folder)
-        pdf.is_last_page = False
         pdf = calcPage1(pdf, data)
         pdf = calcPage2(pdf, data, user_folder, vertrieb_angebot)
 

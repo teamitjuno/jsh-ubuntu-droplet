@@ -19,6 +19,7 @@ class PDF(FPDF):
         """
         super(PDF, self).__init__(*args, **kwargs)
         self.is_last_page = False
+        self.skip_logo = False
         self.title1 = title1
         self.set_left_margin(18.875)
         self.set_right_margin(12.875)
@@ -49,7 +50,7 @@ class PDF(FPDF):
         header_text = f"Seite {self.page_no()}/{pages}       {self.title1}"
         self.cell(0, 10, header_text, 0, 0, "")
 
-        if not self.is_last_page:
+        if not self.skip_logo:
             self.set_y(15)
             self.set_font("JUNO Solar Lt", "", 12)
             self.set_x(40)
@@ -64,6 +65,8 @@ class PDF(FPDF):
         pass
 
 def calcPage1(pdf, data):
+    pdf.is_last_page = True
+    pdf.skip_logo = False
     pdf.add_page()
     pdf.set_fill_color(240)
     # Adresszeile
@@ -195,6 +198,8 @@ def calcPage1(pdf, data):
     return pdf
 
 def calcPage2(pdf, data, user_folder, vertrieb_angebot):
+    pdf.is_last_page = True
+    pdf.skip_logo = False
     pdf.add_page()
     pdf.set_fill_color(240)
     # Kostenkalkulation ohne Photovoltaikanlage anhand der Ausgangsdaten

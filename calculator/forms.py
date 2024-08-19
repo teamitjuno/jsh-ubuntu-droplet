@@ -107,6 +107,7 @@ class CalculatorForm(forms.ModelForm):
     )
     wallboxtyp = forms.ChoiceField(
         required=False,
+        label="Wallbox",
         widget=forms.Select(
             attrs={
                 "class": "form-select",
@@ -116,7 +117,7 @@ class CalculatorForm(forms.ModelForm):
     )
     wallbox_anzahl = forms.IntegerField(
         initial=0,
-        label="Anzahl",
+        label="Wallbox Anzahl",
         required=False,
         widget=forms.NumberInput(
             attrs={
@@ -175,7 +176,7 @@ class CalculatorForm(forms.ModelForm):
         ),
     )
     anz_speicher = forms.IntegerField(
-        label="Anzahl Speichermodule (kann sein 0)",
+        label="Speichermodule Anzahl (kann 0 sein)",
         required=False,
         initial=0,
         validators=[validate_range],
