@@ -888,7 +888,7 @@ class VertriebAngebotForm(ModelForm):
 
     gesamtkapazitat = forms.IntegerField(
         initial=0,
-        label="Gesamtkapazitat",
+        label="Gesamtkapazität",
         required=False,
         widget=forms.NumberInput(
             attrs={

@@ -344,8 +344,8 @@
                                                                         
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}kWh</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }}"></td>
+                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
+                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>{{ form.smartmeter_model.label_tag }}</th>
@@ -410,12 +410,12 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Modulleistung [Wp]</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }}</td>
+                                                                        <th>Modulleistung</th>
+                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Modullsumme [kWp]</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }}</td>
+                                                                        <th>Modulsumme</th>
+                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1435,8 +1435,8 @@ function submitFormWithAction(action) {
                                                                     </tr>
 
                                                                     <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}kWh</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }}"></td>
+                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
+                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
                                                                         
                                                                         
                                                                     </tr>
@@ -1516,12 +1516,12 @@ function submitFormWithAction(action) {
                                                                     </tr>
 
                                                                     <tr>
-                                                                        <th>Modulleistung [Wp]</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }}</td>
+                                                                        <th>Modulleistung</th>
+                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Modullsumme [kWp]</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }}</td>
+                                                                        <th>Modulsumme</th>
+                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
