@@ -94,6 +94,8 @@ class WallBoxPreise(models.Model):
 class OptionalAccessoriesPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    pdf_name = models.CharField(max_length=255, default="")
+    pdf_text = models.TextField(help_text="Inhalt", default="<<kein editierbarer text>>")
 
     def __str__(self) -> str:
         return f"{self.price}"

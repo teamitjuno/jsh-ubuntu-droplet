@@ -79,6 +79,8 @@ class OptionalAccessoriesPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
+        "pdf_name",
+        "pdf_text",
     )
     search_fields = ("name",)
     inlines = [PricesInline]

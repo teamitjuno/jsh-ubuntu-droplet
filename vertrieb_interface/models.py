@@ -495,6 +495,20 @@ class VertriebAngebot(TimeStampMixin):
             out = ""
         return out
 
+    def get_zubehoer_text(self, name):
+        try:
+            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_text)
+        except:
+            out = ""
+        return out
+
+    def get_zubehoer_name(self, name):
+        try:
+            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_name)
+        except:
+            out = ""
+        return out
+
     def save(self, *args, **kwargs):
         if not self.angebot_id:
             self.angebot_id = self.generate_angebot_id()
@@ -1391,7 +1405,11 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "elwa": self.elwa,
+            "elwaName": self.get_zubehoer_name("elwa_2"),
+            "elwaText": self.get_zubehoer_text("elwa_2"),
             "thor": self.thor,
+            "thorName": self.get_zubehoer_name("ac_thor_3_kw"),
+            "thorText": self.get_zubehoer_text("ac_thor_3_kw"),
             "heizstab": self.heizstab,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,

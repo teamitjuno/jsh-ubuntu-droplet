@@ -1024,50 +1024,6 @@ class PDF(FPDF):
                 content_2=tab24_content_2,
                 content_4=tab24_content_4,
             )
-            # tab1_module = data["module"]
-            # tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModule"])} Wp\n∙ Produktgarantie: {str(data["produktGarantie"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantie"])}'
-            # tab1_module_anzahl = f'{str(data["anzModule"])} Stk'
-            # if data["hersteller"] == "Huawei":
-            #
-            #     # Tabelle Eintrag 24
-            #     # Wallbox Huawei
-            #     eintrag += 1
-            #     tab24_eintrag_nummer = str(eintrag) + "."
-            #     tab24_content_1 = self.get_attribute_by_identifier(
-            #         "huawei_wallbox", "content"
-            #     )
-            #     tab24_content_2 = str(data["wallboxAnz"])
-            #     tab24_content_4 = self.get_attribute_by_identifier(
-            #         "huawei_wallbox_1", "content"
-            #     )
-            #     self.setup_eintrag_text(
-            #         "huawei_wallbox_1",
-            #         tab24_eintrag_nummer,
-            #         tab24_content_1,
-            #         content_2=tab24_content_2,
-            #         content_4=tab24_content_4,
-            #     )
-            #
-            # elif data["hersteller"] == "Viessmann":
-            #
-            #     # Tabelle Eintrag 24
-            #     # Wallbox Viessmann
-            #     eintrag += 1
-            #     tab24_eintrag_nummer = str(eintrag) + "."
-            #     tab24_content_1 = self.get_attribute_by_identifier(
-            #         "viessmann_wallbox", "content"
-            #     )
-            #     tab24_content_2 = str(data["wallboxAnz"])
-            #     tab24_content_4 = self.get_attribute_by_identifier(
-            #         "viessmann_wallbox_1", "content"
-            #     )
-            #     self.setup_eintrag_text(
-            #         "viessmann_wallbox_1",
-            #         tab24_eintrag_nummer,
-            #         tab24_content_1,
-            #         content_2=tab24_content_2,
-            #         content_4=tab24_content_4,
-            #     )
 
         # OPTIONALES ZUBEHÖR
         if not (
@@ -1090,6 +1046,21 @@ class PDF(FPDF):
             )
             self.setup_text(
                 "optionales_zubehoer_2", optionales_zubehoer_2, alignment="L"
+            )
+
+        # Tabelle Eintrag Thor
+        if data["thor"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["thorName"])
+            tab28_content_2 = "1 Stk."
+            tab28_content_4 = str(data["thorText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
             )
 
         if data["hersteller"] == "Huawei":
@@ -1151,35 +1122,15 @@ class PDF(FPDF):
                     content_2=tab27_content_2,
                 )
 
-            # Tabelle Eintrag Thor
-            if data["thor"] == True:
-                eintrag += 1
-                tab28_eintrag_nummer = str(eintrag) + "."
-                tab28_content_1 = self.get_attribute_by_identifier("thor", "content")
-                tab28_content_2 = "1 Stk."
-                tab28_content_4 = self.get_attribute_by_identifier("thor_1", "content")
-                self.setup_eintrag_text(
-                    "thor_1",
-                    tab28_eintrag_nummer,
-                    tab28_content_1,
-                    content_2=tab28_content_2,
-                    content_4=tab28_content_4,
-                )
-
             # HUAWEI ELWA
-
             if data["elwa"] == True:
                 eintrag += 1
                 tab29_eintrag_nummer = str(eintrag) + "."
-                tab29_content_1 = self.get_attribute_by_identifier(
-                    "elwa_huawei_1", "content"
-                )
+                tab29_content_1 = str(data["elwaName"])
                 tab29_content_2 = "1 Stk."
-                tab29_content_4 = self.get_attribute_by_identifier(
-                    "elwa_huawei_2", "content"
-                )
+                tab29_content_4 = str(data["elwaText"])
                 self.setup_eintrag_text(
-                    "elwa_huawei_2",
+                    "zubehoer_platzhalter",
                     tab29_eintrag_nummer,
                     tab29_content_1,
                     content_2=tab29_content_2,
@@ -1275,22 +1226,6 @@ class PDF(FPDF):
                     tab29_content_1,
                     content_2=tab29_content_2,
                     content_4=tab29_content_4,
-                )
-
-            # Tabelle Eintrag Thor
-            if data["thor"] == True:
-
-                eintrag += 1
-                tab28_eintrag_nummer = str(eintrag) + "."
-                tab28_content_1 = self.get_attribute_by_identifier("thor", "content")
-                tab28_content_2 = "1 Stk."
-                tab28_content_4 = self.get_attribute_by_identifier("thor_1", "content")
-                self.setup_eintrag_text(
-                    "thor_1",
-                    tab28_eintrag_nummer,
-                    tab28_content_1,
-                    content_2=tab28_content_2,
-                    content_4=tab28_content_4,
                 )
 
         return eintrag
