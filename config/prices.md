@@ -106,8 +106,8 @@ KwpPreise.objects.create(name='Preis25', price=880.00)
 KwpPreise.objects.create(name='Preis30', price=660.00)
 
 from prices.models import OptionalAccessoriesPreise
-OptionalAccessoriesPreise.objects.create(name='elwa_2', pdf_name='∙ 0 - 3,5 KW stufenlos geregeltes Warmwasserbereitungsgerät für netzgekoppelte Photovoltaikanlagen ∙ Produktgarantie: 2 Jahre', price=1250.00)
-OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', pdf_name='∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager für Warmwasser, elektrische Wärmequellen und optional Heizung ∙ Produktgarantie: 2 Jahre', price=1250.00)
+OptionalAccessoriesPreise.objects.create(name='elwa_2', pdf_name='mypv AC ELWA 2', pdf_text='∙ 0 - 3,5 KW stufenlos geregeltes Warmwasserbereitungsgerät für netzgekoppelte Photovoltaikanlagen ∙ Produktgarantie: 2 Jahre', price=1250.00)
+OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', pdf_name='mypv AC∙THOR', pdf_text='∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager für Warmwasser, elektrische Wärmequellen und optional Heizung ∙ Produktgarantie: 2 Jahre', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='heizstab', price=250.00)
 OptionalAccessoriesPreise.objects.create(name='apzFeld', pdf_name='APZ-Feld Nachrüstung', price=777.78)
 OptionalAccessoriesPreise.objects.create(name='potenzialausgleich', pdf_name='Potenzialausgleich inkl. Erdspieß', price=1666.67)
