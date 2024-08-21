@@ -1030,7 +1030,13 @@ class PDF(FPDF):
             not data["optionVorh"]
             and not data["elwa"]
             and not data["thor"]
+            and not data["apzFeld"]
+            and not data["zaehlerschrank"]
+            and not data["potenzialausgleich"]
+            and not data["geruestKunde"]
+            and not data["dachhakenKunde"]
             and not data["anzOptimierer"] > 0
+            and not data["midZaehler"] > 0
         ):
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
             self.set_y(self.get_y() + 10)
@@ -1048,7 +1054,6 @@ class PDF(FPDF):
                 "optionales_zubehoer_2", optionales_zubehoer_2, alignment="L"
             )
 
-        # Tabelle Eintrag Thor
         if data["thor"] == True:
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
@@ -1062,9 +1067,60 @@ class PDF(FPDF):
                 content_2=tab28_content_2,
                 content_4=tab28_content_4,
             )
-
+        if data["midZaehler"] > 0:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["midZaehlerName"])
+            tab28_content_2 = str(data["midZaehler"]) + " Stk."
+            tab28_content_4 = str(data["midZaehlerText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        if data["apzFeld"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["apzFeldName"])
+            tab28_content_2 = "1 Stk."
+            tab28_content_4 = str(data["apzFeldText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        if data["zaehlerschrank"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["zaehlerschrankName"])
+            tab28_content_2 = "1 Stk."
+            tab28_content_4 = str(data["zaehlerschrankText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        if data["potenzialausgleich"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["potenzialausgleichName"])
+            tab28_content_2 = "1 Stk."
+            tab28_content_4 = str(data["potenzialausgleichText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        # Zubehör mit Herstellerbezug
         if data["hersteller"] == "Huawei":
-
             # OPTIMIERER HUAWEI
             if data["anzOptimierer"] > 0:
 
@@ -1113,7 +1169,7 @@ class PDF(FPDF):
                 tab27_content_1 = self.get_attribute_by_identifier(
                     "wandhalterung_huawei_1", "content"
                 )
-                tab27_content_2 = str(data["anzWandhalterungSpeicher"])
+                tab27_content_2 = str(data["anzWandhalterungSpeicher"]) + " Stk."
 
                 self.setup_eintrag_text(
                     "wandhalterung_huawei_1",
@@ -1227,7 +1283,32 @@ class PDF(FPDF):
                     content_2=tab29_content_2,
                     content_4=tab29_content_4,
                 )
-
+        if data["geruestKunde"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["geruestKundeName"])
+            tab28_content_2 = "1"
+            tab28_content_4 = str(data["geruestKundeText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        if data["dachhakenKunde"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["dachhakenKundeName"])
+            tab28_content_2 = "1"
+            tab28_content_4 = str(data["dachhakenKundeText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
         return eintrag
 
     def lastPage(self, data):

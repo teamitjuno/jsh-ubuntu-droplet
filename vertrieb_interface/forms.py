@@ -1091,7 +1091,44 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-check-input", "id": "notstrom"}
         ),
     )
-
+    apzFeld = forms.BooleanField(
+        label="APZ-Feld Nachrüstung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
+    )
+    zaehlerschrank = forms.BooleanField(
+        label="Zählerschrankerneuerung nach TAB",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank"}),
+    )
+    potenzialausgleich = forms.BooleanField(
+        label="Potenzialausgleich inkl. Erdspieß",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "potenzialausgleich"}),
+    )
+    midZaehler = forms.IntegerField(
+        label="MID-Zähler Anzahl",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "midZaehler",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    geruestKunde = forms.BooleanField(
+        label="Gerüst durch Kunde",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestKunde"}),
+    )
+    dachhakenKunde = forms.BooleanField(
+        label="Setzen der Dachhaken durch Kunde",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "dachhakenKunde"}),
+    )
     zahlungsbedingungen = forms.ChoiceField(
         choices=[
             ("20 – 70 – 10 %", "20 – 70 – 10 %"),
@@ -1301,9 +1338,15 @@ class VertriebAngebotForm(ModelForm):
             "garantieWR",
             "elwa",
             "thor",
+            "midZaehler",
+            "apzFeld",
+            "zaehlerschrank",
+            "potenzialausgleich",
             "heizstab",
             "notstrom",
             "anzOptimizer",
+            "geruestKunde",
+            "dachhakenKunde",
             "indiv_price_included",
             "indiv_price",
             "zahlungsbedingungen",
@@ -1644,6 +1687,19 @@ class VertriebAngebotForm(ModelForm):
                     }
                 )
 
+        midZaehler = cleaned_data.get("midZaehler")
+        wallbox_typ = cleaned_data.get("wallboxtyp")
+        if midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
+            raise ValidationError(
+                (
+                    f"Sie haben eine Wallbox vom Typ {wallbox_typ} ausgewählt. Sie können keinen MID-Zähler auswählen. Überprüfen Sie die Daten."
+                ),
+                params={
+                    "midZaehler": midZaehler,
+                    "wallbox_typ": wallbox_typ,
+                },
+            )
+
         if action == "save" and anrede == "Firma":
             return cleaned_data
 
@@ -1651,7 +1707,7 @@ class VertriebAngebotForm(ModelForm):
             name_first_name = cleaned_data.get("name_first_name")
             if not name_first_name or name_first_name == "":
                 raise ValidationError(
-                    ("Vorname Feld ist erforderlich und kann nicht lee sein"),
+                    ("Vorname Feld ist erforderlich und kann nicht leer sein"),
                     params={"name_first_name": name_first_name},
                 )
             return cleaned_data

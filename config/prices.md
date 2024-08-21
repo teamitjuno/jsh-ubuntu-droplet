@@ -109,14 +109,18 @@ from prices.models import OptionalAccessoriesPreise
 OptionalAccessoriesPreise.objects.create(name='elwa_2', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='heizstab', price=250.00)
+OptionalAccessoriesPreise.objects.create(name='apzFeld', price=777.78)
+OptionalAccessoriesPreise.objects.create(name='potenzialausgleich', price=1666.67)
+OptionalAccessoriesPreise.objects.create(name='zaehlerschrank', price=2777.78)
+OptionalAccessoriesPreise.objects.create(name='mid_zaehler', price=211.11)
+OptionalAccessoriesPreise.objects.create(name='geruestKunde', price=500.00)
+OptionalAccessoriesPreise.objects.create(name='dachhakenKunde', price=500.00)
 OptionalAccessoriesPreise.objects.create(name='optimizer', price=90.00)
 OptionalAccessoriesPreise.objects.create(name='abzug_pro_modul', price=410.00)
 OptionalAccessoriesPreise.objects.create(name='batteriemodul_huawei5', price=2887.50)
 OptionalAccessoriesPreise.objects.create(name='batteriemodul_huawei7', price=3320.00)
 OptionalAccessoriesPreise.objects.create(name='batteriemodul_viessmann', price=3703.00)
-OptionalAccessoriesPreise.objects.create(name='harvi', price=95.00)
 OptionalAccessoriesPreise.objects.create(name='leistungsmodul', price=1575.00)
-OptionalAccessoriesPreise.objects.create(name='hub', price=125.00)
 OptionalAccessoriesPreise.objects.create(name='power_boost', price=0.00)
 OptionalAccessoriesPreise.objects.create(name='kabelpreis', price=35.00)
 OptionalAccessoriesPreise.objects.create(name='backup_box', price=1800.00)
@@ -893,32 +897,12 @@ Editierbarer_Text.objects.create(
     font_size=11
 )
 
-# Create mypv AC THOR power manager entry
+# Create Zubehör Platzhalter entry
 Editierbarer_Text.objects.create(
-    identifier='thor', 
-    content="mypv AC∙THOR", 
+    identifier='zubehoer_platzhalter', 
+    content="<<kein editierbarer text>>", 
     font='JUNO Solar Lt', 
     font_size=11
-)
-
-Editierbarer_Text.objects.create(
-    identifier='thor_1', 
-    content="∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager für Warmwasser, elektrische Wärmequellen und optional Heizung\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
-)
-# Create 'elwa_huawei_1' and 'elwa_huawei_2' entries for the mypv AC ELWA 2
-Editierbarer_Text.objects.create(
-    identifier='elwa_huawei_1', 
-    content="mypv AC ELWA 2", 
-    font='JUNO Solar Lt', 
-    font_size=11
-)
-Editierbarer_Text.objects.create(
-    identifier='elwa_huawei_2', 
-    content="0 - 3,5 KW stufenlos geregeltes Warmwasserbereitungsgerät für netzgekoppelte Photovoltaikanlagen\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
 )
 
 # Create entries for Huawei and Viessmann module optimizers

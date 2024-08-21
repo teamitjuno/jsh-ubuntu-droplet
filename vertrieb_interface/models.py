@@ -360,7 +360,6 @@ class VertriebAngebot(TimeStampMixin):
     anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
     anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
-    wallbox = models.BooleanField(default=False)
     ausrichtung = models.CharField(
         max_length=10, choices=AUSRICHTUNG_CHOICES, default="Ost/West"
     )
@@ -379,13 +378,18 @@ class VertriebAngebot(TimeStampMixin):
     garantieWR = models.CharField(
         max_length=10, choices=GARANTIE_WR_CHOICES, default="10 Jahre"
     )
+    # Zubehör
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
-
+    apzFeld = models.BooleanField(default=False)
+    zaehlerschrank = models.BooleanField(default=False)
+    potenzialausgleich = models.BooleanField(default=False)
+    midZaehler = models.PositiveIntegerField(default=0)
+    wallbox = models.BooleanField(default=False)
     wallboxtyp = models.CharField(
         max_length=100,
         blank=True,
@@ -396,9 +400,9 @@ class VertriebAngebot(TimeStampMixin):
         default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
     hub_included = models.BooleanField(default=False)
-
+    geruestKunde = models.BooleanField(default=False)
+    dachhakenKunde = models.BooleanField(default=False)
     # Ticket:
-
     module_ticket = models.CharField(
         max_length=100,
         blank=True,
@@ -938,6 +942,18 @@ class VertriebAngebot(TimeStampMixin):
             return wandhalterung_preis
 
     @property
+    def midZaehler_preis(self):
+        midZaehler_preis = 0
+        if self.midZaehler != 0:
+            anz_midZaehler = int(self.midZaehler)
+            midZaehler_preis = self.calculate_price(
+                OptionalAccessoriesPreise,
+                "mid_zaehler",
+                anz_midZaehler,
+            )
+            return midZaehler_preis
+
+    @property
     def batteriespeicher_preis(self):
         batteriePreis = 0
         if self.anz_speicher != 0:
@@ -1255,6 +1271,14 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.smartmeter_angebot_price)
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
+        if self.midZaehler > 0:
+            accessories_price += float(self.midZaehler_preis)
+        if self.apzFeld:
+            accessories_price += float(self.get_optional_accessory_price("apzFeld"))
+        if self.zaehlerschrank:
+            accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
+        if self.potenzialausgleich:
+            accessories_price += float(self.get_optional_accessory_price("potenzialausgleich"))
         if self.hub_included == True:
             accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
@@ -1315,6 +1339,11 @@ class VertriebAngebot(TimeStampMixin):
             angebotsSumme = self.indiv_price
 
         angebotsSumme *= (1-(self.rabatt/100))
+        # Abzug Selbstleistungen nach Rabattierung
+        if self.geruestKunde:
+            angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
+        if self.dachhakenKunde:
+            angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
@@ -1410,6 +1439,24 @@ class VertriebAngebot(TimeStampMixin):
             "thor": self.thor,
             "thorName": self.get_zubehoer_name("ac_thor_3_kw"),
             "thorText": self.get_zubehoer_text("ac_thor_3_kw"),
+            "midZaehler": self.midZaehler,
+            "midZaehlerName": self.get_zubehoer_name("mid_zaehler"),
+            "midZaehlerText": self.get_zubehoer_text("mid_zaehler"),
+            "apzFeld": self.apzFeld,
+            "apzFeldName": self.get_zubehoer_name("apzFeld"),
+            "apzFeldText": self.get_zubehoer_text("apzFeld"),
+            "zaehlerschrank": self.zaehlerschrank,
+            "zaehlerschrankName": self.get_zubehoer_name("zaehlerschrank"),
+            "zaehlerschrankText": self.get_zubehoer_text("zaehlerschrank"),
+            "potenzialausgleich": self.potenzialausgleich,
+            "potenzialausgleichName": self.get_zubehoer_name("potenzialausgleich"),
+            "potenzialausgleichText": self.get_zubehoer_text("potenzialausgleich"),
+            "geruestKunde": self.geruestKunde,
+            "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
+            "geruestKundeText": self.get_zubehoer_text("geruestKunde"),
+            "dachhakenKunde": self.dachhakenKunde,
+            "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
+            "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
             "heizstab": self.heizstab,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
