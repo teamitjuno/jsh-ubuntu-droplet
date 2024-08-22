@@ -768,7 +768,7 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_20_1', 
-    content="∙ Der Einbau des FRE (Funk-Rundsteuerempfänger) erfolgt kostenfrei durch den Auftraggeber.\n∙ Anfallende Kosten durch den Netzbetreiber sind vom Auftragnehmer zu tragen.", 
+    content="∙ Der Einbau des FRE (Funk-Rundsteuerempfänger) erfolgt kostenfrei durch den Auftragnehmer.\n∙ Anfallende Kosten durch den Netzbetreiber sind vom Auftraggeber zu tragen.", 
     font='JUNO Solar Lt', 
     font_size=10
 )
