@@ -9,7 +9,7 @@ import os
 
 title = ""
 pages = 7
-
+global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
 
 class PDF(FPDF):
     """
@@ -984,7 +984,6 @@ class PDF(FPDF):
     def page4(self, data, eintrag):
         self.add_page()
 
-
         # Tabelle Eintrag 23
         eintrag += 1
         tab23_eintrag_nummer = str(eintrag) + "."
@@ -1026,6 +1025,7 @@ class PDF(FPDF):
             )
 
         # OPTIONALES ZUBEHÖR
+        global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
         if not (
             not data["optionVorh"]
             and not data["elwa"]
@@ -1119,28 +1119,6 @@ class PDF(FPDF):
                 tab28_eintrag_nummer,
                 tab28_content_1,
                 content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["betaPlatte"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["betaPlatteName"])
-            tab28_content_4 = str(data["betaPlatteText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_4=tab28_content_4,
-            )
-        if data["metallZiegel"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["metallZiegelName"])
-            tab28_content_4 = str(data["metallZiegelText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
                 content_4=tab28_content_4,
             )
         # Zubehör mit Herstellerbezug
@@ -1307,8 +1285,40 @@ class PDF(FPDF):
                     content_2=tab29_content_2,
                     content_4=tab29_content_4,
                 )
+        addedPage = False
+        if data["betaPlatte"] == True:
+            eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["betaPlatteName"])
+            tab28_content_4 = str(data["betaPlatteText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_4=tab28_content_4,
+            )
+        if data["metallZiegel"] == True:
+            eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["metallZiegelName"])
+            tab28_content_4 = str(data["metallZiegelText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_4=tab28_content_4,
+            )
         if data["geruestKunde"] == True:
             eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["geruestKundeName"])
             tab28_content_2 = "1"
@@ -1320,8 +1330,12 @@ class PDF(FPDF):
                 content_2=tab28_content_2,
                 content_4=tab28_content_4,
             )
+
         if data["dachhakenKunde"] == True:
             eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["dachhakenKundeName"])
             tab28_content_2 = "1"
@@ -1700,14 +1714,48 @@ def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_").replace(",","")
 
 
+def anzahlZubehoer(data):
+    anzahlZubehoer = 0
+    if data["optionVorh"]:
+        anzahlZubehoer += 1
+    if data["elwa"]:
+        anzahlZubehoer += 1
+    if data["thor"]:
+        anzahlZubehoer += 1
+    if data["apzFeld"]:
+        anzahlZubehoer += 1
+    if data["zaehlerschrank"]:
+        anzahlZubehoer += 1
+    if data["potenzialausgleich"]:
+        anzahlZubehoer += 1
+    if data["geruestKunde"]:
+        anzahlZubehoer += 1
+    if data["dachhakenKunde"]:
+        anzahlZubehoer += 1
+    if data["anzOptimierer"] > 0:
+        anzahlZubehoer += 1
+    if data["midZaehler"] > 0:
+        anzahlZubehoer += 1
+    if data["betaPlatte"]:
+        anzahlZubehoer += 1
+    if data["metallZiegel"]:
+        anzahlZubehoer += 1
+    return anzahlZubehoer
+
 def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
-    global title, pages
+    global title, pages, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
     title1 = f"{vertrieb_angebot.angebot_id}"
     pages = 7
+    zubehoerLimitMitWallbox = 31
+    zubehoerLimitOhneWallbox = 34
     if certifikate:
         pages += 1
     if withCalc:
         pages += 2
+    anzZubehoer = anzahlZubehoer(data)
+    if (data["wallboxAnz"] > 0 and anzZubehoer > zubehoerLimitMitWallbox - 24) or anzZubehoer > zubehoerLimitOhneWallbox - 23:
+        pages += 1
+
     pdf = PDF(title1)
     pdf.set_title(title)
     pdf.set_author("JUNO Solar Home GmbH")
