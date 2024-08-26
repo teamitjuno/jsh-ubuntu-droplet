@@ -628,6 +628,24 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.beta_platte.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="beta_platte" {% if form.beta_platte.value %}checked{% endif %} data-switch="success" name="{{ form.beta_platte.html_name }}" />
+                                                                                <label class="custom-control-label" for="beta_platte" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.metall_ziegel.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="metall_ziegel" {% if form.metall_ziegel.value %}checked{% endif %} data-switch="success" name="{{ form.metall_ziegel.html_name }}" />
+                                                                                <label class="custom-control-label" for="metall_ziegel" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>{{ form.geruestKunde.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1676,9 +1694,43 @@ function submitFormWithAction(action) {
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wallbox</div>
+                                                            <div class="card-body">
+                                                                 <table class="table table-sm table-hover">
+                                                                    <tr hidden>
+                                                                        <th>{{ form.wallbox.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
+                                                                                <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
+                                                                        <td>{{ form.wallboxtyp }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
+                                                                        <td>{{ form.wallbox_anzahl }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.midZaehler.label_tag }}</th>
+                                                                        <td>{{ form.midZaehler }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.kabelanschluss.label_tag }}</th>
+                                                                        <td>{{ form.kabelanschluss }}</td>
+                                                                    </tr>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
-                                                                <table class="table table-sm table-hover">
+                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>{{ form.notstrom.label_tag }}</th>
                                                                         <td>
@@ -1730,28 +1782,70 @@ function submitFormWithAction(action) {
                                                                             <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
                                                                         </td>
                                                                     </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.wallbox.label_tag }}</th>
+                                                                    <tr>
+                                                                        <th>{{ form.apzFeld.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                                                <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                                <input type="checkbox" class="custom-control-input" id="apzFeld" {% if form.apzFeld.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeld.html_name }}" />
+                                                                                <label class="custom-control-label" for="apzFeld" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
-                                                                        <td>{{ form.wallboxtyp }}</td>
+                                                                        <th>{{ form.zaehlerschrank.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="zaehlerschrank" {% if form.zaehlerschrank.value %}checked{% endif %} data-switch="success" name="{{ form.zaehlerschrank.html_name }}" />
+                                                                                <label class="custom-control-label" for="zaehlerschrank" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
-                                                                        <td>{{ form.wallbox_anzahl }}</td>
+                                                                        <th>{{ form.potenzialausgleich.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="potenzialausgleich" {% if form.potenzialausgleich.value %}checked{% endif %} data-switch="success" name="{{ form.potenzialausgleich.html_name }}" />
+                                                                                <label class="custom-control-label" for="potenzialausgleich" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.kabelanschluss.label_tag }}</th>
-                                                                        <td>{{ form.kabelanschluss }}</td>
+                                                                        <th>{{ form.beta_platte.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="beta_platte" {% if form.beta_platte.value %}checked{% endif %} data-switch="success" name="{{ form.beta_platte.html_name }}" />
+                                                                                <label class="custom-control-label" for="beta_platte" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
-                                                                </table>
+                                                                    <tr>
+                                                                        <th>{{ form.metall_ziegel.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="metall_ziegel" {% if form.metall_ziegel.value %}checked{% endif %} data-switch="success" name="{{ form.metall_ziegel.html_name }}" />
+                                                                                <label class="custom-control-label" for="metall_ziegel" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.geruestKunde.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="geruestKunde" {% if form.geruestKunde.value %}checked{% endif %} data-switch="success" name="{{ form.geruestKunde.html_name }}" />
+                                                                                <label class="custom-control-label" for="geruestKunde" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.dachhakenKunde.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="dachhakenKunde" {% if form.dachhakenKunde.value %}checked{% endif %} data-switch="success" name="{{ form.dachhakenKunde.html_name }}" />
+                                                                                <label class="custom-control-label" for="dachhakenKunde" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                 </table>
                                                             </div>
                                                         </div>
                                                     </div>

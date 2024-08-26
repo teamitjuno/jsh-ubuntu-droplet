@@ -388,6 +388,8 @@ class VertriebAngebot(TimeStampMixin):
     apzFeld = models.BooleanField(default=False)
     zaehlerschrank = models.BooleanField(default=False)
     potenzialausgleich = models.BooleanField(default=False)
+    beta_platte = models.BooleanField(default=False)
+    metall_ziegel = models.BooleanField(default=False)
     midZaehler = models.PositiveIntegerField(default=0)
     wallbox = models.BooleanField(default=False)
     wallboxtyp = models.CharField(
@@ -929,6 +931,24 @@ class VertriebAngebot(TimeStampMixin):
             return 0.0
 
     @property
+    def beta_platte_preis(self):
+        limits = [7, 11, 15, 19, 23, 27, 30]
+        kwp = min(30, self.modulsumme_kWp)
+        kwpUpper = min(upper for upper in limits if upper >= kwp)
+        namePlatte = "BetaPlatte" + str(kwpUpper)
+        beta_preis = float(KwpPreise.objects.get(name=namePlatte).price)
+        return beta_preis
+
+    @property
+    def metall_ziegel_preis(self):
+        limits = [7, 11, 15, 19, 23, 27, 30]
+        kwp = min(30, self.modulsumme_kWp)
+        kwpUpper = min(upper for upper in limits if upper >= kwp)
+        nameZiegel = "MetallZiegel" + str(kwpUpper)
+        ziegel_preis = float(KwpPreise.objects.get(name=nameZiegel).price)
+        return ziegel_preis
+
+    @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
         if self.anz_wandhalterung_fuer_speicher != 0:
@@ -1111,10 +1131,6 @@ class VertriebAngebot(TimeStampMixin):
         return float(OptionalAccessoriesPreise.objects.get(name="kabelpreis").price)
 
     @property
-    def harvi_preis(self):
-        return float(OptionalAccessoriesPreise.objects.get(name="harvi").price)
-
-    @property
     def optimizer_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
 
@@ -1279,6 +1295,10 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
         if self.potenzialausgleich:
             accessories_price += float(self.get_optional_accessory_price("potenzialausgleich"))
+        if self.beta_platte:
+            accessories_price += float(self.beta_platte_preis)
+        if self.metall_ziegel:
+            accessories_price += float(self.metall_ziegel_preis)
         if self.hub_included == True:
             accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
@@ -1304,8 +1324,7 @@ class VertriebAngebot(TimeStampMixin):
             return float(WrGarantiePreise.objects.get(name=name).price)
 
         limits = [5, 7, 10, 12, 15, 20, 25, 30]
-        ranges = (
-            [(0, limits[0])]
+        ranges = ([(0, limits[0])]
             + list(zip(limits, limits[1:]))
             + [(limits[-1], float("30"))]
         )
@@ -1457,6 +1476,12 @@ class VertriebAngebot(TimeStampMixin):
             "dachhakenKunde": self.dachhakenKunde,
             "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
             "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
+            "betaPlatte": self.beta_platte,
+            "betaPlatteName": self.get_zubehoer_name("beta_platte"),
+            "betaPlatteText": self.get_zubehoer_text("beta_platte"),
+            "metallZiegel": self.metall_ziegel,
+            "metallZiegelName": self.get_zubehoer_name("metall_ziegel"),
+            "metallZiegelText": self.get_zubehoer_text("metall_ziegel"),
             "heizstab": self.heizstab,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,

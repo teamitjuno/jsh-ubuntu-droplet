@@ -147,6 +147,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "apzFeld",
                     "zaehlerschrank",
                     "potenzialausgleich",
+                    "beta_platte",
+                    "metall_ziegel",
                     "geruestKunde",
                     "dachhakenKunde",
                     "midZaehler",

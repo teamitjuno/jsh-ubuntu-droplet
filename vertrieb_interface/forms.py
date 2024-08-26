@@ -1106,6 +1106,16 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "potenzialausgleich"}),
     )
+    beta_platte = forms.BooleanField(
+        label="Beta Platte",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "beta_platte"}),
+    )
+    metall_ziegel = forms.BooleanField(
+        label="Metalldachziegel mit Modulhalter",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "metall_ziegel"}),
+    )
     midZaehler = forms.IntegerField(
         label="MID-Zähler Anzahl",
         required=False,
@@ -1342,6 +1352,8 @@ class VertriebAngebotForm(ModelForm):
             "apzFeld",
             "zaehlerschrank",
             "potenzialausgleich",
+            "beta_platte",
+            "metall_ziegel",
             "heizstab",
             "notstrom",
             "anzOptimizer",

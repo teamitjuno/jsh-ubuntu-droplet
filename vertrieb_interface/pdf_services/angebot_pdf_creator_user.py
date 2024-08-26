@@ -1037,6 +1037,8 @@ class PDF(FPDF):
             and not data["dachhakenKunde"]
             and not data["anzOptimierer"] > 0
             and not data["midZaehler"] > 0
+            and not data["betaPlatte"]
+            and not data["metallZiegel"]
         ):
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
             self.set_y(self.get_y() + 10)
@@ -1117,6 +1119,28 @@ class PDF(FPDF):
                 tab28_eintrag_nummer,
                 tab28_content_1,
                 content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+        if data["betaPlatte"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["betaPlatteName"])
+            tab28_content_4 = str(data["betaPlatteText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_4=tab28_content_4,
+            )
+        if data["metallZiegel"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["metallZiegelName"])
+            tab28_content_4 = str(data["metallZiegelText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
                 content_4=tab28_content_4,
             )
         # Zubehör mit Herstellerbezug
