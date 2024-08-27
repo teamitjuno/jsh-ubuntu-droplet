@@ -57,7 +57,7 @@ class PDF(FPDF):
             if self.page_no() != 1:
                 self.cell(0, 10, title, 0, 0, "")
 
-            logo_path = os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg")
+            logo_path = os.path.join(settings.STATIC_ROOT, "fonts/junosolar_logo.jpg")
             self.image(logo_path, x=167, y=10, w=30, h=15)
             self.ln(15)
 

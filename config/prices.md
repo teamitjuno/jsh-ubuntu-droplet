@@ -140,10 +140,6 @@ OptionalAccessoriesPreise.objects.create(name='leistungsmodul', price=1575.00)
 OptionalAccessoriesPreise.objects.create(name='power_boost', price=0.00)
 OptionalAccessoriesPreise.objects.create(name='kabelpreis', price=35.00)
 OptionalAccessoriesPreise.objects.create(name='backup_box', price=1800.00)
-OptionalAccessoriesPreise.objects.create(name='einspreis_vergutung_bis10kWp', price=8.20)
-OptionalAccessoriesPreise.objects.create(name='einspreis_vergutung_10bis40kWp', price=7.10)
-OptionalAccessoriesPreise.objects.create(name='erzeugung_sued', price=950.00)
-OptionalAccessoriesPreise.objects.create(name='erzeugung_ost_west', price=880.00)
 OptionalAccessoriesPreise.objects.create(name='wandhalterung_fuer_speicher', price=120.00)
 OptionalAccessoriesPreise.objects.create(name='smartmeter_dtsu', price=400.00)
 OptionalAccessoriesPreise.objects.create(name='smartmeter_emma', price=600.00)
@@ -174,6 +170,9 @@ AndereKonfigurationWerte.objects.create(name='einfach_schwer_erreichbar', value=
 AndereKonfigurationWerte.objects.create(name='komplex_einfach_erreichbar', value=1.05)
 AndereKonfigurationWerte.objects.create(name='komplex_schwer_erreichbar', value=1.075)
 AndereKonfigurationWerte.objects.create(name='sehr_komplex', value=1.10)
+AndereKonfigurationWerte.objects.create(name='erzeugung_sued', value=950.00)
+AndereKonfigurationWerte.objects.create(name='erzeugung_ost_west', value=880.00)
+AndereKonfigurationWerte.objects.create(name='rabatt_limit', value=12.00)
 
 
 from vertrieb_interface.models import Dokument_PDF

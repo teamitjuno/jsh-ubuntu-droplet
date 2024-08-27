@@ -234,9 +234,9 @@ class Calculator(models.Model):
         direction_map = {"Sud": "erzeugung_sued", "Ost/West": "erzeugung_ost_west"}
         direction = str(self.ausrichtung)
         if direction in direction_map:
-            return OptionalAccessoriesPreise.objects.get(
+            return AndereKonfigurationWerte.objects.get(
                 name=direction_map[direction]
-            ).price
+            ).value
         else:
             return 0.00
 

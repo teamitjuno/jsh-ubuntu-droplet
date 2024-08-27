@@ -426,7 +426,9 @@ class VertriebAngebot(TimeStampMixin):
         blank=True,
         null=True,
     )
-    rabatt = models.IntegerField(default=0)
+    rabatt = models.IntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
     genehmigung_rabatt = models.BooleanField(default=False)
 
     # Result Prices :
@@ -839,9 +841,9 @@ class VertriebAngebot(TimeStampMixin):
         direction_map = {"Sud": "erzeugung_sued", "Ost/West": "erzeugung_ost_west"}
         direction = str(self.ausrichtung)
         if direction in direction_map:
-            return OptionalAccessoriesPreise.objects.get(
+            return AndereKonfigurationWerte.objects.get(
                 name=direction_map[direction]
-            ).price
+            ).value
         else:
             return 0.00
 

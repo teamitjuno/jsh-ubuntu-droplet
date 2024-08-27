@@ -8,7 +8,7 @@ from vertrieb_interface.pdf_services.calc_pdf_creator import calcPage1, calcPage
 import os
 
 title = ""
-pages = 7
+pages = 6
 global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
 
 class PDF(FPDF):
@@ -221,7 +221,7 @@ class PDF(FPDF):
             if self.page_no() != 1:
                 self.cell(0, 10, title, 0, 0, "")
 
-            logo_path = os.path.join(settings.MEDIA_ROOT, "fonts/junosolar_logo.jpg")
+            logo_path = os.path.join(settings.STATIC_ROOT, "fonts/junosolar_logo.jpg")
             self.image(logo_path, x=167, y=10, w=30, h=15)
             self.ln(15)
 
@@ -907,25 +907,27 @@ class PDF(FPDF):
         )
 
         # Tabelle Eintrag 20
-        eintrag += 1
-        tab20_eintrag_nummer = str(eintrag) + "."
-        tab20_content_1 = self.get_attribute_by_identifier(
-            "tabelle_eintrag_20", "content"
-        )
-        tab20_content_4 = self.get_attribute_by_identifier(
-            "tabelle_eintrag_20_1", "content"
-        )
-        self.setup_eintrag_text(
-            "tabelle_eintrag_20_1",
-            tab20_eintrag_nummer,
-            tab20_content_1,
-            content_2="1",
-            content_4=tab20_content_4,
-        )
+        if data["kWp"] >= 25.0:
+            eintrag += 1
+            tab20_eintrag_nummer = str(eintrag) + "."
+            tab20_content_1 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_20", "content"
+            )
+            tab20_content_4 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_20_1", "content"
+            )
+            self.setup_eintrag_text(
+                "tabelle_eintrag_20_1",
+                tab20_eintrag_nummer,
+                tab20_content_1,
+                content_2="1",
+                content_4=tab20_content_4,
+            )
 
         ###################################################################
         # line_2_page_3
         self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
+        self.set_y(self.get_y() + 10)
         ###################################################################
 
         # Zusätzliche Leistungen
@@ -979,27 +981,48 @@ class PDF(FPDF):
             content_4=tab22_content_4,
         )
 
+        # Tabelle Eintrag 23
+        if data["kWp"] < 25.0:
+            eintrag += 1
+            tab23_eintrag_nummer = str(eintrag) + "."
+            tab23_content_1 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_23", "content"
+            )
+            tab23_content_4 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_23_1", "content"
+            )
+            self.setup_eintrag_text(
+                "tabelle_eintrag_23_1",
+                tab23_eintrag_nummer,
+                tab23_content_1,
+                content_2="1",
+                content_4=tab23_content_4,
+            )
+
         return eintrag
 
     def page4(self, data, eintrag):
-        self.add_page()
+        zubehoerVorhanden = anzahlZubehoer(data) > 0
+        if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0:
+            self.add_page()
 
-        # Tabelle Eintrag 23
-        eintrag += 1
-        tab23_eintrag_nummer = str(eintrag) + "."
-        tab23_content_1 = self.get_attribute_by_identifier(
-            "tabelle_eintrag_23", "content"
-        )
-        tab23_content_4 = self.get_attribute_by_identifier(
-            "tabelle_eintrag_23_1", "content"
-        )
-        self.setup_eintrag_text(
-            "tabelle_eintrag_23_1",
-            tab23_eintrag_nummer,
-            tab23_content_1,
-            content_2="1",
-            content_4=tab23_content_4,
-        )
+        if data["kWp"] >= 25.0:
+            # Tabelle Eintrag 23
+            eintrag += 1
+            tab23_eintrag_nummer = str(eintrag) + "."
+            tab23_content_1 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_23", "content"
+            )
+            tab23_content_4 = self.get_attribute_by_identifier(
+                "tabelle_eintrag_23_1", "content"
+            )
+            self.setup_eintrag_text(
+                "tabelle_eintrag_23_1",
+                tab23_eintrag_nummer,
+                tab23_content_1,
+                content_2="1",
+                content_4=tab23_content_4,
+            )
 
         if data["wallboxVorh"]:
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
@@ -1026,20 +1049,7 @@ class PDF(FPDF):
 
         # OPTIONALES ZUBEHÖR
         global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
-        if not (
-            not data["optionVorh"]
-            and not data["elwa"]
-            and not data["thor"]
-            and not data["apzFeld"]
-            and not data["zaehlerschrank"]
-            and not data["potenzialausgleich"]
-            and not data["geruestKunde"]
-            and not data["dachhakenKunde"]
-            and not data["anzOptimierer"] > 0
-            and not data["midZaehler"] > 0
-            and not data["betaPlatte"]
-            and not data["metallZiegel"]
-        ):
+        if zubehoerVorhanden:
             self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
             self.set_y(self.get_y() + 10)
 
@@ -1441,7 +1451,7 @@ class PDF(FPDF):
                 self.multi_cell(
                     0,
                     6,
-                    "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss",
+                    "0% bei Angebotsannahme\n20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss",
                     0,
                     0,
                     "L",
@@ -1451,7 +1461,7 @@ class PDF(FPDF):
                 self.multi_cell(
                     0,
                     6,
-                    "10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss",
+                    "0% bei Angebotsannahme\n10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss",
                     0,
                     0,
                     "L",
@@ -1461,7 +1471,7 @@ class PDF(FPDF):
                 self.multi_cell(
                     0,
                     6,
-                    "100% bei Auftragsbestätigung\n0% bei Baubeginn\n0% bei Netzanschluss",
+                    "0% bei Angebotsannahme\n100% bei Auftragsbestätigung\n0% bei Baubeginn\n0% bei Netzanschluss",
                     0,
                     0,
                     "L",
@@ -1745,7 +1755,7 @@ def anzahlZubehoer(data):
 def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     global title, pages, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
     title1 = f"{vertrieb_angebot.angebot_id}"
-    pages = 7
+    pages = 6
     zubehoerLimitMitWallbox = 31
     zubehoerLimitOhneWallbox = 34
     if certifikate:
@@ -1754,6 +1764,8 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
         pages += 2
     anzZubehoer = anzahlZubehoer(data)
     if (data["wallboxAnz"] > 0 and anzZubehoer > zubehoerLimitMitWallbox - 24) or anzZubehoer > zubehoerLimitOhneWallbox - 23:
+        pages += 1
+    if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
         pages += 1
 
     pdf = PDF(title1)

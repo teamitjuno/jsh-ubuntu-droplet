@@ -184,13 +184,13 @@ function arbeits_liste(arbeitspreis, verbrauch, prognose, zeitraum) {
     return priceList;
 }
 
-function erzProJahr(ausrichtung, optionalAccessoriesPreise) {
+function erzProJahr(ausrichtung, andereKonfigurationsWerte) {
     let val = 0.00;
     if (ausrichtung === "Süd") {
-        return optionalAccessoriesPreise["erzeugung_sued"];
+        return andereKonfigurationsWerte["erzeugung_sued"];
     }
     if (ausrichtung === "Ost/West") {
-        return optionalAccessoriesPreise["erzeugung_ost_west"];
+        return andereKonfigurationsWerte["erzeugung_ost_west"];
     }
     return val;
 }

@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 # Local application/library specific imports
 from authentication.models import User
 from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
-from prices.models import SolarModulePreise, WallBoxPreise
+from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
     update_status,
@@ -150,62 +150,51 @@ def validate_two_decimal_places(value):
 def validate_floats(value):
     if not isinstance(value, float) or value < 0:
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Eine gültige Gleitkommazahl größer oder gleich Null ist erforderlich."
-            ),
-            params={"value": value},
+                f"Ungültige Eingabe: {value}. Eine gültige Gleitkommazahl größer oder gleich Null ist erforderlich."
         )
 
 
 def validate_integers(value):
     if not isinstance(value, int) or value < 0:
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Eine gültige ganze Zahl größer oder gleich Null ist erforderlich."
-            ),
-            params={"value": value},
+                f"Ungültige Eingabe: {value}. Eine gültige ganze Zahl größer oder gleich Null ist erforderlich."
         )
 
 
 def validate_integers_ticket(value):
     if not isinstance(value, int):
         raise ValidationError(
-            ("Ungültige Eingabe: %(value)s. Die Menge muss ganzzahlig sein."),
-            params={"value": value},
+            f"Ungültige Eingabe: {value}. Die Menge muss ganzzahlig sein."
         )
 
+
 def validate_rabatt(value):
-    if not isinstance(value, int) or not (0 <= value <= 10):
+    rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
+    if not isinstance(value, int) or not (0 <= value <= rabatt_limit):
+        rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
         raise ValidationError(
-            "Ungültige Eingabe: %(value)s. Die Höhe des Rabatts sollte zwischen 0% und 10% liegen.",
-            params={"value": value},
+            f"Ungültige Eingabe: {value}. Die Höhe des Rabatts sollte zwischen 0% und {rabattStr}% liegen."
         )
+
 
 def validate_solar_module_anzahl(value):
     if not isinstance(value, int) or not (6 <= value <= 69):
         raise ValidationError(
-            "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 69 liegen.",
-            params={"value": value},
+            f"Ungültige Eingabe: {value}. Die Menge der Solarmodule sollte zwischen 6 und 69 liegen."
         )
 
 
 def validate_solar_module_ticket_anzahl(value):
     if not isinstance(value, int) or value > 4:
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
-            ),
-            params={"value": value},
+                f"Ungültige Eingabe: {value}. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
         )
 
 
 def validate_optimizer_ticket_anzahl(value):
     if not isinstance(value, int) or value > 4:
         raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
-            ),
-            params={"value": value},
+                f"Ungültige Eingabe: {value}. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
         )
 
 
@@ -237,8 +226,7 @@ def validate_range(value, hersteller):
 def validate_empty(value):
     if value is None or value == "":
         raise ValidationError(
-            ("Ungültige Eingabe: %(value)s. Etwas hinzufügen"),
-            params={"value": value},
+            f"Ungültige Eingabe: {value}. Etwas hinzufügen"
         )
 
 
@@ -846,15 +834,15 @@ class VertriebAngebotForm(ModelForm):
 
     SPEICHER_MODEL_CHOICES = [
         ("----", "----"),
-        ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
         ("LUNA 2000-7-S1", "LUNA 2000-7-S1"),
+        ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
         ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
     ]
 
     SMARTMETER_MODEL_CHOICES = [
         ("----", "----"),
-        ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
         ("EMMA-A02", "EMMA-A02"),
+        ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
     ]
 
@@ -1153,8 +1141,8 @@ class VertriebAngebotForm(ModelForm):
     )
     rabatt = forms.IntegerField(
         initial=0,
-        validators=[validate_rabatt],
         label="Rabatt in %",
+        validators=[validate_rabatt],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",

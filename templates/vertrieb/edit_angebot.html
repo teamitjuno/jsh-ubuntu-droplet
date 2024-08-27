@@ -1195,17 +1195,17 @@ function setFieldOptions(value) {
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            if($('#speicher_model').val() == "LUNA 2000-7-S1"){
-                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
-            }
-            else {
+            if($('#speicher_model').val() == "LUNA 2000-5-S0"){
                 speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             }
-            if($('#smartmeter_model').val() == "EMMA-A02"){
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
+            else {
+                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
+            }
+            if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
+                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
             }
             else {
-                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
+                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
             }
             $('#garantieWR_row').show();
         } else {
@@ -2422,17 +2422,17 @@ function setFieldOptions(value) {
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
             wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            if($('#speicher_model').val() == "LUNA 2000-7-S1"){
-                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
-            }
-            else {
+            if($('#speicher_model').val() == "LUNA 2000-5-S0"){
                 speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             }
-            if($('#smartmeter_model').val() == "EMMA-A02"){
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
+            else {
+                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
+            }
+            if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
+                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
             }
             else {
-                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
+                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
             }
             $('#garantieWR_row').show();
         } else {
