@@ -193,6 +193,22 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Finanzierung",
+            {
+                "fields": (
+                    "finanzierung",
+                    "anzahlung",
+                    "nettokreditbetrag",
+                    "monatliche_rate",
+                    "laufzeit",
+                    "sollzinssatz",
+                    "effektiver_zins",
+                    "gesamtkreditbetrag",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
             "DEBUG ANGEBOT_DATA",
             {
                 "fields": ("ag_data",),

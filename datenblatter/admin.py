@@ -36,6 +36,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
                     "viessmann_allgemeine_bedingungen",
                     "viessmann_versicherung_ausweis",
                     "ac_thor",
+                    "finanzierung",
                 )
             },
         ),

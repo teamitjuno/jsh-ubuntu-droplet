@@ -1184,6 +1184,53 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "indiv_price"}),
     )
 
+    # Finanzierung
+    finanzierung = forms.BooleanField(
+        label="Finanzierung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "finanzierung"}),
+    )
+    anzahlung = forms.FloatField(
+        label="Anzahlung",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "anzahlung"}),
+    )
+    monatliche_rate = forms.FloatField(
+        label="Monatliche Rate",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "monatliche_rate"}),
+    )
+    laufzeit = forms.IntegerField(
+        initial=0,
+        label="Laufzeit",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "laufzeit",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    sollzinssatz = forms.FloatField(
+        label="Sollzinssatz in %",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "sollzinssatz"}),
+    )
+    effektiver_zins = forms.FloatField(
+        label="Effektiver Jahreszins in %",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "effektiver_zins"}),
+    )
+    gesamtkreditbetrag = forms.FloatField(
+        label="Gesamtkreditbetrag",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "gesamtkreditbetrag"}),
+    )
+
+    # Ticket
     module_ticket = forms.ChoiceField(
         label="Zusätzlich & Abzüge: Module",
         choices=[
@@ -1361,6 +1408,13 @@ class VertriebAngebotForm(ModelForm):
             "optimizer_ticket",
             "batteriemodule_ticket",
             "notstrom_ticket",
+            "finanzierung",
+            "anzahlung",
+            "monatliche_rate",
+            "laufzeit",
+            "sollzinssatz",
+            "effektiver_zins",
+            "gesamtkreditbetrag"
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -1424,6 +1478,11 @@ class VertriebAngebotForm(ModelForm):
         self.fields["rabatt"].widget.attrs.update(
             {"id": "rabatt"}
         )
+        # self.fields["anzahlung"].widget.attrs.update({"id": "anzahlung"})
+        # self.fields["monatliche_rate"].widget.attrs.update({"id": "monatliche_rate"})
+        # self.fields["laufzeit"].widget.attrs.update({"id": "laufzeit"})
+        # self.fields["sollzinssatz"].widget.attrs.update({"id": "sollzinssatz"})
+        # self.fields["effektiver_zins"].widget.attrs.update({"id": "effektiver_zins"})
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
             {"id": "id_vorname_nachname"}

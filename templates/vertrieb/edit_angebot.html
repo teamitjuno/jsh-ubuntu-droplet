@@ -310,6 +310,31 @@
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>{{ form.solar_module.label_tag }}</th>
+                                                                        <td>{{ form.solar_module }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.modulanzahl.label_tag }}</th>
+                                                                        <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
+                                                                            {{ form.modulanzahl }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Modulleistung</th>
+                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Modulsumme</th>
+                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
@@ -354,7 +379,8 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-
+                                                    </div> 
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Montage)</div>
                                                             <div class="card-body">
@@ -393,29 +419,50 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                    </div> 
-                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>{{ form.solar_module.label_tag }}</th>
-                                                                        <td>{{ form.solar_module }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.modulanzahl.label_tag }}</th>
-                                                                        <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
-                                                                            {{ form.modulanzahl }}
+                                                                        <th>{{ form.finanzierung.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_finanzierung" {% if form.finanzierung.value %}checked{% endif %} data-switch="success" name="{{ form.finanzierung.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_finanzierung" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <th>Modulleistung</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>Barzahlungspreis</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <th>Modulsumme</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>{{ form.anzahlung.label_tag }}</th>
+                                                                        <td>{{ form.anzahlung }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>Nettokreditbetrag</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.nettokreditbetrag|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.monatliche_rate.label_tag }}</th>
+                                                                        <td>{{ form.monatliche_rate }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.laufzeit.label_tag }}</th>
+                                                                        <td>{{ form.laufzeit }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.sollzinssatz.label_tag }}</th>
+                                                                        <td>{{ form.sollzinssatz }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.effektiver_zins.label_tag }}</th>
+                                                                        <td>{{ form.effektiver_zins }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.gesamtkreditbetrag.label_tag }}</th>
+                                                                        <td>{{ form.gesamtkreditbetrag }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -444,9 +491,14 @@
                                                                     $(document).ready(function() {
                                                                         // Initial state of 'Inddiv Preis' row
                                                                         updateIndivPreisRow();
+                                                                        updateFinanzierungRow();
                                                                         // On 'Indiv Preis inkl.' checkbox state change
                                                                         $('#switch_indiv_price_included').change(function() {
                                                                             updateIndivPreisRow();
+                                                                        });
+                                                                        // On 'Finanzierung' checkbox state change
+                                                                        $('#switch_finanzierung').change(function() {
+                                                                            updateFinanzierungRow();
                                                                         });
                                                                         function updateIndivPreisRow() {
                                                                             if ($('#switch_indiv_price_included').is(':checked')) {
@@ -455,6 +507,15 @@
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').hide();
+                                                                            }
+                                                                        }
+                                                                        function updateFinanzierungRow() {
+                                                                            if ($('#switch_finanzierung').is(':checked')) {
+                                                                                // If checkbox is checked, show 'Inddiv Preis' row
+                                                                                $('.finanzierung_row').show();
+                                                                            } else {
+                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                                $('.finanzierung_row').hide();
                                                                             }
                                                                         }
                                                                     });
@@ -1329,7 +1390,7 @@ function submitFormWithAction(actionType) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    const excludeSelector = ':not([name="hersteller"]):not([name="anrede"]):not([name="name_first_name"]):not([name="name_last_name"]):not([name="telefon_mobil"]):not([name="telefon_festnetz"]):not([name="email"]):not([name="strasse"]):not([name="ort"]):not([name="name_suffix"])';
+    const excludeSelector = ':not([name="hersteller"]):not([name="anrede"]):not([name="name_first_name"]):not([name="name_last_name"]):not([name="telefon_mobil"]):not([name="telefon_festnetz"]):not([name="email"]):not([name="strasse"]):not([name="ort"]):not([name="name_suffix"]):not([name="monatliche_rate"]):not([name="laufzeit"]):not([name="sollzinssatz"]):not([name="effektiver_zins"]):not([name="gesamtkreditbetrag"])';
     const formFields = document.querySelectorAll('.table input' + excludeSelector + ', .table select' + excludeSelector + ', .table .custom-control-input' + excludeSelector);
 
     const onChange = () => {
@@ -1490,6 +1551,43 @@ function submitFormWithAction(action) {
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>{{ form.solar_module.label_tag }}</th>
+                                                                        <td><input type="text" class="form-control" name="{{ form.solar_module.name }}" value="{{ form.solar_module.value }}" readonly></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.modulanzahl.label_tag }}</th>
+                                                                        <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
+                                                                            <input type="text" class="form-control" name="{{ form.modulanzahl.name }}" value="{{ form.modulanzahl.value }}" readonly>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.garantieWR.label_tag }}</th>
+                                                                        <td><input type="text" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
+                                                                    </tr>
+
+                                                                    <tr>
+                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
+                                                                            <input type="text" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}" readonly>
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    <tr>
+                                                                        <th>Modulleistung</th>
+                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Modulsumme</th>
+                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
@@ -1513,13 +1611,12 @@ function submitFormWithAction(action) {
                                                                     <tr>
                                                                         <th>{{ form.gesamtkapazitat.label_tag }}</th>
                                                                         <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
-                                                                        
-                                                                        
                                                                     </tr>
                                                                 </table>
                                                             </div>
                                                         </div>
-
+                                                    </div> 
+                                                    <div class="col-lg-4">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Montage)</div>
                                                             <div class="card-body">
@@ -1563,41 +1660,50 @@ function submitFormWithAction(action) {
                                                                 {% endif %}
                                                             </div>
                                                         </div>
-                                                    </div> 
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
+                                                       <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>{{ form.solar_module.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.solar_module.name }}" value="{{ form.solar_module.value }}" readonly></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.modulanzahl.label_tag }}</th>
-                                                                        <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
-                                                                            <input type="text" class="form-control" name="{{ form.modulanzahl.name }}" value="{{ form.modulanzahl.value }}" readonly>
+                                                                        <th>{{ form.finanzierung.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_finanzierung" {% if form.finanzierung.value %}checked{% endif %} data-switch="success" name="{{ form.finanzierung.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_finanzierung" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.garantieWR.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>Barzahlungspreis</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
-
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            <input type="text" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}" readonly>
-                                                                        </td>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>{{ form.anzahlung.label_tag }}</th>
+                                                                        <td>{{ form.anzahlung }}</td>
                                                                     </tr>
-
-                                                                    <tr>
-                                                                        <th>Modulleistung</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
+                                                                    <tr class="conditional-row finanzierung_row">
+                                                                        <th>Nettokreditbetrag</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.nettokreditbetrag|format_price }}</td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <th>Modulsumme</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.monatliche_rate.label_tag }}</th>
+                                                                        <td>{{ form.monatliche_rate }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.laufzeit.label_tag }}</th>
+                                                                        <td>{{ form.laufzeit }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.sollzinssatz.label_tag }}</th>
+                                                                        <td>{{ form.sollzinssatz }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.effektiver_zins.label_tag }}</th>
+                                                                        <td>{{ form.effektiver_zins }}</td>
+                                                                    </tr>
+                                                                    <tr class="conditional-row finanzierung_row no_refresh">
+                                                                        <th>{{ form.gesamtkreditbetrag.label_tag }}</th>
+                                                                        <td>{{ form.gesamtkreditbetrag }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1626,9 +1732,14 @@ function submitFormWithAction(action) {
                                                                     $(document).ready(function() {
                                                                         // Initial state of 'Inddiv Preis' row
                                                                         updateIndivPreisRow();
+                                                                        updateFinanzierungRow();
                                                                         // On 'Indiv Preis inkl.' checkbox state change
                                                                         $('#switch_indiv_price_included').change(function() {
                                                                             updateIndivPreisRow();
+                                                                        });
+                                                                        // On 'Finanzierung' checkbox state change
+                                                                        $('#switch_finanzierung').change(function() {
+                                                                            updateFinanzierungRow();
                                                                         });
                                                                         function updateIndivPreisRow() {
                                                                             if ($('#switch_indiv_price_included').is(':checked')) {
@@ -1637,6 +1748,15 @@ function submitFormWithAction(action) {
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').hide();
+                                                                            }
+                                                                        }
+                                                                        function updateFinanzierungRow() {
+                                                                            if ($('#switch_finanzierung').is(':checked')) {
+                                                                                // If checkbox is checked, show 'Inddiv Preis' row
+                                                                                $('.finanzierung_row').show();
+                                                                            } else {
+                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                                $('.finanzierung_row').hide();
                                                                             }
                                                                         }
                                                                     });

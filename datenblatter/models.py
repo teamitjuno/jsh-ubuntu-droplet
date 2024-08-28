@@ -28,3 +28,4 @@ class Datenblatter(models.Model):
         upload_to="uploads/", blank=True, null=True
     )
     ac_thor = models.FileField(upload_to="uploads/", blank=True, null=True)
+    finanzierung = models.FileField(upload_to="uploads/", blank=True, null=True)

@@ -457,6 +457,30 @@ class VertriebAngebot(TimeStampMixin):
     fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     Full_ticket_preis = models.FloatField(default=0.00)
 
+    # Finanzierung
+    finanzierung = models.BooleanField(default=False)
+    anzahlung = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    nettokreditbetrag = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    monatliche_rate = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    laufzeit = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
+    sollzinssatz = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    effektiver_zins = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    gesamtkreditbetrag = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+
     # Files and other fields:
     datenblatter_solar_module = models.BooleanField(default=False)
     datenblatter_speichermodule = models.BooleanField(default=False)
@@ -553,6 +577,7 @@ class VertriebAngebot(TimeStampMixin):
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
         self.gesamtkapazitat = self.gesamtkapazitat_rechnung
+        self.nettokreditbetrag = self.get_nettokreditbetrag
         # if self.solar_module:
         #     self.datenblatter_solar_module = True
         # if self.anzOptimizer > 0:
@@ -1030,16 +1055,16 @@ class VertriebAngebot(TimeStampMixin):
 
 
     @property
+    def get_nettokreditbetrag(self):
+        return self.angebotsumme - self.anzahlung
+
+    @property
     def get_zuschlag(self):
         # Fetch all the values
         values = self.get_values()
 
         # Check if 'self.solar_module' is not None, else assign the default module name
-        module_name = (
-            self.solar_module
-            if self.solar_module
-            else ("Phono Solar PS420M7GFH-18/VNH")
-        )
+        module_name = (self.solar_module if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH"))
         # Return value based on module_name
         return float(values.get(module_name))
 
@@ -1366,14 +1391,16 @@ class VertriebAngebot(TimeStampMixin):
             angebotsSumme = self.indiv_price
 
         angebotsSumme *= (1-(self.rabatt/100))
+
+        userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
+        angebotsSumme *= userAufschlag
         # Abzug Selbstleistungen nach Rabattierung
         if self.geruestKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
         if self.dachhakenKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
-
-        userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
-        angebotsSumme *= userAufschlag
+        if self.finanzierung:
+            angebotsSumme += 300
 
         return angebotsSumme
 
