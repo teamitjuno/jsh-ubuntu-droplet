@@ -469,6 +469,24 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        <script type="text/javascript">
+                                                            $(document).ready(function() {
+                                                                updateFinanzierungRow();
+                                                                // On 'Finanzierung' checkbox state change
+                                                                $('#switch_finanzierung').change(function() {
+                                                                    updateFinanzierungRow();
+                                                                });
+                                                                function updateFinanzierungRow() {
+                                                                    if ($('#switch_finanzierung').is(':checked')) {
+                                                                        // If checkbox is checked, show 'Inddiv Preis' row
+                                                                        $('#finanzierung_table').show();
+                                                                    } else {
+                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                        $('#finanzierung_table').hide();
+                                                                    }
+                                                                }
+                                                            });
+                                                        </script>
                                                         {% if user.role.name == "admin" %}
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
@@ -493,14 +511,9 @@
                                                                     $(document).ready(function() {
                                                                         // Initial state of 'Inddiv Preis' row
                                                                         updateIndivPreisRow();
-                                                                        updateFinanzierungRow();
                                                                         // On 'Indiv Preis inkl.' checkbox state change
                                                                         $('#switch_indiv_price_included').change(function() {
                                                                             updateIndivPreisRow();
-                                                                        });
-                                                                        // On 'Finanzierung' checkbox state change
-                                                                        $('#switch_finanzierung').change(function() {
-                                                                            updateFinanzierungRow();
                                                                         });
                                                                         function updateIndivPreisRow() {
                                                                             if ($('#switch_indiv_price_included').is(':checked')) {
@@ -509,15 +522,6 @@
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                        function updateFinanzierungRow() {
-                                                                            if ($('#switch_finanzierung').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#finanzierung_table').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#finanzierung_table').hide();
                                                                             }
                                                                         }
                                                                     });
@@ -1712,6 +1716,24 @@ function submitFormWithAction(action) {
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        <script type="text/javascript">
+                                                            $(document).ready(function() {
+                                                                updateFinanzierungRow();
+                                                                // On 'Finanzierung' checkbox state change
+                                                                $('#switch_finanzierung').change(function() {
+                                                                    updateFinanzierungRow();
+                                                                });
+                                                                function updateFinanzierungRow() {
+                                                                    if ($('#switch_finanzierung').is(':checked')) {
+                                                                        // If checkbox is checked, show 'Inddiv Preis' row
+                                                                        $('#finanzierung_table').show();
+                                                                    } else {
+                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                        $('#finanzierung_table').hide();
+                                                                    }
+                                                                }
+                                                            });
+                                                        </script>
                                                         {% if user.role.name == "admin" %}
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
@@ -1736,14 +1758,9 @@ function submitFormWithAction(action) {
                                                                     $(document).ready(function() {
                                                                         // Initial state of 'Inddiv Preis' row
                                                                         updateIndivPreisRow();
-                                                                        updateFinanzierungRow();
                                                                         // On 'Indiv Preis inkl.' checkbox state change
                                                                         $('#switch_indiv_price_included').change(function() {
                                                                             updateIndivPreisRow();
-                                                                        });
-                                                                        // On 'Finanzierung' checkbox state change
-                                                                        $('#switch_finanzierung').change(function() {
-                                                                            updateFinanzierungRow();
                                                                         });
                                                                         function updateIndivPreisRow() {
                                                                             if ($('#switch_indiv_price_included').is(':checked')) {
@@ -1752,15 +1769,6 @@ function submitFormWithAction(action) {
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                        function updateFinanzierungRow() {
-                                                                            if ($('#switch_finanzierung').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#finanzierung_table').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#finanzierung_table').hide();
                                                                             }
                                                                         }
                                                                     });
