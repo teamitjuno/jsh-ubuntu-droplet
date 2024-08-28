@@ -49,8 +49,10 @@ MODULE_NAME_MAP = {
     "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B": "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
 }
 ACCESSORY_NAME = "leistungsmodul"
-BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
-DEFAULT_BATT_USAGE = 0.3
+#BATT_DICT = {1: 0.6, 2: 0.7, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.92}
+BATT_DICT = {5: 0.6, 7: 0.66, 10: 0.74, 14: 0.79, 15: 0.79, 20: 0.81, 21: 0.81, 25: 0.85, 28: 0.90, 30: 0.92, 35: 0.92,
+             42: 0.92}
+DEFAULT_BATT_USAGE = 0.35
 ANGEBOT_STATUS_CHOICES = [
     ("", ""),
     ("angenommen", "angenommen"),
@@ -1051,7 +1053,11 @@ class VertriebAngebot(TimeStampMixin):
         if self.erzeugte_energie < nutzEnergie:
             nutzEnergie = float(self.erzProJahr) * float(self.modulsumme_kWp)
         if self.anz_speicher != 0:
-            nutzEnergie = nutzEnergie * BATT_DICT[self.anz_speicher]
+            if self.speicher_model == "LUNA 2000-7-S1":
+                kwh = self.anz_speicher * 7
+            else:
+                kwh = self.anz_speicher * 5
+            nutzEnergie = nutzEnergie * BATT_DICT[kwh]
         else:
             nutzEnergie = nutzEnergie * DEFAULT_BATT_USAGE
         return round(nutzEnergie, 2)
