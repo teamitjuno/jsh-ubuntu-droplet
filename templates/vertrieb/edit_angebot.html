@@ -432,6 +432,8 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                </table>
+                                                                <table id="finanzierung_table" class="table table-sm table-hover">
                                                                     <tr class="conditional-row finanzierung_row">
                                                                         <th>Barzahlungspreis</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
@@ -512,10 +514,10 @@
                                                                         function updateFinanzierungRow() {
                                                                             if ($('#switch_finanzierung').is(':checked')) {
                                                                                 // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('.finanzierung_row').show();
+                                                                                $('#finanzierung_table').show();
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('.finanzierung_row').hide();
+                                                                                $('#finanzierung_table').hide();
                                                                             }
                                                                         }
                                                                     });
@@ -1673,6 +1675,8 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                </table>
+                                                                <table id="finanzierung_table" class="table table-sm table-hover">
                                                                     <tr class="conditional-row finanzierung_row">
                                                                         <th>Barzahlungspreis</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
@@ -1753,10 +1757,10 @@ function submitFormWithAction(action) {
                                                                         function updateFinanzierungRow() {
                                                                             if ($('#switch_finanzierung').is(':checked')) {
                                                                                 // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('.finanzierung_row').show();
+                                                                                $('#finanzierung_table').show();
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('.finanzierung_row').hide();
+                                                                                $('#finanzierung_table').hide();
                                                                             }
                                                                         }
                                                                     });
