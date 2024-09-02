@@ -1381,7 +1381,7 @@ class PDF(FPDF):
             fill=True,
         )
         self.set_y(45)
-        sum = data["angebotssumme"]
+        sum = data["kostenPVA"]
         netto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))

@@ -414,7 +414,7 @@
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Brutto</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.kosten_pva|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -1183,7 +1183,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Preis Brutto</th>
-                                                    <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                    <td class="text-success-emphasis">{{ vertrieb_angebot.kosten_pva|format_price }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -1656,7 +1656,7 @@ function submitFormWithAction(action) {
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
+                                                                        <td>{{ vertrieb_angebot.kosten_pva|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                                 {% if vertrieb_angebot.angebot_id_assigned == False %}
