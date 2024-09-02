@@ -1359,7 +1359,7 @@ class PDF(FPDF):
             )
         return eintrag
 
-    def lastPage(self, data):
+    def pricePage(self, data):
         self.add_page()
         self.is_last_page = False
         # Angebotssumme
@@ -1500,7 +1500,7 @@ class PDF(FPDF):
             h=24,
         )
 
-    def page5(self):
+    def agbPage(self):
         self.skip_logo = True
         self.add_page()
         self.is_last_page = True
@@ -1706,7 +1706,7 @@ class PDF(FPDF):
         # Set the font size
         self.set_font_size(font_size)
 
-    def page6(self, certifikate):
+    def certPage(self, certifikate):
         if certifikate:
             self.add_page()
             self.is_last_page = True
@@ -1716,6 +1716,62 @@ class PDF(FPDF):
                 y=10,
                 w=198,
             )
+        else:
+            pass
+
+    def financePage(self, data):
+        if data["finanzierung"]:
+            self.add_page()
+            finanzierung_0 = self.get_attribute_by_identifier("finanzierung_0", "content")
+            self.setup_text("finanzierung_0", finanzierung_0, bold=True, alignment="L")
+            finanzierung_1 = self.get_attribute_by_identifier("finanzierung_1", "content")
+            self.setup_text("finanzierung_1", finanzierung_1, bold=True, alignment="L")
+            finanzierung_2 = self.get_attribute_by_identifier("finanzierung_2", "content")
+            self.setup_text("finanzierung_2", finanzierung_2, alignment="L")
+            finanzierung_3 = self.get_attribute_by_identifier("finanzierung_3", "content")
+            self.setup_text("finanzierung_3", finanzierung_3, alignment="L")
+            finanzierung_4 = self.get_attribute_by_identifier("finanzierung_4", "content")
+            self.setup_text("finanzierung_4", finanzierung_4, bold=True, alignment="L")
+            finanzierung_5 = self.get_attribute_by_identifier("finanzierung_5", "content")
+            self.setup_text("finanzierung_5", finanzierung_5, alignment="L")
+            finanzierung_6 = self.get_attribute_by_identifier("finanzierung_6", "content")
+            self.setup_text("finanzierung_6", finanzierung_6, bold=True, alignment="L")
+            finanzierung_7 = self.get_attribute_by_identifier("finanzierung_7", "content")
+            self.setup_text("finanzierung_7", finanzierung_7, alignment="L")
+            finanzierung_8 = self.get_attribute_by_identifier("finanzierung_8", "content")
+            self.setup_text("finanzierung_8", finanzierung_8, bold=True, alignment="L")
+            finanzierung_9 = self.get_attribute_by_identifier("finanzierung_9", "content")
+            self.setup_text("finanzierung_9", finanzierung_9, alignment="L")
+
+            self.set_fill_color(240)
+            self.set_y(125)
+            self.set_font("JUNO Solar Lt", "B", 17)
+            self.multi_cell(0, 6, "Ihre Investition\n ", 0, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_y(135)
+            steuer = data["steuersatz"]
+            self.multi_cell(
+                0,
+                6,
+                "Barzahlungspreis\nAnzahlung\nNettokreditbetrag\nMonatliche Rate\nLaufzeit\nSollzinssatz\nEffektiver Jahreszins\nGesamtkreditbetrag",
+                0,
+                "L",
+                fill=True,
+            )
+            self.set_y(135)
+            barzahlung = convertCurrency("{:,.2f} €".format(data["kostenPVA"]))
+            anzahlung = convertCurrency("{:,.2f} €".format(data["anzahlung"]))
+            nettoKr = convertCurrency("{:,.2f} €".format(data["nettokreditbetrag"]))
+            monatlicheRate = convertCurrency("{:,.2f} €".format(data["monatliche_rate"]))
+            laufzeit = str(data["laufzeit"]) + " Monate"
+            sollzinssatz = str(data["sollzinssatz"]) + "%"
+            effektiverJ = str(data["effektiver_zins"]) + "%"
+            gesamtkr = convertCurrency("{:,.2f} €".format(data["gesamtkreditbetrag"]))
+            self.multi_cell(0, 6, f'{barzahlung}\n{anzahlung}\n{nettoKr}\n{monatlicheRate}\n{laufzeit}\n{sollzinssatz}\n{effektiverJ}', 0, "R")
+            self.set_y(177)
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6, gesamtkr, 0, 0, "R")
+            self.line(175, 177, 197, 177)
         else:
             pass
 
@@ -1760,6 +1816,8 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     zubehoerLimitOhneWallbox = 34
     if certifikate:
         pages += 1
+    if data["finanzierung"]:
+        pages += 1
     if withCalc:
         pages += 2
     anzZubehoer = anzahlZubehoer(data)
@@ -1779,9 +1837,10 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     eintrag = pdf.page3(data, eintrag)
     eintrag = pdf.page4(data, eintrag)
 
-    pdf.lastPage(data)
-    pdf.page6(certifikate)
-    pdf.page5()
+    pdf.pricePage(data)
+    pdf.financePage(data)
+    pdf.certPage(certifikate)
+    pdf.agbPage()
 
     if withCalc:
         user_folder = os.path.join(

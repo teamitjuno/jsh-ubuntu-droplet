@@ -1419,3 +1419,18 @@ seinen übrigen Teilen verbindlich. Anstelle der unwirksamen Punkte treten, sowe
 vorhanden, die gesetzlichen Vorschriften. Soweit dies für eine Vertragspartei eine
 unzumutbare Härte darstellen würde, wird der Vertrag jedoch im Ganzen
 unwirksam.""", font='JUNO Solar Lt', font_size=12)
+
+# Create entries for Finanzierung
+Editierbarer_Text.objects.create(identifier='finanzierung_0', content="""Informationen zur Finanzierung""", font='JUNO Solar Lt', font_size=17)
+Editierbarer_Text.objects.create(identifier='finanzierung_1', content="""Finanzierung durch""", font='JUNO Solar Lt', x=0, y=40, font_size=12)
+Editierbarer_Text.objects.create(identifier='finanzierung_2', content="""Cloover GmbH Gormannstraße 14, 10119 Berlin""", font='JUNO Solar Lt', font_size=11)
+Editierbarer_Text.objects.create(identifier='finanzierung_3', content="""Handelsregister: HRB-259359-B
+Registergericht: Amtsgericht Charlottenburg (Berlin)
+Vertreten durch:
+Jodok Betschart""", font='JUNO Solar Lt', font_size=11)
+Editierbarer_Text.objects.create(identifier='finanzierung_4', content="""Kontakt""", font='JUNO Solar Lt', x=0, y=75, font_size=12)
+Editierbarer_Text.objects.create(identifier='finanzierung_5', content="""Telefon: +49 30 30015139 E-Mail: contact@cloover.com""", font='JUNO Solar Lt', font_size=11)
+Editierbarer_Text.objects.create(identifier='finanzierung_6', content="""Umsatzsteuer-Identifikationsnummer""", font='JUNO Solar Lt', x=0, y=90, font_size=12)
+Editierbarer_Text.objects.create(identifier='finanzierung_7', content="""gemäß § 27 a Umsatzsteuergesetz: UST-ID-Nr.: DE367997984""", font='JUNO Solar Lt', font_size=11)
+Editierbarer_Text.objects.create(identifier='finanzierung_8', content="""EU-Streitschlichtung""", font='JUNO Solar Lt', x=0, y=105, font_size=12)
+Editierbarer_Text.objects.create(identifier='finanzierung_9', content="""Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/. Unsere E-Mail-Adresse finden Sie im Impressum.""", font='JUNO Solar Lt', font_size=11)

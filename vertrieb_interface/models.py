@@ -1536,6 +1536,7 @@ class VertriebAngebot(TimeStampMixin):
             ),
             "finanzierung": self.finanzierung,
             "anzahlung": self.anzahlung,
+            "nettokreditbetrag": self.nettokreditbetrag,
             "monatliche_rate": self.monatliche_rate,
             "laufzeit": self.laufzeit,
             "sollzinssatz": self.sollzinssatz,
