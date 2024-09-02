@@ -1399,6 +1399,7 @@ class VertriebAngebot(TimeStampMixin):
             angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
         if self.dachhakenKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
+        # Aufpreis Finanzierung nach Rabattierung
         if self.finanzierung:
             angebotsSumme += 300
 
@@ -1533,6 +1534,13 @@ class VertriebAngebot(TimeStampMixin):
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
             ),
+            "finanzierung": self.finanzierung,
+            "anzahlung": self.anzahlung,
+            "monatliche_rate": self.monatliche_rate,
+            "laufzeit": self.laufzeit,
+            "sollzinssatz": self.sollzinssatz,
+            "effektiver_zins": self.effektiver_zins,
+            "gesamtkreditbetrag": self.gesamtkreditbetrag,
             "debug": False,
             "hersteller": self.hersteller,
             "version": 1.0,

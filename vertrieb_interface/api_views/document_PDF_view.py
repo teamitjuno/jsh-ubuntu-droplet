@@ -167,6 +167,8 @@ class DocumentView(LoginRequiredMixin, DetailView):
             self._attach_datenblatter(
                 email, datenblatter, "viessmann_versicherung_ausweis", "VIESSMANN Versicherungsausweis"
             )
+        if vertrieb_angebot.finanzierung:
+            self._attach_datenblatter(email, datenblatter, "finanzierung", "Flyer_Finanzierung_by_CLOOVER")
 
     def _attach_datenblatter(self, email, datenblatter, field, filename):
         """

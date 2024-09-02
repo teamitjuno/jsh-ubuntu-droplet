@@ -24,7 +24,6 @@ from vertrieb_interface.forms import (
 )
 from vertrieb_interface.models import VertriebAngebot
 
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -121,27 +120,62 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
         )
 
         if vertrieb_angebot.datenblatter_solar_module:
-            self._attach_datenblatt_module(
+            self._attach_datenblatt_from_prices(
                 email,
                 SolarModulePreise.objects.get(name=vertrieb_angebot.solar_module).datenblatt,
+                SolarModulePreise.objects.get(name=vertrieb_angebot.solar_module).filename,
             )
 
+        if vertrieb_angebot.datenblatter_optimizer:
+            if vertrieb_angebot.hersteller == "Huawei":
+                self._attach_datenblatter(email, datenblatter, "optimizer", "Huawei Optimizer")
+            else:
+                self._attach_datenblatter(email, datenblatter, "optimizer_viessmann", "VIESSMANN Optimizer")
+                self._attach_datenblatter(email, datenblatter, "viessmann_tigo", "VIESSMANN Tigo")
+
         if vertrieb_angebot.datenblatter_speichermodule:
-            if vertrieb_angebot.speicher_model == "LUNA 2000-5-S0":
-                self._attach_datenblatter(email, datenblatter, ["speicher_module"])
-            elif vertrieb_angebot.speicher_model == "LUNA 2000-7-S1":
-                self._attach_datenblatter(email, datenblatter, ["speicher_module_huawei7"])
+            if vertrieb_angebot.hersteller == "Huawei":
+                if vertrieb_angebot.speicher_model == "LUNA 2000-5-S0":
+                    self._attach_datenblatter(email, datenblatter, "speicher_module", "Huawei S0 Speicher 5kWh")
+                elif vertrieb_angebot.speicher_model == "LUNA 2000-7-S1":
+                    self._attach_datenblatter(email, datenblatter, "speicher_module_huawei7", "Huawei S1 Speicher 7kWh")
+            else:
+                self._attach_datenblatter(
+                    email, datenblatter, "speicher_module_viessmann", "VIESSMANN Speicher"
+                )
+
+        if vertrieb_angebot.datenblatter_smartmeter:
+            if vertrieb_angebot.smartmeter_model == "Smart Power Sensor DTSU666H":
+                self._attach_datenblatter(email, datenblatter, "huawei_smartmeter_dtsu", "Smart Power Sensor")
+            elif vertrieb_angebot.smartmeter_model == "EMMA-A02":
+                self._attach_datenblatter(email, datenblatter, "huawei_smartmeter_emma", "EMMA-A02")
 
         if vertrieb_angebot.datenblatter_wechselrichter:
-            self._attach_datenblatter(email, datenblatter, ["wechselrichter"])
+            if vertrieb_angebot.hersteller == "Huawei":
+                self._attach_datenblatter(email, datenblatter, "wechselrichter", "Huawei Wechselrichter")
 
         if vertrieb_angebot.datenblatter_wallbox:
-            self._attach_datenblatter(email, datenblatter, ["wall_box"])
+            self._attach_datenblatt_from_prices(
+                email,
+                WallBoxPreise.objects.get(name=vertrieb_angebot.wallboxtyp).datenblatt,
+                WallBoxPreise.objects.get(name=vertrieb_angebot.wallboxtyp).filename,
+            )
 
         if vertrieb_angebot.datenblatter_backup_box:
-            self._attach_datenblatter(email, datenblatter, ["backup_box"])
+            if vertrieb_angebot.hersteller == "Huawei":
+                self._attach_datenblatter(email, datenblatter, "backup_box", "Huawei Backup Box")
 
-    def _attach_datenblatter(self, email, datenblatter, fields):
+        if vertrieb_angebot.hersteller == "Viessmann":
+            self._attach_datenblatter(
+                email, datenblatter, "viessmann_allgemeine_bedingungen", "VIESSMANN Allgemeine Bedingungen"
+            )
+            self._attach_datenblatter(
+                email, datenblatter, "viessmann_versicherung_ausweis", "VIESSMANN Versicherungsausweis"
+            )
+        if vertrieb_angebot.finanzierung:
+            self._attach_datenblatter(email, datenblatter, "finanzierung", "Flyer_Finanzierung_by_CLOOVER")
+
+    def _attach_datenblatter(self, email, datenblatter, field, filename):
         """
         Anhängen von Datenblättern zu einer E-Mail.
 
@@ -151,44 +185,44 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
         Args:
             email: Das E-Mail-Objekt, zu dem die Anhänge hinzugefügt werden sollen.
             datenblatter: Ein Objekt, das die Datenblätter enthält.
-            fields: Eine Liste von Feldnamen, die den Attributen in datenblatter entsprechen, deren
-                    Datenblätter angehängt werden sollen.
+            fields: Eine Feldname, der dem Attributen in datenblatter entspricht, dessen
+                    Datenblatt angehängt werden soll.
+            filename: Eine Name, den die angehängte Datei erhalten soll
 
         Raises:
             AttributeError: Wenn ein angegebenes Feld nicht in datenblatter existiert.
             IOError: Wenn das Datenblatt nicht geöffnet oder gelesen werden kann.
             Exception: Allgemeine Ausnahmebehandlung für unerwartete Fehler.
         """
-        for field in fields:
-            try:
-                datenblatt = getattr(datenblatter, field, None)
-                if not datenblatt:
-                    raise AttributeError(
-                        f"{field} attribute is missing in datenblatter object."
-                    )
-
-                with datenblatt.open("rb") as file:
-                    file_data = file.read()
-
-                email.attach(f"{field}.pdf", file_data, "application/pdf")
-
-            except AttributeError as e:
-                logger.error(f"Failed to process {field}: {e}")
-                raise e  # Optionally re-raise if you want the error to propagate.
-
-            except IOError as e:
-                logger.error(
-                    f"Failed to read or attach {field}.pdf due to a file error: {e}"
+        try:
+            datenblatt = getattr(datenblatter, field, None)
+            if not datenblatt:
+                raise AttributeError(
+                    f"{field} attribute is missing in datenblatter object."
                 )
-                raise e  # Optionally re-raise if the process should not continue on error.
 
-            except Exception as e:
-                logger.error(
-                    f"An unexpected error occurred while processing {field}: {e}"
-                )
-                raise e  # Optionally re-raise to signify critical failure.
+            with datenblatt.open("rb") as file:
+                file_data = file.read()
 
-    def _attach_datenblatt_module(self, email, solarmodul):
+            email.attach(f"{filename}.pdf", file_data, "application/pdf")
+
+        except AttributeError as e:
+            logger.error(f"Failed to process {field}: {e}")
+            raise e  # Optionally re-raise if you want the error to propagate.
+
+        except IOError as e:
+            logger.error(
+                f"Failed to read or attach {field}.pdf due to a file error: {e}"
+            )
+            raise e  # Optionally re-raise if the process should not continue on error.
+
+        except Exception as e:
+            logger.error(
+                f"An unexpected error occurred while processing {field}: {e}"
+            )
+            raise e  # Optionally re-raise to signify critical failure.
+
+    def _attach_datenblatt_from_prices(self, email, datenblatt, filename):
         """
         Anhängen von Datenblättern zu einer E-Mail.
 
@@ -198,6 +232,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
         Args:
             email: Das E-Mail-Objekt, zu dem die Anhänge hinzugefügt werden sollen.
             solarmodul: Das Datenblatt.
+            filename: Eine Name, den die angehängte Datei erhalten soll
 
         Raises:
             AttributeError: Wenn ein angegebenes Feld nicht in datenblatter existiert.
@@ -205,7 +240,6 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             Exception: Allgemeine Ausnahmebehandlung für unerwartete Fehler.
         """
         try:
-            datenblatt = solarmodul
             if not datenblatt:
                 raise AttributeError(
                     f"{solarmodul} is missing."
@@ -214,7 +248,7 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             with datenblatt.open("rb") as file:
                 file_data = file.read()
 
-            email.attach(f"Solarmodule.pdf", file_data, "application/pdf")
+            email.attach(f"{filename}.pdf", file_data, "application/pdf")
 
         except AttributeError as e:
             logger.error(f"Failed to process {solarmodul}: {e}")
