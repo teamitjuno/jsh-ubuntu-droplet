@@ -399,6 +399,15 @@
                                                                             <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
                                                                         </td>
                                                                     </tr>
+                                                                    <tr id="ausweisung_row" class="conditional-row">
+                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr id="genehmigung_row" class="conditional-row">
                                                                         <th>{{ form.genehmigung_rabatt.label_tag }}</th>
                                                                         <td>
@@ -1236,10 +1245,14 @@ $(document).ready(function() {
 function toggleGenehmigung(value){
     if (value >= 6) {
         $('#genehmigung_row').show();
+        $('#ausweisung_row').show();
+    } else if (value > 0) {
+        $('#genehmigung_row').hide();   
+        $('#ausweisung_row').show();
     } else {
         $('#genehmigung_row').hide();
+        $('#ausweisung_row').hide();
     }
-
 }
 
 function toggleHeizstab(value){
@@ -1639,6 +1652,15 @@ function submitFormWithAction(action) {
                                                                         <th>{{ form.rabatt.label_tag }}</th>
                                                                         <td>
                                                                             <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="ausweisung_row" class="conditional-row">
+                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr id="genehmigung_row" class="conditional-row">
@@ -2520,10 +2542,14 @@ $(document).ready(function() {
 function toggleGenehmigung(value){
     if (value >= 6) {
         $('#genehmigung_row').show();
+        $('#ausweisung_row').show();
+    } else if (value > 0) {
+        $('#genehmigung_row').hide();   
+        $('#ausweisung_row').show();
     } else {
         $('#genehmigung_row').hide();
+        $('#ausweisung_row').hide();
     }
-
 }
 
 function toggleHeizstab(value){

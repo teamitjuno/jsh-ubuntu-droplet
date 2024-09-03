@@ -431,6 +431,7 @@ class VertriebAngebot(TimeStampMixin):
     rabatt = models.IntegerField(
         default=0, validators=[MinValueValidator(0)]
     )
+    ausweisung_rabatt = models.BooleanField(default=False)
     genehmigung_rabatt = models.BooleanField(default=False)
 
     # Result Prices :
@@ -454,6 +455,7 @@ class VertriebAngebot(TimeStampMixin):
     )
 
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    rabattsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     Full_ticket_preis = models.FloatField(default=0.00)
 
@@ -560,7 +562,9 @@ class VertriebAngebot(TimeStampMixin):
         self.zoho_kundennumer = self.kundennumer_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.smartmeter_angebot_price = self.smartmeter_preis
-        self.angebotsumme = round(self.angebots_summe, 2)
+        tmpSumme, tmpRabatt = self.angebots_summe
+        self.angebotsumme = round(tmpSumme, 2)
+        self.rabattsumme = round(tmpRabatt, 2)
         # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
         self.fullticketpreis = self.full_ticket_preis
         self.anfrage_vom = self.get_current_date_formatted
@@ -1390,6 +1394,7 @@ class VertriebAngebot(TimeStampMixin):
                 angebotsSumme *= 1.07
             angebotsSumme = self.indiv_price
 
+        rabatt = angebotsSumme * (self.rabatt/100)
         angebotsSumme *= (1-(self.rabatt/100))
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
@@ -1397,22 +1402,23 @@ class VertriebAngebot(TimeStampMixin):
         # Abzug Selbstleistungen nach Rabattierung
         if self.geruestKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
+            rabatt += float(self.get_optional_accessory_price("geruestKunde"))
         if self.dachhakenKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
+            rabatt += float(self.get_optional_accessory_price("dachhakenKunde"))
         # Aufpreis Finanzierung nach Rabattierung
         if self.finanzierung:
             angebotsSumme += 300
-
-        return angebotsSumme
+        return angebotsSumme, rabatt
 
     @property
     def angebots_summe_mit_ticket_preis(self):
-        summe = float(self.angebots_summe) + float(self.full_ticket_preis)
+        summe = float(self.angebots_summe[0]) + float(self.full_ticket_preis)
         return summe
 
     @property
     def kosten_pva(self):
-        return float(self.angebots_summe) * float(
+        return float(self.angebots_summe[0]) * float(
             1 + AndereKonfigurationWerte.objects.get(name="steuersatz").value
         )
 
@@ -1529,7 +1535,9 @@ class VertriebAngebot(TimeStampMixin):
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "zahlungs_bedingungen": self.zahlungsbedingungen,
             "rabatt": self.rabatt,
+            "rabattsumme": self.rabattsumme,
             "genehmigung_rabatt": self.genehmigung_rabatt,
+            "ausweisung_rabatt": self.ausweisung_rabatt,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

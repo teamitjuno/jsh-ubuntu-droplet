@@ -1158,6 +1158,11 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "genehmigung_rabatt"}),
     )
+    ausweisung_rabatt = forms.BooleanField(
+        label="Ausweisung Rabatt auf Angebot",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
+    )
 
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
@@ -1398,6 +1403,7 @@ class VertriebAngebotForm(ModelForm):
             "indiv_price",
             "zahlungsbedingungen",
             "rabatt",
+            "ausweisung_rabatt",
             "genehmigung_rabatt",
             "module_ticket",
             "modul_anzahl_ticket",

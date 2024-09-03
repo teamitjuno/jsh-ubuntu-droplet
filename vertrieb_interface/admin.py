@@ -186,6 +186,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "notstrom_angebot_price",
                     "optimizer_angebot_price",
                     "rabatt",
+                    "rabattsumme",
+                    "ausweisung_rabatt",
                     "genehmigung_rabatt",
                     "angebotsumme",
                 ),

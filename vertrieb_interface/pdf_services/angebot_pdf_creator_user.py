@@ -1370,26 +1370,40 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         steuer = data["steuersatz"]
-        self.multi_cell(
-            0,
-            6,
-            "Anlagengröße\n \nNetto\nMwSt. "
-            + str(int(round(steuer * 100, 0)))
-            + "%\nBrutto",
-            0,
-            "L",
-            fill=True,
-        )
+        ausweisung_rabatt = data["ausweisung_rabatt"]
+        self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
+        if not ausweisung_rabatt:
+            self.cell(0, 6, "", 0, 1, "L", fill=True)
+        self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
+        if ausweisung_rabatt:
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6, "Ihr individueller Rabatt", 0, 1, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "", 12)
+        self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
+        self.set_font("JUNO Solar Lt", "B", 12)
+        self.cell(0, 6, "Ihre Investition (inkl. MwSt.)", 0, 1, "L", fill=True)
+        self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         sum = data["kostenPVA"]
+        rabatsum = data["rabattsumme"]
         netto = convertCurrency("{:,.2f} €".format(sum))
+        nettoVorRabatt = convertCurrency("{:,.2f} €".format(sum+rabatsum))
+        rab = convertCurrency("{:,.2f} €".format(rabatsum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
-        self.multi_cell(0, 6, f'{str(data["kWp"])} kWp\n \n{netto}\n{mwst}', 0, "R")
-        self.set_y(70)
+        self.cell(0, 6, str(data["kWp"]) + " kWp", 0, 1, "R")
+        if not ausweisung_rabatt:
+            self.cell(0, 6, "", 0, 1, "R")
+            self.cell(0, 6, netto, 0, 1, "R")
+        if ausweisung_rabatt:
+            self.cell(0, 6, nettoVorRabatt, 0, 1, "R")
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6,"-" + rab, 0, 1, "R")
+            self.set_font("JUNO Solar Lt", "", 12)
+        self.cell(0, 6, mwst, 0, 1, "R")
         self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, brutto, 0, 0, "R")
-        self.line(175, 70, 197, 70)
+        self.cell(0, 6, brutto, 0, 1, "R")
+        self.line(175, 69, 197, 69)
         # Verbindlichkeiten
         verbindlichkeiten_1 = self.get_attribute_by_identifier(
             "verbindlichkeiten_1", "content"
