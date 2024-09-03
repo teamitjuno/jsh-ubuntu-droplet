@@ -406,8 +406,19 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
             "AC_THOR": return_lower_bull(vertrieb_angebot.thor),
             "AC_THOR_Heizstab": vertrieb_angebot.heizstab,
+            "MID_Anzahl": int(vertrieb_angebot.midZaehler),
+            "APZ_Feld": return_lower_bull(vertrieb_angebot.apzFeld),
+            "Z_hlerschrank": return_lower_bull(vertrieb_angebot.zaehlerschrank),
+            "Potenzialausgleich": return_lower_bull(vertrieb_angebot.potenzialausgleich),
+            "Beta_Platte": return_lower_bull(vertrieb_angebot.beta_platte),
+            "Metalldachziegel": return_lower_bull(vertrieb_angebot.metall_ziegel),
+            "Ger_st_durch_Kunde": return_lower_bull(vertrieb_angebot.geruestKunde),
+            "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_angebot.dachhakenKunde),
+            "Rabatt": int(vertrieb_angebot.rabatt),
+            "Rabatt_genehmigt": return_lower_bull(vertrieb_angebot.genehmigung_rabatt),
             "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
+            "Finanzierung": return_lower_bull(vertrieb_angebot.finanzierung),
         }
     }
     try:
