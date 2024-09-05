@@ -1324,6 +1324,20 @@ class PDF(FPDF):
                 tab28_content_1,
                 content_4=tab28_content_4,
             )
+        if data["prefaBefestigung"] == True:
+            eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["prefaBefestigungName"])
+            tab28_content_4 = str(data["prefaBefestigungText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_4=tab28_content_4,
+            )
         if data["geruestKunde"] == True:
             eintrag += 1
             if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
@@ -1819,6 +1833,8 @@ def anzahlZubehoer(data):
     if data["betaPlatte"]:
         anzahlZubehoer += 1
     if data["metallZiegel"]:
+        anzahlZubehoer += 1
+    if data["prefaBefestigung"]:
         anzahlZubehoer += 1
     return anzahlZubehoer
 

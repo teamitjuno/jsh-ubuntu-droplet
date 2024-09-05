@@ -149,6 +149,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "potenzialausgleich",
                     "beta_platte",
                     "metall_ziegel",
+                    "prefa_befestigung",
                     "geruestKunde",
                     "dachhakenKunde",
                     "midZaehler",

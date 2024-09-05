@@ -412,6 +412,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Potenzialausgleich": return_lower_bull(vertrieb_angebot.potenzialausgleich),
             "Beta_Platte": return_lower_bull(vertrieb_angebot.beta_platte),
             "Metalldachziegel": return_lower_bull(vertrieb_angebot.metall_ziegel),
+            "PREFA_Dachbefestigung": return_lower_bull(vertrieb_angebot.prefa_befestigung),
             "Ger_st_durch_Kunde": return_lower_bull(vertrieb_angebot.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_angebot.dachhakenKunde),
             "Rabatt": int(vertrieb_angebot.rabatt),

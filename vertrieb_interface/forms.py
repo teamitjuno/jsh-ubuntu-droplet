@@ -1104,6 +1104,11 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "metall_ziegel"}),
     )
+    prefa_befestigung = forms.BooleanField(
+        label="PREFA-Dachbefestigung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "prefa_befestigung"}),
+    )
     midZaehler = forms.IntegerField(
         label="MID-Zähler Anzahl",
         required=False,
@@ -1394,6 +1399,7 @@ class VertriebAngebotForm(ModelForm):
             "potenzialausgleich",
             "beta_platte",
             "metall_ziegel",
+            "prefa_befestigung",
             "heizstab",
             "notstrom",
             "anzOptimizer",

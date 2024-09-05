@@ -722,6 +722,15 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.prefa_befestigung.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="prefa_befestigung" {% if form.prefa_befestigung.value %}checked{% endif %} data-switch="success" name="{{ form.prefa_befestigung.html_name }}" />
+                                                                                <label class="custom-control-label" for="prefa_befestigung" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>{{ form.geruestKunde.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1978,6 +1987,15 @@ function submitFormWithAction(action) {
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="metall_ziegel" {% if form.metall_ziegel.value %}checked{% endif %} data-switch="success" name="{{ form.metall_ziegel.html_name }}" />
                                                                                 <label class="custom-control-label" for="metall_ziegel" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.prefa_befestigung.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="prefa_befestigung" {% if form.prefa_befestigung.value %}checked{% endif %} data-switch="success" name="{{ form.prefa_befestigung.html_name }}" />
+                                                                                <label class="custom-control-label" for="prefa_befestigung" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>

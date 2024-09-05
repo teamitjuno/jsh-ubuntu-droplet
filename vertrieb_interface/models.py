@@ -392,6 +392,7 @@ class VertriebAngebot(TimeStampMixin):
     potenzialausgleich = models.BooleanField(default=False)
     beta_platte = models.BooleanField(default=False)
     metall_ziegel = models.BooleanField(default=False)
+    prefa_befestigung = models.BooleanField(default=False)
     midZaehler = models.PositiveIntegerField(default=0)
     wallbox = models.BooleanField(default=False)
     wallboxtyp = models.CharField(
@@ -982,6 +983,10 @@ class VertriebAngebot(TimeStampMixin):
         return ziegel_preis
 
     @property
+    def prefa_befestigung_preis(self):
+        prefa_preis = OptionalAccessoriesPreise.objects.get(name="prefa_befestigung").price * self.modulanzahl
+        return prefa_preis
+    @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
         if self.anz_wandhalterung_fuer_speicher != 0:
@@ -1336,6 +1341,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.beta_platte_preis)
         if self.metall_ziegel:
             accessories_price += float(self.metall_ziegel_preis)
+        if self.prefa_befestigung:
+            accessories_price += float(self.prefa_befestigung_preis)
         if self.hub_included == True:
             accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
@@ -1524,6 +1531,9 @@ class VertriebAngebot(TimeStampMixin):
             "metallZiegel": self.metall_ziegel,
             "metallZiegelName": self.get_zubehoer_name("metall_ziegel"),
             "metallZiegelText": self.get_zubehoer_text("metall_ziegel"),
+            "prefaBefestigung": self.prefa_befestigung,
+            "prefaBefestigungName": self.get_zubehoer_name("prefa_befestigung"),
+            "prefaBefestigungText": self.get_zubehoer_text("prefa_befestigung"),
             "heizstab": self.heizstab,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
