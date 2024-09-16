@@ -102,6 +102,9 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     kuerzel = models.CharField(max_length=3, null=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    age = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
     zoho_data = models.JSONField(default=dict, blank=True)
     zoho_data_text = models.TextField(default="", blank=True)
     records_fetch_limit = models.PositiveIntegerField(default=100)
