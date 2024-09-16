@@ -8,6 +8,7 @@ from vertrieb_interface.zoho_api_connector import (
     fetch_user_angebote_all,
     fetch_user_angebote_limit,
 )
+from authentication.models import User
 
 
 def load_user_json_data(request):
@@ -146,3 +147,18 @@ def load_user_angebots(request):
         return JsonResponse({"status": "error"}, status=500)
 
     return JsonResponse({"status": "success"}, status=200)
+
+def changeVerguetung():
+    """
+        Überschreibt den Startwert der Einspeisevergütungen für jeden Nutzer.
+
+        Args:
+        None
+
+        Returns:
+        None
+        """
+    users = User.objects.all()
+    for user in users:
+        User.objects.filter(zoho_id=user.zoho_id).update(initial_bis10kWp=8.03)
+        User.objects.filter(zoho_id=user.zoho_id).update(initial_bis40kWp=6.95)
