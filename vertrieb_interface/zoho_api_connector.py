@@ -10,11 +10,9 @@ from config.settings import (
     ZOHO_CLIENT_SECRET,
     ZOHO_REFRESH_TOKEN,
     ACCESS_TOKEN_URL,
+    BASE_URL,
 )
 
-BASE_URL = (
-    "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report"
-)
 VERTRIEB_URL = f"{BASE_URL}/Privatkunden_API"
 ANGEBOTE_URL = f"{BASE_URL}/Angebote"
 PROVISIONE_URL = f"{BASE_URL}/Provision_alle_PVA"

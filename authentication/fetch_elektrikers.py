@@ -128,7 +128,8 @@ def extract_ids(data):
 def fetch_all_elektrik_angebots():
     headers = get_headers()
     params = {"limit": LIMIT}
-    return fetch_records(BASE_URL, headers, params)
+    url = BASE_URL+"/Elektrikkalender"
+    return fetch_records(url, headers, params)
 
 
 def fetch_all_detailed_elektrik_records(ids):

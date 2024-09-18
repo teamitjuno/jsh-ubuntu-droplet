@@ -7,6 +7,7 @@ from random import randint
 from config.settings import (
     ENV_FILE,
     ZOHO_ACCESS_TOKEN,
+    BASE_URL,
     BASE_URL_PRIV_KUNDEN,
     ZOHO_CLIENT_ID,
     ZOHO_CLIENT_SECRET,
@@ -27,6 +28,8 @@ class Command(BaseCommand):
         if not access_token:
             access_token = self.refresh_access_token()
 
+        url = BASE_URL + "/Au_endienstler_API"
+
         headers = {
             "Authorization": f"Zoho-oauthtoken {access_token}",
         }
@@ -42,8 +45,9 @@ class Command(BaseCommand):
             params = {
                 "from": start_index,
                 "limit": limit,
+                "criteria": "Unternehmen_verlassen_am == null"
             }
-            response = requests.get(BASE_URL_PRIV_KUNDEN, headers=headers, params=params)  # type: ignore
+            response = requests.get(url, headers=headers, params=params)  # type: ignore
             if response.status_code == 401:
                 access_token = self.refresh_access_token()
                 headers["Authorization"] = f"Zoho-oauthtoken {access_token}"
@@ -61,14 +65,17 @@ class Command(BaseCommand):
 
             for record in data["data"]:
                 if (
-                    "Vertriebler" in record
-                    and "display_value" in record["Vertriebler"]
-                    and "ID" in record["Vertriebler"]
+                    "Name" in record
+                    and "Mail" in record
+                    and "ID" in record
+                    and "Mobil" in record
                 ):
                     vertriebler_set.add(
                         (
-                            record["Vertriebler"]["display_value"],
-                            record["Vertriebler"]["ID"],
+                            record["Name"],
+                            record["ID"],
+                            record["Mail"],
+                            record["Mobil"],
                         )
                     )
 
@@ -109,6 +116,7 @@ class Command(BaseCommand):
         for user_info in zoho_users_list:
             # Ensure that user_info is a list with at least two elements
             if isinstance(user_info, list) and len(user_info) >= 2:
+                print(user_info)
                 names = user_info[0].split(" ")
                 if len(names) < 2:
                     self.stdout.write(
@@ -119,13 +127,15 @@ class Command(BaseCommand):
                 last_name = " ".join(names[1:]) if len(names) > 1 else ""
                 zoho_id = int(user_info[1])
                 username = (first_name + last_name).lower()
-                email = (
-                    first_name[0].lower()
-                    + last_name[0].lower()
-                    + f"{DEFAULT_EMAIL_DOMAIN}"
-                )
-                kuerzel = first_name[0].upper() + last_name[0].upper()
-                phone = "+49175" + str(randint(1000000, 9999999))
+                email = user_info[2]
+                if email == None or email == "":
+                    continue
+                kuerzel = email[0:email.index("@")].upper()
+                if len(kuerzel) > 3:
+                    kuerzel = kuerzel[:3]
+                phone = user_info[3]
+                if phone == None or phone == "":
+                    phone = f"+49175{randint(1000000, 9999999)}"
 
                 # Check if a User with the provided zoho_id exists
                 user_exists = User.objects.filter(zoho_id=zoho_id).exists()
@@ -138,7 +148,7 @@ class Command(BaseCommand):
                         username=username,
                         first_name=first_name,
                         last_name=last_name,
-                        age=30,
+                        age=0,
                         phone=phone,
                         is_staff=False,
                         beruf="Vertrieb",
