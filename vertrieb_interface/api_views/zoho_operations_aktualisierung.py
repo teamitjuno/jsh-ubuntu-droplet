@@ -122,17 +122,17 @@ def load_user_angebots(request):
     try:
         user_data = load_user_json_data(request)
 
-        if user_data == [] or user_data == "" or user_data is None:
-            all_user_angebots_list = fetch_user_angebote_all(request)
-            request.user.zoho_data_text = json.dumps(all_user_angebots_list)
-            request.user.save()
-        else:
-            all_user_angebots_list = fetch_user_angebote_limit(
-                request, request.user.records_fetch_limit
-            )
-            updated_data = update_list(user_data, all_user_angebots_list)
-            request.user.zoho_data_text = json.dumps(updated_data)
-            request.user.save()
+        #if user_data == [] or user_data == "" or user_data is None:
+        all_user_angebots_list = fetch_user_angebote_all(request)
+        request.user.zoho_data_text = json.dumps(all_user_angebots_list)
+        request.user.save()
+        # else:
+        #     all_user_angebots_list = fetch_user_angebote_limit(
+        #         request, request.user.records_fetch_limit
+        #     )
+        #     updated_data = update_list(user_data, all_user_angebots_list)
+        #     request.user.zoho_data_text = json.dumps(updated_data)
+        #     request.user.save()
     except Exception:
         all_user_angebots_list = fetch_user_angebote_all(request)
         request.user.zoho_data_text = json.dumps(all_user_angebots_list)

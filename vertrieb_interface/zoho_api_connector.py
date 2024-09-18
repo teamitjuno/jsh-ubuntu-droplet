@@ -94,7 +94,7 @@ def fetch_user_angebote_all(request):
         params = {
             "from": start_index,
             "limit": LIMIT_ALL,
-            "criteria": f"Vertriebler.ID == {user.zoho_id}",
+            "criteria": f'Vertriebler.ID == {user.zoho_id} && Anfrage_vom > today.subDay(400) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))',
         }
 
         data = fetch_data_from_api(VERTRIEB_URL, params)
