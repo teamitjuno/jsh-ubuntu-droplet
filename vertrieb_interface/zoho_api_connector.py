@@ -113,21 +113,6 @@ def fetch_user_angebote_all(request):
     return all_user_angebots_list
 
 
-def fetch_user_angebote_limit(request, records_fetch_limit):
-    user = request.user
-    params = {
-        "limit": records_fetch_limit,
-        "criteria": f"Vertriebler.ID == {user.zoho_id}",
-    }
-
-    data = fetch_data_from_api(VERTRIEB_URL, params)
-
-    if data is None or not data.get("data"):
-        return []
-    else:
-        return process_all_user_data(data)
-
-
 def log_and_notify(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     timelaps = f"{message} - {timestamp}"

@@ -6,7 +6,6 @@ from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
     fetch_user_angebote_all,
-    fetch_user_angebote_limit,
 )
 from authentication.models import User
 
@@ -120,19 +119,9 @@ def load_user_angebots(request):
     JsonResponse: Gibt das Ergebnis der Operation zurück, einschließlich Fehler- oder Erfolgsstatus.
     """
     try:
-        user_data = load_user_json_data(request)
-
-        #if user_data == [] or user_data == "" or user_data is None:
         all_user_angebots_list = fetch_user_angebote_all(request)
         request.user.zoho_data_text = json.dumps(all_user_angebots_list)
         request.user.save()
-        # else:
-        #     all_user_angebots_list = fetch_user_angebote_limit(
-        #         request, request.user.records_fetch_limit
-        #     )
-        #     updated_data = update_list(user_data, all_user_angebots_list)
-        #     request.user.zoho_data_text = json.dumps(updated_data)
-        #     request.user.save()
     except Exception:
         all_user_angebots_list = fetch_user_angebote_all(request)
         request.user.zoho_data_text = json.dumps(all_user_angebots_list)

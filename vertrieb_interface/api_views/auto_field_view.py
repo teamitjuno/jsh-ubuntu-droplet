@@ -11,7 +11,6 @@ from vertrieb_interface.api_views.common import load_json_data, update_list
 from vertrieb_interface.api_views.auth_checkers import VertriebCheckMixin
 from vertrieb_interface.zoho_api_connector import (
     fetch_user_angebote_all,
-    fetch_user_angebote_limit,
 )
 from authentication.models import User
 
