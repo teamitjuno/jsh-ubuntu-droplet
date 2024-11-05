@@ -146,7 +146,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "elwa",
                     "apzFeld",
                     "zaehlerschrank",
-                    "potenzialausgleich",
+                    "potentialausgleich",
                     "beta_platte",
                     "metall_ziegel",
                     "prefa_befestigung",

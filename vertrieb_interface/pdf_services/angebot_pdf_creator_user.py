@@ -1118,12 +1118,12 @@ class PDF(FPDF):
                 content_2=tab28_content_2,
                 content_4=tab28_content_4,
             )
-        if data["potenzialausgleich"] == True:
+        if data["potentialausgleich"] == True:
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["potenzialausgleichName"])
+            tab28_content_1 = str(data["potentialausgleichName"])
             tab28_content_2 = "1 Stk."
-            tab28_content_4 = str(data["potenzialausgleichText"])
+            tab28_content_4 = str(data["potentialausgleichText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
                 tab28_eintrag_nummer,
@@ -1820,7 +1820,7 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["zaehlerschrank"]:
         anzahlZubehoer += 1
-    if data["potenzialausgleich"]:
+    if data["potentialausgleich"]:
         anzahlZubehoer += 1
     if data["geruestKunde"]:
         anzahlZubehoer += 1

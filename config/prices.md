@@ -124,7 +124,7 @@ OptionalAccessoriesPreise.objects.create(name='elwa_2', pdf_name='mypv AC ELWA 2
 OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', pdf_name='mypv AC∙THOR', pdf_text='∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager für Warmwasser, elektrische Wärmequellen und optional Heizung ∙ Produktgarantie: 2 Jahre', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='heizstab', price=250.00)
 OptionalAccessoriesPreise.objects.create(name='apzFeld', pdf_name='APZ-Feld Nachrüstung', price=777.78)
-OptionalAccessoriesPreise.objects.create(name='potenzialausgleich', pdf_name='Potenzialausgleich inkl. Erdspieß', price=1666.67)
+OptionalAccessoriesPreise.objects.create(name='potentialausgleich', pdf_name='Potentialausgleich inkl. Erdspieß', price=1666.67)
 OptionalAccessoriesPreise.objects.create(name='zaehlerschrank', pdf_name='Zählerschrankerneuerung nach TAB', price=2777.78)
 OptionalAccessoriesPreise.objects.create(name='mid_zaehler', pdf_name='MID-Zähler für Wallbox', price=211.11)
 OptionalAccessoriesPreise.objects.create(name='geruestKunde', pdf_name='Gerüst durch Kunden gestellt', price=500.00)

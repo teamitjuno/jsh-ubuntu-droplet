@@ -389,7 +389,7 @@ class VertriebAngebot(TimeStampMixin):
     anzOptimizer = models.PositiveIntegerField(default=0)
     apzFeld = models.BooleanField(default=False)
     zaehlerschrank = models.BooleanField(default=False)
-    potenzialausgleich = models.BooleanField(default=False)
+    potentialausgleich = models.BooleanField(default=False)
     beta_platte = models.BooleanField(default=False)
     metall_ziegel = models.BooleanField(default=False)
     prefa_befestigung = models.BooleanField(default=False)
@@ -1335,8 +1335,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("apzFeld"))
         if self.zaehlerschrank:
             accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
-        if self.potenzialausgleich:
-            accessories_price += float(self.get_optional_accessory_price("potenzialausgleich"))
+        if self.potentialausgleich:
+            accessories_price += float(self.get_optional_accessory_price("potentialausgleich"))
         if self.beta_platte:
             accessories_price += float(self.beta_platte_preis)
         if self.metall_ziegel:
@@ -1516,9 +1516,9 @@ class VertriebAngebot(TimeStampMixin):
             "zaehlerschrank": self.zaehlerschrank,
             "zaehlerschrankName": self.get_zubehoer_name("zaehlerschrank"),
             "zaehlerschrankText": self.get_zubehoer_text("zaehlerschrank"),
-            "potenzialausgleich": self.potenzialausgleich,
-            "potenzialausgleichName": self.get_zubehoer_name("potenzialausgleich"),
-            "potenzialausgleichText": self.get_zubehoer_text("potenzialausgleich"),
+            "potentialausgleich": self.potentialausgleich,
+            "potentialausgleichName": self.get_zubehoer_name("potentialausgleich"),
+            "potentialausgleichText": self.get_zubehoer_text("potentialausgleich"),
             "geruestKunde": self.geruestKunde,
             "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
             "geruestKundeText": self.get_zubehoer_text("geruestKunde"),

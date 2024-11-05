@@ -1089,10 +1089,10 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank"}),
     )
-    potenzialausgleich = forms.BooleanField(
-        label="Potenzialausgleich inkl. Erdspieß",
+    potentialausgleich = forms.BooleanField(
+        label="Potentialausgleich inkl. Erdspieß",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "potenzialausgleich"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "potentialausgleich"}),
     )
     beta_platte = forms.BooleanField(
         label="Beta Platte",
@@ -1396,7 +1396,7 @@ class VertriebAngebotForm(ModelForm):
             "midZaehler",
             "apzFeld",
             "zaehlerschrank",
-            "potenzialausgleich",
+            "potentialausgleich",
             "beta_platte",
             "metall_ziegel",
             "prefa_befestigung",

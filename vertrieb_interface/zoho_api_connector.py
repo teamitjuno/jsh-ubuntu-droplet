@@ -392,7 +392,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "MID_Anzahl": int(vertrieb_angebot.midZaehler),
             "APZ_Feld": return_lower_bull(vertrieb_angebot.apzFeld),
             "Z_hlerschrank": return_lower_bull(vertrieb_angebot.zaehlerschrank),
-            "Potenzialausgleich": return_lower_bull(vertrieb_angebot.potenzialausgleich),
+            "Potentialausgleich": return_lower_bull(vertrieb_angebot.potentialausgleich),
             "Beta_Platte": return_lower_bull(vertrieb_angebot.beta_platte),
             "Metalldachziegel": return_lower_bull(vertrieb_angebot.metall_ziegel),
             "PREFA_Dachbefestigung": return_lower_bull(vertrieb_angebot.prefa_befestigung),
