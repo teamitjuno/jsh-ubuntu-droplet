@@ -1535,6 +1535,8 @@ class VertriebAngebot(TimeStampMixin):
             "prefaBefestigungName": self.get_zubehoer_name("prefa_befestigung"),
             "prefaBefestigungText": self.get_zubehoer_text("prefa_befestigung"),
             "heizstab": self.heizstab,
+            "heizstabName": self.get_zubehoer_name("heizstab"),
+            "heizstabText": self.get_zubehoer_text("heizstab"),
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,

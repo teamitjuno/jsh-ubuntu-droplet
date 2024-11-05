@@ -165,6 +165,12 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
             if vertrieb_angebot.hersteller == "Huawei":
                 self._attach_datenblatter(email, datenblatter, "backup_box", "Huawei Backup Box")
 
+        if vertrieb_angebot.thor:
+            self._attach_datenblatter(email, datenblatter, "ac_thor", "SOL THOR")
+
+        if vertrieb_angebot.elwa:
+            self._attach_datenblatter(email, datenblatter, "ac_elwa", "AC ELWA 2")
+
         if vertrieb_angebot.hersteller == "Viessmann":
             self._attach_datenblatter(
                 email, datenblatter, "viessmann_allgemeine_bedingungen", "VIESSMANN Allgemeine Bedingungen"

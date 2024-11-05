@@ -1079,6 +1079,19 @@ class PDF(FPDF):
                 content_2=tab28_content_2,
                 content_4=tab28_content_4,
             )
+        if data["heizstab"] == True:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["heizstabName"])
+            tab28_content_2 = "1 Stk."
+            tab28_content_4 = str(data["heizstabText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
         if data["midZaehler"] > 0:
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
@@ -1815,6 +1828,8 @@ def anzahlZubehoer(data):
     if data["elwa"]:
         anzahlZubehoer += 1
     if data["thor"]:
+        anzahlZubehoer += 1
+    if data["heizstab"]:
         anzahlZubehoer += 1
     if data["apzFeld"]:
         anzahlZubehoer += 1
