@@ -6,6 +6,7 @@ from prices.models import (
     WallBoxPreise,
     SolarModulePreise,
     OptionalAccessoriesPreise,
+    RabattAktion,
     AndereKonfigurationWerte,
     Prices,
 )
@@ -86,6 +87,17 @@ class OptionalAccessoriesPreisAdmin(admin.ModelAdmin):
     inlines = [PricesInline]
 
 
+@admin.register(RabattAktion)
+class RabattAktionAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "prozentsatz",
+        "fixbetrag",
+    )
+    search_fields = ("name",)
+    inlines = [PricesInline]
+
+
 @admin.register(AndereKonfigurationWerte)
 class AndereKonfigurationWerteAdmin(admin.ModelAdmin):
     list_display = ("name", "value")
@@ -97,32 +109,36 @@ class PricesAdmin(admin.ModelAdmin):
     list_display = (
         "elektrik_prices",
         "modul_prices",
-        "modul_garantie_preise",
+        "wr_garantie_preise",
         "wallbox_prices",
         "optional_accessories_prices",
+        "rabatt_aktion",
         "andere_preise",
     )
     list_select_related = (
         "elektrik_prices",
         "modul_prices",
-        "modul_garantie_preise",
+        "wr_garantie_preise",
         "wallbox_prices",
         "optional_accessories_prices",
+        "rabatt_aktion",
         "andere_preise",
     )
     search_fields = (
         "elektrik_prices__name",
         "modul_prices__name",
-        "modul_garantie_preise__name",
+        "wr_garantie_preise__name",
         "wallbox_prices__name",
         "optional_accessories_prices__name",
+        "rabatt_aktion__name",
         "andere_preise__name",
     )
     autocomplete_fields = (
         "elektrik_prices",
         "modul_prices",
-        "modul_garantie_preise",
+        "wr_garantie_preise",
         "wallbox_prices",
         "optional_accessories_prices",
+        "rabatt_aktion",
         "andere_preise",
     )

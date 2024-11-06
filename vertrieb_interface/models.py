@@ -30,6 +30,7 @@ from prices.models import (
     WrGarantiePreise,
     KwpPreise,
     OptionalAccessoriesPreise,
+    RabattAktion,
     SolarModulePreise,
     WallBoxPreise,
 )
@@ -431,6 +432,11 @@ class VertriebAngebot(TimeStampMixin):
     )
     rabatt = models.IntegerField(
         default=0, validators=[MinValueValidator(0)]
+    )
+    rabattaktion_included = models.BooleanField(default=False)
+    rabattaktion = models.CharField(
+        max_length=100,
+        default="----",
     )
     ausweisung_rabatt = models.BooleanField(default=False)
     genehmigung_rabatt = models.BooleanField(default=False)
@@ -1400,6 +1406,11 @@ class VertriebAngebot(TimeStampMixin):
 
         rabatt = angebotsSumme * (self.rabatt/100)
         angebotsSumme *= (1-(self.rabatt/100))
+
+        # Rabattaktionen
+        if self.rabattaktion_included:
+            angebotsSumme *= (1-(float(RabattAktion.objects.get(name=self.rabattaktion).prozentsatz)/100))
+            angebotsSumme -= float(RabattAktion.objects.get(name=self.rabattaktion).fixbetrag)
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag

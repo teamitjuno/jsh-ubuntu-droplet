@@ -418,6 +418,19 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.rabattaktion_included.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_rabattaktion" {% if form.rabattaktion_included.value %}checked{% endif %} data-switch="success" name="{{ form.rabattaktion_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_rabattaktion" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="rabattaktion_row" class="conditional-row">
+                                                                        <th>{{ form.rabattaktion.label_tag }}</th>
+                                                                        <td>{{ form.rabattaktion }}</td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -428,6 +441,24 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        <script type="text/javascript">
+                                                            $(document).ready(function() {
+                                                                updateRabattaktionRow();
+                                                                // On 'Finanzierung' checkbox state change
+                                                                $('#switch_rabattaktion').change(function() {
+                                                                    updateRabattaktionRow();
+                                                                });
+                                                                function updateRabattaktionRow() {
+                                                                    if ($('#switch_rabattaktion').is(':checked')) {
+                                                                        // If checkbox is checked, show 'Inddiv Preis' row
+                                                                        $('#rabattaktion_row').show();
+                                                                    } else {
+                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                        $('#rabattaktion_row').hide();
+                                                                    }
+                                                                }
+                                                            });
+                                                        </script>
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
                                                             <div class="card-body">
@@ -1682,6 +1713,19 @@ function submitFormWithAction(action) {
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.rabattaktion_included.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_rabattaktion" {% if form.rabattaktion_included.value %}checked{% endif %} data-switch="success" name="{{ form.rabattaktion_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_rabattaktion" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="rabattaktion_row" class="conditional-row">
+                                                                        <th>{{ form.rabattaktion.label_tag }}</th>
+                                                                        <td>{{ form.rabattaktion }}</td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -1697,6 +1741,24 @@ function submitFormWithAction(action) {
                                                                 {% endif %}
                                                             </div>
                                                         </div>
+                                                        <script type="text/javascript">
+                                                            $(document).ready(function() {
+                                                                updateRabattaktionRow();
+                                                                // On 'Finanzierung' checkbox state change
+                                                                $('#switch_rabattaktion').change(function() {
+                                                                    updateRabattaktionRow();
+                                                                });
+                                                                function updateRabattaktionRow() {
+                                                                    if ($('#switch_rabattaktion').is(':checked')) {
+                                                                        // If checkbox is checked, show 'Inddiv Preis' row
+                                                                        $('#rabattaktion_row').show();
+                                                                    } else {
+                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                        $('#rabattaktion_row').hide();
+                                                                    }
+                                                                }
+                                                            });
+                                                        </script>
                                                        <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
                                                             <div class="card-body">

@@ -190,6 +190,8 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "rabattsumme",
                     "ausweisung_rabatt",
                     "genehmigung_rabatt",
+                    "rabattaktion_included",
+                    "rabattaktion",
                     "angebotsumme",
                 ),
                 "classes": ("collapse",),

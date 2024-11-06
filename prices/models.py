@@ -108,6 +108,23 @@ class OptionalAccessoriesPreise(models.Model):
         new_position.save()
 
 
+class RabattAktion(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    prozentsatz = models.DecimalField(max_digits=10, decimal_places=2)
+    fixbetrag = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    @staticmethod
+    def add_position(name, prozentsatz=0.00, fixbetrag=0.00):
+        new_position = RabattAktion.objects.create(
+            name=name, price=prozentsatz, fixbetrag=fixbetrag
+        )
+        new_position.save()
+
+
+
 class AndereKonfigurationWerte(models.Model):
     name = models.CharField(max_length=255, unique=True)
     value = models.DecimalField(max_digits=10, decimal_places=3)
@@ -124,13 +141,14 @@ class AndereKonfigurationWerte(models.Model):
 class Prices(models.Model):
     elektrik_prices = models.ForeignKey(ElektrikPreis, on_delete=models.CASCADE)
     modul_prices = models.ForeignKey(KwpPreise, on_delete=models.CASCADE)
-    modul_garantie_preise = models.ForeignKey(
+    wr_garantie_preise = models.ForeignKey(
         WrGarantiePreise, on_delete=models.CASCADE
     )
     wallbox_prices = models.ForeignKey(WallBoxPreise, on_delete=models.CASCADE)
     optional_accessories_prices = models.ForeignKey(
         OptionalAccessoriesPreise, on_delete=models.CASCADE
     )
+    rabatt_aktion = models.ForeignKey(RabattAktion, on_delete=models.CASCADE)
     andere_preise = models.ForeignKey(
         AndereKonfigurationWerte, on_delete=models.CASCADE
     )
