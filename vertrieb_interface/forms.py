@@ -1691,7 +1691,7 @@ class VertriebAngebotForm(ModelForm):
                 raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
 
         anz_speicher = cleaned_data.get("anz_speicher")
-        message, is_valid = validate_range(anz_speicher, hersteller)
+        message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
