@@ -571,7 +571,6 @@ class VertriebAngebot(TimeStampMixin):
         tmpSumme, tmpRabatt = self.angebots_summe
         self.angebotsumme = round(tmpSumme, 2)
         self.rabattsumme = round(tmpRabatt, 2)
-        # self.wandhalterung_ticket_preis = self.wandhalterung_ticket_preis
         self.fullticketpreis = self.full_ticket_preis
         self.anfrage_vom = self.get_current_date_formatted
         self.benotigte_restenergie = self.restenergie
@@ -586,7 +585,6 @@ class VertriebAngebot(TimeStampMixin):
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
         self.Full_ticket_preis = self.full_ticket_preis
-        self.gesamtkapazitat = self.gesamtkapazitat_rechnung
         self.nettokreditbetrag = self.get_nettokreditbetrag
         # if self.solar_module:
         #     self.datenblatter_solar_module = True
@@ -1034,6 +1032,9 @@ class VertriebAngebot(TimeStampMixin):
                 batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
                     leistungsmodulePreis
                 )
+                # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen
+                if(anz_speicher > 6 and self.modulsumme_kWp < 25.0):
+                    batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
             elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
                 batteriePreis = self.calculate_price(
                     OptionalAccessoriesPreise, "batteriemodul_viessmann", anz_speicher
@@ -1044,7 +1045,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def smartmeter_preis(self):
-        smartmeterPreis = smartmeterPreis = self.calculate_price(
+        smartmeterPreis = self.calculate_price(
                     OptionalAccessoriesPreise, "smartmeter_dtsu", 1
                 )
         if self.smartmeter_model == "Smart Power Sensor DTSU666H":
@@ -1080,9 +1081,6 @@ class VertriebAngebot(TimeStampMixin):
         # Return value based on module_name
         return float(values.get(module_name))
 
-    @property
-    def gesamtkapazitat_rechnung(self):
-        return self.anz_speicher * 5000
 
     @property
     def nutz_energie(self):
@@ -1094,7 +1092,8 @@ class VertriebAngebot(TimeStampMixin):
                 kwh = self.anz_speicher * 7
             else:
                 kwh = self.anz_speicher * 5
-            nutzEnergie = nutzEnergie * BATT_DICT[kwh]
+            # Limitierung bis 6 Speichermodule, danach pauschal kein noch besserer Eigenverbrauch
+            nutzEnergie = nutzEnergie * BATT_DICT[min(kwh,42)]
         else:
             nutzEnergie = nutzEnergie * DEFAULT_BATT_USAGE
         return round(nutzEnergie, 2)

@@ -198,25 +198,26 @@ def validate_optimizer_ticket_anzahl(value):
         )
 
 
-def validate_range(value, hersteller):
+def validate_range(value, speicher_model):
     # Update the maximum values for different hersteller, including Huawei
-    max_values = {"Viessmann": 3, "Huawei": 6, "default": 6}
-    max_value = max_values.get(hersteller, max_values["default"])
+    max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "default": 6}
+    max_value = max_values.get(speicher_model, max_values["default"])
 
     # Update the error messages, including a specific message for Huawei
     error_messages = {
-        "Viessmann": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
-        "Huawei": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 6 sein.",
+        "Vitocharge VX3 PV-Stromspeicher": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
+        "LUNA 2000-5-S0": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 6 sein.",
+        "LUNA 2000-7-S1": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 12 sein.",
         "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
     }
 
     # Check if value is within the valid range
     # Note: For Huawei, we check if value is strictly less than 18, as per your condition
     if not isinstance(value, int) or not 0 <= value <= max_values.get(
-        hersteller, max_value + 1
+        speicher_model, max_value + 1
     ):
         # Use %(value)s for string interpolation in the default error message
-        error_message = error_messages.get(hersteller, error_messages["default"]) % {
+        error_message = error_messages.get(speicher_model, error_messages["default"]) % {
             "value": value
         }
         return error_message, False
@@ -1586,11 +1587,11 @@ class VertriebAngebotForm(ModelForm):
 
         action = self.data.get("action_type")
         hersteller = cleaned_data.get("hersteller")
-        wechselrichter_model = cleaned_data.get("wechselrichter_model")
+        speicher_model = cleaned_data.get("speicher_model")
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
-        message, is_valid = validate_range(anz_speicher, hersteller)
+        message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})

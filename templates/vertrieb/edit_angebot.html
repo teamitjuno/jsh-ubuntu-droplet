@@ -2704,7 +2704,7 @@ function calculateGesamtkapazitat() {
         gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
     }
 
-    $('#gesamtkapazitat').val(gesamtkapazitat);
+    $('#gesamtkapazitat').val(gesamtkapazitat.toFixed(2));
 }
 
 function limitModulanzahl(maxValue) {
