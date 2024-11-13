@@ -1070,7 +1070,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["thorName"])
-            tab28_content_2 = "1 Stk."
+            tab28_content_2 = "1"
             tab28_content_4 = str(data["thorText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1083,7 +1083,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["heizstabName"])
-            tab28_content_2 = "1 Stk."
+            tab28_content_2 = "1"
             tab28_content_4 = str(data["heizstabText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1109,7 +1109,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["apzFeldName"])
-            tab28_content_2 = "1 Stk."
+            tab28_content_2 = "1"
             tab28_content_4 = str(data["apzFeldText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1122,7 +1122,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["zaehlerschrankName"])
-            tab28_content_2 = "1 Stk."
+            tab28_content_2 = "1"
             tab28_content_4 = str(data["zaehlerschrankText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1135,7 +1135,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["potentialausgleichName"])
-            tab28_content_2 = "1 Stk."
+            tab28_content_2 = "1"
             tab28_content_4 = str(data["potentialausgleichText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1173,7 +1173,7 @@ class PDF(FPDF):
                 tab26_content_1 = self.get_attribute_by_identifier(
                     "notstrom_huawei_1", "content"
                 )
-                tab26_content_2 = "1 Stk."
+                tab26_content_2 = "1"
                 tab26_content_4 = self.get_attribute_by_identifier(
                     "notstrom_huawei_2", "content"
                 )
@@ -1208,7 +1208,7 @@ class PDF(FPDF):
                 eintrag += 1
                 tab29_eintrag_nummer = str(eintrag) + "."
                 tab29_content_1 = str(data["elwaName"])
-                tab29_content_2 = "1 Stk."
+                tab29_content_2 = "1"
                 tab29_content_4 = str(data["elwaText"])
                 self.setup_eintrag_text(
                     "zubehoer_platzhalter",
@@ -1244,7 +1244,7 @@ class PDF(FPDF):
                 tab26_content_1 = self.get_attribute_by_identifier(
                     "optimierer_viessmann_3", "content"
                 )
-                tab26_content_2 = "1 Stk."
+                tab26_content_2 = "1"
                 tab26_content_4 = self.get_attribute_by_identifier(
                     "optimierer_viessmann_4", "content"
                 )
@@ -1261,7 +1261,7 @@ class PDF(FPDF):
                 tab27_content_1 = self.get_attribute_by_identifier(
                     "optimierer_viessmann_5", "content"
                 )
-                tab27_content_2 = "1 Stk."
+                tab27_content_2 = "1"
 
                 self.setup_eintrag_text(
                     "optimierer_viessmann_5",
@@ -1277,7 +1277,7 @@ class PDF(FPDF):
                 tab28_content_1 = self.get_attribute_by_identifier(
                     "notstrom_viessmann_1", "content"
                 )
-                tab28_content_2 = "1 Stk."
+                tab28_content_2 = "1"
                 tab28_content_4 = self.get_attribute_by_identifier(
                     "notstrom_viessmann_2", "content"
                 )
@@ -1297,7 +1297,7 @@ class PDF(FPDF):
                 tab29_content_1 = self.get_attribute_by_identifier(
                     "gridbox_viessmann_1", "content"
                 )
-                tab29_content_2 = "1 Stk."
+                tab29_content_2 = "1"
                 tab29_content_4 = self.get_attribute_by_identifier(
                     "gridbox_viessmann_2", "content"
                 )
