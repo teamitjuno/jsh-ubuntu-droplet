@@ -321,7 +321,7 @@ class PDF(FPDF):
         tab1_eintrag_nummer = str(eintrag) + "."
         tab1_module = data["modulTicketArt"]
         tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModuleTicket"])} Wp\n∙ Produktgarantie: {str(data["produktGarantieTicket"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantieTicket"])}'
-        tab1_module_anzahl = f'{str(data["modulTicket"])} Stk'
+        tab1_module_anzahl = f'{str(data["modulTicket"])}'
         self.setup_eintrag_text(
             "tabelle_eintrag_1",
             tab1_eintrag_nummer,
@@ -355,7 +355,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -396,7 +396,7 @@ class PDF(FPDF):
                 leistungsmodule = ceil(
                     (int(data["batterieTicket"]) + int(data["batterieAnz"])) / 3
                 ) - ceil(int(data["batterieAnz"]) / 3)
-                self.multi_cell(0, 5, f"{str(leistungsmodule)} Stk" + "\n" + f'{str(data["batterieTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 5, f"{str(leistungsmodule)}" + "\n" + f'{str(data["batterieTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y + 5)
                 self.set_x(170)
                 self.cell(
@@ -432,7 +432,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["wandhalterungTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["wandhalterungTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -467,7 +467,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["elwaTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["elwaTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -500,7 +500,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["thorTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["thorTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -540,7 +540,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["notstromTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["notstromTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -574,7 +574,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["optimizerTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -601,7 +601,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 5, "1 Stk.", 0, "L")
+                self.multi_cell(0, 5, "1", 0, "L")
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
@@ -617,7 +617,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 5, "1 Stk.", 0, "L")
+                self.multi_cell(0, 5, "1", 0, "L")
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(0, 6, "inklusive", 0, 0, "R")
@@ -651,7 +651,7 @@ class PDF(FPDF):
                 leistungsmodule = ceil(
                     (int(data["batterieTicket"]) + int(data["batterieAnz"])) / 3
                 ) - ceil(int(data["batterieAnz"]) / 3)
-                self.multi_cell(0, 5, f"{str(leistungsmodule)} Stk" + "\n" + f'{str(data["batterieTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 5, f"{str(leistungsmodule)}" + "\n" + f'{str(data["batterieTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y + 5)
                 self.set_x(170)
                 self.cell(
@@ -694,7 +694,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["thorTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["thorTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(
@@ -734,7 +734,7 @@ class PDF(FPDF):
                 self.set_y(y)
                 self.set_x(150)
                 self.set_font("JUNO Solar Lt", "", 11)
-                self.multi_cell(0, 6, f'{str(data["notstromTicket"])} Stk', 0, 0, "L")  # type: ignore
+                self.multi_cell(0, 6, f'{str(data["notstromTicket"])}', 0, 0, "L")  # type: ignore
                 self.set_y(y)
                 self.set_x(170)
                 self.cell(

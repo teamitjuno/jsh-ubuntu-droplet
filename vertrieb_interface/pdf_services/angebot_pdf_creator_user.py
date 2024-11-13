@@ -374,7 +374,7 @@ class PDF(FPDF):
         tab1_eintrag_nummer = str(eintrag) + "."
         tab1_module = data["module"]
         tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModule"])} Wp\n∙ Produktgarantie: {str(data["produktGarantie"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantie"])}'
-        tab1_module_anzahl = f'{str(data["anzModule"])} Stk'
+        tab1_module_anzahl = f'{str(data["anzModule"])}'
         self.setup_eintrag_text(
             "tabelle_eintrag_1",
             tab1_eintrag_nummer,
@@ -1096,7 +1096,7 @@ class PDF(FPDF):
             eintrag += 1
             tab28_eintrag_nummer = str(eintrag) + "."
             tab28_content_1 = str(data["midZaehlerName"])
-            tab28_content_2 = str(data["midZaehler"]) + " Stk."
+            tab28_content_2 = str(data["midZaehler"])
             tab28_content_4 = str(data["midZaehlerText"])
             self.setup_eintrag_text(
                 "zubehoer_platzhalter",
@@ -1154,7 +1154,7 @@ class PDF(FPDF):
                 tab25_content_1 = self.get_attribute_by_identifier(
                     "optimierer_huawei_1", "content"
                 )
-                tab25_content_2 = str(data["anzOptimierer"]) + " Stk."
+                tab25_content_2 = str(data["anzOptimierer"])
                 tab25_content_4 = self.get_attribute_by_identifier(
                     "optimierer_huawei_2", "content"
                 )
@@ -1194,7 +1194,7 @@ class PDF(FPDF):
                 tab27_content_1 = self.get_attribute_by_identifier(
                     "wandhalterung_huawei_1", "content"
                 )
-                tab27_content_2 = str(data["anzWandhalterungSpeicher"]) + " Stk."
+                tab27_content_2 = str(data["anzWandhalterungSpeicher"])
 
                 self.setup_eintrag_text(
                     "wandhalterung_huawei_1",
@@ -1227,7 +1227,7 @@ class PDF(FPDF):
                 tab25_content_1 = self.get_attribute_by_identifier(
                     "optimierer_viessmann_1", "content"
                 )
-                tab25_content_2 = str(data["anzOptimierer"]) + " Stk."
+                tab25_content_2 = str(data["anzOptimierer"])
                 tab25_content_4 = self.get_attribute_by_identifier(
                     "optimierer_viessmann_2", "content"
                 )

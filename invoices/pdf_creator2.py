@@ -194,7 +194,7 @@ class PDF(FPDF):
             ):
                 quantity = str(position.quantity).strip("Decimal()") + "  m"
             else:
-                quantity = str(position.quantity).strip("Decimal()") + "  stk."
+                quantity = str(position.quantity).strip("Decimal()")
             self.set_x(150)
             self.multi_cell(0, 5, f"- {quantity}", 0, "L")
 
