@@ -418,17 +418,17 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.rabattaktion_included.label_tag }}</th>
+                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_rabattaktion" {% if form.rabattaktion_included.value %}checked{% endif %} data-switch="success" name="{{ form.rabattaktion_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_rabattaktion" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr id="rabattaktion_row" class="conditional-row">
-                                                                        <th>{{ form.rabattaktion.label_tag }}</th>
-                                                                        <td>{{ form.rabattaktion }}</td>
+                                                                    <tr id="sonderrabatt_row" class="conditional-row">
+                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
+                                                                        <td>{{ form.sonderrabatt }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Netto</th>
@@ -443,18 +443,18 @@
                                                         </div>
                                                         <script type="text/javascript">
                                                             $(document).ready(function() {
-                                                                updateRabattaktionRow();
+                                                                updateSonderrabattRow();
                                                                 // On 'Finanzierung' checkbox state change
-                                                                $('#switch_rabattaktion').change(function() {
-                                                                    updateRabattaktionRow();
+                                                                $('#switch_sonderrabatt').change(function() {
+                                                                    updateSonderrabattRow();
                                                                 });
-                                                                function updateRabattaktionRow() {
-                                                                    if ($('#switch_rabattaktion').is(':checked')) {
+                                                                function updateSonderrabattRow() {
+                                                                    if ($('#switch_sonderrabatt').is(':checked')) {
                                                                         // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#rabattaktion_row').show();
+                                                                        $('#sonderrabatt_row').show();
                                                                     } else {
                                                                         // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#rabattaktion_row').hide();
+                                                                        $('#sonderrabatt_row').hide();
                                                                     }
                                                                 }
                                                             });
@@ -1713,17 +1713,17 @@ function submitFormWithAction(action) {
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.rabattaktion_included.label_tag }}</th>
+                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_rabattaktion" {% if form.rabattaktion_included.value %}checked{% endif %} data-switch="success" name="{{ form.rabattaktion_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_rabattaktion" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr id="rabattaktion_row" class="conditional-row">
-                                                                        <th>{{ form.rabattaktion.label_tag }}</th>
-                                                                        <td>{{ form.rabattaktion }}</td>
+                                                                    <tr id="sonderrabatt_row" class="conditional-row">
+                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
+                                                                        <td>{{ form.sonderrabatt }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Netto</th>
@@ -1743,18 +1743,18 @@ function submitFormWithAction(action) {
                                                         </div>
                                                         <script type="text/javascript">
                                                             $(document).ready(function() {
-                                                                updateRabattaktionRow();
+                                                                updateSonderrabattRow();
                                                                 // On 'Finanzierung' checkbox state change
-                                                                $('#switch_rabattaktion').change(function() {
-                                                                    updateRabattaktionRow();
+                                                                $('#switch_sonderrabatt').change(function() {
+                                                                    updateSonderrabattRow();
                                                                 });
-                                                                function updateRabattaktionRow() {
-                                                                    if ($('#switch_rabattaktion').is(':checked')) {
+                                                                function updateSonderrabattRow() {
+                                                                    if ($('#switch_sonderrabatt').is(':checked')) {
                                                                         // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#rabattaktion_row').show();
+                                                                        $('#sonderrabatt_row').show();
                                                                     } else {
                                                                         // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#rabattaktion_row').hide();
+                                                                        $('#sonderrabatt_row').hide();
                                                                     }
                                                                 }
                                                             });

@@ -108,7 +108,7 @@ class OptionalAccessoriesPreise(models.Model):
         new_position.save()
 
 
-class RabattAktion(models.Model):
+class Sonderrabatt(models.Model):
     name = models.CharField(max_length=255, unique=True)
     prozentsatz = models.DecimalField(max_digits=10, decimal_places=2)
     fixbetrag = models.DecimalField(max_digits=10, decimal_places=2)
@@ -118,7 +118,7 @@ class RabattAktion(models.Model):
 
     @staticmethod
     def add_position(name, prozentsatz=0.00, fixbetrag=0.00):
-        new_position = RabattAktion.objects.create(
+        new_position = Sonderrabatt.objects.create(
             name=name, price=prozentsatz, fixbetrag=fixbetrag
         )
         new_position.save()
@@ -148,7 +148,7 @@ class Prices(models.Model):
     optional_accessories_prices = models.ForeignKey(
         OptionalAccessoriesPreise, on_delete=models.CASCADE
     )
-    rabatt_aktion = models.ForeignKey(RabattAktion, on_delete=models.CASCADE)
+    sonder_rabatt = models.ForeignKey(Sonderrabatt, on_delete=models.CASCADE)
     andere_preise = models.ForeignKey(
         AndereKonfigurationWerte, on_delete=models.CASCADE
     )

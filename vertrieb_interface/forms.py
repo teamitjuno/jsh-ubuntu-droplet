@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 # Local application/library specific imports
 from authentication.models import User
 from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
-from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte, RabattAktion
+from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte, Sonderrabatt
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.zoho_api_connector import (
     update_status,
@@ -1157,14 +1157,14 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
     )
-    rabattaktion_included = forms.BooleanField(label="Rabattaktion vorhanden",
+    sonderrabatt_included = forms.BooleanField(label="Sonderrabatt vorhanden",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "rabattaktion_included"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "sonderrabatt_included"}),
     )
-    rabattaktion = forms.ChoiceField(
-        label="Rabattaktion",
+    sonderrabatt = forms.ChoiceField(
+        label="Sonderrabatt",
         required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "rabattaktion"}),
+        widget=forms.Select(attrs={"class": "form-select", "id": "sonderrabatt"}),
     )
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
@@ -1408,8 +1408,8 @@ class VertriebAngebotForm(ModelForm):
             "rabatt",
             "ausweisung_rabatt",
             "genehmigung_rabatt",
-            "rabattaktion_included",
-            "rabattaktion",
+            "sonderrabatt_included",
+            "sonderrabatt",
             "module_ticket",
             "modul_anzahl_ticket",
             "elwa_ticket",
@@ -1466,9 +1466,9 @@ class VertriebAngebotForm(ModelForm):
             (module.name, module.name)
             for module in WallBoxPreise.objects.filter(in_stock=True)
         ]
-        self.fields["rabattaktion"].choices = [
-            (rabattakt.name, rabattakt.name)
-            for rabattakt in RabattAktion.objects.filter()
+        self.fields["sonderrabatt"].choices = [
+            (sonderrab.name, sonderrab.name)
+            for sonderrab in Sonderrabatt.objects.filter()
         ]
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
 
