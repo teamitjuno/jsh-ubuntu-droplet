@@ -407,6 +407,8 @@ class VertriebAngebot(TimeStampMixin):
     )
     hub_included = models.BooleanField(default=False)
     geruestKunde = models.BooleanField(default=False)
+    geruestOeffentlich = models.BooleanField(default=False)
+    smartDongleLte = models.BooleanField(default=False)
     dachhakenKunde = models.BooleanField(default=False)
     # Ticket:
     module_ticket = models.CharField(
@@ -1331,6 +1333,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.smartmeter_angebot_price)
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
+        if self.smartDongleLte:
+            accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
         if self.midZaehler > 0:
             accessories_price += float(self.midZaehler_preis)
         if self.apzFeld:
@@ -1414,6 +1418,8 @@ class VertriebAngebot(TimeStampMixin):
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
         # Abzug Selbstleistungen nach Rabattierung
+        if self.geruestOeffentlich:
+            angebotsSumme += float(self.get_optional_accessory_price("geruestOeffentlich"))
         if self.geruestKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
             rabatt += float(self.get_optional_accessory_price("geruestKunde"))
@@ -1529,6 +1535,7 @@ class VertriebAngebot(TimeStampMixin):
             "geruestKunde": self.geruestKunde,
             "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
             "geruestKundeText": self.get_zubehoer_text("geruestKunde"),
+            "geruestOeffentlich": self.geruestOeffentlich,
             "dachhakenKunde": self.dachhakenKunde,
             "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
             "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
@@ -1544,6 +1551,9 @@ class VertriebAngebot(TimeStampMixin):
             "heizstab": self.heizstab,
             "heizstabName": self.get_zubehoer_name("heizstab"),
             "heizstabText": self.get_zubehoer_text("heizstab"),
+            "smartDongleLte": self.smartDongleLte,
+            "smartDongleLteName": self.get_zubehoer_name("smartDongleLte"),
+            "smartDongleLteText": self.get_zubehoer_text("smartDongleLte"),
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,

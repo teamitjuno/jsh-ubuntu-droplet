@@ -665,6 +665,15 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.smartDongleLte.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="smartDongleLte" {% if form.smartDongleLte.value %}checked{% endif %} data-switch="success" name="{{ form.smartDongleLte.html_name }}" />
+                                                                                <label class="custom-control-label" for="smartDongleLte" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr id="bool_elwa_row">
                                                                         <th>{{ form.elwa.label_tag }}</th>
                                                                         <td>
@@ -767,6 +776,15 @@
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="geruestKunde" {% if form.geruestKunde.value %}checked{% endif %} data-switch="success" name="{{ form.geruestKunde.html_name }}" />
                                                                                 <label class="custom-control-label" for="geruestKunde" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.geruestOeffentlich.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="geruestOeffentlich" {% if form.geruestOeffentlich.value %}checked{% endif %} data-switch="success" name="{{ form.geruestOeffentlich.html_name }}" />
+                                                                                <label class="custom-control-label" for="geruestOeffentlich" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -1965,6 +1983,15 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.smartDongleLte.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="smartDongleLte" {% if form.smartDongleLte.value %}checked{% endif %} data-switch="success" name="{{ form.smartDongleLte.html_name }}" />
+                                                                                <label class="custom-control-label" for="smartDongleLte" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr id="bool_elwa_row">
                                                                         <th>{{ form.elwa.label_tag }}</th>
                                                                         <td>
@@ -2067,6 +2094,15 @@ function submitFormWithAction(action) {
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="geruestKunde" {% if form.geruestKunde.value %}checked{% endif %} data-switch="success" name="{{ form.geruestKunde.html_name }}" />
                                                                                 <label class="custom-control-label" for="geruestKunde" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.geruestOeffentlich.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="geruestOeffentlich" {% if form.geruestOeffentlich.value %}checked{% endif %} data-switch="success" name="{{ form.geruestOeffentlich.html_name }}" />
+                                                                                <label class="custom-control-label" for="geruestOeffentlich" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>

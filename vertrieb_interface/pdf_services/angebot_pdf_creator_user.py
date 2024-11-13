@@ -1309,6 +1309,22 @@ class PDF(FPDF):
                     content_4=tab29_content_4,
                 )
         addedPage = False
+        if data["smartDongleLte"] == True:
+            eintrag += 1
+            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
+                self.add_page()
+                addedPage = True
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = str(data["smartDongleLteName"])
+            tab28_content_2 = "1"
+            tab28_content_4 = str(data["smartDongleLteText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
         if data["betaPlatte"] == True:
             eintrag += 1
             if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
@@ -1832,6 +1848,8 @@ def anzahlZubehoer(data):
     if data["heizstab"]:
         anzahlZubehoer += 1
     if data["apzFeld"]:
+        anzahlZubehoer += 1
+    if data["smartDongleLte"]:
         anzahlZubehoer += 1
     if data["zaehlerschrank"]:
         anzahlZubehoer += 1

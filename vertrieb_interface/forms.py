@@ -1068,6 +1068,13 @@ class VertriebAngebotForm(ModelForm):
             attrs={"class": "form-check-input", "id": "notstrom"}
         ),
     )
+    smartDongleLte = forms.BooleanField(
+        label="Smart Dongle LTE",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "smartDongleLte"}
+        ),
+    )
     apzFeld = forms.BooleanField(
         label="APZ-Feld Nachrüstung",
         required=False,
@@ -1115,6 +1122,11 @@ class VertriebAngebotForm(ModelForm):
         label="Gerüst durch Kunde",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestKunde"}),
+    )
+    geruestOeffentlich = forms.BooleanField(
+        label="Gerüst Draufhöhe höher 6m oder im öffentlichen Raum",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestOeffentlich"}),
     )
     dachhakenKunde = forms.BooleanField(
         label="Setzen der Dachhaken durch Kunde",
@@ -1399,8 +1411,10 @@ class VertriebAngebotForm(ModelForm):
             "prefa_befestigung",
             "heizstab",
             "notstrom",
+            "smartDongleLte",
             "anzOptimizer",
             "geruestKunde",
+            "geruestOeffentlich",
             "dachhakenKunde",
             "indiv_price_included",
             "indiv_price",

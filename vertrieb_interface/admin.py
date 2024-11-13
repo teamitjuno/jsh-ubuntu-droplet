@@ -141,6 +141,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "notstrom",
+                    "smartDongleLte",
                     "thor",
                     "heizstab",
                     "elwa",
@@ -151,6 +152,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "metall_ziegel",
                     "prefa_befestigung",
                     "geruestKunde",
+                    "geruestOeffentlich",
                     "dachhakenKunde",
                     "midZaehler",
                     "wandhalterung_fuer_speicher",
