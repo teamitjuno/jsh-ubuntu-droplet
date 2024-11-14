@@ -1124,7 +1124,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestKunde"}),
     )
     geruestOeffentlich = forms.BooleanField(
-        label="Gerüst Draufhöhe höher 6m oder im öffentlichen Raum",
+        label="Gerüst Traufhöhe höher 6m oder im öffentlichen Raum",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestOeffentlich"}),
     )
