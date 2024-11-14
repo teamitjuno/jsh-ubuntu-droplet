@@ -1418,11 +1418,11 @@ class VertriebAngebot(TimeStampMixin):
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
         # Abzug Selbstleistungen nach Rabattierung
-        if self.geruestOeffentlich:
-            angebotsSumme += float(self.get_optional_accessory_price("geruestOeffentlich"))
         if self.geruestKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
             rabatt += float(self.get_optional_accessory_price("geruestKunde"))
+        elif self.geruestOeffentlich:
+            angebotsSumme += float(self.get_optional_accessory_price("geruestOeffentlich"))
         if self.dachhakenKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
             rabatt += float(self.get_optional_accessory_price("dachhakenKunde"))

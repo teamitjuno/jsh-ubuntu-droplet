@@ -779,7 +779,7 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr id="geruestOeff_row" class="conditional-row">
                                                                         <th>{{ form.geruestOeffentlich.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1287,6 +1287,7 @@ $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
+    toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
 
@@ -1319,7 +1320,14 @@ function toggleHeizstab(value){
     } else {
         $('#heizstab_row').hide();
     }
+}
 
+function toggleGeruestOeff(value){
+    if (value === false) {
+        $('#geruestOeff_row').show();
+    } else {
+        $('#geruestOeff_row').hide();
+    }
 }
 
 function setFieldOptions(value) {
@@ -2097,7 +2105,7 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
-                                                                    <tr>
+                                                                    <tr id="geruestOeff_row" class="conditional-row">
                                                                         <th>{{ form.geruestOeffentlich.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -2640,6 +2648,7 @@ $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
+    toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     toggleBoolelwaRow($('#hersteller').val());
     setFieldOptions($('#hersteller').val());
     calculateGesamtkapazitat();
@@ -2675,6 +2684,14 @@ function toggleHeizstab(value){
         $('#heizstab_row').hide();
     }
 
+}
+
+function toggleGeruestOeff(value){
+    if (value === false) {
+        $('#geruestOeff_row').show();
+    } else {
+        $('#geruestOeff_row').hide();
+    }
 }
 
 function toggleAnzWandhalterung(value) {

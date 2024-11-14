@@ -398,7 +398,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Metalldachziegel": return_lower_bull(vertrieb_angebot.metall_ziegel),
             "PREFA_Dachbefestigung": return_lower_bull(vertrieb_angebot.prefa_befestigung),
             "Ger_st_durch_Kunde": return_lower_bull(vertrieb_angebot.geruestKunde),
-            "Ger_st_oeffentlich": return_lower_bull(vertrieb_angebot.geruestOeffentlich),
+            "Ger_st_oeffentlich": return_lower_bull(vertrieb_angebot.geruestOeffentlich) and not return_lower_bull(vertrieb_angebot.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_angebot.dachhakenKunde),
             "Rabatt": int(vertrieb_angebot.rabatt),
             "Rabatt_genehmigt": return_lower_bull(vertrieb_angebot.genehmigung_rabatt),
