@@ -840,6 +840,42 @@ class DeleteUserAngebot(DeleteView):
         return redirect(self.get_success_url())
 
 
+class DeleteUserTicket(DeleteView):
+    model = VertriebTicket
+    template_name = "vertrieb/view_orders_ticket.html"
+
+    def get_success_url(self):
+        return reverse("vertrieb_interface:view_orders_ticket")
+
+    def get_object(self, queryset=None):
+        return VertriebTicket.objects.get(ticket_id=self.kwargs["ticket_id"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if TELEGRAM_LOGGING:
+            send_custom_message(self.request.user, "Hat ein Ticket gelöscht", "Info")
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.angebot_id_assigned = False
+        self.object.save()
+        CustomLogEntry.objects.log_action(
+            user_id=self.object.user_id,
+            content_type_id=ContentType.objects.get_for_model(self.object).pk,
+            object_id=self.object.pk,
+            object_repr=str(self.object),
+            action_flag=CHANGE,
+            status=self.object.status,
+        )
+        self.object.delete()
+        return redirect(self.get_success_url())
+
+
 def delete_unexisting_records(request):
     user = request.user
 

@@ -1715,13 +1715,6 @@ class VertriebTicket(TimeStampMixin):
     anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
     anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
-    ausrichtung = models.CharField(
-        max_length=10, choices=AUSRICHTUNG_CHOICES, default="Ost/West"
-    )
-    komplex = models.CharField(
-        max_length=30, choices=KOMPLEX_CHOICES, default="sehr komplex"
-    )
-
     solar_module = models.CharField(
         max_length=100,
         default="Phono Solar PS420M7GFH-18/VNH",

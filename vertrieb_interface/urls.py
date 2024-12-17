@@ -66,11 +66,11 @@ path(
         name="delete_user_angebot",
     ),
     path("vertrieb/view_orders_ticket/", ViewOrdersTicket.as_view(), name="view_orders_ticket"),
-    # path(
-    #     "vertrieb/view_orders_ticket/delete/<str:ticket_id>/",
-    #     views.DeleteUserAngebot.as_view(),
-    #     name="delete_user_angebot",
-    # ),
+    path(
+        "vertrieb/view_orders_ticket/delete/<str:ticket_id>/",
+        views.DeleteUserTicket.as_view(),
+        name="delete_user_ticket_new",
+    ),
     path(
         "vertrieb/ticket_creation/",
         views.TicketCreationView.as_view(),

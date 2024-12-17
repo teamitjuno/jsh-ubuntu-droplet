@@ -196,106 +196,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                        <!-- Column 2 -->
-                                                        {% if user.map_notizen_container_view == "Map" %}
-                                                    <div class="col-lg-7">
-
-                                                        <div class="card">
-                                                            <div class="col-sm-12 mb-2 mb-sm-0">             
-                                                                
-                                                                <ul class="nav nav-tabs nav-bordered mb-3">
-                                                                    <li class="nav-item">
-                                                                        <a href="#home-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
-                                                                            <i class="mdi mdi-home-variant d-md-none d-block"></i>
-                                                                            <span class="d-none d-md-block">Map</span>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li class="nav-item">
-                                                                        <a href="#profile-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
-                                                                            <i class="mdi mdi-account-circle d-md-none d-block"></i>
-                                                                            <span class="d-none d-md-block">Notizen</span>
-                                                                        </a>
-                                                                    </li>
-                                                                    {% comment %} <li class="nav-item">
-                                                                        <a href="#settings-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
-                                                                            <i class="mdi mdi-settings-outline d-md-none d-block"></i>
-                                                                            <span class="d-none d-md-block">FAQ</span>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li class="nav-item">
-                                                                        <a href="#abdeckung-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
-                                                                            <i class="mdi mdi-settings-outline d-md-none d-block"></i>
-                                                                            <span class="d-none d-md-block">Abdeckung</span>
-                                                                        </a>
-                                                                    </li> {% endcomment %}
-                                                                </ul>
-                                                                
-                                                                    <div class="tab-content">
-                                                                        <!-- Tab Map OpenStreet -->
-                                                                        <div class="tab-pane show active" id="home-b1">
-                                                                            <div id="map" style="width: 100%; height: 550px;"></div>
-                                                                            <a id="dynamicMapLink" href="#" target="_blank">Größere Karte anzeigen</a>
-                                                                            <br/>
-                                                                        </div>
-                                                                        <!-- Tab Map SolarApi -->
-                                                                        <div class="tab-pane" id="profile-b1">
-                                                                            {% include 'vertrieb/extra/notizen.html' %}
-                                                                        </div>
-                                                                        <!-- Tab Map FAQ -->
-                                                                        <div class="tab-pane" id="settings-b1">
-                                                                            <div class="card mb-3">
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="text-center">
-                                                                                        <h3 class="">FAQ: Verständnis der zweiten Registerkarte der Solar-API</h3>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="card-body">
-                                                                                    <div class="col-xl-12">
-                                                                                        <div>
-                                                                                            <div class="faq-question-q-box">Q.</div>
-                                                                                            <h4 class="faq-question">Was ermöglicht die zweite Registerkarte der Solar-API?</h4>
-                                                                                            <p class="faq-answer mb-4">Die zweite Registerkarte der Solar-API ist eine neu entwickelte Funktion, die die Visualisierung potenzieller Standorte für Solarpanel-Installationen auf dynamischen Karten ermöglicht. Sie nutzt "Building Insights" in der Solar-API und befindet sich aktuell noch im Testmodus, ist jedoch bereits nutzbar.</p>
-                                                                                        </div>
-
-                                                                                        <!-- Question/Answer -->
-                                                                                        <div>
-                                                                                            <div class="faq-question-q-box">Q.</div>
-                                                                                            <h4 class="faq-question">Gibt es geografische Einschränkungen bei der Datenabdeckung?</h4>
-                                                                                            <p class="faq-answer mb-4">Ja, die Abdeckung der Google-Gebäudedaten, die für diese Funktion notwendig sind, ist derzeit auf bestimmte Regionen beschränkt. Eine ungefähre Übersicht der Abdeckung  <a href="https://developers.google.com/maps/documentation/solar/coverage" target="_blank">finden Sie hier</a> oder sich im Tab "Abdeckung" informieren.</p>
-                                                                                        </div>
-
-                                                                                        <!-- Question/Answer -->
-                                                                                        <div>
-                                                                                            <div class="faq-question-q-box">Q.</div>
-                                                                                            <h4 class="faq-question">Was bietet die Solar-API außer der Standortvisualisierung noch?</h4>
-                                                                                            <p class="faq-answer mb-4">Die Solar-API stellt umfassende Daten zu Energieeinsparungen und zur Planung von Solaranlagen zur Verfügung. Diese Daten helfen dabei, das Solarpotenzial besser zu verstehen und zu nutzen, auch wenn man selbst nicht tief in der Materie steckt.</p>
-                                                                                        </div>
-
-                                                                                        <!-- Question/Answer -->
-                                                                                        <div>
-                                                                                            <div class="faq-question-q-box">Q.</div>
-                                                                                            <h4 class="faq-question">Wie kann die Solar-API-Demo genutzt werden?</h4>
-                                                                                            <p class="faq-answer mb-4">Um die Demo zu nutzen, geben Sie einfach die gewünschte Adresse in die Suchleiste unter der Registerkarte "Solar-API" ein und verwenden Sie den Schieberegler, um die Anzahl der Module zu variieren.</p>
-                                                                                        </div>
-                                                                                        
-                                                                                    </div> <!-- end col-->
-                                                                                </div>
-                                                                            </div>
-                                                                        </div> <!-- end tab-content-->
-
-                                                                        <!-- Tab Abdeckung -->
-                                                                        <div class="tab-pane" id="abdeckung-b1">
-                                                                            <img class="img-fluid" src="{% static 'img/abdeckung.png' %}" width="100%" height="250px" alt="Card image cap">
-                                                                        </div>
-                                                                    </div> <!-- end col-->
-                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                            
-                                                        {% elif user.map_notizen_container_view == "Notizen" %}
-                                                            {% include 'vertrieb/extra/notizen.html' %}
-                                                        {% endif %}
                                                 </div><!-- End of row -->
                                             </div>
                                         </div>
@@ -384,218 +284,12 @@
                                                                         <td>{{ form.zahlungsbedingungen }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="ausweisung_row" class="conditional-row">
-                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="genehmigung_row" class="conditional-row">
-                                                                        <th>{{ form.genehmigung_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="genehmigung_rabatt" {% if form.genehmigung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.genehmigung_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="genehmigung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="sonderrabatt_row" class="conditional-row">
-                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
-                                                                        <td>{{ form.sonderrabatt }}</td>
-                                                                    </tr>
-                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Preis Brutto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_ticket.kosten_pva|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateSonderrabattRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_sonderrabatt').change(function() {
-                                                                    updateSonderrabattRow();
-                                                                });
-                                                                function updateSonderrabattRow() {
-                                                                    if ($('#switch_sonderrabatt').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.finanzierung.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_finanzierung" {% if form.finanzierung.value %}checked{% endif %} data-switch="success" name="{{ form.finanzierung.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_finanzierung" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                                <table id="finanzierung_table" class="table table-sm table-hover">
-                                                                    <tr class="conditional-row">
-                                                                        <th>Barzahlungspreis</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.anzahlung.label_tag }}</th>
-                                                                        <td>{{ form.anzahlung }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>Nettokreditbetrag</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.nettokreditbetrag|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.monatliche_rate.label_tag }}</th>
-                                                                        <td>{{ form.monatliche_rate }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.laufzeit.label_tag }}</th>
-                                                                        <td>{{ form.laufzeit }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.sollzinssatz.label_tag }}</th>
-                                                                        <td>{{ form.sollzinssatz }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.effektiver_zins.label_tag }}</th>
-                                                                        <td>{{ form.effektiver_zins }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.gesamtkreditbetrag.label_tag }}</th>
-                                                                        <td>{{ form.gesamtkreditbetrag }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateFinanzierungRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_finanzierung').change(function() {
-                                                                    updateFinanzierungRow();
-                                                                });
-                                                                function updateFinanzierungRow() {
-                                                                    if ($('#switch_finanzierung').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                        {% if user.role.name == "admin" %}
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="indiv_price_row">
-                                                                        <th>{{form.indiv_price.label_tag }}</th>
-                                                                        <td>{{ form.indiv_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                                                                <script type="text/javascript">
-                                                                    $(document).ready(function() {
-                                                                        // Initial state of 'Inddiv Preis' row
-                                                                        updateIndivPreisRow();
-                                                                        // On 'Indiv Preis inkl.' checkbox state change
-                                                                        $('#switch_indiv_price_included').change(function() {
-                                                                            updateIndivPreisRow();
-                                                                        });
-                                                                        function updateIndivPreisRow() {
-                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                </script>
-                                                            </div>
-                                                        </div>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Erzeugte Energie pro Jahr</th>
-                                                                        <td>{{ vertrieb_ticket.erzeugte_energie_pro_jahr|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Nutzbare PV-Energie</th>
-                                                                        <td>{{ vertrieb_ticket.nutzbare_nutzenergie|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Benötigte Restenergie</th>
-                                                                        <td>{{ vertrieb_ticket.benotigte_restenergie|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Kosten für Restenergie</th>
-                                                                        <td>{{ vertrieb_ticket.kosten_fur_restenergie|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Einspeisevergütung gesamt</th>
-                                                                        <td>{{ vertrieb_ticket.einspreisevergütung_gesamt|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_ticket.strom_ohne|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis abzgl. Vergütung und inkl. Reststrom</th>
-                                                                        <td>{{ vertrieb_ticket.abzug_vergutung|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Ersparnis</th>
-                                                                        <td>{{ vertrieb_ticket.Ersparnis|format_price }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -808,7 +502,7 @@
                                             <div class="float-end">
                                                 <i class="mdi mdi-file-document widget-icon"></i>
                                             </div>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Ticket ID</h5>
                                             {% if vertrieb_ticket.angebot_id_assigned %}
                                                 <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
                                             {% else %}
@@ -839,15 +533,6 @@
                                             <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ vertrieb_ticket.zoho_kundennumer }}">
                                             {% comment %} <p>{{ vertrieb_ticket.zoho_kundennumer}}</p> {% endcomment %}
                                             {% comment %} <p hidden>{{ form.zoho_kundennumer}}</p>  {% endcomment %}
-                                            
-                                            <p class="mb-0 text-muted">
-                                            {% if not vertrieb_ticket.termine_text %}
-                                                <span class="text-danger me-2"></i> Kein Termin</span>
-                                            {% else %}
-                                                <span class="text-success me-2"></i> {{ vertrieb_ticket.termine_text }}</span>
-                                            {% endif %}
-                                                <span class="text-nowrap">Termin</span>
-                                            </p>
                                         </div> 
                                     </div> 
                                 </div> 
@@ -903,7 +588,7 @@
                                                         }
                                                     </script>
                                                     <div class="row m-2">
-                                                        <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
+                                                        <button type="submit" onclick=submitFormWithAction('angebotsumme_rechnen') class="btn btn-soft-info rounded-pill">Ticket Summe rechnen</button>
                                                     </div>
                                                     <div class="row m-2">
                                                         
@@ -917,7 +602,7 @@
 
                                                 
                                                     <div class="row m-2">
-                                                        <button type="button" id="pdf_erstellen" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
+                                                        <button type="button" id="pdf_erstellen" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Ticket PDF erstellen</button>
                                                         
                                                     </div>
                                                     <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -928,63 +613,13 @@
                                                                         <i class="ri-information-line h1 text-info"></i>
                                                                         <h4 class="mt-2">Achtung!</h4>
                                                                         <p class="mt-3">Diese Aktion setzt den Status des Angebots automatisch auf "bekommen" und leitet Sie zur PDF-Seite des Angebots weiter. Wollen Sie das fortsetzen?"</p>
-                                                                        
-                                                                            {% comment %} <script>
-                                                                                function getCookie(name) {
-                                                                                    let cookieValue = null;
-                                                                                    if (document.cookie && document.cookie !== '') {
-                                                                                        const cookies = document.cookie.split(';');
-                                                                                        for (let i = 0; i < cookies.length; i++) {
-                                                                                            const cookie = cookies[i].trim();
-                                                                                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                                                                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                                                                                break;
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                    return cookieValue;
-                                                                                }
-                                                                                const csrftoken = getCookie('csrftoken');
-                                                                                $.ajaxSetup({
-                                                                                    headers: { "X-CSRFToken": csrftoken }
-                                                                                });
-                                                                                    function setAction(action) {
-                                                                                        document.getElementById('form-action').value = action;
-                                                                                    }
-                                                                                function saveFormAndGeneratePDF() {
-                                                                                    // Set the status value to "bekommen" before the form submission
-                                                                                    // $('#id_status').val('bekommen');
-                                                                                    $('#is_locked').val('True');
-                                                                                    
-                                                                                    // Continue with the AJAX POST request to save the form
-                                                                                    $.ajax({
-                                                                                        type: "POST",
-                                                                                        url: $("#main-form").attr('action'),
-                                                                                        data: $("#main-form").serialize(),
-                                                                                        // success: function(data){
-                                                                                            // Once the form is successfully saved, redirect to generate the PDF
-                                                                                        //    window.location.href = "{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_ticket.ticket_id %}";
-                                                                                        //},
-                                                                                        error: function(err){
-                                                                                            // Handle any errors accordingly
-                                                                                            console.error("Error saving form:", err);
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            </script>  {% endcomment %}
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
                                                                             
                                                                             <button type="submit" onclick=submitFormWithAction('switch_to_bekommen') id="continueButtonn" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-
                                                                     </div>
                                                                 </div>
                                                             </div><!-- /.modal-content -->
                                                         </div><!-- /.modal-dialog -->
-                                                    </div>
-
-                                                    <div class="row m-2">
-                                                        <button type="button" id="pdf_and_calc_erstellen" data-bs-toggle="modal" data-bs-target="#info-alert-modal2" class="btn btn-outline-info rounded-pill" enabled>Angebot PDF mit Kalkulation erstellen</button>
-
                                                     </div>
                                                     <div id="info-alert-modal2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
@@ -1061,7 +696,6 @@
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
-    toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     calculateGesamtkapazitat();
@@ -1076,19 +710,6 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
-
-function toggleGenehmigung(value){
-    if (value >= 6) {
-        $('#genehmigung_row').show();
-        $('#ausweisung_row').show();
-    } else if (value > 0) {
-        $('#genehmigung_row').hide();   
-        $('#ausweisung_row').show();
-    } else {
-        $('#genehmigung_row').hide();
-        $('#ausweisung_row').hide();
-    }
-}
 
 function toggleHeizstab(value){
     if (value === true) {
@@ -1479,43 +1100,6 @@ function submitFormWithAction(action) {
                                                                         <td>{{ form.zahlungsbedingungen }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="ausweisung_row" class="conditional-row">
-                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="genehmigung_row" class="conditional-row">
-                                                                        <th>{{ form.genehmigung_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="genehmigung_rabatt" {% if form.genehmigung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.genehmigung_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="genehmigung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="sonderrabatt_row" class="conditional-row">
-                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
-                                                                        <td>{{ form.sonderrabatt }}</td>
-                                                                    </tr>
-                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td>{{ vertrieb_ticket.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -1525,179 +1109,10 @@ function submitFormWithAction(action) {
                                                                     </tr>
                                                                 </table>
                                                                 {% if vertrieb_ticket.angebot_id_assigned == False %}
-                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Angebot Summe rechnen</button>
+                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Ticket Summe rechnen</button>
                                                                 {% else %}
-                                                                <button type="submit" form="main-form" disabled id="save-all-forms" class="btn btn-outline-info rounded-pill">Angebot Summe rechnen</button>
+                                                                <button type="submit" form="main-form" disabled id="save-all-forms" class="btn btn-outline-info rounded-pill">Ticket Summe rechnen</button>
                                                                 {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateSonderrabattRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_sonderrabatt').change(function() {
-                                                                    updateSonderrabattRow();
-                                                                });
-                                                                function updateSonderrabattRow() {
-                                                                    if ($('#switch_sonderrabatt').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                       <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.finanzierung.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_finanzierung" {% if form.finanzierung.value %}checked{% endif %} data-switch="success" name="{{ form.finanzierung.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_finanzierung" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                                <table id="finanzierung_table" class="table table-sm table-hover">
-                                                                    <tr class="conditional-row">
-                                                                        <th>Barzahlungspreis</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.anzahlung.label_tag }}</th>
-                                                                        <td>{{ form.anzahlung }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>Nettokreditbetrag</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.nettokreditbetrag|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.monatliche_rate.label_tag }}</th>
-                                                                        <td>{{ form.monatliche_rate }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.laufzeit.label_tag }}</th>
-                                                                        <td>{{ form.laufzeit }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.sollzinssatz.label_tag }}</th>
-                                                                        <td>{{ form.sollzinssatz }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.effektiver_zins.label_tag }}</th>
-                                                                        <td>{{ form.effektiver_zins }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.gesamtkreditbetrag.label_tag }}</th>
-                                                                        <td>{{ form.gesamtkreditbetrag }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateFinanzierungRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_finanzierung').change(function() {
-                                                                    updateFinanzierungRow();
-                                                                });
-                                                                function updateFinanzierungRow() {
-                                                                    if ($('#switch_finanzierung').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                        {% if user.role.name == "admin" %}
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="indiv_price_row">
-                                                                        <th>{{form.indiv_price.label_tag }}</th>
-                                                                        <td>{{ form.indiv_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                                                                <script type="text/javascript">
-                                                                    $(document).ready(function() {
-                                                                        // Initial state of 'Inddiv Preis' row
-                                                                        updateIndivPreisRow();
-                                                                        // On 'Indiv Preis inkl.' checkbox state change
-                                                                        $('#switch_indiv_price_included').change(function() {
-                                                                            updateIndivPreisRow();
-                                                                        });
-                                                                        function updateIndivPreisRow() {
-                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                </script>
-                                                            </div>
-                                                        </div>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Energie Details</div>
-                                                            <div class="card-body">
-                                                                 <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>Erzeugte Energie pro Jahr</th>
-                                                                        <td>{{ vertrieb_ticket.erzeugte_energie_pro_jahr|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Nutzbare PV-Energie</th>
-                                                                        <td>{{ vertrieb_ticket.nutzbare_nutzenergie|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Benötigte Restenergie</th>
-                                                                        <td>{{ vertrieb_ticket.benotigte_restenergie|format_number }} kWh</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Kosten für Restenergie</th>
-                                                                        <td>{{ vertrieb_ticket.kosten_fur_restenergie|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Einspeisevergütung gesamt</th>
-                                                                        <td>{{ vertrieb_ticket.einspreisevergütung_gesamt|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Stromkosten ohne PV-Anlage</th>
-                                                                        <td>{{ vertrieb_ticket.strom_ohne|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis abzgl. Vergütung und inkl. Reststrom</th>
-                                                                        <td>{{ vertrieb_ticket.abzug_vergutung|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Ersparnis</th>
-                                                                        <td>{{ vertrieb_ticket.Ersparnis|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1939,14 +1354,6 @@ function submitFormWithAction(action) {
                                             <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
                                             <p hidden>{{ form.zoho_kundennumer}}</p>
                                             <p></p>
-                                        <p class="mb-0 text-muted">
-                                        {% if not vertrieb_ticket.termine_text %}
-                                            <span class="text-danger me-2"></i> Kein Termin</span>
-                                        {% else %}
-                                            <span class="text-success me-2"></i> {{ vertrieb_ticket.termine_text }}</span>
-                                        {% endif %}
-                                            <span class="text-nowrap">Termin</span>
-                                        </p>
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card-->
                             </div> <!-- end col-->
@@ -2009,7 +1416,7 @@ function submitFormWithAction(action) {
 
                                                 
                                                     <div class="row m-2">
-                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Angebot PDF erstellen</button>
+                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Ticket PDF erstellen</button>
                                                         
                                                     </div>
                                                     <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -2023,7 +1430,7 @@ function submitFormWithAction(action) {
                                                                         <script>
                                                                             function redirectToPdfCreation() {
                                                                                 // Replace 'yourUrl' with the Django URL generated by the template tag
-                                                                                var yourUrl = "{% url 'vertrieb_interface:create_angebot_pdf_user' vertrieb_ticket.ticket_id %}";
+                                                                                var yourUrl = "{% url 'vertrieb_interface:create_ticket_new_pdf_user' vertrieb_ticket.ticket_id %}";
                                                                                 window.location.href = yourUrl;
                                                                             }
                                                                         </script>
@@ -2038,32 +1445,6 @@ function submitFormWithAction(action) {
                                                         </div><!-- /.modal-dialog -->
                                                     </div>
 
-                                                    <div class="row m-2">
-                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal2" class="btn btn-outline-info rounded-pill" enabled>Angebot PDF mit Kalkulation erstellen</button>
-                                                        <script>
-                                                            document.addEventListener('DOMContentLoaded', function () {
-                                                                var pdfButton = document.getElementById('pdf_erstellen');
-                                                                var pdfButton2 = document.getElementById('pdf_and_calc_erstellen');
-
-                                                                pdfButton.addEventListener('click', function() {
-                                                                    this.disabled = true; // Disable the button
-                                                                    this.classList.add('disabled'); // Optional: Add a class to change the appearance
-                                                                    pdfButton2.disabled = true; // Disable the second button
-                                                                    pdfButton2.classList.add('disabled'); // Optional: Add a class for the second button
-                                                                });
-
-                                                                // If you want similar functionality for pdfButton2, add an event listener here
-                                                                pdfButton2.addEventListener('click', function() {
-                                                                    this.disabled = true;
-                                                                    this.classList.add('disabled');
-                                                                    pdfButton.disabled = true; // Disable the second button
-                                                                    pdfButton.classList.add('disabled'); // Optional: Add a class for the second button
-                                                                    // Add any other functionality you need for pdfButton2
-                                                                });
-                                                            });
-
-                                                        </script>
-                                                    </div>
                                                     <div id="info-alert-modal2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
                                                             <div class="modal-content">
@@ -2196,7 +1577,6 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
-    toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     toggleBoolelwaRow($('#hersteller').val());
@@ -2213,19 +1593,6 @@ $(document).ready(function() {
         setFieldOptions(hersteller);
     });
 });
-
-function toggleGenehmigung(value){
-    if (value >= 6) {
-        $('#genehmigung_row').show();
-        $('#ausweisung_row').show();
-    } else if (value > 0) {
-        $('#genehmigung_row').hide();   
-        $('#ausweisung_row').show();
-    } else {
-        $('#genehmigung_row').hide();
-        $('#ausweisung_row').hide();
-    }
-}
 
 function toggleHeizstab(value){
     if (value === true) {

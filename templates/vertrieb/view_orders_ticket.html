@@ -43,7 +43,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for vertrieb_ticket in angebots %}
+                                        {% for vertrieb_ticket in tickets %}
                                         {% if vertrieb_ticket.angebot_id_assigned and vertrieb_ticket.status != "abgelehnt" and vertrieb_ticket.status != "abgelaufen" and vertrieb_ticket.name != "------" and vertrieb_ticket.status != "storniert"%}
                                         <tr>
                                             <td>{{ vertrieb_ticket.zoho_kundennumer }}</td>
@@ -104,7 +104,7 @@
                                                 <a href="{% url 'vertrieb_interface:edit_ticket_new' vertrieb_ticket.ticket_id %}" class="btn btn-outline-success rounded-pill btn-sm">Öffnen</a>
                                             </td>
                                             <td>
-                                                <form action="{% url 'vertrieb_interface:delete_user_angebot' vertrieb_ticket.ticket_id %}"  method="post">
+                                                <form action="{% url 'vertrieb_interface:delete_user_ticket_new' vertrieb_ticket.ticket_id %}"  method="post">
                                                     {% csrf_token %}
                                                 <input type="submit" value="Löschen" class="btn btn-outline-danger rounded-pill btn-sm">
                                             </form>

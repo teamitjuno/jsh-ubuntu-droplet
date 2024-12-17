@@ -22,7 +22,7 @@ class ViewOrdersTicket(LoginRequiredMixin, VertriebCheckMixin, ListView):
         # Optimized query to directly exclude "angenommen" and "bekommen" statuses
         return self.model.objects.filter(
             user=self.request.user, is_locked=False
-        )#.exclude(status__in=["angenommen"])
+        ).exclude(status__in=["angenommen"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

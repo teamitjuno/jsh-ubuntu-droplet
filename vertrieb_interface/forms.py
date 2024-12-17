@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from authentication.models import User
 from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
 from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte, Sonderrabatt
-from vertrieb_interface.models import VertriebAngebot
+from vertrieb_interface.models import VertriebAngebot, VertriebTicket
 from vertrieb_interface.zoho_api_connector import (
     update_status,
 )
@@ -2732,39 +2732,6 @@ class VertriebTicketForm(ModelForm):
             attrs={"class": "form-select", "id": "zahlungsbedingungen"}
         ),
     )
-    rabatt = forms.IntegerField(
-        initial=0,
-        label="Rabatt in %",
-        validators=[validate_rabatt],
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "rabatt",
-                "data-toggle": "touchspin",
-                "value": "0",
-                "style": "max-width: 300px",
-            }
-        ),
-    )
-    genehmigung_rabatt = forms.BooleanField(
-        label="Genehmigung Rabatt",
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "genehmigung_rabatt"}),
-    )
-    ausweisung_rabatt = forms.BooleanField(
-        label="Ausweisung Rabatt auf Angebot",
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
-    )
-    sonderrabatt_included = forms.BooleanField(label="Sonderrabatt vorhanden",
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "sonderrabatt_included"}),
-    )
-    sonderrabatt = forms.ChoiceField(
-        label="Sonderrabatt",
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "sonderrabatt"}),
-    )
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
         required=True,
@@ -2876,17 +2843,10 @@ class VertriebTicketForm(ModelForm):
             (module.name, module.name)
             for module in WallBoxPreise.objects.filter(in_stock=True)
         ]
-        self.fields["sonderrabatt"].choices = [
-            (sonderrab.name, sonderrab.name)
-            for sonderrab in Sonderrabatt.objects.filter()
-        ]
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
 
         self.fields["angebot_id_assigned"].widget.attrs.update(
             {"id": "angebot_id_assigned"}
-        )
-        self.fields["rabatt"].widget.attrs.update(
-            {"id": "rabatt"}
         )
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
@@ -2932,7 +2892,7 @@ class VertriebTicketForm(ModelForm):
         if form.status == "bekommen":
             try:
 
-                db_object = VertriebTicket.objects.get(angebot_id=form.angebot_id)
+                db_object = VertriebTicket.objects.get(ticket_id=form.ticket_id)
                 db_countdown_on = db_object.countdown_on
                 db_zoho_id = db_object.zoho_id
                 if db_countdown_on == False:
