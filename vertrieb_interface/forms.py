@@ -2156,3 +2156,1030 @@ class TicketForm(forms.ModelForm):
                     },
                 ),
             )
+
+class VertriebTicketForm(ModelForm):
+    is_locked = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "is_locked",
+            }
+        ),
+    )
+    zoho_id = forms.IntegerField(required=False)
+
+    angebot_id_assigned = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "angebot_id_assigned",
+            }
+        ),
+    )
+    status = forms.ChoiceField(
+        label="Angebotstatus",
+        choices=ANGEBOT_STATUS_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "id": "id_status",
+            }
+        ),
+        required=False,
+    )
+    status_pva = forms.ChoiceField(
+        label="Status_PVA",
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "id": "id_status_pva",
+            }
+        ),
+        required=False,
+    )
+    angenommenes_angebot = forms.CharField(
+        label="Angenommenes Angebot",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "angenommenes_angebot",
+            }
+        ),
+    )
+    status_change_date = forms.CharField(
+        label="Angebotstatus Änderungsdatum:",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Angebotstatus Änderungsdatum:",
+                "id": "status_change_date",
+            }
+        ),
+    )
+
+    zoho_kundennumer = forms.CharField(
+        label="Kundennumer",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Kundennumer",
+                "id": "zoho_kundennumer",
+            }
+        ),
+    )
+    angebot_bekommen_am = forms.CharField(
+        label="Bekommen am",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Angebot bekommen am",
+                "id": "angebot_bekommen_am",
+            }
+        ),
+    )
+    anrede = forms.ChoiceField(
+        label="Anrede",
+        choices=ANREDE_CHOICES,
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "id": "id_anrede",
+            }
+        ),
+    )
+    name = forms.ChoiceField(
+        choices=[],
+        label="Interessent",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "data-toggle": "select2",
+                "id": "id_name",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    vorname_nachname = forms.CharField(
+        label="Nach-, Vorname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname_nachname",
+            }
+        ),
+    )
+    name_first_name = forms.CharField(
+        label="Vorname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_vorname",
+            }
+        ),
+    )
+    name_suffix = forms.CharField(
+        label="Vorname Suffix",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_name_suffix",
+            }
+        ),
+    )
+    name_last_name = forms.CharField(
+        label="Nachname",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_nachname",
+            }
+        ),
+    )
+    telefon_mobil = forms.CharField(
+        label="Telefon Mobil",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Telefon Mobil",
+                "id": "id_telefon_mobil",
+            }
+        ),
+    )
+    telefon_festnetz = forms.CharField(
+        label="Telefon Festnetz",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Telefon Festnetz",
+                "id": "id_telefon_festnetz",
+            }
+        ),
+    )
+    email = forms.CharField(
+        label="E-mail",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email",
+                "id": "id_email",
+            }
+        ),
+    )
+    firma = forms.CharField(
+        label="Firma (optional)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Firma",
+                "id": "firma",
+            }
+        ),
+    )
+    strasse = forms.CharField(
+        label="Straße & Hausnummer",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Straße & Hausnummer",
+                "id": "id_strasse",
+            }
+        ),
+    )
+    ort = forms.CharField(
+        label="PLZ & Ort",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "PLZ & Ort",
+                "id": "id_ort",
+            }
+        ),
+    )
+    postanschrift_latitude = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "latitude",
+            }
+        ),
+    )
+    postanschrift_longitude = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "longitude",
+            }
+        ),
+    )
+    anlagenstandort = forms.CharField(
+        label="Anlagenstandort (falls abweichend)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Anlagenstandort",
+                "id": "anlagenstandort",
+            }
+        ),
+    )
+    anz_speicher = forms.IntegerField(
+        label="Speichermodule Anzahl",
+        required=False,
+        initial=0,
+        validators=[],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "anz_speicher",
+            }
+        ),
+    )
+
+    HERSTELLER_CHOICES = [
+        ("----", "----"),
+        ("Huawei", "Huawei"),
+        ("Viessmann", "Viessmann"),
+    ]
+
+    WALLBOXTYP_CHOICES = [
+        ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
+        ("Viessmann Charging Station", "Viessmann Charging Station"),
+    ]
+
+
+    WECHSELRICHTER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("SUN 2000", "SUN 2000"),
+        ("Vitocharge VX3", "Vitocharge VX3"),
+    ]
+
+    SPEICHER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("LUNA 2000-7-S1", "LUNA 2000-7-S1"),
+        ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
+        ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
+    ]
+
+    SMARTMETER_MODEL_CHOICES = [
+        ("----", "----"),
+        ("EMMA-A02", "EMMA-A02"),
+        ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
+        ("Viessmann Energiezähler", "Viessmann Energiezähler"),
+    ]
+
+    hersteller = forms.ChoiceField(
+        label="Hersteller",
+        required=True,
+        choices=HERSTELLER_CHOICES,
+        initial="Huawei",
+        widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
+    )
+
+    wechselrichter_model = forms.ChoiceField(
+        label="Wechselrichter",
+        choices=WECHSELRICHTER_MODEL_CHOICES,
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "wechselrichter_model"}
+        ),
+    )
+
+    speicher_model = forms.ChoiceField(
+        label="Batteriespeicher",
+        choices=SPEICHER_MODEL_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select", "id": "speicher_model"}),
+    )
+
+    smartmeter_model = forms.ChoiceField(
+        label="EMS / Smart Meter",
+        choices=SMARTMETER_MODEL_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select", "id": "smartmeter_model"}),
+    )
+
+    gesamtkapazitat = forms.IntegerField(
+        initial=0,
+        label="Gesamtkapazität",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "gesamtkapazitat",
+                "readonly": "readonly",
+            }
+        ),
+    )
+
+    speicher = forms.BooleanField(
+        label="Speichermodule inkl.",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "speicher",
+            }
+        ),
+    )
+    wandhalterung_fuer_speicher = forms.BooleanField(
+        label="Wandhalterung für Speicher inkl.",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "wandhalterung_fuer_speicher",
+            }
+        ),
+    )
+    anz_wandhalterung_fuer_speicher = forms.IntegerField(
+        label="Wandhalterung Anzahl",
+        required=False,
+        initial=0,
+        validators=[validate_integers],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "anz_wandhalterung_fuer_speicher",
+                "style": "max-width: 100px",
+            }
+        ),
+    )
+    wallbox = forms.BooleanField(
+        label="E-Ladestation (Wallbox)",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "wallbox-checkbox",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    heizstab = forms.BooleanField(
+        label="Heizstab für THOR inklusive",
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "heizstab-checkbox",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+
+    notizen = forms.CharField(
+        label="Notizen",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 16,
+                "class": "form-control",
+                "id": "id_notizen",
+            }
+        ),
+    )
+    empfohlen_von = forms.CharField(
+        label="Empfohlen von:",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Empfohlen von:",
+                "id": "empfohlen_von",
+            }
+        ),
+    )
+    wallboxtyp = forms.ChoiceField(
+        required=False,
+        label="Wallbox",
+        initial="----",
+        choices=WALLBOXTYP_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "id": "wallboxtyp",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    wallbox_anzahl = forms.IntegerField(
+        initial=0,
+        label="Wallbox Anzahl",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "wallbox_anzahl",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    kabelanschluss = forms.FloatField(
+        initial=10.0,
+        label="Kabelanschlusslänge [m]",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "kabelanschluss",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+
+    solar_module = forms.ChoiceField(
+        label="Solar Module",
+        widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
+    )
+    modulanzahl = forms.IntegerField(
+        label="Module Anzahl",
+        validators=[validate_solar_module_anzahl],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "modulanzahl",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    elwa = forms.BooleanField(
+        label="AC-ELWA 2",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "id": "elwa",
+                "style": "max-width: 70px",
+            }
+        ),
+    )
+    thor = forms.BooleanField(
+        label="AC-THOR",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
+    )
+    notstrom = forms.BooleanField(
+        label="Notstrom",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "notstrom"}
+        ),
+    )
+    smartDongleLte = forms.BooleanField(
+        label="Smart Dongle LTE",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "smartDongleLte"}
+        ),
+    )
+    apzFeld = forms.BooleanField(
+        label="APZ-Feld Nachrüstung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
+    )
+    zaehlerschrank = forms.BooleanField(
+        label="Zählerschrankerneuerung nach TAB",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank"}),
+    )
+    potentialausgleich = forms.BooleanField(
+        label="Potentialausgleich inkl. Erdspieß",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "potentialausgleich"}),
+    )
+    beta_platte = forms.BooleanField(
+        label="Beta Platte",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "beta_platte"}),
+    )
+    metall_ziegel = forms.BooleanField(
+        label="Metalldachziegel mit Modulhalter",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "metall_ziegel"}),
+    )
+    prefa_befestigung = forms.BooleanField(
+        label="PREFA-Dachbefestigung",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "prefa_befestigung"}),
+    )
+    midZaehler = forms.IntegerField(
+        label="MID-Zähler Anzahl",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "midZaehler",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    geruestKunde = forms.BooleanField(
+        label="Gerüst durch Kunde",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestKunde"}),
+    )
+    geruestOeffentlich = forms.BooleanField(
+        label="Gerüst Traufhöhe höher 6m oder im öffentlichen Raum",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "geruestOeffentlich"}),
+    )
+    dachhakenKunde = forms.BooleanField(
+        label="Setzen der Dachhaken durch Kunde",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "dachhakenKunde"}),
+    )
+    zahlungsbedingungen = forms.ChoiceField(
+        choices=[
+            ("20 – 70 – 10 %", "20 – 70 – 10 %"),
+            ("10 – 80 – 10 %", "10 – 80 – 10 %"),
+            ("100 – 0 – 0 %", "100 – 0 – 0 %"),
+        ],
+        required=False,
+        initial="20 – 70 – 10 %",
+        widget=forms.Select(
+            attrs={"class": "form-select", "id": "zahlungsbedingungen"}
+        ),
+    )
+    rabatt = forms.IntegerField(
+        initial=0,
+        label="Rabatt in %",
+        validators=[validate_rabatt],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "rabatt",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    genehmigung_rabatt = forms.BooleanField(
+        label="Genehmigung Rabatt",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "genehmigung_rabatt"}),
+    )
+    ausweisung_rabatt = forms.BooleanField(
+        label="Ausweisung Rabatt auf Angebot",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
+    )
+    sonderrabatt_included = forms.BooleanField(label="Sonderrabatt vorhanden",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "sonderrabatt_included"}),
+    )
+    sonderrabatt = forms.ChoiceField(
+        label="Sonderrabatt",
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "id": "sonderrabatt"}),
+    )
+    anzOptimizer = forms.IntegerField(
+        label="Optimizer Anzahl",
+        required=True,
+        validators=[validate_integers],
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "anzOptimizer",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+
+    class Meta:
+        model = VertriebAngebot
+        fields = [
+            "is_locked",
+            "status",
+            "status_pva",
+            "angenommenes_angebot",
+            "anrede",
+            "zoho_id",
+            "telefon_festnetz",
+            "telefon_mobil",
+            "email",
+            "vertriebler_display_value",
+            "adresse_pva_display_value",
+            "postanschrift_latitude",
+            "postanschrift_longitude",
+            "vertriebler_id",
+            "notizen",
+            "zoho_kundennumer",
+            "angebot_bekommen_am",
+            "status_change_date",
+            "status_change_field",
+            "name",
+            "vorname_nachname",
+            "name_first_name",
+            "name_suffix",
+            "name_last_name",
+            "firma",
+            "strasse",
+            "ort",
+            "anlagenstandort",
+            "hersteller",
+            "gesamtkapazitat",
+            "wechselrichter_model",
+            "speicher_model",
+            "speicher",
+            "anz_speicher",
+            "smartmeter_model",
+            "wandhalterung_fuer_speicher",
+            "anz_wandhalterung_fuer_speicher",
+            "wallbox",
+            "wallboxtyp",
+            "wallbox_anzahl",
+            "kabelanschluss",
+            "solar_module",
+            "modulanzahl",
+            "elwa",
+            "thor",
+            "midZaehler",
+            "apzFeld",
+            "zaehlerschrank",
+            "potentialausgleich",
+            "beta_platte",
+            "metall_ziegel",
+            "prefa_befestigung",
+            "heizstab",
+            "notstrom",
+            "smartDongleLte",
+            "anzOptimizer",
+            "geruestKunde",
+            "geruestOeffentlich",
+            "dachhakenKunde",
+        ]
+
+    def __init__(self, *args, user, **kwargs):
+        super(VertriebTicketForm, self).__init__(*args, **kwargs)
+        default_choice = [("", "--------")]
+        self.fields["name"].choices = default_choice  # Set default choice initially
+
+        try:
+            filtered_data = [
+                item
+                for item in load_json_data(user.zoho_data_text)
+                if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
+            ]
+
+            if filtered_data:
+                name_list = [(item["zoho_id"], item["name"]) for item in filtered_data]
+                name_list = sorted(name_list, key=lambda x: x[1])
+                self.fields["name"].choices = default_choice + name_list
+
+            else:
+                self.fields["name"].choices = (
+                    default_choice  # Only default choice available
+                )
+        except Exception as e:
+            # Handle other exceptions which could be related to data issues or fetching problems
+
+            self.fields["name"].choices = default_choice  # Fallback to default choice
+
+        self.fields["solar_module"].choices = [
+            (module.name, module.name)
+            for module in SolarModulePreise.objects.filter(in_stock=True)
+        ]
+        self.fields["wallboxtyp"].choices = [
+            (module.name, module.name)
+            for module in WallBoxPreise.objects.filter(in_stock=True)
+        ]
+        self.fields["sonderrabatt"].choices = [
+            (sonderrab.name, sonderrab.name)
+            for sonderrab in Sonderrabatt.objects.filter()
+        ]
+        self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
+
+        self.fields["angebot_id_assigned"].widget.attrs.update(
+            {"id": "angebot_id_assigned"}
+        )
+        self.fields["rabatt"].widget.attrs.update(
+            {"id": "rabatt"}
+        )
+        self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
+        self.fields["vorname_nachname"].widget.attrs.update(
+            {"id": "id_vorname_nachname"}
+        )
+
+        self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
+        self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
+        self.fields["wechselrichter_model"].widget.attrs.update(
+            {"id": "wechselrichter_model"}
+        )
+        self.fields["speicher_model"].widget.attrs.update({"id": "speicher_model"})
+        self.fields["smartmeter_model"].widget.attrs.update({"id": "smartmeter_model"})
+        self.fields["hersteller"].widget.attrs.update({"id": "hersteller"})
+        self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
+        self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
+        self.fields["postanschrift_latitude"].widget.attrs.update(
+            {"id": "id_postanschrift_latitude"}
+        )
+        self.fields["postanschrift_longitude"].widget.attrs.update(
+            {"id": "id_postanschrift_longitude"}
+        )
+
+        self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
+        self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
+            {"id": "wandhalterung_fuer_speicher"}
+        )
+        self.fields["anz_wandhalterung_fuer_speicher"].widget.attrs.update(
+            {"id": "anz_wandhalterung_fuer_speicher"}
+        )
+        self.fields["zoho_kundennumer"].widget.attrs.update({"id": "zoho_kundennumer"})
+
+        self.fields["angenommenes_angebot"].widget.attrs.update(
+            {"id": "angenommenes_angebot"}
+        )
+        self.fields["email"].widget.attrs.update({"id": "id_email"})
+        self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
+        self.fields["name"].widget.attrs.update({"id": "id_name"})
+
+    def save(self, commit=True):
+        form = super(VertriebTicketForm, self).save(commit=False)
+
+        if form.status == "bekommen":
+            try:
+
+                db_object = VertriebTicket.objects.get(angebot_id=form.angebot_id)
+                db_countdown_on = db_object.countdown_on
+                db_zoho_id = db_object.zoho_id
+                if db_countdown_on == False:
+                    form.status = "bekommen"
+                    form.is_locked = True
+                    now = timezone.now()
+                    now_localized = timezone.localtime(now)
+                    form.status_change_field = now_localized
+                    form.status_change_date = timezone.now().date().isoformat()
+                    db_object.countdown_on = True
+                    if db_zoho_id:
+                        update_status(db_zoho_id, form.status)
+                    db_object.save()
+                    form.save()
+
+                if db_countdown_on == True:
+                    form.status_change_date = db_object.status_change_date
+                    form.status_change_field = db_object.status_change_field
+                    form.save()
+
+            except VertriebTicket.DoesNotExist:
+                pass
+
+            form.save()
+        else:
+            form.status_change_date = None
+            form.status_change_field = None
+            form.save()
+
+        if commit:
+            form.save()
+
+        return form
+
+    def clean(self):
+        cleaned_data = super().clean()
+        incompatible_combinations = {
+            ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
+            ("Viessmann", "SUN 2000"): "wechselrichter_model",
+            ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
+            ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
+            ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",
+            ("Viessmann", "EMMA-A02"): "smartmeter_model",
+            ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
+            ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
+            ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",
+            ("Huawei", "Viessmann Energiezähler"): "smartmeter_model",
+        }
+
+        action = self.data.get("action_type")
+        hersteller = cleaned_data.get("hersteller")
+        speicher_model = cleaned_data.get("speicher_model")
+        modulanzahl = cleaned_data.get("modulanzahl")
+        anzOptimizer = cleaned_data.get("anzOptimizer")
+        anz_speicher = cleaned_data.get("anz_speicher")
+        message, is_valid = validate_range(anz_speicher, speicher_model)
+        if not is_valid:
+            self.add_error(
+                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
+            )
+        if anzOptimizer is not None and modulanzahl is not None:
+            if anzOptimizer > modulanzahl:
+                self.add_error(
+                    "anzOptimizer",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Optimierer kann nicht größer sein als die Anzahl der Module."
+                        ),
+                        params={
+                            "anzOptimizer": anzOptimizer,
+                            "modulanzahl": modulanzahl,
+                        },
+                    ),
+                )
+        wallbox = cleaned_data.get("wallbox")
+        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
+
+        if wallbox is not None and wallbox_anzahl is not None:
+            if wallbox == True and wallbox_anzahl == 0:
+                self.add_error(
+                    "wallbox",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
+                        ),
+                        params={
+                            "wallbox": wallbox,
+                            "wallbox_anzahl": wallbox_anzahl,
+                        },
+                    ),
+                )
+        if action == "angebotsumme_rechnen":
+            return cleaned_data
+
+        interessent = cleaned_data.get("name")
+        modulanzahl = cleaned_data.get("modulanzahl")
+        name_last_name = cleaned_data.get("name_last_name")
+        anzOptimizer = cleaned_data.get("anzOptimizer")
+
+        if anzOptimizer is not None and modulanzahl is not None:
+            if anzOptimizer > modulanzahl:
+                self.add_error(
+                    "anzOptimizer",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Optimierer kann nicht größer sein als die Anzahl der Module."
+                        ),
+                        params={
+                            "anzOptimizer": anzOptimizer,
+                            "modulanzahl": modulanzahl,
+                        },
+                    ),
+                )
+
+        if interessent == "----":
+            raise forms.ValidationError(
+                {"name": "Sie haben keinen Interessent ausgewählt"}
+            )
+
+        anrede = cleaned_data.get("anrede")
+        if anrede is None or anrede == "":
+            raise ValidationError(
+                ("Anrede Feld ist erforderlich"),
+                params={"anrede": anrede},
+            )
+
+        if not name_last_name or name_last_name == "":
+            raise ValidationError(
+                ("Nachname Feld ist erforderlich und darf nicht leer sein"),
+                params={"name_last_name": name_last_name},
+            )
+
+        strasse = cleaned_data.get("strasse")
+        if strasse is None or strasse == "":
+            raise ValidationError(
+                ("Strasse Feld ist erforderlich"),
+                params={"strasse": strasse},
+            )
+        ort = cleaned_data.get("ort")
+        if ort is None or ort == "":
+            raise ValidationError(
+                ("Ort Feld ist erforderlich"),
+                params={"ort": ort},
+            )
+
+        email = self.cleaned_data.get("email")
+        if not email:
+            raise ValidationError("Email Feld ist erforderlich")
+        if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
+
+        anz_speicher = cleaned_data.get("anz_speicher")
+        message, is_valid = validate_range(anz_speicher, speicher_model)
+        if not is_valid:
+            self.add_error(
+                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
+            )
+
+        wallbox = cleaned_data.get("wallbox")
+        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
+
+        if wallbox is not None and wallbox_anzahl is not None:
+            if wallbox == True and wallbox_anzahl == 0:
+                self.add_error(
+                    "wallbox",
+                    ValidationError(
+                        (
+                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
+                        ),
+                        params={
+                            "wallbox": wallbox,
+                            "wallbox_anzahl": wallbox_anzahl,
+                        },
+                    ),
+                )
+        for (manufacturer, model), field_name in incompatible_combinations.items():
+            if hersteller == manufacturer and cleaned_data.get(field_name) == model:
+                raise forms.ValidationError(
+                    {
+                        field_name: f"Sie haben einen {manufacturer} Hersteller ausgewählt. Sie können keine {model.split()[0]} {field_name.replace('_', ' ')} auswählen. Überprüfen Sie die Daten."
+                    }
+                )
+
+        midZaehler = cleaned_data.get("midZaehler")
+        wallbox_typ = cleaned_data.get("wallboxtyp")
+        if midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
+            raise ValidationError(
+                (
+                    f"Sie haben eine Wallbox vom Typ {wallbox_typ} ausgewählt. Sie können keinen MID-Zähler auswählen. Überprüfen Sie die Daten."
+                ),
+                params={
+                    "midZaehler": midZaehler,
+                    "wallbox_typ": wallbox_typ,
+                },
+            )
+
+        if action == "save" and anrede == "Firma":
+            return cleaned_data
+
+        elif action == "save" and anrede != "Firma":
+            name_first_name = cleaned_data.get("name_first_name")
+            if not name_first_name or name_first_name == "":
+                raise ValidationError(
+                    ("Vorname Feld ist erforderlich und kann nicht leer sein"),
+                    params={"name_first_name": name_first_name},
+                )
+            return cleaned_data
+
+        else:
+            if interessent == "----":
+                raise forms.ValidationError(
+                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+                )
+
+            if hersteller == "----":
+                raise forms.ValidationError(
+                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+                )
+            return cleaned_data
+
+    def clean_phone(self):
+        telefon_mobil = self.cleaned_data["phone"]
+        if len(telefon_mobil) != 11:
+            raise forms.ValidationError(
+                "Länge der Telefonnummer muss + und 10 Ziffern sein"
+            )
+        return telefon_mobil
+
+    def fill_geo_coordinates(self):
+        address = f"{self.cleaned_data['strasse']}, {self.cleaned_data['ort']}"
+        api_key = GOOGLE_MAPS_API_KEY
+        base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+
+        response = requests.get(base_url, params={"address": address, "key": api_key})
+        if response.status_code == 200:
+            data = response.json()
+            if data["results"]:
+                location = data["results"][0]["geometry"]["location"]
+                self.cleaned_data["postanschrift_latitude"] = location["lat"]
+                self.cleaned_data["postanschrift_longitude"] = location["lng"]
+                self.instance.postanschrift_latitude = location["lat"]
+                self.instance.postanschrift_longitude = location["lng"]
+            else:
+                print("Geocoding API did not return any results.")
+
+        else:
+            print("Geocoding API request failed.")

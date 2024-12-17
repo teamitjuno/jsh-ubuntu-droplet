@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+<div class="submit-row">
+    <a href="{% url 'vertrieb_interface:create_ticket_new_pdf_user' original.ticket_id %}" class="btn btn-primary submit-btn">PDF Ticket erstellen</a>
+</div>
+<div class="submit-row">
+    <a href="{% url 'vertrieb_interface:serve_ticket_new_pdf' original.ticket_id %}" class="btn btn-primary submit-btn">PDF Ticket ansehen</a>
+</div>
+{{ block.super }}
+{% endblock %}

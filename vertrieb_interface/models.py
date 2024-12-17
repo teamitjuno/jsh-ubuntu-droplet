@@ -1630,6 +1630,877 @@ class VertriebAngebot(TimeStampMixin):
         return dt
 
 
+class VertriebTicket(TimeStampMixin):
+    ticket_id = models.CharField(max_length=255, unique=True, primary_key=True)
+    current_date = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_locked = models.BooleanField(default=False)
+
+    #   ZOHO FIELDS
+    zoho_id = models.CharField(max_length=255, blank=True, null=True)
+    angebot_zoho_id = models.CharField(max_length=255, blank=True, null=True)
+    angebot_id_assigned = models.BooleanField(default=False)
+    angenommenes_angebot = models.CharField(
+        max_length=255, default="", blank=True, null=True
+    )
+    status = models.CharField(
+        choices=ANGEBOT_STATUS_CHOICES,
+        default="",
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    status_pva = models.CharField(
+        default="",
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    status_change_field = models.DateTimeField(null=True, blank=True)
+    status_change_date = models.CharField(max_length=255, null=True, blank=True)
+    telefon_festnetz = models.CharField(max_length=255, blank=True, null=True)
+    telefon_mobil = models.CharField(max_length=255, blank=True, null=True)
+    zoho_kundennumer = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, blank=True, null=True)
+    text_for_email = models.TextField(blank=True, null=True, default=TEXT_FOR_EMAIL)
+    name_display_value = models.CharField(max_length=255, blank=True, null=True)
+    vertriebler_display_value = models.CharField(max_length=255, blank=True, null=True)
+    vertriebler_id = models.CharField(max_length=255, blank=True, null=True)
+    adresse_pva_display_value = models.CharField(max_length=255, blank=True, null=True)
+    angebot_bekommen_am = models.CharField(max_length=255, blank=True, null=True)
+    anfrage_vom = models.CharField(max_length=255, blank=True, null=True)
+    postanschrift_latitude = models.CharField(
+        max_length=255, default="00000", blank=True, null=True
+    )
+    postanschrift_longitude = models.CharField(
+        max_length=255, default="00000", blank=True, null=True
+    )
+    notizen = models.TextField(blank=True, null=True)
+    pva_klein = models.CharField(max_length=255, blank=True, null=True)
+    name_prefix = models.CharField(max_length=255, blank=True, null=True)
+    name_last_name = models.CharField(max_length=255, blank=True, null=True)
+    name_suffix = models.CharField(max_length=255, blank=True, null=True)
+    name_first_name = models.CharField(max_length=255, blank=True, null=True)
+
+    anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
+    name = models.CharField(max_length=100, blank=True, default="------")
+    vorname_nachname = models.CharField(max_length=100, blank=True, null=True)
+    zoho_first_name = models.CharField(max_length=100, blank=True, null=True)
+    zoho_last_name = models.CharField(max_length=100, blank=True, null=True)
+    firma = models.CharField(max_length=100, blank=True)
+    strasse = models.CharField(max_length=100, blank=True)
+    ort = models.CharField(max_length=100, blank=True)
+    anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
+
+
+    # Module & Zubehör
+    hersteller = models.CharField(
+        max_length=100,
+        default="Huawei",
+    )
+    wechselrichter_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    speicher_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    smartmeter_model = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    gesamtkapazitat = models.PositiveIntegerField(default=0)
+    speicher = models.BooleanField(default=False)
+    anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
+    wandhalterung_fuer_speicher = models.BooleanField(default=False)
+    anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
+    ausrichtung = models.CharField(
+        max_length=10, choices=AUSRICHTUNG_CHOICES, default="Ost/West"
+    )
+    komplex = models.CharField(
+        max_length=30, choices=KOMPLEX_CHOICES, default="sehr komplex"
+    )
+
+    solar_module = models.CharField(
+        max_length=100,
+        default="Phono Solar PS420M7GFH-18/VNH",
+    )
+    modulleistungWp = models.PositiveIntegerField(default=420)
+    modulanzahl = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
+    # Zubehör
+    elwa = models.BooleanField(default=False)
+    thor = models.BooleanField(default=False)
+    heizstab = models.BooleanField(default=False)
+    notstrom = models.BooleanField(default=False)
+    optimizer = models.BooleanField(default=False)
+    anzOptimizer = models.PositiveIntegerField(default=0)
+    apzFeld = models.BooleanField(default=False)
+    zaehlerschrank = models.BooleanField(default=False)
+    potentialausgleich = models.BooleanField(default=False)
+    beta_platte = models.BooleanField(default=False)
+    metall_ziegel = models.BooleanField(default=False)
+    prefa_befestigung = models.BooleanField(default=False)
+    midZaehler = models.PositiveIntegerField(default=0)
+    wallbox = models.BooleanField(default=False)
+    wallboxtyp = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    wallbox_anzahl = models.PositiveIntegerField(default=0)
+    kabelanschluss = models.FloatField(
+        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )
+    hub_included = models.BooleanField(default=False)
+    geruestKunde = models.BooleanField(default=False)
+    geruestOeffentlich = models.BooleanField(default=False)
+    smartDongleLte = models.BooleanField(default=False)
+    dachhakenKunde = models.BooleanField(default=False)
+
+    # Result Prices :
+    solar_module_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    batteriespeicher_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    smartmeter_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    wallbox_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    notstrom_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+    optimizer_angebot_price = models.FloatField(
+        default=0.00, validators=[MinValueValidator(0)]
+    )
+
+    angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+
+    # Files and other fields:
+    profile_foto = models.BinaryField(blank=True, null=True)
+    ticket_pdf = models.BinaryField(blank=True, null=True)
+    ag_data = models.TextField(blank=True)
+    ag_fetched_data = models.TextField(blank=True, null=True)
+    countdown_on = models.BooleanField(default=False)
+
+    def get_optional_accessory_price(self, name):
+        return float(OptionalAccessoriesPreise.objects.get(name=name).price)
+
+    def get_module_preis(self, name):
+        return float(SolarModulePreise.objects.get(name=name).price)
+
+    def get_module_garantie(self, name):
+        try:
+            out = str(SolarModulePreise.objects.get(name=name).module_garantie)
+        except:
+            out = ""
+        return out
+
+    def get_leistungs_garantie(self, name):
+        try:
+            out = str(SolarModulePreise.objects.get(name=name).leistungs_garantie)
+        except:
+            out = ""
+        return out
+
+    def get_wallbox_text(self, name):
+        try:
+            out = str(WallBoxPreise.objects.get(name=name).pdf_text)
+        except:
+            out = ""
+        return out
+
+    def get_zubehoer_text(self, name):
+        try:
+            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_text)
+        except:
+            out = ""
+        return out
+
+    def get_zubehoer_name(self, name):
+        try:
+            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_name)
+        except:
+            out = ""
+        return out
+
+    def save(self, *args, **kwargs):
+        if not self.ticket_id:
+            self.ticket_id = self.generate_ticket_id()
+            action_flag = ADDITION
+        else:
+            action_flag = CHANGE
+
+
+        self.modulleistungWp = self.extract_modulleistungWp_from_name
+        self.wallbox_angebot_price = self.full_wallbox_preis
+        self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
+        self.optimizer_angebot_price = float(self.full_optimizer_preis)
+        self.name = self.swap_name_order
+        self.name_display_value = self.swap_name_order_PDF
+        self.zoho_kundennumer = self.kundennumer_finder
+        self.batteriespeicher_angebot_price = self.batteriespeicher_preis
+        self.smartmeter_angebot_price = self.smartmeter_preis
+        tmpSumme, tmpRabatt = self.angebots_summe
+        self.angebotsumme = round(tmpSumme, 2)
+        self.anfrage_vom = self.get_current_date_formatted
+        self.ag_data = self.data
+        self.total_anzahl = self.modulanzahl
+        super(VertriebTicket, self).save(*args, **kwargs)
+
+        CustomLogEntry.objects.log_action(
+            user_id=self.user_id,
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.pk,
+            object_repr=str(self.ticket_id),
+            action_flag=action_flag,
+        )
+
+    def __str__(self) -> str:
+        return f"{self.ticket_id}"
+
+    def generate_ticket_id(self):
+        if self.user_id:
+            user = User.objects.get(id=self.user.pk)
+            kurz = user.kuerzel  # Assuming 'kuerzel' is an attribute of User
+            current_datetime = datetime.datetime.now()
+            return f"AN-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+        else:
+            # Return a default ID
+            current_datetime = datetime.datetime.now()
+            return f"AN-DEFAULT{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+
+    def get_absolute_url(self):
+        return reverse("edit_ticket_new", args=[str(self.angebot_id)])
+
+    def delete(self, *args, **kwargs):
+        # Log deletion before actually deleting
+        CustomLogEntry.objects.log_action(
+            user_id=self.user_id,
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.pk,
+            object_repr=str(self),
+            action_flag=DELETION,
+        )
+        super().delete(*args, **kwargs)
+
+    @property
+    def get_current_date_formatted(self):
+        if self.anfrage_vom == None or self.anfrage_vom == "":
+            current_datetime = datetime.datetime.now()
+            self.anfrage_vom = current_datetime.strftime("%d-%b-%Y")
+            return current_datetime.strftime("%d-%b-%Y")
+        return self.anfrage_vom
+
+    @property
+    def firma_case(self):
+        if self.anrede == "Firma":
+            self.name_first_name = ""
+            return self.name_last_name
+        else:
+            return self.name
+
+    @property
+    def assign_status_change_field(self):
+        status_change_field = timezone.localtime(timezone.now())
+        return status_change_field
+
+    def countdown(self):
+        if self.status_change_field:
+            status_change_datetime = self.status_change_field
+
+            delta = timezone.now() - status_change_datetime
+            # get the difference in time
+
+            # Check that status_change_field is within the past 14 days
+            if delta.days < 0 or delta.days > 14:
+                return None
+
+            total_seconds = (
+                14 * 24 * 60 * 60 - delta.total_seconds()
+            )  # convert the difference to seconds
+
+            # calculate days, hours, minutes
+            days, remaining_seconds = divmod(total_seconds, 60 * 60 * 24)
+            hours, remaining_seconds = divmod(remaining_seconds, 60 * 60)
+            minutes = remaining_seconds // 60
+
+            if total_seconds <= 0:
+                return "0 days, 0 hours, 0 minutes"
+
+            return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
+        else:
+            return None
+
+    @property
+    def swap_name_order(self):
+        if self.anrede == "Firma":
+            parts = self.name_last_name
+        elif self.anrede == "Familie":
+            parts = self.name_last_name
+        else:
+            if self.name_suffix:
+                parts = (
+                    str(self.name_last_name)
+                    + ", "
+                    + str(self.name_suffix)
+                    + " "
+                    + str(self.name_first_name)
+                )
+            else:
+                parts = str(self.name_last_name) + ", " + str(self.name_first_name)
+        return str(parts)
+
+    @property
+    def swap_name_order_PDF(self):
+        if self.anrede == "Firma":
+            parts = self.name_last_name
+        elif self.anrede == "Familie":
+            parts = self.name_last_name
+        else:
+            if self.name_suffix:
+                parts = (
+                    str(self.name_suffix)
+                    + " "
+                    + str(self.name_first_name)
+                    + " "
+                    + str(self.name_last_name)
+                )
+            else:
+                parts = str(self.name_first_name) + " " + str(self.name_last_name)
+        return str(parts)
+
+    @property
+    def kundennumer_finder(self):
+        if self.zoho_kundennumer:
+            return self.zoho_kundennumer
+
+        if not self.zoho_id:
+            return ""
+
+        try:
+            data = json.loads(
+                self.user.zoho_data_text
+                or '[{"zoho_id": "default", "zoho_kundennumer": "default"}]'
+            )
+        except json.JSONDecodeError:
+            return ""
+
+        zoho_id = str(self.zoho_id)
+        return next(
+            (
+                item["zoho_kundennumer"]
+                for item in data
+                if item.get("zoho_id") == zoho_id
+            ),
+            "",
+        )
+
+
+    @property
+    def get_building_insights(
+        self, latitude=None, longitude=None, requiredQuality="HIGH"
+    ):
+        # Replace with your Solar API key if different
+        if self.postanschrift_latitude and self.postanschrift_longitude:
+            latitude = float(self.postanschrift_latitude)
+            longitude = float(self.postanschrift_longitude)
+        else:
+            latitude, longitude = self.coordinates_extractor
+        url = f"https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude={latitude}&location.longitude={longitude}&requiredQuality={requiredQuality}&key={GOOGLE_MAPS_API_KEY}"
+        response = requests.get(url)
+        return response.json()
+
+    @property
+    def google_maps_url(self):
+        if self.postanschrift_latitude and self.postanschrift_longitude:
+            latitude = float(self.postanschrift_latitude)
+            longitude = float(self.postanschrift_longitude)
+            maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
+            return maps_url
+        elif not self.postanschrift_latitude or not self.postanschrift_longitude:
+            latitude, longitude = self.coordinates_extractor
+            maps_url = f"https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}#map=14/{latitude}/{longitude}"
+            return maps_url
+        else:
+            return ""
+
+    @property
+    def get_vertribler(self):
+        return f"{self.user.first_name} {self.user.last_name} \nMobil: {self.user.phone}\nEmail: {self.user.email}"  # type: ignore
+
+    @property
+    def vertrieb_abk(self):
+        return f"{self.user.kuerzel}"  # type: ignore
+
+    @property
+    def angebot_gultig(self):
+        current_date = datetime.datetime.now()
+        frist = current_date + timedelta(days=14)
+        return frist.strftime("%d.%m.%Y")
+
+    """
+
+    CALCULATING   KUNDEN DATAS  
+
+    """
+
+    @property
+    def full_adresse(self):
+        return f"{self.strasse}\n{self.ort}"
+
+    @property
+    def anlagen_standort(self):
+        if self.anlagenstandort:
+            return self.anlagenstandort
+        else:
+            return f"{self.strasse}, {self.ort}"
+
+    @property
+    def extract_modulleistungWp_from_name(self):
+        match = re.search(r"(\d+)", str(self.solar_module))
+        if match:
+            return int(match.group(1))
+        return 420
+
+    @property
+    def extract_modulleistungWp_from_ticket(self):
+        match = re.search(r"(\d+)", str(self.module_ticket))
+        if match:
+            return int(match.group(1))
+        return 420
+
+    @property
+    def leistungsmodul_preis(self):
+        return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+
+    @property
+    def stromgrundpreis_gesamt(self):
+        return round(float(self.grundpreis) * 12 * int(self.zeitraum), 2)
+
+    @staticmethod
+    def priceInflation(pricePerYear, increasePerYear, years):
+        sumPrice = 0
+        priceList = []
+        for i in range(years):
+            sumPrice += pricePerYear
+            priceList.append(sumPrice)
+            pricePerYear = pricePerYear * (1.0 + increasePerYear)
+        return sumPrice, priceList
+
+    """
+
+    CALCULATING   SOLAR MODULE PARAMETERS  
+
+    """
+
+    @staticmethod
+    def get_values():
+        return {obj.name: obj.zuschlag for obj in SolarModulePreise.objects.all()}
+
+    @staticmethod
+    def get_prices():
+        return {obj.name: obj.price for obj in OptionalAccessoriesPreise.objects.all()}
+
+    @staticmethod
+    def get_module_prices():
+        return {obj.name: obj.price for obj in SolarModulePreise.objects.all()}
+
+    def calculate_price(self, model, name, multiplier):
+        try:
+            multiplier = int(multiplier)
+        except ValueError:
+            multiplier = 0
+        price = get_price(model, name)
+        return price * multiplier
+
+    @property
+    def modulleistung_price(self):
+        prices = self.get_prices()
+        return float(prices[ACCESSORY_NAME])
+
+    @property
+    def elwa_price(self):
+        prices = self.get_prices()
+        return float(prices["elwa_2"])
+
+    @property
+    def thor_price(self):
+        prices = self.get_prices()
+        return float(prices["ac_thor_3_kw"])
+
+    @property
+    def heizstab_price(self):
+        prices = self.get_prices()
+        return float(prices["heizstab"])
+
+    @property
+    def solar_module_gesamt_preis(self):
+        module_prices = self.get_module_prices()
+        module_name = (
+            self.solar_module if self.solar_module else "Phono Solar PS420M7GFH-18/VNH"
+        )
+        try:
+            return float(module_prices[module_name]) * int(self.modulanzahl)
+        except KeyError:
+            # handle the error, maybe return a default value or raise a more descriptive error
+            return 0.0
+
+    @property
+    def beta_platte_preis(self):
+        limits = [7, 11, 15, 19, 23, 27, 30]
+        kwp = min(30, self.modulsumme_kWp)
+        kwpUpper = min(upper for upper in limits if upper >= kwp)
+        namePlatte = "BetaPlatte" + str(kwpUpper)
+        beta_preis = float(KwpPreise.objects.get(name=namePlatte).price)
+        return beta_preis
+
+    @property
+    def metall_ziegel_preis(self):
+        limits = [7, 11, 15, 19, 23, 27, 30]
+        kwp = min(30, self.modulsumme_kWp)
+        kwpUpper = min(upper for upper in limits if upper >= kwp)
+        nameZiegel = "MetallZiegel" + str(kwpUpper)
+        ziegel_preis = float(KwpPreise.objects.get(name=nameZiegel).price)
+        return ziegel_preis
+
+    @property
+    def prefa_befestigung_preis(self):
+        prefa_preis = OptionalAccessoriesPreise.objects.get(name="prefa_befestigung").price * self.modulanzahl
+        return prefa_preis
+    @property
+    def wandhalterung_fuer_speicher_preis(self):
+        wandhalterung_preis = 0
+        if self.anz_wandhalterung_fuer_speicher != 0:
+            anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
+            wandhalterung_preis = self.calculate_price(
+                OptionalAccessoriesPreise,
+                "wandhalterung_fuer_speicher",
+                anz_wandhalterung_fuer_speicher,
+            )
+
+            return wandhalterung_preis
+
+    @property
+    def midZaehler_preis(self):
+        midZaehler_preis = 0
+        if self.midZaehler != 0:
+            anz_midZaehler = int(self.midZaehler)
+            midZaehler_preis = self.calculate_price(
+                OptionalAccessoriesPreise,
+                "mid_zaehler",
+                anz_midZaehler,
+            )
+            return midZaehler_preis
+
+    @property
+    def batteriespeicher_preis(self):
+        batteriePreis = 0
+        if self.anz_speicher != 0:
+            leistungsmodulePreis = self.leistungsmodul_preis
+            anz_speicher = int(self.anz_speicher)
+            if self.speicher_model == "LUNA 2000-5-S0":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_huawei5", anz_speicher
+                )
+                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
+                    leistungsmodulePreis
+                )
+            elif self.speicher_model == "LUNA 2000-7-S1":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_huawei7", anz_speicher
+                )
+                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
+                    leistungsmodulePreis
+                )
+                # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen
+                if(anz_speicher > 6 and self.modulsumme_kWp < 25.0):
+                    batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
+            elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
+                batteriePreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "batteriemodul_viessmann", anz_speicher
+                )
+            return batteriePreis
+        elif self.anz_speicher == 0:
+            return batteriePreis
+
+    @property
+    def smartmeter_preis(self):
+        smartmeterPreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
+                )
+        if self.smartmeter_model == "Smart Power Sensor DTSU666H":
+            smartmeterPreis = self.calculate_price(
+                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
+                )
+        elif self.smartmeter_model == "EMMA-A02":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_emma", 1
+            )
+        elif self.smartmeter_model == "Viessmann Energiezähler":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_viessmann", 1
+            )
+        return smartmeterPreis
+
+    @property
+    def modulsumme_kWp(self):
+        return self.modulleistungWp * self.modulanzahl / 1000
+
+
+    @property
+    def get_nettokreditbetrag(self):
+        return self.angebotsumme - self.anzahlung
+
+    @property
+    def get_zuschlag(self):
+        # Fetch all the values
+        values = self.get_values()
+
+        # Check if 'self.solar_module' is not None, else assign the default module name
+        module_name = (self.solar_module if self.solar_module else ("Phono Solar PS420M7GFH-18/VNH"))
+        # Return value based on module_name
+        return float(values.get(module_name))
+
+    """
+
+    CALCULATING   WALLBOX  
+
+    """
+
+    @property
+    def wallbox_anzahl_pdf(self):
+        if self.wallbox_anzahl and self.wallbox_anzahl > 3:
+            raise ValueError(
+                "Achtung, mehr als 3 Wallboxen ausgewählt, bitte Preise für Harvi & Hub bzw. Power Boost überprüfen."
+            )
+        return (
+            "\n1\n1"
+            if "Zappi" in str(self.wallboxtyp)
+            else "\n1" if "Power Boost" in str(self.wallboxtyp) else "\n1"
+        )
+
+    @property
+    def wallbox_kabel_preis(self):
+        return float(OptionalAccessoriesPreise.objects.get(name="kabelpreis").price)
+
+    @property
+    def optimizer_preis(self):
+        return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
+
+    @property
+    def optimizer_full_preis(self):
+        return self.anzOptimizer * self.optimizer_preis
+
+    """
+
+    CALCULATING   ANGEBOT SUMME  
+
+    """
+
+    @property
+    def full_optimizer_preis(self):
+        return self.anzOptimizer * self.get_optional_accessory_price("optimizer")
+
+    @property
+    def full_wallbox_preis(self):
+        if self.wallbox_anzahl:
+            preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
+            preis *= self.wallbox_anzahl
+            if self.kabelanschluss and self.kabelanschluss >= 10:
+                preis += (self.kabelanschluss - 10) * self.get_optional_accessory_price(
+                    "kabelpreis"
+                )
+            return preis
+        else:
+            return 0.00
+
+    @property
+    def full_accessories_price(self):
+        accessories_price = 0
+        if self.full_optimizer_preis:
+            accessories_price += float(self.full_optimizer_preis)
+        if self.full_wallbox_preis:
+            accessories_price += float(self.full_wallbox_preis)
+        if self.batteriespeicher_angebot_price:
+            accessories_price += float(self.batteriespeicher_angebot_price)
+        if self.smartmeter_angebot_price:
+            accessories_price += float(self.smartmeter_angebot_price)
+        if self.notstrom:
+            accessories_price += float(self.get_optional_accessory_price("backup_box"))
+        if self.smartDongleLte:
+            accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
+        if self.midZaehler > 0:
+            accessories_price += float(self.midZaehler_preis)
+        if self.apzFeld:
+            accessories_price += float(self.get_optional_accessory_price("apzFeld"))
+        if self.zaehlerschrank:
+            accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
+        if self.potentialausgleich:
+            accessories_price += float(self.get_optional_accessory_price("potentialausgleich"))
+        if self.beta_platte:
+            accessories_price += float(self.beta_platte_preis)
+        if self.metall_ziegel:
+            accessories_price += float(self.metall_ziegel_preis)
+        if self.prefa_befestigung:
+            accessories_price += float(self.prefa_befestigung_preis)
+        if self.hub_included == True:
+            accessories_price += float(self.get_optional_accessory_price("hub"))
+        if self.wandhalterung_fuer_speicher_preis:
+            accessories_price += float(self.wandhalterung_fuer_speicher_preis)
+        if self.elwa:
+            accessories_price += float(self.elwa_price)
+        if self.thor:
+            accessories_price += float(self.thor_price)
+        if self.heizstab:
+            accessories_price += float(self.heizstab_price)
+        return accessories_price
+
+    @property
+    def angebots_summe(self):
+        def get_price(prefix, kw):
+            name = prefix + str(kw)
+            return (float(KwpPreise.objects.get(name=name).price)) * float(
+                self.get_zuschlag
+            )
+
+
+        limits = [5, 7, 10, 12, 15, 20, 25, 30]
+        ranges = ([(0, limits[0])]
+            + list(zip(limits, limits[1:]))
+            + [(limits[-1], float("30"))]
+        )
+
+        kwp = min(30, self.modulsumme_kWp)
+        angebotsSumme = sum(
+            (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
+            for lower, upper in ranges
+            if lower < kwp
+        )
+
+        if self.user.typ == "Evolti":  # type: ignore
+            angebotsSumme *= 1.05
+
+        angebotsSumme += float(self.full_accessories_price)
+
+        rabatt = 0
+
+        userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
+        angebotsSumme *= userAufschlag
+        # Abzug Selbstleistungen nach Rabattierung
+        if self.geruestKunde:
+            angebotsSumme -= float(self.get_optional_accessory_price("geruestKunde"))
+            rabatt += float(self.get_optional_accessory_price("geruestKunde"))
+        elif self.geruestOeffentlich:
+            angebotsSumme += float(self.get_optional_accessory_price("geruestOeffentlich"))
+        if self.dachhakenKunde:
+            angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
+            rabatt += float(self.get_optional_accessory_price("dachhakenKunde"))
+        return angebotsSumme, rabatt
+
+
+    @property
+    def kosten_pva(self):
+        return float(self.angebots_summe[0]) * float(
+            1 + AndereKonfigurationWerte.objects.get(name="steuersatz").value
+        )
+
+    @property
+    def data(self):
+        dt = {
+            "firma": self.firma,
+            "anrede": self.anrede,
+            "kunde": self.name_display_value,
+            "adresse": self.full_adresse,
+            "vertriebler": str(self.get_vertribler),
+            "vertriebAbk": self.vertrieb_abk,
+            "gueltig": self.angebot_gultig,
+            "module": self.solar_module,
+            "wpModule": self.modulleistungWp,
+            "anzModule": self.modulanzahl,
+            "produktGarantie": self.get_module_garantie(self.solar_module),
+            "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
+            "kWp": self.modulsumme_kWp,
+            "kWpOhneRundung": self.modulsumme_kWp,
+            "standort": self.anlagen_standort,
+            "batterieVorh": self.batteriespeicher_preis,
+            "batterieModell": self.speicher_model,
+            "smartmeterModell": self.smartmeter_model,
+            "wandhalterungSpeicher": self.wandhalterung_fuer_speicher,
+            "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
+            "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
+            "batterieAnz": self.anz_speicher,
+            "wallboxVorh": self.full_wallbox_preis,
+            "wallboxTyp": self.wallboxtyp,
+            "wallboxText": self.get_wallbox_text(self.wallboxtyp),
+            "wallboxAnz": self.wallbox_anzahl,
+            "optionVorh": self.notstrom,
+            "elwa": self.elwa,
+            "elwaName": self.get_zubehoer_name("elwa_2"),
+            "elwaText": self.get_zubehoer_text("elwa_2"),
+            "thor": self.thor,
+            "thorName": self.get_zubehoer_name("ac_thor_3_kw"),
+            "thorText": self.get_zubehoer_text("ac_thor_3_kw"),
+            "midZaehler": self.midZaehler,
+            "midZaehlerName": self.get_zubehoer_name("mid_zaehler"),
+            "midZaehlerText": self.get_zubehoer_text("mid_zaehler"),
+            "apzFeld": self.apzFeld,
+            "apzFeldName": self.get_zubehoer_name("apzFeld"),
+            "apzFeldText": self.get_zubehoer_text("apzFeld"),
+            "zaehlerschrank": self.zaehlerschrank,
+            "zaehlerschrankName": self.get_zubehoer_name("zaehlerschrank"),
+            "zaehlerschrankText": self.get_zubehoer_text("zaehlerschrank"),
+            "potentialausgleich": self.potentialausgleich,
+            "potentialausgleichName": self.get_zubehoer_name("potentialausgleich"),
+            "potentialausgleichText": self.get_zubehoer_text("potentialausgleich"),
+            "geruestKunde": self.geruestKunde,
+            "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
+            "geruestKundeText": self.get_zubehoer_text("geruestKunde"),
+            "geruestOeffentlich": self.geruestOeffentlich,
+            "dachhakenKunde": self.dachhakenKunde,
+            "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
+            "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
+            "betaPlatte": self.beta_platte,
+            "betaPlatteName": self.get_zubehoer_name("beta_platte"),
+            "betaPlatteText": self.get_zubehoer_text("beta_platte"),
+            "metallZiegel": self.metall_ziegel,
+            "metallZiegelName": self.get_zubehoer_name("metall_ziegel"),
+            "metallZiegelText": self.get_zubehoer_text("metall_ziegel"),
+            "prefaBefestigung": self.prefa_befestigung,
+            "prefaBefestigungName": self.get_zubehoer_name("prefa_befestigung"),
+            "prefaBefestigungText": self.get_zubehoer_text("prefa_befestigung"),
+            "heizstab": self.heizstab,
+            "heizstabName": self.get_zubehoer_name("heizstab"),
+            "heizstabText": self.get_zubehoer_text("heizstab"),
+            "smartDongleLte": self.smartDongleLte,
+            "smartDongleLteName": self.get_zubehoer_name("smartDongleLte"),
+            "smartDongleLteText": self.get_zubehoer_text("smartDongleLte"),
+            "optimierer": self.optimizer,
+            "anzOptimierer": self.anzOptimizer,
+            "notstrom": self.notstrom,
+            "solarModulePreis": self.solar_module_gesamt_preis,
+            "wallboxPreis": self.full_wallbox_preis,
+            "notstromPreis": self.get_optional_accessory_price("backup_box"),
+            "batterieSpeicherPreis": self.batteriespeicher_preis,
+            "gesamtOptimizerPreis": self.full_optimizer_preis,
+            "angebotssumme": self.angebotsumme,
+            "steuersatz": float(
+                AndereKonfigurationWerte.objects.get(name="steuersatz").value
+            ),
+            "debug": False,
+            "hersteller": self.hersteller,
+            "version": 1.0,
+        }
+        return dt
+
+
+
 class Editierbarer_Text(models.Model):
     """
     Modell, das einen bearbeitbaren Textblock in einem PDF-Dokument darstellt.

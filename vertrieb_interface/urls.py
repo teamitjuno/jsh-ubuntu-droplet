@@ -3,10 +3,12 @@ from django.conf.urls.static import static
 from django.urls import path, re_path
 from vertrieb_interface.api_views import views
 from vertrieb_interface.api_views.angebot_main_view import AngebotEditView
+from vertrieb_interface.api_views.ticket_main_view import TicketNewEditView
 from vertrieb_interface.api_views.ticket_view import TicketEditView
 from vertrieb_interface.api_views.kalkulation_view import KalkulationEditView
 from vertrieb_interface.api_views.auto_field_view import VertriebAutoFieldView
 from vertrieb_interface.api_views.alle_angebote_view import ViewOrders
+from vertrieb_interface.api_views.alle_tickets_view import ViewOrdersTicket
 from vertrieb_interface.api_views.document_PDF_view import DocumentView
 from vertrieb_interface.api_views.document_and_calculation_PDF_view import (
     DocumentAndCalcView,
@@ -29,12 +31,16 @@ vertrieb_patterns = [
     path(
         "vertrieb/edit_angebot/map/<str:angebot_id>/", views.map_view, name="map_view"
     ),
+path(
+        "vertrieb/edit_ticket_new/map/<str:ticket_id>/", views.map_view, name="map_view"
+    ),
     path(
         "vertrieb/vertrieb_autofield/",
         VertriebAutoFieldView.as_view(),
         name="vertrieb_autofield",
     ),
     path("vertrieb/create_angebot/", views.create_angebot, name="create_angebot"),
+    path("vertrieb/create_ticket_new/", views.create_ticket_new, name="create_ticket_new"),
     path(
         "vertrieb/create_angebot_redirect/",
         views.create_angebot_redirect,
@@ -59,6 +65,12 @@ vertrieb_patterns = [
         views.DeleteUserAngebot.as_view(),
         name="delete_user_angebot",
     ),
+    path("vertrieb/view_orders_ticket/", ViewOrdersTicket.as_view(), name="view_orders_ticket"),
+    # path(
+    #     "vertrieb/view_orders_ticket/delete/<str:ticket_id>/",
+    #     views.DeleteUserAngebot.as_view(),
+    #     name="delete_user_angebot",
+    # ),
     path(
         "vertrieb/ticket_creation/",
         views.TicketCreationView.as_view(),
@@ -68,6 +80,11 @@ vertrieb_patterns = [
         "vertrieb/edit_angebot/<str:angebot_id>/",
         AngebotEditView.as_view(),
         name="edit_angebot",
+    ),
+path(
+        "vertrieb/edit_ticket_new/<str:ticket_id>/",
+        TicketNewEditView.as_view(),
+        name="edit_ticket_new",
     ),
     path(
         "vertrieb/edit_ticket/<str:angebot_id>/",
@@ -88,6 +105,11 @@ vertrieb_patterns = [
         "vertrieb/create_angebot_pdf_user/<str:angebot_id>",
         views.create_angebot_pdf_user,
         name="create_angebot_pdf_user",
+    ),
+    path(
+        "vertrieb/create_ticket_new_pdf_user/<str:ticket_id>",
+        views.create_ticket_new_pdf_user,
+        name="create_ticket_new_pdf_user",
     ),
     path(
         "vertrieb/create_ticket_pdf/<str:angebot_id>",
@@ -132,6 +154,11 @@ vertrieb_patterns = [
         "serve_ticket_pdf/<str:angebot_id>/",
         views.serve_ticket_pdf,
         name="serve_ticket_pdf",
+    ),
+    path(
+        "serve_ticket_new_pdf/<str:ticket_id>/",
+        views.serve_ticket_new_pdf,
+        name="serve_ticket_new_pdf",
     ),
     path("document/<str:angebot_id>/", DocumentView.as_view(), name="document_view"),
     path(

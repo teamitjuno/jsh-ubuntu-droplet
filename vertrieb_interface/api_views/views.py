@@ -52,6 +52,7 @@ from datenblatter.models import Datenblatter
 from vertrieb_interface.forms import (
     VertriebAngebotForm,
     VertriebAngebotEmailForm,
+    VertriebTicketForm,
 )
 from vertrieb_interface.api_views.zoho_operations_aktualisierung import (
     load_user_angebots,
@@ -60,9 +61,10 @@ from vertrieb_interface.zoho_api_connector import (
     fetch_angenommen_status,
     fetch_user_angebote_all,
 )
-from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
+from vertrieb_interface.models import CustomLogEntry, VertriebAngebot, VertriebTicket
 from vertrieb_interface.pdf_services import (
     angebot_pdf_creator_user,
+    ticket_pdf_creator_user,
     calc_pdf_creator,
     ticket_pdf_creator,
 )
@@ -711,6 +713,61 @@ def create_angebot(request):
     return render(request, "vertrieb/edit_angebot.html", {"form_angebot": form_angebot})
 
 
+@user_passes_test(vertrieb_check)
+def create_ticket_new(request):
+    user = request.user
+
+    initial_data = {
+        "anz_speicher": user.initial_anz_speicher,
+        "wandhalterung_fuer_speicher": user.initial_wandhalterung_fuer_speicher,
+        "solar_module": user.initial_solar_module,
+        "modulanzahl": user.initial_modulanzahl,
+        "elwa": user.initial_elwa,
+        "thor": user.initial_thor,
+        "heizstab": user.initial_heizstab,
+        "notstrom": user.initial_notstrom,
+        "anzOptimizer": user.initial_anzOptimizer,
+        "wallboxtyp": user.initial_wallboxtyp,
+        "wallbox_anzahl": user.initial_wallbox_anzahl,
+        "kabelanschluss": user.initial_kabelanschluss,
+        "map_notizen_container_view": user.map_notizen_container_view,
+    }
+
+    form_ticket = VertriebTicketForm(request.POST or initial_data, user=user)
+
+    if TELEGRAM_LOGGING:
+        send_custom_message(user, "erstellt ein neues Angebot", "📄")
+
+    if form_ticket.is_valid():
+        vertrieb_ticket = form_ticket.save(commit=False)
+        vertrieb_ticket.user = user
+        vertrieb_ticket.save()
+        return redirect("vertrieb_interface:edit_ticket_new", vertrieb_ticket.ticket_id)
+
+    if request.POST and "create_blank_ticket_new" in request.POST:
+        blank_ticket = VertriebTicket(user=user)
+        blank_ticket.created_at = timezone.now()
+        blank_ticket.current_date = datetime.datetime.now()
+        blank_ticket.anz_speicher = user.initial_anz_speicher
+        blank_ticket.wandhalterung_fuer_speicher = (
+            user.initial_wandhalterung_fuer_speicher
+        )
+        blank_ticket.solar_module = user.initial_solar_module
+        blank_ticket.modulanzahl = user.initial_modulanzahl
+        blank_ticket.text_for_email = user.initial_text_for_email
+        blank_ticket.save()
+        return HttpResponseRedirect(
+            reverse("vertrieb_interface:edit_ticket_new", args=[blank_ticket.ticket_id])
+        )
+
+    if not form_ticket.is_valid():
+
+        return page_not_found(request, Exception())
+
+    return render(request, "vertrieb/edit_ticket_new.html", {"form_ticket": form_ticket})
+
+
+
 def map_view(request, angebot_id, *args, **kwargs):
     vertrieb_angebot = VertriebAngebot.objects.get(
         angebot_id=angebot_id, user=request.user
@@ -914,6 +971,25 @@ def create_calc_pdf(request, angebot_id):
 
 
 @login_required
+def create_ticket_new_pdf_user(request, ticket_id):
+    vertrieb_ticket = get_object_or_404(VertriebAngebot, ticket_id=ticket_id)
+    user = request.user
+    data = vertrieb_ticket.data
+    certifikate = user.user_certifikate
+
+    pdf_content = ticket_pdf_creator_user.createOfferPdf(
+        data,
+        vertrieb_ticket,
+        certifikate,
+        user,
+    )
+    vertrieb_ticket.ticket_pdf = pdf_content
+    vertrieb_ticket.save()
+
+    return redirect("vertrieb_interface:document_view", ticket_id=ticket_id)
+
+
+@login_required
 def create_ticket_pdf(request, angebot_id):
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
     user = request.user
@@ -986,6 +1062,24 @@ def serve_ticket_pdf(request, angebot_id):
         return StreamingHttpResponse("File not found.", status=404)
 
     async_iterator = AsyncFileIter(vertrieb_angebot.ticket_pdf)
+
+    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename={filename}"
+
+    return response
+
+@login_required
+def serve_ticket_new_pdf(request, ticket_id):
+    decoded_ticket_id = unquote(ticket_id)
+    vertrieb_ticket = get_object_or_404(VertriebTicket, ticket_id=decoded_ticket_id)
+    name = replace_spaces_with_underscores(vertrieb_ticket.name)
+    filename = f"{name}_{vertrieb_ticket.ticket_id}.pdf"
+    sleep(0.5)
+
+    if not vertrieb_ticket.ticket_pdf:
+        return StreamingHttpResponse("File not found.", status=404)
+
+    async_iterator = AsyncFileIter(vertrieb_ticket.ticket_pdf)
 
     response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename={filename}"
