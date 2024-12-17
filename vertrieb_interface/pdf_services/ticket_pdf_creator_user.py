@@ -4,7 +4,6 @@ from fpdf import FPDF
 from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
 from vertrieb_interface.models import Editierbarer_Text
-from vertrieb_interface.pdf_services.calc_pdf_creator import calcPage1, calcPage2
 import os
 
 title = ""
@@ -393,7 +392,7 @@ class PDF(FPDF):
             tab2_wr_model = self.get_attribute_by_identifier(
                 "tabelle_eintrag_2_viessman_1", "content"
             )
-            garantie = str(data["garantieJahre"])
+            garantie = ""
             tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
             self.setup_eintrag_text(
                 "tabelle_eintrag_2_viessman_2",
@@ -406,7 +405,7 @@ class PDF(FPDF):
             eintrag += 1
             tab3_eintrag_nummer = str(eintrag) + "."
             tab3_energiezahler = data["smartmeterModell"]
-            garantie = str(data["garantieJahre"])
+            garantie = ""
             tab3_energiezahler_props = f'{self.get_attribute_by_identifier("tabelle_eintrag_3_viessman_2", "content")}'
 
             self.setup_eintrag_text(
@@ -452,7 +451,7 @@ class PDF(FPDF):
             tab2_wr_model = self.get_attribute_by_identifier(
                 "tabelle_eintrag_2_huawei_1", "content"
             )
-            garantie = str(data["garantieJahre"])
+            garantie = ""
             tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
             self.setup_eintrag_text(
                 "tabelle_eintrag_2_huawei_2",
@@ -1413,15 +1412,9 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         steuer = data["steuersatz"]
-        ausweisung_rabatt = data["ausweisung_rabatt"]
         self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
-        if not ausweisung_rabatt:
-            self.cell(0, 6, "", 0, 1, "L", fill=True)
+        self.cell(0, 6, "", 0, 1, "L", fill=True)
         self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
-        if ausweisung_rabatt:
-            self.set_font("JUNO Solar Lt", "B", 12)
-            self.cell(0, 6, "Ihr individueller Rabatt", 0, 1, "L", fill=True)
-            self.set_font("JUNO Solar Lt", "", 12)
         self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, "Ihre Investition (inkl. MwSt.)", 0, 1, "L", fill=True)
@@ -1435,14 +1428,8 @@ class PDF(FPDF):
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
         self.cell(0, 6, str(data["kWp"]) + " kWp", 0, 1, "R")
-        if not ausweisung_rabatt:
-            self.cell(0, 6, "", 0, 1, "R")
-            self.cell(0, 6, netto, 0, 1, "R")
-        if ausweisung_rabatt:
-            self.cell(0, 6, nettoVorRabatt, 0, 1, "R")
-            self.set_font("JUNO Solar Lt", "B", 12)
-            self.cell(0, 6,"-" + rab, 0, 1, "R")
-            self.set_font("JUNO Solar Lt", "", 12)
+        self.cell(0, 6, "", 0, 1, "R")
+        self.cell(0, 6, netto, 0, 1, "R")
         self.cell(0, 6, mwst, 0, 1, "R")
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, brutto, 0, 1, "R")
@@ -1776,62 +1763,6 @@ class PDF(FPDF):
         else:
             pass
 
-    def financePage(self, data):
-        if data["finanzierung"]:
-            self.add_page()
-            finanzierung_0 = self.get_attribute_by_identifier("finanzierung_0", "content")
-            self.setup_text("finanzierung_0", finanzierung_0, bold=True, alignment="L")
-            finanzierung_1 = self.get_attribute_by_identifier("finanzierung_1", "content")
-            self.setup_text("finanzierung_1", finanzierung_1, bold=True, alignment="L")
-            finanzierung_2 = self.get_attribute_by_identifier("finanzierung_2", "content")
-            self.setup_text("finanzierung_2", finanzierung_2, alignment="L")
-            finanzierung_3 = self.get_attribute_by_identifier("finanzierung_3", "content")
-            self.setup_text("finanzierung_3", finanzierung_3, alignment="L")
-            finanzierung_4 = self.get_attribute_by_identifier("finanzierung_4", "content")
-            self.setup_text("finanzierung_4", finanzierung_4, bold=True, alignment="L")
-            finanzierung_5 = self.get_attribute_by_identifier("finanzierung_5", "content")
-            self.setup_text("finanzierung_5", finanzierung_5, alignment="L")
-            finanzierung_6 = self.get_attribute_by_identifier("finanzierung_6", "content")
-            self.setup_text("finanzierung_6", finanzierung_6, bold=True, alignment="L")
-            finanzierung_7 = self.get_attribute_by_identifier("finanzierung_7", "content")
-            self.setup_text("finanzierung_7", finanzierung_7, alignment="L")
-            finanzierung_8 = self.get_attribute_by_identifier("finanzierung_8", "content")
-            self.setup_text("finanzierung_8", finanzierung_8, bold=True, alignment="L")
-            finanzierung_9 = self.get_attribute_by_identifier("finanzierung_9", "content")
-            self.setup_text("finanzierung_9", finanzierung_9, alignment="L")
-
-            self.set_fill_color(240)
-            self.set_y(125)
-            self.set_font("JUNO Solar Lt", "B", 17)
-            self.multi_cell(0, 6, "Ihre Investition\n ", 0, "L", fill=True)
-            self.set_font("JUNO Solar Lt", "", 12)
-            self.set_y(135)
-            steuer = data["steuersatz"]
-            self.multi_cell(
-                0,
-                6,
-                "Barzahlungspreis\nAnzahlung\nNettokreditbetrag\nMonatliche Rate\nLaufzeit\nSollzinssatz\nEffektiver Jahreszins\nGesamtkreditbetrag",
-                0,
-                "L",
-                fill=True,
-            )
-            self.set_y(135)
-            barzahlung = convertCurrency("{:,.2f} €".format(data["kostenPVA"]))
-            anzahlung = convertCurrency("{:,.2f} €".format(data["anzahlung"]))
-            nettoKr = convertCurrency("{:,.2f} €".format(data["nettokreditbetrag"]))
-            monatlicheRate = convertCurrency("{:,.2f} €".format(data["monatliche_rate"]))
-            laufzeit = str(data["laufzeit"]) + " Monate"
-            sollzinssatz = str(data["sollzinssatz"]) + "%"
-            effektiverJ = str(data["effektiver_zins"]) + "%"
-            gesamtkr = convertCurrency("{:,.2f} €".format(data["gesamtkreditbetrag"]))
-            self.multi_cell(0, 6, f'{barzahlung}\n{anzahlung}\n{nettoKr}\n{monatlicheRate}\n{laufzeit}\n{sollzinssatz}\n{effektiverJ}', 0, "R")
-            self.set_y(177)
-            self.set_font("JUNO Solar Lt", "B", 12)
-            self.cell(0, 6, gesamtkr, 0, 0, "R")
-            self.line(175, 177, 197, 177)
-        else:
-            pass
-
 
 def replace_spaces_with_underscores(s: str) -> str:
     return s.replace(" ", "_").replace(",","")
@@ -1871,18 +1802,14 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     return anzahlZubehoer
 
-def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
+def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     global title, pages, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
-    title1 = f"{vertrieb_angebot.angebot_id}"
+    title1 = f"{vertrieb_ticket.ticket_id}"
     pages = 6
     zubehoerLimitMitWallbox = 31
     zubehoerLimitOhneWallbox = 34
     if certifikate:
         pages += 1
-    if data["finanzierung"]:
-        pages += 1
-    if withCalc:
-        pages += 2
     anzZubehoer = anzahlZubehoer(data)
     if (data["wallboxAnz"] > 0 and anzZubehoer > zubehoerLimitMitWallbox - 24) or anzZubehoer > zubehoerLimitOhneWallbox - 23:
         pages += 1
@@ -1904,15 +1831,6 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     pdf.financePage(data)
     pdf.certPage(certifikate)
     pdf.agbPage()
-
-    if withCalc:
-        user_folder = os.path.join(
-            settings.MEDIA_ROOT, f"pdf/usersangebots/{user.username}/Kalkulationen/"
-        )
-        if not os.path.exists(user_folder):
-            os.makedirs(user_folder)
-        pdf = calcPage1(pdf, data)
-        pdf = calcPage2(pdf, data, user_folder, vertrieb_angebot)
 
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore

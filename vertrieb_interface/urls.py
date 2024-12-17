@@ -10,6 +10,7 @@ from vertrieb_interface.api_views.auto_field_view import VertriebAutoFieldView
 from vertrieb_interface.api_views.alle_angebote_view import ViewOrders
 from vertrieb_interface.api_views.alle_tickets_view import ViewOrdersTicket
 from vertrieb_interface.api_views.document_PDF_view import DocumentView
+from vertrieb_interface.api_views.document_ticket_PDF_view import DocumentViewTicket
 from vertrieb_interface.api_views.document_and_calculation_PDF_view import (
     DocumentAndCalcView,
 )
@@ -161,6 +162,7 @@ path(
         name="serve_ticket_new_pdf",
     ),
     path("document/<str:angebot_id>/", DocumentView.as_view(), name="document_view"),
+    path("documentTicket/<str:ticket_id>/", DocumentViewTicket.as_view(), name="document_view_ticket"),
     path(
         "document_calc/<str:angebot_id>/",
         views.document_calc_view,

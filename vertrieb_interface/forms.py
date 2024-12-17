@@ -3143,3 +3143,64 @@ class VertriebTicketForm(ModelForm):
 
         else:
             print("Geocoding API request failed.")
+
+
+class VertriebTicketEmailForm(ModelForm):
+    email = forms.CharField(
+        label="E-mail",
+        max_length=100,
+        required=False,
+        validators=[validate_email],
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "id_email",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    text_for_email = forms.CharField(
+        label="Text for email",
+        initial="""
+            Sehr geehrter Interessent,
+
+            anbei wie besprochen das Angebot im Anhang als PDF-Dokument.
+
+            Bei Fragen stehen wir Ihnen gern jederzeit zur Verfügung!
+
+
+            Wir wünschen Ihnen einen schönen Tag und würden uns über eine positive Rückmeldung freuen.
+
+            Mit freundlichen Grüßen,
+
+            Ihr Juno Solar Home Team
+                """,
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 16,
+                "class": "form-control",
+                "id": "id_text_for_email",
+            }
+        ),
+    )
+
+    class Meta:
+        model = VertriebTicket
+        fields = [
+            "email",
+            "text_for_email",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super(VertriebTicketEmailForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields["email"].initial = self.instance.email
+            self.fields["text_for_email"].initial = self.instance.text_for_email
+
+    def save(self, commit=True):
+        form = super(VertriebTicketEmailForm, self).save(commit=False)
+        if commit:
+            form.save()
+        return form

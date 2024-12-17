@@ -1008,7 +1008,7 @@ def create_calc_pdf(request, angebot_id):
 
 @login_required
 def create_ticket_new_pdf_user(request, ticket_id):
-    vertrieb_ticket = get_object_or_404(VertriebAngebot, ticket_id=ticket_id)
+    vertrieb_ticket = get_object_or_404(VertriebTicket, ticket_id=ticket_id)
     user = request.user
     data = vertrieb_ticket.data
     certifikate = user.user_certifikate
