@@ -2422,23 +2422,11 @@ class VertriebTicketForm(ModelForm):
         ),
     )
 
-    HERSTELLER_CHOICES = [
-        ("----", "----"),
-        ("Huawei", "Huawei"),
-        ("Viessmann", "Viessmann"),
-    ]
-
     WALLBOXTYP_CHOICES = [
         ("Huawei FusionCharge AC", "Huawei FusionCharge AC"),
         ("Viessmann Charging Station", "Viessmann Charging Station"),
     ]
 
-
-    WECHSELRICHTER_MODEL_CHOICES = [
-        ("----", "----"),
-        ("SUN 2000", "SUN 2000"),
-        ("Vitocharge VX3", "Vitocharge VX3"),
-    ]
 
     SPEICHER_MODEL_CHOICES = [
         ("----", "----"),
@@ -2453,22 +2441,6 @@ class VertriebTicketForm(ModelForm):
         ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
     ]
-
-    hersteller = forms.ChoiceField(
-        label="Hersteller",
-        required=True,
-        choices=HERSTELLER_CHOICES,
-        initial="Huawei",
-        widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
-    )
-
-    wechselrichter_model = forms.ChoiceField(
-        label="Wechselrichter",
-        choices=WECHSELRICHTER_MODEL_CHOICES,
-        widget=forms.Select(
-            attrs={"class": "form-select", "id": "wechselrichter_model"}
-        ),
-    )
 
     speicher_model = forms.ChoiceField(
         label="Batteriespeicher",
@@ -2764,9 +2736,7 @@ class VertriebTicketForm(ModelForm):
             "strasse",
             "ort",
             "anlagenstandort",
-            "hersteller",
             "gesamtkapazitat",
-            "wechselrichter_model",
             "speicher_model",
             "speicher",
             "anz_speicher",
@@ -2842,12 +2812,8 @@ class VertriebTicketForm(ModelForm):
 
         self.fields["name_first_name"].widget.attrs.update({"id": "id_vorname"})
         self.fields["name_last_name"].widget.attrs.update({"id": "id_nachname"})
-        self.fields["wechselrichter_model"].widget.attrs.update(
-            {"id": "wechselrichter_model"}
-        )
         self.fields["speicher_model"].widget.attrs.update({"id": "speicher_model"})
         self.fields["smartmeter_model"].widget.attrs.update({"id": "smartmeter_model"})
-        self.fields["hersteller"].widget.attrs.update({"id": "hersteller"})
         self.fields["wallbox_anzahl"].widget.attrs.update({"id": "wallbox_anzahl"})
         self.fields["wallbox"].widget.attrs.update({"id": "wallbox-checkbox"})
         self.fields["postanschrift_latitude"].widget.attrs.update(
@@ -2914,21 +2880,8 @@ class VertriebTicketForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        incompatible_combinations = {
-            ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
-            ("Viessmann", "SUN 2000"): "wechselrichter_model",
-            ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
-            ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
-            ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",
-            ("Viessmann", "EMMA-A02"): "smartmeter_model",
-            ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
-            ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
-            ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",
-            ("Huawei", "Viessmann Energiezähler"): "smartmeter_model",
-        }
 
         action = self.data.get("action_type")
-        hersteller = cleaned_data.get("hersteller")
         speicher_model = cleaned_data.get("speicher_model")
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
@@ -3056,13 +3009,6 @@ class VertriebTicketForm(ModelForm):
                         },
                     ),
                 )
-        for (manufacturer, model), field_name in incompatible_combinations.items():
-            if hersteller == manufacturer and cleaned_data.get(field_name) == model:
-                raise forms.ValidationError(
-                    {
-                        field_name: f"Sie haben einen {manufacturer} Hersteller ausgewählt. Sie können keine {model.split()[0]} {field_name.replace('_', ' ')} auswählen. Überprüfen Sie die Daten."
-                    }
-                )
 
         midZaehler = cleaned_data.get("midZaehler")
         wallbox_typ = cleaned_data.get("wallboxtyp")
@@ -3092,12 +3038,7 @@ class VertriebTicketForm(ModelForm):
         else:
             if interessent == "----":
                 raise forms.ValidationError(
-                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
-                )
-
-            if hersteller == "----":
-                raise forms.ValidationError(
-                    {"hersteller": "Sie haben keinen Hersteller ausgewählt"}
+                    {"interessent": "Sie haben keinen Interessenten ausgewählt"}
                 )
             return cleaned_data
 
