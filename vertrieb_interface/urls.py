@@ -137,6 +137,11 @@ path(
         views.PDFAngebotsListView.as_view(),
         name="pdf_angebots_list_view",
     ),
+path(
+        "vertrieb/pdf_tickets_list_view/",
+        views.PDFTicketsListView.as_view(),
+        name="pdf_tickets_list_view",
+    ),
     path(
         "PDFCalculationsListView/<str:angebot_id>/",
         views.PDFCalculationsListView,

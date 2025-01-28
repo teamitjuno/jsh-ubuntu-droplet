@@ -1,0 +1,176 @@
+{% extends 'vertrieb/base.html' %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% load custom_filter %}
+{% block content %}            <!-- ============================================================== -->
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>           
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card d-block">
+                        <div class="card-body">  
+                            <div class="table-container">
+                                <table id="scroll-horizontal-datatable" class="table activate-select table-responsive-md nowrap w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket ID</th>
+                                            <th>Status</th>
+                                            <th>Kunde</th>
+                                            <th>Angebot Summe</th>
+                                            <th>Datum</th>
+                                            <th>Angebot File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for angebot, angebot_file, formatted_name in zipped_tickets %}
+                                            <tr>
+                                                <td>{% if angebot.angebot_id_assigned %}
+                                                    {{ angebot.angebot_id }}
+                                                    {% else %}
+                                                        noch nicht zugeordnet 
+                                                        {% endif %}
+                                                    </td>
+                                                </td>
+                                                {% if angebot.status == "bekommen" %}
+                                                <td class="link-warning">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "angenommen" %}
+                                                <td class="link-success">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "abgelaufen" or angebot.status == "abgelehnt" %}
+                                                <td class="link-danger">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% elif angebot.status == "in Kontakt" or angebot.status == "Kontaktversuch" %}
+                                                <td class="link-primary">
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    {{ angebot.status }}
+                                                </td>
+                                                {% endif %}
+                                                
+                                                
+                                                <td>{{ angebot.name }}</td>
+                                                <td>{{ angebot.angebotsumme|format_price }}</td>
+                                                <td>{{ angebot.current_date }}</td>
+                                                <td>
+                                                    <a href="{{ angebot_file }}" target="_blank" class="link-info">
+                                                        
+                                                            {{ formatted_name }}_{{ angebot.angebot_id }}.pdf
+                                                        
+                                                    </a>                    
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="7">No orders found.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col -->
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script> © Juno-Solar Home 
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">Info</a>
+                            <a href="javascript: void(0);">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    // Function to handle tab actions
+    function handleTabs() {
+        // Get the previously active tab from local storage
+        var activeTab = localStorage.getItem('activeTab');
+
+        // If there's an active tab stored, activate it and then remove it from local storage
+        if (activeTab) {
+            $('[href="' + activeTab + '"]').tab('show');
+            localStorage.removeItem('activeTab');  // Deleting the activeTab item from local storage
+        }
+
+        // When any tab is clicked, save it to the local storage
+        $('.nav-tabs a').on('click', function() {
+            var tabId = $(this).attr('href');
+            localStorage.setItem('activeTab', tabId);
+        });
+    }
+
+    // Call the handleTabs function
+    handleTabs();
+});
+</script>
+{% endblock %}
+            
+
+{% block extra_js %}
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+<!-- Code Highlight js -->
+<script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
+<script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+<script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
+
+<!-- Datatables js -->
+<script src="{% static 'assets/vendor/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.flash.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables.net-select/js/dataTables.select.min.js' %}"></script>
+<!-- Daterangepicker js -->
+<script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
+
+<!-- Apex Charts js -->
+<script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+
+<!-- Vector Map js -->
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+<script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
+
+<!-- Dashboard App js -->
+
+<!-- App js -->
+<script src="{% static 'assets/js/app.min.js' %}"></script>
+<!-- Datatable Demo Aapp js -->
+<script src="{% static 'assets/js/pages/demo.datatable-init.js' %}"></script>
+{% endblock %}

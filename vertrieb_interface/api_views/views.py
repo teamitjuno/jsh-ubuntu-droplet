@@ -1343,6 +1343,21 @@ def get_angebots_and_urls(user_angebots):
     return result
 
 
+def get_tickets_and_urls(user_tickets):
+    """
+    Generate a list of tuples containing angebot, URL, and name with underscores.
+    """
+    result = []
+    for ticket in user_tickets:
+        if ticket.ticket_pdf:
+            url = reverse("vertrieb_interface:serve_ticket_new_pdf", args=[ticket.ticket_id])
+        else:
+            continue
+        name_with_underscores = replace_spaces_with_underscores(ticket.name)
+        result.append((ticket, url, name_with_underscores))
+    return result
+
+
 def filter_user_angebots_by_query(user_angebots, query):
     """Filter user angebots based on the given query."""
     query_conditions = (
@@ -1353,6 +1368,18 @@ def filter_user_angebots_by_query(user_angebots, query):
         | Q(anfrage_vom__icontains=query)
     )
     return user_angebots.filter(query_conditions)
+
+
+def filter_user_tickets_by_query(user_tickets, query):
+    """Filter user angebots based on the given query."""
+    query_conditions = (
+        Q(zoho_kundennumer__icontains=query)
+        | Q(angebot_id__icontains=query)
+        | Q(status__icontains=query)
+        | Q(name__icontains=query)
+        | Q(anfrage_vom__icontains=query)
+    )
+    return user_tickets.filter(query_conditions)
 
 
 class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -1384,6 +1411,38 @@ class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 @method_decorator(login_required, name="dispatch")
 @method_decorator(user_passes_test(vertrieb_check), name="dispatch")
 class PDFAngebotsListView(PDFAngebotsListView):
+    pass
+
+
+class PDFTicketsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = VertriebTicket
+    template_name = "vertrieb/pdf_ticket_created.html"
+    context_object_name = "tickets"
+
+    def test_func(self):
+        return vertrieb_check(self.request.user)
+
+    def get_queryset(self):
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
+        )
+        query = self.request.GET.get("q")
+        if query:
+            queryset = filter_user_tickets_by_query(queryset, query)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_tickets = context["tickets"]
+        context["zipped_tickets"] = get_tickets_and_urls(user_tickets)
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(user_passes_test(vertrieb_check), name="dispatch")
+class PDFTicketsListView(PDFTicketsListView):
     pass
 
 
