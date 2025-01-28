@@ -1220,7 +1220,7 @@ class PDF(FPDF):
         self.set_fill_color(240)
         self.set_y(35)
         self.set_font("JUNO Solar Lt", "B", 17)
-        self.multi_cell(0, 6, "Angebotssumme\n ", 0, "L", fill=True)
+        self.multi_cell(0, 6, "Aufpreissumme\n ", 0, "L", fill=True)
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         steuer = data["steuersatz"]
@@ -1233,10 +1233,7 @@ class PDF(FPDF):
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         sum = data["kostenPVA"]
-        rabatsum = data["rabattsumme"]
         netto = convertCurrency("{:,.2f} €".format(sum))
-        nettoVorRabatt = convertCurrency("{:,.2f} €".format(sum+rabatsum))
-        rab = convertCurrency("{:,.2f} €".format(rabatsum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
         self.cell(0, 6, str(data["kWp"]) + " kWp", 0, 1, "R")
@@ -1293,47 +1290,6 @@ class PDF(FPDF):
             "auftragserteilung_2", "content"
         )
         self.setup_text("auftragserteilung_2", auftragserteilung_2, alignment="L")
-        # Zahlungsmodalitäten
-        y = self.get_y()
-        self.set_y(y + 5)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        # zahlungsmodalitäten
-        self.cell(0, 6, "Zahlungsmodalitäten", 0, 0, "L")
-        self.set_font("JUNO Solar Lt", "", 11)
-        self.set_y(y + 11)
-        if data["zahlungs_bedingungen"]:
-            if data["zahlungs_bedingungen"] == "20 – 70 – 10 %":
-                # zahlungsmodalitäten_1
-                self.multi_cell(
-                    0,
-                    6,
-                    "0% bei Angebotsannahme\n20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss",
-                    0,
-                    0,
-                    "L",
-                )  # type: ignore
-            elif data["zahlungs_bedingungen"] == "10 – 80 – 10 %":
-                # zahlungsmodalitäten_2
-                self.multi_cell(
-                    0,
-                    6,
-                    "0% bei Angebotsannahme\n10% bei Auftragsbestätigung\n80% bei Baubeginn\n10% bei Netzanschluss",
-                    0,
-                    0,
-                    "L",
-                )  # type: ignore
-            elif data["zahlungs_bedingungen"] == "100 – 0 – 0 %":
-                # zahlungsmodalitäten_3
-                self.multi_cell(
-                    0,
-                    6,
-                    "0% bei Angebotsannahme\n100% bei Auftragsbestätigung\n0% bei Baubeginn\n0% bei Netzanschluss",
-                    0,
-                    0,
-                    "L",
-                )
-        else:
-            self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(255)
@@ -1640,7 +1596,6 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     eintrag = pdf.page4(data, eintrag)
 
     pdf.pricePage(data)
-    pdf.financePage(data)
     pdf.certPage(certifikate)
     pdf.agbPage()
 

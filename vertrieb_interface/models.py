@@ -2454,6 +2454,7 @@ class VertriebTicket(TimeStampMixin):
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
             ),
+            "kostenPVA": self.kosten_pva,
             "debug": False,
             "version": 1.0,
         }

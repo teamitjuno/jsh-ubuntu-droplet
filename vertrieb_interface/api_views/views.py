@@ -1022,7 +1022,7 @@ def create_ticket_new_pdf_user(request, ticket_id):
     vertrieb_ticket.ticket_pdf = pdf_content
     vertrieb_ticket.save()
 
-    return redirect("vertrieb_interface:document_view", ticket_id=ticket_id)
+    return redirect("vertrieb_interface:document_view_ticket_new", ticket_id=ticket_id)
 
 
 @login_required
@@ -1049,6 +1049,13 @@ def document_ticket_view(request, angebot_id):
     pdf_url = reverse("vertrieb_interface:serve_ticket_pdf", args=[angebot_id])
     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
     return render(request, "vertrieb/document_ticket_view.html", context)
+
+
+@login_required
+def document_ticket_new_view(request, ticket_id):
+    pdf_url = reverse("vertrieb_interface:serve_ticket_new_pdf", args=[ticket_id])
+    context = {"pdf_url": pdf_url, "ticket_id": ticket_id}
+    return render(request, "vertrieb/document_ticket_new_view.html", context)
 
 
 @login_required
