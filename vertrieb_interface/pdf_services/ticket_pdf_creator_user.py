@@ -160,32 +160,18 @@ class PDF(FPDF):
         """
         Ruft die Lade/Entladeleistung basierend auf der Anzahl der Batterien ab.
         """
-        if str(data["hersteller"]) == "Viessmann":
-            if str(data["batterieAnz"]) == "1":
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_3", "content"
-                )
-            elif str(data["batterieAnz"]) == "2":
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_4", "content"
-                )
-            else:
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_5", "content"
-                )
-        elif str(data["hersteller"]) == "Huawei":
-            if str(data["batterieAnz"]) == "1":
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei5_3", "content"
-                )
-            elif data["batterieAnz"] >= 2 and data["batterieAnz"] <= 3:
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei5_4", "content"
-                )
-            else:
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei5_5", "content"
-                )
+        if str(data["batterieAnz"]) == "1":
+            entladeleistung = self.get_attribute_by_identifier(
+                "tabelle_eintrag_4_huawei5_3", "content"
+            )
+        elif data["batterieAnz"] >= 2 and data["batterieAnz"] <= 3:
+            entladeleistung = self.get_attribute_by_identifier(
+                "tabelle_eintrag_4_huawei5_4", "content"
+            )
+        else:
+            entladeleistung = self.get_attribute_by_identifier(
+                "tabelle_eintrag_4_huawei5_5", "content"
+            )
         return entladeleistung
 
     def header(self):
@@ -381,151 +367,88 @@ class PDF(FPDF):
             content_2=tab1_module_anzahl,
             content_4=tab1_module_props,
         )
+        # Tabelle Eintrag 2
+        # Wechselrichter
+        eintrag += 1
+        tab2_eintrag_nummer = str(eintrag) + "."
+        tab2_wr_model = self.get_attribute_by_identifier(
+            "tabelle_eintrag_2_huawei_1", "content"
+        )
+        garantie = ""
+        tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
+        self.setup_eintrag_text(
+            "tabelle_eintrag_2_huawei_2",
+            tab2_eintrag_nummer,
+            tab2_wr_model,
+            content_4=tab2_wr_model_props,
+        )
 
-        if data["hersteller"] == "Viessmann":
+        # Tabelle Eintrag 3
 
-            # Tabelle Eintrag 2
-            # Wechselrichter
+        eintrag += 1
+        tab3_eintrag_nummer = str(eintrag) + "."
+        tab3_energiezahler = "Huawei " + data["smartmeterModell"]
+        tab3_energiezahler_props = self.get_attribute_by_identifier(
+            "tabelle_eintrag_3_huawei_2", "content"
+        )
+        self.setup_eintrag_text(
+            "tabelle_eintrag_3_huawei_2",
+            tab3_eintrag_nummer,
+            tab3_energiezahler,
+            content_4=tab3_energiezahler_props,
+        )
 
+        # Tabelle Eintrag 4
+        # Batteriespeicher
+        if data["batterieVorh"]:
             eintrag += 1
-            tab2_eintrag_nummer = str(eintrag) + "."
-            tab2_wr_model = self.get_attribute_by_identifier(
-                "tabelle_eintrag_2_viessman_1", "content"
-            )
-            garantie = ""
-            tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
-            self.setup_eintrag_text(
-                "tabelle_eintrag_2_viessman_2",
-                tab2_eintrag_nummer,
-                tab2_wr_model,
-                content_4=tab2_wr_model_props,
-            )
-
-            # Tabelle Eintrag 3
-            eintrag += 1
-            tab3_eintrag_nummer = str(eintrag) + "."
-            tab3_energiezahler = data["smartmeterModell"]
-            garantie = ""
-            tab3_energiezahler_props = f'{self.get_attribute_by_identifier("tabelle_eintrag_3_viessman_2", "content")}'
-
-            self.setup_eintrag_text(
-                "tabelle_eintrag_3_viessman_2",
-                tab3_eintrag_nummer,
-                tab3_energiezahler,
-                content_4=tab3_energiezahler_props,
-            )
-
-            # Tabelle Eintrag 4
-            # Batteriespeicher
-
-            if data["batterieVorh"]:
-
-                eintrag += 1
-                tab4_eintrag_nummer = str(eintrag) + "."
+            tab4_eintrag_nummer = str(eintrag) + "."
+            tab4_content2_sub1 = str(ceil(data["batterieAnz"] / 3))
+            tab4_content2_sub2 = str(data["batterieAnz"])
+            if data["batterieModell"] == "LUNA 2000-5-S0":
                 tab4_batterie_speicher = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_1", "content"
+                    "tabelle_eintrag_4_huawei5_1", "content"
                 )
-                tab4_content2 = str(data["batterieAnz"])
-                tab4_additional_content = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_2", "content"
+                tab4_additional_content2 = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei5_2", "content"
                 )
-                tab4_entladeleistung = self.get_entladeleistung(data)
-
+                tab4_additional_content = "Leistungsmodule"
+                tab4_batterie_speicher_props = self.get_entladeleistung(data)
                 self.setup_eintrag_text(
-                    "tabelle_eintrag_4_viessman_3",
+                    "tabelle_eintrag_4_huawei5_3",
                     tab4_eintrag_nummer,
                     tab4_batterie_speicher,
                     content_2="",
-                    content_4=tab4_entladeleistung,
+                    content_4=tab4_batterie_speicher_props,
+                    content_2_sub_1=tab4_content2_sub1,
+                    content_2_sub_2=tab4_content2_sub2,
                     additional_content=tab4_additional_content,
-                    content_2_sub_1=tab4_content2,
+                    additional_content_2=tab4_additional_content2,
                     alignment="",
                 )
-
-        elif data["hersteller"] == "Huawei":
-
-            # Tabelle Eintrag 2
-            # Wechselrichter
-            eintrag += 1
-            tab2_eintrag_nummer = str(eintrag) + "."
-            tab2_wr_model = self.get_attribute_by_identifier(
-                "tabelle_eintrag_2_huawei_1", "content"
-            )
-            garantie = ""
-            tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
-            self.setup_eintrag_text(
-                "tabelle_eintrag_2_huawei_2",
-                tab2_eintrag_nummer,
-                tab2_wr_model,
-                content_4=tab2_wr_model_props,
-            )
-
-            # Tabelle Eintrag 3
-
-            eintrag += 1
-            tab3_eintrag_nummer = str(eintrag) + "."
-            tab3_energiezahler = "Huawei " + data["smartmeterModell"]
-            tab3_energiezahler_props = self.get_attribute_by_identifier(
-                "tabelle_eintrag_3_huawei_2", "content"
-            )
-            self.setup_eintrag_text(
-                "tabelle_eintrag_3_huawei_2",
-                tab3_eintrag_nummer,
-                tab3_energiezahler,
-                content_4=tab3_energiezahler_props,
-            )
-
-            # Tabelle Eintrag 4
-            # Batteriespeicher
-            if data["batterieVorh"]:
-                eintrag += 1
-                tab4_eintrag_nummer = str(eintrag) + "."
-                tab4_content2_sub1 = str(ceil(data["batterieAnz"] / 3))
-                tab4_content2_sub2 = str(data["batterieAnz"])
-                if data["batterieModell"] == "LUNA 2000-5-S0":
-                    tab4_batterie_speicher = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei5_1", "content"
-                    )
-                    tab4_additional_content2 = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei5_2", "content"
-                    )
-                    tab4_additional_content = "Leistungsmodule"
-                    tab4_batterie_speicher_props = self.get_entladeleistung(data)
-                    self.setup_eintrag_text(
-                        "tabelle_eintrag_4_huawei5_3",
-                        tab4_eintrag_nummer,
-                        tab4_batterie_speicher,
-                        content_2="",
-                        content_4=tab4_batterie_speicher_props,
-                        content_2_sub_1=tab4_content2_sub1,
-                        content_2_sub_2=tab4_content2_sub2,
-                        additional_content=tab4_additional_content,
-                        additional_content_2=tab4_additional_content2,
-                        alignment="",
-                    )
-                elif data["batterieModell"] == "LUNA 2000-7-S1":
-                    tab4_batterie_speicher = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei7_1", "content"
-                    )
-                    tab4_additional_content2 = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei7_2", "content"
-                    )
-                    tab4_additional_content = "Leistungsmodule"
-                    tab4_batterie_speicher_props = self.get_attribute_by_identifier(
-                        "tabelle_eintrag_4_huawei7_3", "content"
-                    )
-                    self.setup_eintrag_text(
-                        "tabelle_eintrag_4_huawei7_3",
-                        tab4_eintrag_nummer,
-                        tab4_batterie_speicher,
-                        content_2="",
-                        content_4=tab4_batterie_speicher_props,
-                        content_2_sub_1=tab4_content2_sub1,
-                        content_2_sub_2=tab4_content2_sub2,
-                        additional_content=tab4_additional_content,
-                        additional_content_2=tab4_additional_content2,
-                        alignment="",
-                    )
+            elif data["batterieModell"] == "LUNA 2000-7-S1":
+                tab4_batterie_speicher = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei7_1", "content"
+                )
+                tab4_additional_content2 = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei7_2", "content"
+                )
+                tab4_additional_content = "Leistungsmodule"
+                tab4_batterie_speicher_props = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_huawei7_3", "content"
+                )
+                self.setup_eintrag_text(
+                    "tabelle_eintrag_4_huawei7_3",
+                    tab4_eintrag_nummer,
+                    tab4_batterie_speicher,
+                    content_2="",
+                    content_4=tab4_batterie_speicher_props,
+                    content_2_sub_1=tab4_content2_sub1,
+                    content_2_sub_2=tab4_content2_sub2,
+                    additional_content=tab4_additional_content,
+                    additional_content_2=tab4_additional_content2,
+                    alignment="",
+                )
         return eintrag
 
     def page2(self, data, eintrag):
@@ -780,40 +703,21 @@ class PDF(FPDF):
         )
 
         # Tabelle Eintrag 15
-
-        if data["hersteller"] == "Viessmann":
-            eintrag += 1
-            tab15_eintrag_nummer = str(eintrag) + "."
-            tab15_content_1 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_15", "content"
-            )
-            tab15_content_4 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_15_viessman", "content"
-            )
-            self.setup_eintrag_text(
-                "tabelle_eintrag_15_viessman",
-                tab15_eintrag_nummer,
-                tab15_content_1,
-                content_2="1",
-                content_4=tab15_content_4,
-            )
-
-        if data["hersteller"] == "Huawei":
-            eintrag += 1
-            tab15_eintrag_nummer = str(eintrag) + "."
-            tab15_content_1 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_15", "content"
-            )
-            tab15_content_4 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_15_huawei", "content"
-            )
-            self.setup_eintrag_text(
-                "tabelle_eintrag_15_huawei",
-                tab15_eintrag_nummer,
-                tab15_content_1,
-                content_2="1",
-                content_4=tab15_content_4,
-            )
+        eintrag += 1
+        tab15_eintrag_nummer = str(eintrag) + "."
+        tab15_content_1 = self.get_attribute_by_identifier(
+            "tabelle_eintrag_15", "content"
+        )
+        tab15_content_4 = self.get_attribute_by_identifier(
+            "tabelle_eintrag_15_huawei", "content"
+        )
+        self.setup_eintrag_text(
+            "tabelle_eintrag_15_huawei",
+            tab15_eintrag_nummer,
+            tab15_content_1,
+            content_2="1",
+            content_4=tab15_content_4,
+        )
 
         ###########################################################################
         self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
@@ -1143,170 +1047,78 @@ class PDF(FPDF):
                 content_2=tab28_content_2,
                 content_4=tab28_content_4,
             )
-        # Zubehör mit Herstellerbezug
-        if data["hersteller"] == "Huawei":
-            # OPTIMIERER HUAWEI
-            if data["anzOptimierer"] > 0:
+        # OPTIMIERER HUAWEI
+        if data["anzOptimierer"] > 0:
 
-                eintrag += 1
-                tab25_eintrag_nummer = str(eintrag) + "."
-                tab25_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_huawei_1", "content"
-                )
-                tab25_content_2 = str(data["anzOptimierer"])
-                tab25_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_huawei_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_huawei_2",
-                    tab25_eintrag_nummer,
-                    tab25_content_1,
-                    content_2=tab25_content_2,
-                    content_4=tab25_content_4,
-                )
+            eintrag += 1
+            tab25_eintrag_nummer = str(eintrag) + "."
+            tab25_content_1 = self.get_attribute_by_identifier(
+                "optimierer_huawei_1", "content"
+            )
+            tab25_content_2 = str(data["anzOptimierer"])
+            tab25_content_4 = self.get_attribute_by_identifier(
+                "optimierer_huawei_2", "content"
+            )
+            self.setup_eintrag_text(
+                "optimierer_huawei_2",
+                tab25_eintrag_nummer,
+                tab25_content_1,
+                content_2=tab25_content_2,
+                content_4=tab25_content_4,
+            )
 
-            # NOTSTROM
-            if data["notstrom"]:
-                eintrag += 1
-                tab26_eintrag_nummer = str(eintrag) + "."
-                tab26_content_1 = self.get_attribute_by_identifier(
-                    "notstrom_huawei_1", "content"
-                )
-                tab26_content_2 = "1"
-                tab26_content_4 = self.get_attribute_by_identifier(
-                    "notstrom_huawei_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "notstrom_huawei_2",
-                    tab26_eintrag_nummer,
-                    tab26_content_1,
-                    content_2=tab26_content_2,
-                    content_4=tab26_content_4,
-                )
+        # NOTSTROM
+        if data["notstrom"]:
+            eintrag += 1
+            tab26_eintrag_nummer = str(eintrag) + "."
+            tab26_content_1 = self.get_attribute_by_identifier(
+                "notstrom_huawei_1", "content"
+            )
+            tab26_content_2 = "1"
+            tab26_content_4 = self.get_attribute_by_identifier(
+                "notstrom_huawei_2", "content"
+            )
+            self.setup_eintrag_text(
+                "notstrom_huawei_2",
+                tab26_eintrag_nummer,
+                tab26_content_1,
+                content_2=tab26_content_2,
+                content_4=tab26_content_4,
+            )
 
-            # WANDHALTERUNG
-            if data["anzWandhalterungSpeicher"] > 0:
+        # WANDHALTERUNG
+        if data["anzWandhalterungSpeicher"] > 0:
 
-                # Tabelle Eintrag Wandhalterung
-                eintrag += 1
-                tab27_eintrag_nummer = str(eintrag) + "."
-                tab27_content_1 = self.get_attribute_by_identifier(
-                    "wandhalterung_huawei_1", "content"
-                )
-                tab27_content_2 = str(data["anzWandhalterungSpeicher"])
+            # Tabelle Eintrag Wandhalterung
+            eintrag += 1
+            tab27_eintrag_nummer = str(eintrag) + "."
+            tab27_content_1 = self.get_attribute_by_identifier(
+                "wandhalterung_huawei_1", "content"
+            )
+            tab27_content_2 = str(data["anzWandhalterungSpeicher"])
 
-                self.setup_eintrag_text(
-                    "wandhalterung_huawei_1",
-                    tab27_eintrag_nummer,
-                    tab27_content_1,
-                    content_2=tab27_content_2,
-                )
+            self.setup_eintrag_text(
+                "wandhalterung_huawei_1",
+                tab27_eintrag_nummer,
+                tab27_content_1,
+                content_2=tab27_content_2,
+            )
 
-            # HUAWEI ELWA
-            if data["elwa"] == True:
-                eintrag += 1
-                tab29_eintrag_nummer = str(eintrag) + "."
-                tab29_content_1 = str(data["elwaName"])
-                tab29_content_2 = "1"
-                tab29_content_4 = str(data["elwaText"])
-                self.setup_eintrag_text(
-                    "zubehoer_platzhalter",
-                    tab29_eintrag_nummer,
-                    tab29_content_1,
-                    content_2=tab29_content_2,
-                    content_4=tab29_content_4,
-                )
+        # HUAWEI ELWA
+        if data["elwa"] == True:
+            eintrag += 1
+            tab29_eintrag_nummer = str(eintrag) + "."
+            tab29_content_1 = str(data["elwaName"])
+            tab29_content_2 = "1"
+            tab29_content_4 = str(data["elwaText"])
+            self.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab29_eintrag_nummer,
+                tab29_content_1,
+                content_2=tab29_content_2,
+                content_4=tab29_content_4,
+            )
 
-        if data["hersteller"] == "Viessmann":
-
-            # OPTIMIERER VIESSMANN
-            if data["anzOptimierer"] > 0:
-                eintrag += 1
-                tab25_eintrag_nummer = str(eintrag) + "."
-                tab25_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_1", "content"
-                )
-                tab25_content_2 = str(data["anzOptimierer"])
-                tab25_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_2",
-                    tab25_eintrag_nummer,
-                    tab25_content_1,
-                    content_2=tab25_content_2,
-                    content_4=tab25_content_4,
-                )
-
-                eintrag += 1
-                tab26_eintrag_nummer = str(eintrag) + "."
-                tab26_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_3", "content"
-                )
-                tab26_content_2 = "1"
-                tab26_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_4", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_4",
-                    tab26_eintrag_nummer,
-                    tab26_content_1,
-                    content_2=tab26_content_2,
-                    content_4=tab26_content_4,
-                )
-
-                eintrag += 1
-                tab27_eintrag_nummer = str(eintrag) + "."
-                tab27_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_5", "content"
-                )
-                tab27_content_2 = "1"
-
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_5",
-                    tab27_eintrag_nummer,
-                    tab27_content_1,
-                    content_2=tab27_content_2,
-                )
-
-            if data["notstrom"]:
-
-                eintrag += 1
-                tab28_eintrag_nummer = str(eintrag) + "."
-                tab28_content_1 = self.get_attribute_by_identifier(
-                    "notstrom_viessmann_1", "content"
-                )
-                tab28_content_2 = "1"
-                tab28_content_4 = self.get_attribute_by_identifier(
-                    "notstrom_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "notstrom_viessmann_2",
-                    tab28_eintrag_nummer,
-                    tab28_content_1,
-                    content_2=tab28_content_2,
-                    content_4=tab28_content_4,
-                )
-
-            # GRIDBOX
-            if data["wallboxAnz"] >= 2:
-
-                eintrag += 1
-                tab29_eintrag_nummer = str(eintrag) + "."
-                tab29_content_1 = self.get_attribute_by_identifier(
-                    "gridbox_viessmann_1", "content"
-                )
-                tab29_content_2 = "1"
-                tab29_content_4 = self.get_attribute_by_identifier(
-                    "gridbox_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "gridbox_viessmann_2",
-                    tab29_eintrag_nummer,
-                    tab29_content_1,
-                    content_2=tab29_content_2,
-                    content_4=tab29_content_4,
-                )
         addedPage = False
         if data["smartDongleLte"] == True:
             eintrag += 1

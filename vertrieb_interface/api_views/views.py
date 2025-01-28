@@ -1345,7 +1345,7 @@ def get_angebots_and_urls(user_angebots):
 
 def get_tickets_and_urls(user_tickets):
     """
-    Generate a list of tuples containing angebot, URL, and name with underscores.
+    Generate a list of tuples containing ticket, URL, and name with underscores.
     """
     result = []
     for ticket in user_tickets:
@@ -1358,7 +1358,7 @@ def get_tickets_and_urls(user_tickets):
     return result
 
 
-def filter_user_angebots_by_query(user_angebots, query):
+def filter_by_query(user_objects, query):
     """Filter user angebots based on the given query."""
     query_conditions = (
         Q(zoho_kundennumer__icontains=query)
@@ -1367,20 +1367,7 @@ def filter_user_angebots_by_query(user_angebots, query):
         | Q(name__icontains=query)
         | Q(anfrage_vom__icontains=query)
     )
-    return user_angebots.filter(query_conditions)
-
-
-def filter_user_tickets_by_query(user_tickets, query):
-    """Filter user angebots based on the given query."""
-    query_conditions = (
-        Q(zoho_kundennumer__icontains=query)
-        | Q(angebot_id__icontains=query)
-        | Q(status__icontains=query)
-        | Q(name__icontains=query)
-        | Q(anfrage_vom__icontains=query)
-    )
-    return user_tickets.filter(query_conditions)
-
+    return user_objects.filter(query_conditions)
 
 class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = VertriebAngebot
@@ -1398,7 +1385,7 @@ class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         )
         query = self.request.GET.get("q")
         if query:
-            queryset = filter_user_angebots_by_query(queryset, query)
+            queryset = filter_by_query(queryset, query)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -1430,7 +1417,7 @@ class PDFTicketsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         )
         query = self.request.GET.get("q")
         if query:
-            queryset = filter_user_tickets_by_query(queryset, query)
+            queryset = filter_by_query(queryset, query)
         return queryset
 
     def get_context_data(self, **kwargs):

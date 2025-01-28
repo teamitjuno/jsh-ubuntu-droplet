@@ -28,51 +28,51 @@
                                             <th>Ticket ID</th>
                                             <th>Status</th>
                                             <th>Kunde</th>
-                                            <th>Angebot Summe</th>
+                                            <th>Ticket Summe</th>
                                             <th>Datum</th>
-                                            <th>Angebot File</th>
+                                            <th>Ticket PDF</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for angebot, angebot_file, formatted_name in zipped_tickets %}
+                                        {% for ticket, ticket_file, formatted_name in zipped_tickets %}
                                             <tr>
-                                                <td>{% if angebot.angebot_id_assigned %}
-                                                    {{ angebot.angebot_id }}
+                                                <td>{% if ticket.angebot_id_assigned %}
+                                                    {{ ticket.ticket_id }}
                                                     {% else %}
                                                         noch nicht zugeordnet 
                                                         {% endif %}
                                                     </td>
                                                 </td>
-                                                {% if angebot.status == "bekommen" %}
+                                                {% if ticket.status == "bekommen" %}
                                                 <td class="link-warning">
-                                                    {{ angebot.status }}
+                                                    {{ ticket.status }}
                                                 </td>
-                                                {% elif angebot.status == "angenommen" %}
+                                                {% elif ticket.status == "angenommen" %}
                                                 <td class="link-success">
-                                                    {{ angebot.status }}
+                                                    {{ ticket.status }}
                                                 </td>
-                                                {% elif angebot.status == "abgelaufen" or angebot.status == "abgelehnt" %}
+                                                {% elif ticket.status == "abgelaufen" or ticket.status == "abgelehnt" %}
                                                 <td class="link-danger">
-                                                    {{ angebot.status }}
+                                                    {{ ticket.status }}
                                                 </td>
-                                                {% elif angebot.status == "in Kontakt" or angebot.status == "Kontaktversuch" %}
+                                                {% elif angebot.status == "in Kontakt" or ticket.status == "Kontaktversuch" %}
                                                 <td class="link-primary">
-                                                    {{ angebot.status }}
+                                                    {{ ticket.status }}
                                                 </td>
                                                 {% else %}
                                                 <td>
-                                                    {{ angebot.status }}
+                                                    {{ ticket.status }}
                                                 </td>
                                                 {% endif %}
                                                 
                                                 
-                                                <td>{{ angebot.name }}</td>
-                                                <td>{{ angebot.angebotsumme|format_price }}</td>
-                                                <td>{{ angebot.current_date }}</td>
+                                                <td>{{ ticket.name }}</td>
+                                                <td>{{ ticket.angebotsumme|format_price }}</td>
+                                                <td>{{ ticket.current_date }}</td>
                                                 <td>
-                                                    <a href="{{ angebot_file }}" target="_blank" class="link-info">
+                                                    <a href="{{ ticket_file }}" target="_blank" class="link-info">
                                                         
-                                                            {{ formatted_name }}_{{ angebot.angebot_id }}.pdf
+                                                            {{ formatted_name }}_{{ ticket.ticket_id }}.pdf
                                                         
                                                     </a>                    
                                                 </td>
