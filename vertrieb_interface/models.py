@@ -405,7 +405,6 @@ class VertriebAngebot(TimeStampMixin):
     kabelanschluss = models.FloatField(
         default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
-    hub_included = models.BooleanField(default=False)
     geruestKunde = models.BooleanField(default=False)
     geruestOeffentlich = models.BooleanField(default=False)
     smartDongleLte = models.BooleanField(default=False)
@@ -1349,8 +1348,6 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.metall_ziegel_preis)
         if self.prefa_befestigung:
             accessories_price += float(self.prefa_befestigung_preis)
-        if self.hub_included == True:
-            accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
             accessories_price += float(self.wandhalterung_fuer_speicher_preis)
         if self.elwa:
@@ -1744,10 +1741,6 @@ class VertriebTicket(TimeStampMixin):
         null=True,
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
-    kabelanschluss = models.FloatField(
-        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
-    )
-    hub_included = models.BooleanField(default=False)
     geruestKunde = models.BooleanField(default=False)
     geruestOeffentlich = models.BooleanField(default=False)
     smartDongleLte = models.BooleanField(default=False)
@@ -2306,10 +2299,6 @@ class VertriebTicket(TimeStampMixin):
         if self.wallbox_anzahl:
             preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
-            if self.kabelanschluss and self.kabelanschluss >= 10:
-                preis += (self.kabelanschluss - 10) * self.get_optional_accessory_price(
-                    "kabelpreis"
-                )
             return preis
         else:
             return 0.00
@@ -2343,8 +2332,6 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.metall_ziegel_preis)
         if self.prefa_befestigung:
             accessories_price += float(self.prefa_befestigung_preis)
-        if self.hub_included == True:
-            accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.wandhalterung_fuer_speicher_preis:
             accessories_price += float(self.wandhalterung_fuer_speicher_preis)
         if self.elwa:

@@ -67,12 +67,6 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item" role="presentation">
-                                                <a href="#module" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block h4">PV-Anlage</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
                                                 <a href="#zubehoer" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Zubehör</span>
@@ -92,7 +86,7 @@
                                             <div class="card-body">
                                                 <div class="row">
                                                     <!-- Column 1 -->
-                                                    <div class="col-lg-5">
+                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
                                                         <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Interessenteninfo</div>
                                                             <div class="card-body">
@@ -199,7 +193,7 @@
                                                 </div><!-- End of row -->
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="module" role="presentation">
+                                        <div class="tab-pane" id="zubehoer" role="presentation">
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-lg-4">
@@ -216,14 +210,6 @@
                                                                         <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
                                                                             {{ form.modulanzahl }}
                                                                         </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Modulleistung</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_ticket.modulleistungWp }} Wp</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Modulsumme</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_ticket.modulsumme_kWp }} kWp</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -269,73 +255,8 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                    </div> 
+                                                    </div>
                                                     <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Montage)</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.komplex.label_tag }}</th>
-                                                                        <td id="komplex" name="komplex">{{ form.komplex }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Zahlungsmodalitäten</th>
-                                                                        <td>{{ form.zahlungsbedingungen }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Netto</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Brutto</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.kosten_pva|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> 
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane" id="zubehoer" role="presentation">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wallbox</div>
-                                                            <div class="card-body">
-                                                                 <table class="table table-sm table-hover">
-                                                                    <tr hidden>
-                                                                        <th>{{ form.wallbox.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                                                <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
-                                                                        <td>{{ form.wallboxtyp }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
-                                                                        <td>{{ form.wallbox_anzahl }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.midZaehler.label_tag }}</th>
-                                                                        <td>{{ form.midZaehler }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.kabelanschluss.label_tag }}</th>
-                                                                        <td>{{ form.kabelanschluss }}</td>
-                                                                    </tr>
-                                                                 </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
                                                             <div class="card-body">
@@ -485,7 +406,52 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wallbox</div>
+                                                            <div class="card-body">
+                                                                 <table class="table table-sm table-hover">
+                                                                    <tr hidden>
+                                                                        <th>{{ form.wallbox.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
+                                                                                <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
+                                                                        <td>{{ form.wallboxtyp }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
+                                                                        <td>{{ form.wallbox_anzahl }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.midZaehler.label_tag }}</th>
+                                                                        <td>{{ form.midZaehler }}</td>
+                                                                    </tr>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis Ticket</div>
+                                                            <div class="card-body">
+                                                                <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>Preis Netto</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Preis Brutto</th>
+                                                                        <td class="text-success-emphasis">{{ vertrieb_ticket.kosten_pva|format_price }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> 
                                             </div>
                                         </div>
                                     </div>
@@ -690,9 +656,7 @@
                     </div>
                 </div> 
         </form>
-
-        
-        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+                
 <script>
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
@@ -769,7 +733,6 @@ function toggleAnzWandhalterung(value) {
 }
 
 
-
 function calculateGesamtkapazitat() {
     var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
     var hersteller = $('#hersteller').val(); // Correctly get the value as a string
@@ -802,70 +765,7 @@ function submitFormWithAction(actionType) {
     document.getElementById('main-form').submit();
 }
 </script>
-
-
-
-        {% comment %} <script>
-        $(document).ready(function() {
-            toggleAnzWandhalterung($('#hersteller').val());
-            calculateGesamtkapazitat();
-            $('#anz_speicher').change(calculateGesamtkapazitat);
-
-            $("#hersteller").change(function() {
-                toggleAnzWandhalterung($(this).val());
                 
-                var hersteller = $(this).val();
-                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
-                
-                if(hersteller == "Viessmann") {
-                    limitModulanzahl(28);
-                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                } else if(hersteller == "Huawei") {
-                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                } else {
-                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
-                }
-
-                $("#wechselrichter_model").html(wechselrichterOptions);
-                $("#speicher_model").html(speicherOptions);
-                $("#wallboxtyp").html(wallboxtypOptions);
-            });
-        });
-
-        function toggleAnzWandhalterung(value) {
-            if (value === 'Viessmann') {
-                $('#anz_wandhalterung_row').hide();
-            } else {
-                $('#anz_wandhalterung_row').show();
-            }
-        }
-
-        function calculateGesamtkapazitat() {
-            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-            $('#gesamtkapazitat').val(anz_speicher * 5);
-        }
-
-        function limitModulanzahl(maxValue) {
-                $('#modulanzahl').change(function() {
-                    var value = parseInt($(this).val());
-                    if (value > maxValue) {
-                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-                        $(this).val(maxValue);
-                    }
-                });
-            }
-            function submitFormWithAction(actionType) {
-        document.getElementById('actionType').value = actionType;
-        document.getElementById('main-form').submit();
-    }
-        </script> {% endcomment %}
-
-
-    <!--- #############################################################################################-->
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -886,7 +786,7 @@ function submitFormWithAction(action) {
     console.log(`Action to perform: ${action}`);
 }
 </script>
-
+                <!--- Locked state starting here --->
     {% else %}
         <form id="main-form" method="POST" onsubmit="updateDisplay();" action="{% url 'vertrieb_interface:edit_ticket_new' ticket_id=vertrieb_ticket.ticket_id %}">
             {% csrf_token %}
@@ -922,12 +822,6 @@ function submitFormWithAction(action) {
                                                 <a href="#info" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" aria-selected="false" role="tab">
                                                     <i class="mdi mdi-home-variant d-md-none d-block"></i>
                                                     <span class="d-none d-md-block h4">Info</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <a href="#module" onclick=toggleActiveTabFeature() data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="true" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-panorama-sphere-outline d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
                                             </li>
                                             {% if vertrieb_ticket.status == "angenommen" %}
@@ -1011,302 +905,7 @@ function submitFormWithAction(action) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                        <!-- Column 2 -->
-                                                            {% if user.map_notizen_container_view == "Map" %}
-                                                                {% include 'vertrieb/extra/map.html' %}
-                                                            {% elif user.map_notizen_container_view == "Notizen" %}
-                                                                {% include 'vertrieb/extra/notizen.html' %}
-                                                           {% endif %}
                                                 </div><!-- End of row -->
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane" id="module" role="presentation">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Module</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.solar_module.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.solar_module.name }}" value="{{ form.solar_module.value }}" readonly></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.modulanzahl.label_tag }}</th>
-                                                                        <td id="modulanzahl" name="modulanzahl" data-bs-toggle="tooltip">
-                                                                            <input type="text" class="form-control" name="{{ form.modulanzahl.name }}" value="{{ form.modulanzahl.value }}" readonly>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            <input type="text" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}" readonly>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <th>Modulleistung</th>
-                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_ticket.modulleistungWp }} Wp</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Modulsumme</th>
-                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_ticket.modulsumme_kWp }} kWp</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.hersteller.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.hersteller.name }}" value="{{ form.hersteller.value }}" readonly></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wechselrichter_model.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.wechselrichter_model.name }}" value="{{ form.wechselrichter_model.value }}" readonly></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.speicher_model.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.speicher_model.name }}" value="{{ form.speicher_model.value }}" readonly></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.anz_speicher.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.anz_speicher.name }}" value="{{ form.anz_speicher.value }}" readonly></td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div> 
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis PV-Anlage (inkl. Montage)</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.komplex.label_tag }}</th>
-                                                                        <td id="komplex" name="komplex">{{ form.komplex }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Zahlungsmodalitäten</th>
-                                                                        <td>{{ form.zahlungsbedingungen }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Netto</th>
-                                                                        <td>{{ vertrieb_ticket.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Preis Brutto</th>
-                                                                        <td>{{ vertrieb_ticket.kosten_pva|format_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                                {% if vertrieb_ticket.angebot_id_assigned == False %}
-                                                                <button type="submit" name="angebotsumme_rechnen" form="main-form" class="btn btn-soft-info rounded-pill">Ticket Summe rechnen</button>
-                                                                {% else %}
-                                                                <button type="submit" form="main-form" disabled id="save-all-forms" class="btn btn-outline-info rounded-pill">Ticket Summe rechnen</button>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane" id="zubehoer" role="presentation">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wallbox</div>
-                                                            <div class="card-body">
-                                                                 <table class="table table-sm table-hover">
-                                                                    <tr hidden>
-                                                                        <th>{{ form.wallbox.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="wallbox-checkbox" {% if form.wallbox.value %}checked{% endif %} data-switch="success" name="{{ form.wallbox.html_name }}" />
-                                                                                <label class="custom-control-label" for="wallbox-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wallboxtyp.label_tag }}</th>
-                                                                        <td>{{ form.wallboxtyp }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wallbox_anzahl.label_tag }}</th>
-                                                                        <td>{{ form.wallbox_anzahl }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.midZaehler.label_tag }}</th>
-                                                                        <td>{{ form.midZaehler }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.kabelanschluss.label_tag }}</th>
-                                                                        <td>{{ form.kabelanschluss }}</td>
-                                                                    </tr>
-                                                                 </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
-                                                            <div class="card-body">
-                                                                 <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.notstrom.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch04" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.smartDongleLte.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="smartDongleLte" {% if form.smartDongleLte.value %}checked{% endif %} data-switch="success" name="{{ form.smartDongleLte.html_name }}" />
-                                                                                <label class="custom-control-label" for="smartDongleLte" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="bool_elwa_row">
-                                                                        <th>{{ form.elwa.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="elwa" {% if form.elwa.value %}checked{% endif %} data-switch="success" name="{{ form.elwa.html_name }}" />
-                                                                                <label class="custom-control-label" for="elwa" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.thor.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="thor" {% if form.thor.value %}checked{% endif %} data-switch="success" name="{{ form.thor.html_name }}" />
-                                                                                <label class="custom-control-label" for="thor" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="heizstab_row" class="conditional-row">
-                                                                        <th>{{ form.heizstab.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="heizstab-checkbox" {% if form.heizstab.value %}checked{% endif %} data-switch="success" name="{{ form.heizstab.html_name }}" />
-                                                                                <label class="custom-control-label" for="heizstab-checkbox" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch31" {% if form.wandhalterung_fuer_speicher.value %}checked{% endif %} data-switch="success" name="{{ form.wandhalterung_fuer_speicher.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch31" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="anz_wandhalterung_row" class="conditional-row">
-                                                                        <th>{{ form.anz_wandhalterung_fuer_speicher.label_tag }}</th>
-                                                                        <td>
-                                                                            <input type="number" id="anz_wandhalterung_fuer_speicher" class="form-control" name="{{ form.anz_wandhalterung_fuer_speicher.html_name }}" value="{{ form.anz_wandhalterung_fuer_speicher.value }}" />
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.apzFeld.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="apzFeld" {% if form.apzFeld.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeld.html_name }}" />
-                                                                                <label class="custom-control-label" for="apzFeld" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.zaehlerschrank.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="zaehlerschrank" {% if form.zaehlerschrank.value %}checked{% endif %} data-switch="success" name="{{ form.zaehlerschrank.html_name }}" />
-                                                                                <label class="custom-control-label" for="zaehlerschrank" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr hidden>
-                                                                        <th>{{ form.potentialausgleich.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="potentialausgleich" {% if form.potentialausgleich.value %}checked{% endif %} data-switch="success" name="{{ form.potentialausgleich.html_name }}" />
-                                                                                <label class="custom-control-label" for="potentialausgleich" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.beta_platte.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="beta_platte" {% if form.beta_platte.value %}checked{% endif %} data-switch="success" name="{{ form.beta_platte.html_name }}" />
-                                                                                <label class="custom-control-label" for="beta_platte" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.metall_ziegel.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="metall_ziegel" {% if form.metall_ziegel.value %}checked{% endif %} data-switch="success" name="{{ form.metall_ziegel.html_name }}" />
-                                                                                <label class="custom-control-label" for="metall_ziegel" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.prefa_befestigung.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="prefa_befestigung" {% if form.prefa_befestigung.value %}checked{% endif %} data-switch="success" name="{{ form.prefa_befestigung.html_name }}" />
-                                                                                <label class="custom-control-label" for="prefa_befestigung" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.geruestKunde.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="geruestKunde" {% if form.geruestKunde.value %}checked{% endif %} data-switch="success" name="{{ form.geruestKunde.html_name }}" />
-                                                                                <label class="custom-control-label" for="geruestKunde" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="geruestOeff_row" class="conditional-row">
-                                                                        <th>{{ form.geruestOeffentlich.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="geruestOeffentlich" {% if form.geruestOeffentlich.value %}checked{% endif %} data-switch="success" name="{{ form.geruestOeffentlich.html_name }}" />
-                                                                                <label class="custom-control-label" for="geruestOeffentlich" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.dachhakenKunde.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="dachhakenKunde" {% if form.dachhakenKunde.value %}checked{% endif %} data-switch="success" name="{{ form.dachhakenKunde.html_name }}" />
-                                                                                <label class="custom-control-label" for="dachhakenKunde" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                 </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1315,168 +914,55 @@ function submitFormWithAction(action) {
                         </div>
                     </div>
                 <div class="row">
-                    <div class="col-xxl-6">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="mdi mdi-file-document widget-icon"></i>
-                                        </div>
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
-                                        {% if vertrieb_ticket.angebot_id_assigned %}
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
-                                        {% else %}
-                                            <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
-                                        {% endif %}
-                                        {% if vertrieb_ticket.countdown and vertrieb_ticket.status == 'bekommen' %}
-                                        <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_ticket.countdown }}</span><span class="text-nowrap h4"> ab.</span>
-                                        <p></p>
-                                        {% endif %}
-                                        <p class="mb-0 text-muted">
-                                            {% if not vertrieb_ticket.is_locked %}
-                                                <span class="text-success me-2"></i> Verfügbar</span>
+                        <div class="col-xxl-4">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <div class="float-end">
+                                                <i class="mdi mdi-file-document widget-icon"></i>
+                                            </div>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Ticket ID</h5>
+                                            {% if vertrieb_ticket.angebot_id_assigned %}
+                                                <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
                                             {% else %}
-                                                <span class="text-danger me-2"></i> Nicht verfügbar</span>
-                                            {% endif %}    
-                                                <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
-                                        </p>
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="mdi mdi-account widget-icon"></i>
-                                        </div>
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
-                                            <p hidden>{{ form.zoho_kundennumer}}</p>
+                                                <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
+                                            {% endif %}
+                                            {% if vertrieb_ticket.countdown %}
+                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_ticket.countdown }}</span><span class="text-nowrap h4"> ab.</span>
                                             <p></p>
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                        </div> <!-- end row -->
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        {% if vertrieb_ticket.status == 'bekommen' or vertrieb_ticket.status == 'abgelaufen'%} 
-                                        <div class="float-end">
-                                            <button hidden name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
-                                        </div>
-                                        {% endif %}
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_ticket.anfrage_vom }}</h5>
-                                        <p></p>
-                                        {% if not vertrieb_ticket.is_locked %}
-                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            <h4 hidden>{{ form.status }}</h4>
-                                        {% else %}
-                                        <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                        <h4 hidden>{{ form.status }}</h4>
-                                           <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
-                                        {% endif %}
-                                        {% if vertrieb_ticket.status == 'bekommen' or vertrieb_ticket.status == 'abgelaufen'%} 
-                                            <p class="mb-0 text-muted">                                         
-                                                <span class="text-success me-2"></i> {{ vertrieb_ticket.status_change_field }}</span>
-                                                <span class="text-nowrap">Änderungsdatum</span>
+                                            {% endif %}
+                                            <p class="mb-0 text-muted">
+                                                {% if not vertrieb_ticket.is_locked %}
+                                                    <span class="text-success me-2"></i> Verfügbar</span>
+                                                {% else %}
+                                                    <span class="text-danger me-2"></i> Nicht verfügbar</span>
+                                                {% endif %}    
+                                                    <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
                                             </p>
-                                        {% endif %}
-                                        
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
-
-                                                    <script>
-                                                        function showSpinner() {
-                                                            var spinner = document.querySelector('.spinner-border');
-                                                            if (spinner.style.display === 'none' || spinner.style.display === '') {
-                                                                spinner.style.display = 'inline-block';
-                                                            }
-                                                        }
-                                                    </script>
-
-                                                    <div class="row m-2">
-                                                        
-                                                        <button type="submit" form="main-form" id="save-all-forms" class="btn btn-outline-success rounded-pill" onclick="setAction('save')" disabled>
-                                                            Speichern
-                                                        </button>
-
-                                                    </div>
-                                                    <div class="d-flex align-items-center">
-                                                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>
-                                                            </div>
-                                                        <button hidden type="submit" form="main-form" id="save-all-forms" class="btn btn-success rounded-pill" >Speichern</button>
-
-                                                
-                                                    <div class="row m-2">
-                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#info-alert-modal" class="btn btn-outline-info rounded-pill">Ticket PDF erstellen</button>
-                                                        
-                                                    </div>
-                                                    <div id="info-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-body p-4">
-                                                                    <div class="text-center">
-                                                                        <i class="ri-information-line h1 text-info"></i>
-                                                                        <h4 class="mt-2">Achtung!</h4>
-                                                                        <p class="mt-3">Diese Aktion setzt den Status des Angebots automatisch auf "bekommen" und leitet Sie zur PDF-Seite des Angebots weiter. Wollen Sie das fortsetzen?"</p>
-                                                                        <script>
-                                                                            function redirectToPdfCreation() {
-                                                                                // Replace 'yourUrl' with the Django URL generated by the template tag
-                                                                                var yourUrl = "{% url 'vertrieb_interface:create_ticket_new_pdf_user' vertrieb_ticket.ticket_id %}";
-                                                                                window.location.href = yourUrl;
-                                                                            }
-                                                                        </script>
-
-                                                                            
-                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                                                                            <button type="button" id="pdf_erstellen" onclick="redirectToPdfCreation();" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div><!-- /.modal-content -->
-                                                        </div><!-- /.modal-dialog -->
-                                                    </div>
-
-                                                    <div id="info-alert-modal2" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-body p-4">
-                                                                    <div class="text-center">
-                                                                        <i class="ri-information-line h1 text-info"></i>
-                                                                        <h4 class="mt-2">Achtung!</h4>
-                                                                        <p class="mt-3">Diese Aktion setzt den Status des Angebots automatisch auf "bekommen" und leitet Sie zur PDF-Seite des Angebots weiter. Wollen Sie das fortsetzen?"</p>
-                                                                        <script>
-                                                                            function redirectToPdfCalcCreation() {
-                                                                                // Replace 'yourUrl' with the Django URL generated by the template tag
-                                                                                var yourUrl = "{% url 'vertrieb_interface:create_angebot_and_calc_pdf' vertrieb_ticket.ticket_id %}";
-                                                                                window.location.href = yourUrl;
-                                                                            }
-                                                                        </script>
-                                                                        
-                                                                            
-                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                                                                            
-                                                                            <button type="button" id="pdf_and_calc_erstellen" onclick="redirectToPdfCalcCreation();" class="btn btn-info my-2" data-bs-dismiss="modal">Weiter...</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div><!-- /.modal-content -->
-                                                        </div><!-- /.modal-dialog -->
-                                                    </div>
+                                        </div> 
+                                    </div> 
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <table class="table table-sm table-hover">
+                                                <tr>
+                                                    <th>Preis Netto</th>
+                                                    <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Preis Brutto</th>
+                                                    <td class="text-success-emphasis">{{ vertrieb_ticket.kosten_pva|format_price }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    </div>
-                </div><!-- End ROW -->
+                        </div>
+                    </div><!-- End ROW -->
             </div> 
         </form>
        
@@ -1575,176 +1061,13 @@ $(document).ready(function() {
 </script>
 
 <script>
-$(document).ready(function() {
-    toggleAnzWandhalterung($('#hersteller').val());
-    toggleHeizstab(document.getElementById('thor').checked);
-    toggleGeruestOeff(document.getElementById('geruestKunde').checked);
-    toggleBoolelwaRow($('#hersteller').val());
-    setFieldOptions($('#hersteller').val());
-    calculateGesamtkapazitat();
-    $('#anz_speicher').change(calculateGesamtkapazitat);
-
-    $("#hersteller").change(function() {
-        toggleAnzWandhalterung($(this).val());
-        toggleBoolelwaRow($(this).val());
-        calculateGesamtkapazitat(); // Recalculate when manufacturer changes
-        
-        var hersteller = $(this).val();
-        setFieldOptions(hersteller);
-    });
-});
-
-function toggleHeizstab(value){
-    if (value === true) {
-        $('#heizstab_row').show();
-    } else {
-        $('#heizstab_row').hide();
-    }
-
-}
-
-function toggleGeruestOeff(value){
-    if (value === false) {
-        $('#geruestOeff_row').show();
-    } else {
-        $('#geruestOeff_row').hide();
-    }
-}
-
-function toggleAnzWandhalterung(value) {
-    if (value === 'Viessmann') {
-        $('#anz_wandhalterung_row').hide();
-    } else {
-        $('#anz_wandhalterung_row').show();
-    }
-}
-
-function setFieldOptions(value) {
-    var wechselrichterOptions, speicherOptions, smartmeterOptions;
-
-        if(value == "Viessmann") {
-            limitModulanzahl(28);
-            wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-            speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-            smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
-        } else if(value == "Huawei") {
-            wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            if($('#speicher_model').val() == "LUNA 2000-5-S0"){
-                speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
-            }
-            else {
-                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
-            }
-            if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
-                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
-            }
-            else {
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
-            }
-        } else {
-            wechselrichterOptions = speicherOptions = smartmeterOptions = '<option value="">-----</option>';
-        }
-    
-        $("#wechselrichter_model").html(wechselrichterOptions);
-        $("#speicher_model").html(speicherOptions);
-        $("#smartmeter_model").html(smartmeterOptions);
-}
-
-function toggleBoolelwaRow(value) {
-    if (value === 'Viessmann') {
-        $('#bool_elwa_row').hide();
-    } else {
-        $('#bool_elwa_row').show();
-    }
-}
-
-function calculateGesamtkapazitat() {
-    var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
-    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
-    var modell = $('#speicher_model').val();
-
-    if (modell === 'LUNA 2000-5-S0') {
-        gesamtkapazitat = anz_speicher * 5;
-    } else if (modell === 'LUNA 2000-7-S1') {
-        gesamtkapazitat = anz_speicher * 6.9;
-    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
-    }
-
-    $('#gesamtkapazitat').val(gesamtkapazitat.toFixed(2));
-}
-
-function limitModulanzahl(maxValue) {
-    $('#modulanzahl').change(function() {
-        var value = parseInt($(this).val());
-        if (value > maxValue) {
-            alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-            $(this).val(maxValue);
-        }
-    });
-}
 
 function submitFormWithAction(actionType) {
     document.getElementById('actionType').value = actionType;
     document.getElementById('main-form').submit();
 }
 </script>
-
-        {% comment %} <script>
-        $(document).ready(function() {
-            toggleAnzWandhalterung($('#hersteller').val());
-            calculateGesamtkapazitat();
-            $('#anz_speicher').change(calculateGesamtkapazitat);
-
-            $("#hersteller").change(function() {
-                toggleAnzWandhalterung($(this).val());
-                
-                var hersteller = $(this).val();
-                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
-                
-                if(hersteller == "Viessmann") {
-                    limitModulanzahl(28);
-                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                } else if(hersteller == "Huawei") {
-                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                } else {
-                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
-                }
-
-                $("#wechselrichter_model").html(wechselrichterOptions);
-                $("#speicher_model").html(speicherOptions);
-                $("#wallboxtyp").html(wallboxtypOptions);
-            });
-        });
-
-        function toggleAnzWandhalterung(value) {
-            if (value === 'Viessmann') {
-                $('#anz_wandhalterung_row').hide();
-            } else {
-                $('#anz_wandhalterung_row').show();
-            }
-        }
-
-        function calculateGesamtkapazitat() {
-            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-            $('#gesamtkapazitat').val(anz_speicher * 5);
-        }
-
-        function limitModulanzahl(maxValue) {
-                $('#modulanzahl').change(function() {
-                    var value = parseInt($(this).val());
-                    if (value > maxValue) {
-                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-                        $(this).val(maxValue);
-                    }
-                });
-            }
-        </script> {% endcomment %}
+            
         {% endif %}
         <footer class="footer">
                 <div class="container-fluid">
@@ -1951,28 +1274,7 @@ $(document).ready(function() {
         })
     }(window.jQuery)
 </script>
-
-
-{% comment %} 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var anredeField = document.getElementById('id_anrede');
-    var firstNameField = document.getElementById('tr_first_name');
-    var lastNameLabel = document.querySelector('label[for="id_nachname"]');
-
-    function updateFirstNameField() {
-        if (anredeField.value === 'Firma') {
-            firstNameField.setAttribute('hidden', true);
-            lastNameLabel.textContent = 'Firma';
-        } else {
-            firstNameField.removeAttribute('hidden');
-            lastNameLabel.textContent = 'Nachname';
-        }
-    }
-    updateFirstNameField();
-    anredeField.addEventListener('change', updateFirstNameField);
-});
-</script> {% endcomment %}
+    
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -2049,71 +1351,10 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(pollForChanges, 3000);
 });
 </script>
-
-
-{% comment %} <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const longitudeInput = document.getElementById('longitude');
-    const latitudeInput = document.getElementById('latitude');
-    document.getElementById('map').style.height = '550px';
-    document.getElementById('map').style.width = '100%';
-// Then initialize the map
-
-
-    // Initialize the map
-    var map = L.map('map').setView([latitudeInput.value, longitudeInput.value], 14);
-
-    // Load and display tile layers on the map (from OpenStreetMap by default)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Marker
-    var marker = L.marker([latitudeInput.value, longitudeInput.value]).addTo(map);
-    // Call this when the container of the map is shown or resized
     
-
-
-
-
-
-
-
-    function pollForChanges() {
-        var newLat = parseFloat(latitudeInput.value);
-        var newLng = parseFloat(longitudeInput.value);
-
-        // Check if the current map center is different from the input values
-        if(map.getCenter().lat !== newLat || map.getCenter().lng !== newLng ||
-           marker.getLatLng().lat !== newLat || marker.getLatLng().lng !== newLng) {
-            updateMap();
-        }
-    }
-
-    // Update map function
-    function updateMap() {
-        console.log('Updating map with new coordinates');
-        var newLat = parseFloat(latitudeInput.value);
-        var newLng = parseFloat(longitudeInput.value);
-        map.setView([newLat, newLng], 14);
-        marker.setLatLng([newLat, newLng]);
-        // Update your marker position if you have one
-    }
-
-    // Set up polling every 1000 milliseconds (1 second)
-    setInterval(pollForChanges, 1000);
-});
-
-</script> {% endcomment %}
 {% endblock %}
 
 {% block extra_js %}
-{% comment %} <script src="https://maps.google.com/maps/api/js"></script> {% endcomment %}
-{% comment %} <script src="{% static 'assets/vendor/gmaps/gmaps.min.js' %}"></script> {% endcomment %}
-
-        <!-- Google Maps Demo js -->
-{% comment %} <script src="{% static 'assets/js/pages/demo.google-maps.js' %}"></script> {% endcomment %}
 <script src="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
 
 <!-- Code Highlight js -->

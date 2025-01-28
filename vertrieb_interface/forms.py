@@ -2602,18 +2602,6 @@ class VertriebTicketForm(ModelForm):
             }
         ),
     )
-    kabelanschluss = forms.FloatField(
-        initial=10.0,
-        label="Kabelanschlusslänge [m]",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "kabelanschluss",
-                "style": "max-width: 300px",
-            }
-        ),
-    )
 
     solar_module = forms.ChoiceField(
         label="Solar Module",
@@ -2788,7 +2776,6 @@ class VertriebTicketForm(ModelForm):
             "wallbox",
             "wallboxtyp",
             "wallbox_anzahl",
-            "kabelanschluss",
             "solar_module",
             "modulanzahl",
             "elwa",
@@ -2869,8 +2856,6 @@ class VertriebTicketForm(ModelForm):
         self.fields["postanschrift_longitude"].widget.attrs.update(
             {"id": "id_postanschrift_longitude"}
         )
-
-        self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "wandhalterung_fuer_speicher"}
         )
