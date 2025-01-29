@@ -2775,7 +2775,7 @@ class VertriebTicketForm(ModelForm):
             filtered_data = [
                 item
                 for item in load_json_data(user.zoho_data_text)
-                if item["status"] not in ["abgelehnt", "storniert", "angenommen"]
+                if item["status"] not in ["abgelehnt", "storniert"]
             ]
 
             if filtered_data:
