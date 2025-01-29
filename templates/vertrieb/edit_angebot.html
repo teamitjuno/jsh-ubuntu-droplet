@@ -1016,11 +1016,7 @@
                                                 <i class="mdi mdi-file-document widget-icon"></i>
                                             </div>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
-                                            {% if vertrieb_angebot.angebot_id_assigned %}
-                                                <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
-                                            {% else %}
-                                                <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
-                                            {% endif %}
+                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
                                             {% if vertrieb_angebot.countdown %}
                                             <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
                                             <p></p>
@@ -2341,11 +2337,7 @@ function submitFormWithAction(action) {
                                             <i class="mdi mdi-file-document widget-icon"></i>
                                         </div>
                                         <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
-                                        {% if vertrieb_angebot.angebot_id_assigned %}
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
-                                        {% else %}
-                                            <h3 class="mt-3 mb-3">Noch nicht zugeordnet</h3>
-                                        {% endif %}
+                                        <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
                                         {% if vertrieb_angebot.countdown and vertrieb_angebot.status == 'bekommen' %}
                                         <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
                                         <p></p>

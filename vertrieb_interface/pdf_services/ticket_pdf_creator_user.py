@@ -265,10 +265,10 @@ class PDF(FPDF):
 
         # ANGEBOT_untertitel
         ANGEBOT_untertitel_content = self.get_attribute_by_identifier(
-            "ANGEBOT_untertitel", "content"
+            "ZUSATZ_untertitel", "content"
         )
         self.setup_text(
-            "ANGEBOT_untertitel",
+            "ZUSATZ_untertitel",
             ANGEBOT_untertitel_content,
             h=6,
             bold=True,

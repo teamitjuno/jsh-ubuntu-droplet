@@ -246,6 +246,14 @@ Editierbarer_Text.objects.create(
     x=0,
     font_size=14
 )
+Editierbarer_Text.objects.create(
+    identifier='ZUSATZ_untertitel', 
+    content="Zusätzliche Vereinbarung", 
+    font='JUNO Solar Lt',
+    y=80, 
+    x=0,
+    font_size=14
+)
 
 # Create 'ANGEBOT_id_nummer' entry
 Editierbarer_Text.objects.create(
