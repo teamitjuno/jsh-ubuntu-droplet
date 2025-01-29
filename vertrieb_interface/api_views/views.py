@@ -1052,13 +1052,6 @@ def document_ticket_view(request, angebot_id):
 
 
 @login_required
-def document_ticket_new_view(request, ticket_id):
-    pdf_url = reverse("vertrieb_interface:serve_ticket_new_pdf", args=[ticket_id])
-    context = {"pdf_url": pdf_url, "ticket_id": ticket_id}
-    return render(request, "vertrieb/document_ticket_new_view.html", context)
-
-
-@login_required
 def serve_pdf(request, angebot_id):
     decoded_angebot_id = unquote(angebot_id)
     vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)

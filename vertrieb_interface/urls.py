@@ -185,11 +185,6 @@ path(
         views.document_ticket_view,
         name="document_ticket_view",
     ),
-    path(
-        "document_ticket_new/<str:angebot_id>/",
-        views.document_ticket_view,
-        name="document_view_ticket_new",
-    ),
     path("serve_dokumentation/", views.serve_dokumentation, name="serve_dokumentation"),
     path("documentation_view/", views.documentation_view, name="documentation_view"),
     path("send_invoice/<str:angebot_id>/", views.send_invoice, name="send_invoice"),

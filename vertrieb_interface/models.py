@@ -1837,11 +1837,11 @@ class VertriebTicket(TimeStampMixin):
             user = User.objects.get(id=self.user.pk)
             kurz = user.kuerzel  # Assuming 'kuerzel' is an attribute of User
             current_datetime = datetime.datetime.now()
-            return f"AN-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+            return f"ZV-{kurz}{current_datetime.strftime('%d%m%Y-%H%M%S')}"
         else:
             # Return a default ID
             current_datetime = datetime.datetime.now()
-            return f"AN-DEFAULT{current_datetime.strftime('%d%m%Y-%H%M%S')}"
+            return f"ZV-DEFAULT{current_datetime.strftime('%d%m%Y-%H%M%S')}"
 
     def get_absolute_url(self):
         return reverse("edit_ticket_new", args=[str(self.angebot_id)])
