@@ -3,8 +3,17 @@ from math import ceil
 from fpdf import FPDF
 from config import settings
 from vertrieb_interface.pdf_services.helper_functions import convertCurrency
-from vertrieb_interface.models import Editierbarer_Text
 from vertrieb_interface.pdf_services.calc_pdf_creator import calcPage1, calcPage2
+from vertrieb_interface.models import Editierbarer_Text
+from prices.models import (
+    AndereKonfigurationWerte,
+    WrGarantiePreise,
+    KwpPreise,
+    OptionalAccessoriesPreise,
+    Sonderrabatt,
+    SolarModulePreise,
+    WallBoxPreise,
+)
 import os
 
 title = ""
@@ -161,20 +170,7 @@ class PDF(FPDF):
         """
         Ruft die Lade/Entladeleistung basierend auf der Anzahl der Batterien ab.
         """
-        if str(data["hersteller"]) == "Viessmann":
-            if str(data["batterieAnz"]) == "1":
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_3", "content"
-                )
-            elif str(data["batterieAnz"]) == "2":
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_4", "content"
-                )
-            else:
-                entladeleistung = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_viessman_5", "content"
-                )
-        elif str(data["hersteller"]) == "Huawei":
+        if "hersteller" not in data or str(data["hersteller"]) == "Huawei":
             if str(data["batterieAnz"]) == "1":
                 entladeleistung = self.get_attribute_by_identifier(
                     "tabelle_eintrag_4_huawei5_3", "content"
@@ -186,6 +182,19 @@ class PDF(FPDF):
             else:
                 entladeleistung = self.get_attribute_by_identifier(
                     "tabelle_eintrag_4_huawei5_5", "content"
+                )
+        elif str(data["hersteller"]) == "Viessmann":
+            if str(data["batterieAnz"]) == "1":
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_3", "content"
+                )
+            elif str(data["batterieAnz"]) == "2":
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_4", "content"
+                )
+            else:
+                entladeleistung = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_4_viessman_5", "content"
                 )
         return entladeleistung
 
@@ -1001,407 +1010,6 @@ class PDF(FPDF):
 
         return eintrag
 
-    def page4(self, data, eintrag):
-        zubehoerVorhanden = anzahlZubehoer(data) > 0
-        if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0:
-            self.add_page()
-
-        if data["kWp"] >= 25.0:
-            # Tabelle Eintrag 23
-            eintrag += 1
-            tab23_eintrag_nummer = str(eintrag) + "."
-            tab23_content_1 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_23", "content"
-            )
-            tab23_content_4 = self.get_attribute_by_identifier(
-                "tabelle_eintrag_23_1", "content"
-            )
-            self.setup_eintrag_text(
-                "tabelle_eintrag_23_1",
-                tab23_eintrag_nummer,
-                tab23_content_1,
-                content_2="1",
-                content_4=tab23_content_4,
-            )
-
-        if data["wallboxVorh"]:
-            self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
-            self.set_y(self.get_y() + 10)
-
-            # WALLBOX
-            wallbox_1 = self.get_attribute_by_identifier("wallbox_1", "content")
-            self.setup_text("wallbox_1", wallbox_1, bold=True, alignment="L")
-            wallbox_2 = self.get_attribute_by_identifier("wallbox_2", "content")
-            self.setup_text("wallbox_2", wallbox_2, alignment="L")
-
-            eintrag += 1
-            tab24_eintrag_nummer = str(eintrag) + "."
-            tab24_content_1 = str(data["wallboxTyp"])
-            tab24_content_2 = str(data["wallboxAnz"])
-            tab24_content_4 =  str(data["wallboxText"])
-            self.setup_eintrag_text(
-                "wallbox_typ",
-                tab24_eintrag_nummer,
-                content_1=tab24_content_1,
-                content_2=tab24_content_2,
-                content_4=tab24_content_4,
-            )
-
-        # OPTIONALES ZUBEHÖR
-        global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
-        if zubehoerVorhanden:
-            self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
-            self.set_y(self.get_y() + 10)
-
-            optionales_zubehoer_1 = self.get_attribute_by_identifier(
-                "optionales_zubehoer_1", "content"
-            )
-            self.setup_text(
-                "optionales_zubehoer_1", optionales_zubehoer_1, bold=True, alignment="L"
-            )
-            optionales_zubehoer_2 = self.get_attribute_by_identifier(
-                "optionales_zubehoer_2", "content"
-            )
-            self.setup_text(
-                "optionales_zubehoer_2", optionales_zubehoer_2, alignment="L"
-            )
-
-        if data["thor"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["thorName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["thorText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["heizstab"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["heizstabName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["heizstabText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["midZaehler"] > 0:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["midZaehlerName"])
-            tab28_content_2 = str(data["midZaehler"])
-            tab28_content_4 = str(data["midZaehlerText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["apzFeld"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["apzFeldName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["apzFeldText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["zaehlerschrank"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["zaehlerschrankName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["zaehlerschrankText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["potentialausgleich"] == True:
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["potentialausgleichName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["potentialausgleichText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        # Zubehör mit Herstellerbezug
-        if data["hersteller"] == "Huawei":
-            # OPTIMIERER HUAWEI
-            if data["anzOptimierer"] > 0:
-
-                eintrag += 1
-                tab25_eintrag_nummer = str(eintrag) + "."
-                tab25_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_huawei_1", "content"
-                )
-                tab25_content_2 = str(data["anzOptimierer"])
-                tab25_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_huawei_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_huawei_2",
-                    tab25_eintrag_nummer,
-                    tab25_content_1,
-                    content_2=tab25_content_2,
-                    content_4=tab25_content_4,
-                )
-
-            # NOTSTROM
-            if data["notstrom"]:
-                eintrag += 1
-                tab26_eintrag_nummer = str(eintrag) + "."
-                tab26_content_1 = self.get_attribute_by_identifier(
-                    "notstrom_huawei_1", "content"
-                )
-                tab26_content_2 = "1"
-                tab26_content_4 = self.get_attribute_by_identifier(
-                    "notstrom_huawei_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "notstrom_huawei_2",
-                    tab26_eintrag_nummer,
-                    tab26_content_1,
-                    content_2=tab26_content_2,
-                    content_4=tab26_content_4,
-                )
-
-            # WANDHALTERUNG
-            if data["anzWandhalterungSpeicher"] > 0:
-
-                # Tabelle Eintrag Wandhalterung
-                eintrag += 1
-                tab27_eintrag_nummer = str(eintrag) + "."
-                tab27_content_1 = self.get_attribute_by_identifier(
-                    "wandhalterung_huawei_1", "content"
-                )
-                tab27_content_2 = str(data["anzWandhalterungSpeicher"])
-
-                self.setup_eintrag_text(
-                    "wandhalterung_huawei_1",
-                    tab27_eintrag_nummer,
-                    tab27_content_1,
-                    content_2=tab27_content_2,
-                )
-
-            # HUAWEI ELWA
-            if data["elwa"] == True:
-                eintrag += 1
-                tab29_eintrag_nummer = str(eintrag) + "."
-                tab29_content_1 = str(data["elwaName"])
-                tab29_content_2 = "1"
-                tab29_content_4 = str(data["elwaText"])
-                self.setup_eintrag_text(
-                    "zubehoer_platzhalter",
-                    tab29_eintrag_nummer,
-                    tab29_content_1,
-                    content_2=tab29_content_2,
-                    content_4=tab29_content_4,
-                )
-
-        if data["hersteller"] == "Viessmann":
-
-            # OPTIMIERER VIESSMANN
-            if data["anzOptimierer"] > 0:
-                eintrag += 1
-                tab25_eintrag_nummer = str(eintrag) + "."
-                tab25_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_1", "content"
-                )
-                tab25_content_2 = str(data["anzOptimierer"])
-                tab25_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_2",
-                    tab25_eintrag_nummer,
-                    tab25_content_1,
-                    content_2=tab25_content_2,
-                    content_4=tab25_content_4,
-                )
-
-                eintrag += 1
-                tab26_eintrag_nummer = str(eintrag) + "."
-                tab26_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_3", "content"
-                )
-                tab26_content_2 = "1"
-                tab26_content_4 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_4", "content"
-                )
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_4",
-                    tab26_eintrag_nummer,
-                    tab26_content_1,
-                    content_2=tab26_content_2,
-                    content_4=tab26_content_4,
-                )
-
-                eintrag += 1
-                tab27_eintrag_nummer = str(eintrag) + "."
-                tab27_content_1 = self.get_attribute_by_identifier(
-                    "optimierer_viessmann_5", "content"
-                )
-                tab27_content_2 = "1"
-
-                self.setup_eintrag_text(
-                    "optimierer_viessmann_5",
-                    tab27_eintrag_nummer,
-                    tab27_content_1,
-                    content_2=tab27_content_2,
-                )
-
-            if data["notstrom"]:
-
-                eintrag += 1
-                tab28_eintrag_nummer = str(eintrag) + "."
-                tab28_content_1 = self.get_attribute_by_identifier(
-                    "notstrom_viessmann_1", "content"
-                )
-                tab28_content_2 = "1"
-                tab28_content_4 = self.get_attribute_by_identifier(
-                    "notstrom_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "notstrom_viessmann_2",
-                    tab28_eintrag_nummer,
-                    tab28_content_1,
-                    content_2=tab28_content_2,
-                    content_4=tab28_content_4,
-                )
-
-            # GRIDBOX
-            if data["wallboxAnz"] >= 2:
-
-                eintrag += 1
-                tab29_eintrag_nummer = str(eintrag) + "."
-                tab29_content_1 = self.get_attribute_by_identifier(
-                    "gridbox_viessmann_1", "content"
-                )
-                tab29_content_2 = "1"
-                tab29_content_4 = self.get_attribute_by_identifier(
-                    "gridbox_viessmann_2", "content"
-                )
-                self.setup_eintrag_text(
-                    "gridbox_viessmann_2",
-                    tab29_eintrag_nummer,
-                    tab29_content_1,
-                    content_2=tab29_content_2,
-                    content_4=tab29_content_4,
-                )
-        addedPage = False
-        if data["smartDongleLte"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["smartDongleLteName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["smartDongleLteText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        if data["betaPlatte"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["betaPlatteName"])
-            tab28_content_4 = str(data["betaPlatteText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_4=tab28_content_4,
-            )
-        if data["metallZiegel"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["metallZiegelName"])
-            tab28_content_4 = str(data["metallZiegelText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_4=tab28_content_4,
-            )
-        if data["prefaBefestigung"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["prefaBefestigungName"])
-            tab28_content_4 = str(data["prefaBefestigungText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_4=tab28_content_4,
-            )
-        if data["geruestKunde"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["geruestKundeName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["geruestKundeText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-
-        if data["dachhakenKunde"] == True:
-            eintrag += 1
-            if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > zubehoerLimitMitWallbox) or eintrag > zubehoerLimitOhneWallbox):
-                self.add_page()
-                addedPage = True
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = str(data["dachhakenKundeName"])
-            tab28_content_2 = "1"
-            tab28_content_4 = str(data["dachhakenKundeText"])
-            self.setup_eintrag_text(
-                "zubehoer_platzhalter",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
-            )
-        return eintrag
-
     def pricePage(self, data):
         self.add_page()
         self.is_last_page = False
@@ -1557,197 +1165,6 @@ class PDF(FPDF):
             h=24,
         )
 
-    def agbPage(self):
-        self.skip_logo = True
-        self.add_page()
-        self.is_last_page = True
-        self.set_text_color(0)
-        self.set_auto_page_break(auto=True, margin=15)
-
-        bold_texts = [
-            # allgemeine_geschäftsbedingungen_bold_text_1
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_1", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_2
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_2", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_3
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_3", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_4
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_4", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_5
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_5", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_6
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_6", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_7
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_7", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_8
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_8", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_9
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_9", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_10
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_10", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_11
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_11", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_12
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_12", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_13
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_13", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_14
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_14", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_15
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_15", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_16
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_16", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_17
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_17", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_18
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_18", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_19
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_19", "content"
-            ),
-            # allgemeine_geschäftsbedingungen_bold_text_20
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_bold_text_20", "content"
-            ),
-        ]
-
-        regular_texts = [
-            # allgemeine_geschäftsbedingungen_regular_text_1
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_1", "content"
-            ),
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_2", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_2
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_3", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_3
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_4", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_4
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_5", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_5
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_6", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_6
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_7", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_7
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_8", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_8
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_9", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_9
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_10", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_10
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_11", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_11
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_12", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_12
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_13", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_13
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_14", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_14
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_15", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_15
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_16", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_16
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_17", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_17
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_18", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_18
-            self.get_attribute_by_identifier(
-                "allgemeine_geschäftsbedingungen_regular_text_19", "content"
-            ),  # allgemeine_geschäftsbedingungen_regular_text_19
-        ]
-
-        column_width = 1000
-        columns_start_x = [
-            15,
-            self.w / 2 + 5,
-        ]  # assuming two columns with the page split in the middle
-        column = 0
-        self.set_y(10)
-
-        line_counter = 0
-
-        for bold, regular in zip(bold_texts, regular_texts):
-            # Check if adding more strings would exceed the 200-string limit
-            bold_lines = len(bold.split("\n"))
-            regular_lines = len(regular.split("\n"))
-
-            if line_counter + bold_lines + regular_lines > 96:
-                if column == 1:  # If it's the second column, we add a new page.
-                    self.add_page()
-                    column = 0  # Reset to first column
-                else:
-                    column += 1  # Move to the next column
-                self.set_y(10)  # Reset y to top
-                line_counter = 0  # Reset line counter for new column/columns
-
-            # Set x position based on column
-            self.set_x(columns_start_x[column])
-
-            # Print bold text
-            self.set_font("JUNO Solar Lt", "B", 8)
-            self.set_font_size_to_fit(bold, column_width)
-            self.multi_cell(column_width, 3.2, txt=bold)
-            line_counter += bold_lines
-
-            self.set_x(columns_start_x[column])
-            # Print regular text
-            self.set_font("JUNO Solar Lt", "", 8)
-            self.set_font_size_to_fit(regular, column_width)
-            self.multi_cell(column_width, 3.2, txt=regular)
-            line_counter += regular_lines
-
     def set_font_size_to_fit(self, text, width=1000):
         # Current size and width of the text
         current_size = self.font_size_pt
@@ -1762,19 +1179,6 @@ class PDF(FPDF):
 
         # Set the font size
         self.set_font_size(font_size)
-
-    def certPage(self, certifikate):
-        if certifikate:
-            self.add_page()
-            self.is_last_page = True
-            self.image(
-                certifikate.path,
-                x=5,
-                y=10,
-                w=198,
-            )
-        else:
-            pass
 
     def financePage(self, data):
         if data["finanzierung"]:
@@ -1898,12 +1302,12 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     eintrag = pdf.page1(data, eintrag)
     eintrag = pdf.page2(data, eintrag)
     eintrag = pdf.page3(data, eintrag)
-    eintrag = pdf.page4(data, eintrag)
+    pdf, eintrag = page4(pdf, data, eintrag, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox)
 
     pdf.pricePage(data)
     pdf.financePage(data)
-    pdf.certPage(certifikate)
-    pdf.agbPage()
+    pdf = certPage(pdf, certifikate)
+    pdf = agbPage(pdf)
 
     if withCalc:
         user_folder = os.path.join(
@@ -1917,3 +1321,607 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     # Generate the PDF and return it
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
     return pdf_content
+
+def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
+    zubehoerVorhanden = anzahlZubehoer(data) > 0
+    if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0:
+        pdf.add_page()
+
+    if data["kWp"] >= 25.0:
+        # Tabelle Eintrag 23
+        eintrag += 1
+        tab23_eintrag_nummer = str(eintrag) + "."
+        tab23_content_1 = pdf.get_attribute_by_identifier(
+            "tabelle_eintrag_23", "content"
+        )
+        tab23_content_4 = pdf.get_attribute_by_identifier(
+            "tabelle_eintrag_23_1", "content"
+        )
+        pdf.setup_eintrag_text(
+            "tabelle_eintrag_23_1",
+            tab23_eintrag_nummer,
+            tab23_content_1,
+            content_2="1",
+            content_4=tab23_content_4,
+        )
+
+    if data["wallboxVorh"]:
+        pdf.line(pdf.l_margin, pdf.get_y() + 5, 196.5, pdf.get_y() + 5)
+        pdf.set_y(pdf.get_y() + 10)
+
+        # WALLBOX
+        wallbox_1 = pdf.get_attribute_by_identifier("wallbox_1", "content")
+        pdf.setup_text("wallbox_1", wallbox_1, bold=True, alignment="L")
+        wallbox_2 = pdf.get_attribute_by_identifier("wallbox_2", "content")
+        pdf.setup_text("wallbox_2", wallbox_2, alignment="L")
+
+        eintrag += 1
+        tab24_eintrag_nummer = str(eintrag) + "."
+        tab24_content_1 = str(data["wallboxTyp"])
+        tab24_content_2 = str(data["wallboxAnz"])
+        tab24_content_4 =  str(data["wallboxText"])
+        pdf.setup_eintrag_text(
+            "wallbox_typ",
+            tab24_eintrag_nummer,
+            content_1=tab24_content_1,
+            content_2=tab24_content_2,
+            content_4=tab24_content_4,
+        )
+
+    # OPTIONALES ZUBEHÖR
+    limitMitWallbox, limitOhneWallbox
+    if zubehoerVorhanden:
+        pdf.line(pdf.l_margin, pdf.get_y() + 5, 196.5, pdf.get_y() + 5)
+        pdf.set_y(pdf.get_y() + 10)
+
+        optionales_zubehoer_1 = pdf.get_attribute_by_identifier(
+            "optionales_zubehoer_1", "content"
+        )
+        pdf.setup_text(
+            "optionales_zubehoer_1", optionales_zubehoer_1, bold=True, alignment="L"
+        )
+        optionales_zubehoer_2 = pdf.get_attribute_by_identifier(
+            "optionales_zubehoer_2", "content"
+        )
+        pdf.setup_text(
+            "optionales_zubehoer_2", optionales_zubehoer_2, alignment="L"
+        )
+
+    if data["thor"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("ac_thor_3_kw")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["heizstab"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("heizstab")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["midZaehler"] > 0:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("mid_zaehler")
+        tab28_content_2 = str(data["midZaehler"])
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["apzFeld"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("apzFeld")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["zaehlerschrank"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("zaehlerschrank")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["potentialausgleich"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("potentialausgleich")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    # Zubehör mit Herstellerbezug
+    if "hersteller" not in data or data["hersteller"] == "Huawei":
+        # OPTIMIERER HUAWEI
+        if data["anzOptimierer"] > 0:
+
+            eintrag += 1
+            tab25_eintrag_nummer = str(eintrag) + "."
+            tab25_content_1 = pdf.get_attribute_by_identifier(
+                "optimierer_huawei_1", "content"
+            )
+            tab25_content_2 = str(data["anzOptimierer"])
+            tab25_content_4 = pdf.get_attribute_by_identifier(
+                "optimierer_huawei_2", "content"
+            )
+            pdf.setup_eintrag_text(
+                "optimierer_huawei_2",
+                tab25_eintrag_nummer,
+                tab25_content_1,
+                content_2=tab25_content_2,
+                content_4=tab25_content_4,
+            )
+
+        # NOTSTROM
+        if data["notstrom"]:
+            eintrag += 1
+            tab26_eintrag_nummer = str(eintrag) + "."
+            tab26_content_1 = pdf.get_attribute_by_identifier(
+                "notstrom_huawei_1", "content"
+            )
+            tab26_content_2 = "1"
+            tab26_content_4 = pdf.get_attribute_by_identifier(
+                "notstrom_huawei_2", "content"
+            )
+            pdf.setup_eintrag_text(
+                "notstrom_huawei_2",
+                tab26_eintrag_nummer,
+                tab26_content_1,
+                content_2=tab26_content_2,
+                content_4=tab26_content_4,
+            )
+
+        # WANDHALTERUNG
+        if data["anzWandhalterungSpeicher"] > 0:
+
+            # Tabelle Eintrag Wandhalterung
+            eintrag += 1
+            tab27_eintrag_nummer = str(eintrag) + "."
+            tab27_content_1 = pdf.get_attribute_by_identifier(
+                "wandhalterung_huawei_1", "content"
+            )
+            tab27_content_2 = str(data["anzWandhalterungSpeicher"])
+
+            pdf.setup_eintrag_text(
+                "wandhalterung_huawei_1",
+                tab27_eintrag_nummer,
+                tab27_content_1,
+                content_2=tab27_content_2,
+            )
+
+        # HUAWEI ELWA
+        if data["elwa"] == True:
+            eintrag += 1
+            tab29_eintrag_nummer = str(eintrag) + "."
+            tab29_content_1, tab29_content_4 = get_zubehoer_name("elwa_2")
+            tab29_content_2 = "1"
+            pdf.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab29_eintrag_nummer,
+                tab29_content_1,
+                content_2=tab29_content_2,
+                content_4=tab29_content_4,
+            )
+
+    elif data["hersteller"] == "Viessmann":
+
+        # OPTIMIERER VIESSMANN
+        if data["anzOptimierer"] > 0:
+            eintrag += 1
+            tab25_eintrag_nummer = str(eintrag) + "."
+            tab25_content_1 = pdf.get_attribute_by_identifier(
+                "optimierer_viessmann_1", "content"
+            )
+            tab25_content_2 = str(data["anzOptimierer"])
+            tab25_content_4 = pdf.get_attribute_by_identifier(
+                "optimierer_viessmann_2", "content"
+            )
+            pdf.setup_eintrag_text(
+                "optimierer_viessmann_2",
+                tab25_eintrag_nummer,
+                tab25_content_1,
+                content_2=tab25_content_2,
+                content_4=tab25_content_4,
+            )
+
+            eintrag += 1
+            tab26_eintrag_nummer = str(eintrag) + "."
+            tab26_content_1 = pdf.get_attribute_by_identifier(
+                "optimierer_viessmann_3", "content"
+            )
+            tab26_content_2 = "1"
+            tab26_content_4 = pdf.get_attribute_by_identifier(
+                "optimierer_viessmann_4", "content"
+            )
+            pdf.setup_eintrag_text(
+                "optimierer_viessmann_4",
+                tab26_eintrag_nummer,
+                tab26_content_1,
+                content_2=tab26_content_2,
+                content_4=tab26_content_4,
+            )
+
+            eintrag += 1
+            tab27_eintrag_nummer = str(eintrag) + "."
+            tab27_content_1 = pdf.get_attribute_by_identifier(
+                "optimierer_viessmann_5", "content"
+            )
+            tab27_content_2 = "1"
+
+            pdf.setup_eintrag_text(
+                "optimierer_viessmann_5",
+                tab27_eintrag_nummer,
+                tab27_content_1,
+                content_2=tab27_content_2,
+            )
+
+        if data["notstrom"]:
+
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1 = pdf.get_attribute_by_identifier(
+                "notstrom_viessmann_1", "content"
+            )
+            tab28_content_2 = "1"
+            tab28_content_4 = pdf.get_attribute_by_identifier(
+                "notstrom_viessmann_2", "content"
+            )
+            pdf.setup_eintrag_text(
+                "notstrom_viessmann_2",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
+
+        # GRIDBOX
+        if data["wallboxAnz"] >= 2:
+
+            eintrag += 1
+            tab29_eintrag_nummer = str(eintrag) + "."
+            tab29_content_1 = pdf.get_attribute_by_identifier(
+                "gridbox_viessmann_1", "content"
+            )
+            tab29_content_2 = "1"
+            tab29_content_4 = pdf.get_attribute_by_identifier(
+                "gridbox_viessmann_2", "content"
+            )
+            pdf.setup_eintrag_text(
+                "gridbox_viessmann_2",
+                tab29_eintrag_nummer,
+                tab29_content_1,
+                content_2=tab29_content_2,
+                content_4=tab29_content_4,
+            )
+    addedPage = False
+    if data["smartDongleLte"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("smartDongleLte")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["betaPlatte"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("beta_platte")
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_4=tab28_content_4,
+        )
+    if data["metallZiegel"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("metall_ziegel")
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_4=tab28_content_4,
+        )
+    if data["prefaBefestigung"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("prefa_befestigung")
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_4=tab28_content_4,
+        )
+    if data["geruestKunde"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("geruestKunde")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+
+    if data["dachhakenKunde"] == True:
+        eintrag += 1
+        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("dachhakenKunde")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    return pdf, eintrag
+
+def certPage(pdf, certifikate):
+    if certifikate:
+        pdf.add_page()
+        pdf.is_last_page = True
+        pdf.image(
+            certifikate.path,
+            x=5,
+            y=10,
+            w=198,
+        )
+    return pdf
+
+def agbPage(pdf):
+    pdf.skip_logo = True
+    pdf.add_page()
+    pdf.is_last_page = True
+    pdf.set_text_color(0)
+    pdf.set_auto_page_break(auto=True, margin=15)
+
+    bold_texts = [
+        # allgemeine_geschäftsbedingungen_bold_text_1
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_1", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_2
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_2", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_3
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_3", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_4
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_4", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_5
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_5", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_6
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_6", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_7
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_7", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_8
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_8", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_9
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_9", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_10
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_10", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_11
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_11", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_12
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_12", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_13
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_13", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_14
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_14", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_15
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_15", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_16
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_16", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_17
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_17", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_18
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_18", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_19
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_19", "content"
+        ),
+        # allgemeine_geschäftsbedingungen_bold_text_20
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_bold_text_20", "content"
+        ),
+    ]
+
+    regular_texts = [
+        # allgemeine_geschäftsbedingungen_regular_text_1
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_1", "content"
+        ),
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_2", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_2
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_3", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_3
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_4", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_4
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_5", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_5
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_6", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_6
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_7", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_7
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_8", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_8
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_9", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_9
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_10", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_10
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_11", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_11
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_12", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_12
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_13", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_13
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_14", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_14
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_15", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_15
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_16", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_16
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_17", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_17
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_18", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_18
+        pdf.get_attribute_by_identifier(
+            "allgemeine_geschäftsbedingungen_regular_text_19", "content"
+        ),  # allgemeine_geschäftsbedingungen_regular_text_19
+    ]
+
+    column_width = 1000
+    columns_start_x = [
+        15,
+        pdf.w / 2 + 5,
+    ]  # assuming two columns with the page split in the middle
+    column = 0
+    pdf.set_y(10)
+
+    line_counter = 0
+
+    for bold, regular in zip(bold_texts, regular_texts):
+        # Check if adding more strings would exceed the 200-string limit
+        bold_lines = len(bold.split("\n"))
+        regular_lines = len(regular.split("\n"))
+
+        if line_counter + bold_lines + regular_lines > 96:
+            if column == 1:  # If it's the second column, we add a new page.
+                pdf.add_page()
+                column = 0  # Reset to first column
+            else:
+                column += 1  # Move to the next column
+            pdf.set_y(10)  # Reset y to top
+            line_counter = 0  # Reset line counter for new column/columns
+
+        # Set x position based on column
+        pdf.set_x(columns_start_x[column])
+
+        # Print bold text
+        pdf.set_font("JUNO Solar Lt", "B", 8)
+        pdf.set_font_size_to_fit(bold, column_width)
+        pdf.multi_cell(column_width, 3.2, txt=bold)
+        line_counter += bold_lines
+
+        pdf.set_x(columns_start_x[column])
+        # Print regular text
+        pdf.set_font("JUNO Solar Lt", "", 8)
+        pdf.set_font_size_to_fit(regular, column_width)
+        pdf.multi_cell(column_width, 3.2, txt=regular)
+        line_counter += regular_lines
+
+    return pdf
+
+def get_zubehoer_name(zubehoerName):
+    try:
+        name = str(OptionalAccessoriesPreise.objects.get(name=zubehoerName).pdf_name)
+    except:
+        name = ""
+    try:
+        text = str(OptionalAccessoriesPreise.objects.get(name=zubehoerName).pdf_text)
+    except:
+        text =  ""
+    return name, text

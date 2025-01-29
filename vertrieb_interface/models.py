@@ -538,20 +538,6 @@ class VertriebAngebot(TimeStampMixin):
             out = ""
         return out
 
-    def get_zubehoer_text(self, name):
-        try:
-            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_text)
-        except:
-            out = ""
-        return out
-
-    def get_zubehoer_name(self, name):
-        try:
-            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_name)
-        except:
-            out = ""
-        return out
-
     def save(self, *args, **kwargs):
         if not self.angebot_id:
             self.angebot_id = self.generate_angebot_id()
@@ -1500,45 +1486,19 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "elwa": self.elwa,
-            "elwaName": self.get_zubehoer_name("elwa_2"),
-            "elwaText": self.get_zubehoer_text("elwa_2"),
             "thor": self.thor,
-            "thorName": self.get_zubehoer_name("ac_thor_3_kw"),
-            "thorText": self.get_zubehoer_text("ac_thor_3_kw"),
             "midZaehler": self.midZaehler,
-            "midZaehlerName": self.get_zubehoer_name("mid_zaehler"),
-            "midZaehlerText": self.get_zubehoer_text("mid_zaehler"),
             "apzFeld": self.apzFeld,
-            "apzFeldName": self.get_zubehoer_name("apzFeld"),
-            "apzFeldText": self.get_zubehoer_text("apzFeld"),
             "zaehlerschrank": self.zaehlerschrank,
-            "zaehlerschrankName": self.get_zubehoer_name("zaehlerschrank"),
-            "zaehlerschrankText": self.get_zubehoer_text("zaehlerschrank"),
             "potentialausgleich": self.potentialausgleich,
-            "potentialausgleichName": self.get_zubehoer_name("potentialausgleich"),
-            "potentialausgleichText": self.get_zubehoer_text("potentialausgleich"),
             "geruestKunde": self.geruestKunde,
-            "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
-            "geruestKundeText": self.get_zubehoer_text("geruestKunde"),
             "geruestOeffentlich": self.geruestOeffentlich,
             "dachhakenKunde": self.dachhakenKunde,
-            "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
-            "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
             "betaPlatte": self.beta_platte,
-            "betaPlatteName": self.get_zubehoer_name("beta_platte"),
-            "betaPlatteText": self.get_zubehoer_text("beta_platte"),
             "metallZiegel": self.metall_ziegel,
-            "metallZiegelName": self.get_zubehoer_name("metall_ziegel"),
-            "metallZiegelText": self.get_zubehoer_text("metall_ziegel"),
             "prefaBefestigung": self.prefa_befestigung,
-            "prefaBefestigungName": self.get_zubehoer_name("prefa_befestigung"),
-            "prefaBefestigungText": self.get_zubehoer_text("prefa_befestigung"),
             "heizstab": self.heizstab,
-            "heizstabName": self.get_zubehoer_name("heizstab"),
-            "heizstabText": self.get_zubehoer_text("heizstab"),
             "smartDongleLte": self.smartDongleLte,
-            "smartDongleLteName": self.get_zubehoer_name("smartDongleLte"),
-            "smartDongleLteText": self.get_zubehoer_text("smartDongleLte"),
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,
@@ -1779,20 +1739,6 @@ class VertriebTicket(TimeStampMixin):
     def get_wallbox_text(self, name):
         try:
             out = str(WallBoxPreise.objects.get(name=name).pdf_text)
-        except:
-            out = ""
-        return out
-
-    def get_zubehoer_text(self, name):
-        try:
-            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_text)
-        except:
-            out = ""
-        return out
-
-    def get_zubehoer_name(self, name):
-        try:
-            out = str(OptionalAccessoriesPreise.objects.get(name=name).pdf_name)
         except:
             out = ""
         return out
@@ -2403,45 +2349,19 @@ class VertriebTicket(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "elwa": self.elwa,
-            "elwaName": self.get_zubehoer_name("elwa_2"),
-            "elwaText": self.get_zubehoer_text("elwa_2"),
             "thor": self.thor,
-            "thorName": self.get_zubehoer_name("ac_thor_3_kw"),
-            "thorText": self.get_zubehoer_text("ac_thor_3_kw"),
             "midZaehler": self.midZaehler,
-            "midZaehlerName": self.get_zubehoer_name("mid_zaehler"),
-            "midZaehlerText": self.get_zubehoer_text("mid_zaehler"),
             "apzFeld": self.apzFeld,
-            "apzFeldName": self.get_zubehoer_name("apzFeld"),
-            "apzFeldText": self.get_zubehoer_text("apzFeld"),
             "zaehlerschrank": self.zaehlerschrank,
-            "zaehlerschrankName": self.get_zubehoer_name("zaehlerschrank"),
-            "zaehlerschrankText": self.get_zubehoer_text("zaehlerschrank"),
             "potentialausgleich": self.potentialausgleich,
-            "potentialausgleichName": self.get_zubehoer_name("potentialausgleich"),
-            "potentialausgleichText": self.get_zubehoer_text("potentialausgleich"),
             "geruestKunde": self.geruestKunde,
-            "geruestKundeName": self.get_zubehoer_name("geruestKunde"),
-            "geruestKundeText": self.get_zubehoer_text("geruestKunde"),
             "geruestOeffentlich": self.geruestOeffentlich,
             "dachhakenKunde": self.dachhakenKunde,
-            "dachhakenKundeName": self.get_zubehoer_name("dachhakenKunde"),
-            "dachhakenKundeText": self.get_zubehoer_text("dachhakenKunde"),
             "betaPlatte": self.beta_platte,
-            "betaPlatteName": self.get_zubehoer_name("beta_platte"),
-            "betaPlatteText": self.get_zubehoer_text("beta_platte"),
             "metallZiegel": self.metall_ziegel,
-            "metallZiegelName": self.get_zubehoer_name("metall_ziegel"),
-            "metallZiegelText": self.get_zubehoer_text("metall_ziegel"),
             "prefaBefestigung": self.prefa_befestigung,
-            "prefaBefestigungName": self.get_zubehoer_name("prefa_befestigung"),
-            "prefaBefestigungText": self.get_zubehoer_text("prefa_befestigung"),
             "heizstab": self.heizstab,
-            "heizstabName": self.get_zubehoer_name("heizstab"),
-            "heizstabText": self.get_zubehoer_text("heizstab"),
             "smartDongleLte": self.smartDongleLte,
-            "smartDongleLteName": self.get_zubehoer_name("smartDongleLte"),
-            "smartDongleLteText": self.get_zubehoer_text("smartDongleLte"),
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,
