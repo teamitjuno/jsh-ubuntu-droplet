@@ -51,26 +51,6 @@ def validate_solar_module_anzahl(value):
         )
 
 
-def validate_solar_module_ticket_anzahl(value):
-    if value > 4:
-        raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
-            ),
-            params={"value": value},
-        )
-
-
-def validate_optimizer_ticket_anzahl(value):
-    if value > 4:
-        raise ValidationError(
-            (
-                "Ungültige Eingabe: %(value)s. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
-            ),
-            params={"value": value},
-        )
-
-
 def validate_range(value):
     if not isinstance(value, int):
         if value < 0 or value > 6:

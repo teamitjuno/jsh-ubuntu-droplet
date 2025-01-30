@@ -185,16 +185,9 @@ def validate_solar_module_anzahl(value):
 
 
 def validate_solar_module_ticket_anzahl(value):
-    if not isinstance(value, int) or value > 4:
+    if not isinstance(value, int) or value > 10:
         raise ValidationError(
-                f"Ungültige Eingabe: {value}. Die Anzahl der Solarmodule sollte 4 oder weniger betragen."
-        )
-
-
-def validate_optimizer_ticket_anzahl(value):
-    if not isinstance(value, int) or value > 4:
-        raise ValidationError(
-                f"Ungültige Eingabe: {value}. Die Anzahl der Optimierer sollte 4 oder weniger betragen."
+                f"Ungültige Eingabe: {value}. Die Anzahl der Solarmodule sollte 10 oder weniger betragen."
         )
 
 
@@ -2581,7 +2574,7 @@ class VertriebTicketForm(ModelForm):
     )
     modulanzahl = forms.IntegerField(
         label="Module Anzahl",
-        validators=[validate_solar_module_anzahl],
+        validators=[validate_solar_module_ticket_anzahl],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -2695,7 +2688,6 @@ class VertriebTicketForm(ModelForm):
     anzOptimizer = forms.IntegerField(
         label="Optimizer Anzahl",
         required=True,
-        validators=[validate_integers],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",

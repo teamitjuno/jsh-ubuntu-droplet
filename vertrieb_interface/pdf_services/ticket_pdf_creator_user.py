@@ -298,10 +298,10 @@ class PDF(FPDF):
 
         # uberschrift_und_text_2
         uberschrift_und_text_2_content = self.get_attribute_by_identifier(
-            "uberschrift_und_text_2", "content"
+            "uberschrift_und_text_2_ticket", "content"
         )
         self.setup_text(
-            "uberschrift_und_text_2", uberschrift_und_text_2_content, alignment="LR"
+            "uberschrift_und_text_2_ticket", uberschrift_und_text_2_content, alignment="LR"
         )
 
         # tabelle_beginn_1
@@ -448,10 +448,10 @@ class PDF(FPDF):
         steuer = data["steuersatz"]
         self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
         self.cell(0, 6, "", 0, 1, "L", fill=True)
-        self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
+        self.cell(0, 6, "zusätzliche Kosten", 0, 1, "L", fill=True)
         self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
         self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Ihre Investition (inkl. MwSt.)", 0, 1, "L", fill=True)
+        self.cell(0, 6, "Ihre zusätzlichen Kosten (inkl. MwSt.)", 0, 1, "L", fill=True)
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         sum = data["kostenPVA"]

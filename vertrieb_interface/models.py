@@ -1020,9 +1020,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def smartmeter_preis(self):
-        smartmeterPreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
-                )
+        smartmeterPreis = 0
         if self.smartmeter_model == "Smart Power Sensor DTSU666H":
             smartmeterPreis = self.calculate_price(
                     OptionalAccessoriesPreise, "smartmeter_dtsu", 1
@@ -1659,7 +1657,7 @@ class VertriebTicket(TimeStampMixin):
     )
     modulleistungWp = models.PositiveIntegerField(default=420)
     modulanzahl = models.PositiveIntegerField(
-        default=0, validators=[MinValueValidator(0)]
+        default=0, validators=[MinValueValidator(-50)]
     )
     # Zubehör
     elwa = models.BooleanField(default=False)
@@ -1758,6 +1756,7 @@ class VertriebTicket(TimeStampMixin):
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
+        self.angenommenes_angebot = self.angebot_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.smartmeter_angebot_price = self.smartmeter_preis
         tmpSumme, tmpRabatt = self.angebots_summe
@@ -1915,6 +1914,16 @@ class VertriebTicket(TimeStampMixin):
             "",
         )
 
+    @property
+    def angebot_finder(self):
+        if self.angenommenes_angebot:
+            return self.angenommenes_angebot
+        else:
+            angebote = VertriebAngebot.objects.filter(zoho_id=self.zoho_id)
+            for an in angebote:
+                if an.angebot_id == an.angenommenes_angebot:
+                    return an.angebot_id
+        return ""
 
     @property
     def get_building_insights(
@@ -2145,9 +2154,7 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def smartmeter_preis(self):
-        smartmeterPreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
-                )
+        smartmeterPreis = 0
         if self.smartmeter_model == "Smart Power Sensor DTSU666H":
             smartmeterPreis = self.calculate_price(
                     OptionalAccessoriesPreise, "smartmeter_dtsu", 1
@@ -2164,12 +2171,12 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def modulsumme_kWp(self):
-        return self.modulleistungWp * self.modulanzahl / 1000
+        existing = 0
+        if(self.angenommenes_angebot != ""):
+            existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
+        return existing + (self.modulleistungWp * self.modulanzahl / 1000)
 
 
-    @property
-    def get_nettokreditbetrag(self):
-        return self.angebotsumme - self.anzahlung
 
     @property
     def get_zuschlag(self):
@@ -2271,29 +2278,7 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def angebots_summe(self):
-        def get_price(prefix, kw):
-            name = prefix + str(kw)
-            return (float(KwpPreise.objects.get(name=name).price)) * float(
-                self.get_zuschlag
-            )
-
-
-        limits = [5, 7, 10, 12, 15, 20, 25, 30]
-        ranges = ([(0, limits[0])]
-            + list(zip(limits, limits[1:]))
-            + [(limits[-1], float("30"))]
-        )
-
-        kwp = min(30, self.modulsumme_kWp)
-        angebotsSumme = sum(
-            (min(self.modulsumme_kWp, upper) - lower) * get_price("Preis", upper)
-            for lower, upper in ranges
-            if lower < kwp
-        )
-
-        if self.user.typ == "Evolti":  # type: ignore
-            angebotsSumme *= 1.05
-
+        angebotsSumme = float(SolarModulePreise.objects.get(name=self.solar_module).price * self.modulanzahl)
         angebotsSumme += float(self.full_accessories_price)
 
         rabatt = 0

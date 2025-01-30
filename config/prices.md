@@ -329,6 +329,13 @@ Editierbarer_Text.objects.create(
     y=115,
     font_size=11
 )
+Editierbarer_Text.objects.create(
+    identifier='uberschrift_und_text_2_ticket', 
+    content="vielen Dank für Ihre Anfrage. Wir bieten Ihnen hiermit die folgenden zusätzlichen Vereinbarungen zu ihrer Photovoltaikanlage an:", 
+    font='JUNO Solar Lt',
+    y=115,
+    font_size=11
+)
 
 # Create 'tabelle_beginn_1' to 'tabelle_beginn_6' entries
 Editierbarer_Text.objects.create(
