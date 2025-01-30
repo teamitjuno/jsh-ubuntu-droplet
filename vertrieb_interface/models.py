@@ -1656,7 +1656,7 @@ class VertriebTicket(TimeStampMixin):
         default="Phono Solar PS420M7GFH-18/VNH",
     )
     modulleistungWp = models.PositiveIntegerField(default=420)
-    modulanzahl = models.PositiveIntegerField(
+    modulanzahl = models.IntegerField(
         default=0, validators=[MinValueValidator(-50)]
     )
     # Zubehör
@@ -1665,7 +1665,7 @@ class VertriebTicket(TimeStampMixin):
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
-    anzOptimizer = models.PositiveIntegerField(default=0)
+    anzOptimizer = models.IntegerField(default=0)
     apzFeld = models.BooleanField(default=False)
     zaehlerschrank = models.BooleanField(default=False)
     potentialausgleich = models.BooleanField(default=False)
@@ -2318,7 +2318,7 @@ class VertriebTicket(TimeStampMixin):
             "anzModule": self.modulanzahl,
             "produktGarantie": self.get_module_garantie(self.solar_module),
             "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
-            "kWp": self.modulsumme_kWp,
+            "kWp": round(self.modulsumme_kWp,2),
             "kWpOhneRundung": self.modulsumme_kWp,
             "standort": self.anlagen_standort,
             "batterieVorh": self.batteriespeicher_preis,

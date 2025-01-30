@@ -2878,25 +2878,27 @@ class VertriebTicketForm(ModelForm):
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
+        angenommenes_angebot = cleaned_data.get("angenommenes_angebot")
         message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
             )
-        if anzOptimizer is not None and modulanzahl is not None:
-            if anzOptimizer > modulanzahl:
-                self.add_error(
-                    "anzOptimizer",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Optimierer kann nicht größer sein als die Anzahl der Module."
+        if angenommenes_angebot is not None and angenommenes_angebot != "":
+            if anzOptimizer is not None:
+                origOptimizer = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).anzOptimizer
+                if anzOptimizer > origOptimizer:
+                    self.add_error(
+                        "anzOptimizer",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Optimierer kann nicht größer sein als die ursprüngliche Anzahl der Optimierer."
+                            ),
+                            params={
+                                "anzOptimizer": anzOptimizer,
+                            },
                         ),
-                        params={
-                            "anzOptimizer": anzOptimizer,
-                            "modulanzahl": modulanzahl,
-                        },
-                    ),
-                )
+                    )
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
 

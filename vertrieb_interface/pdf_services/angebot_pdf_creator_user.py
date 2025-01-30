@@ -1262,7 +1262,7 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["dachhakenKunde"]:
         anzahlZubehoer += 1
-    if data["anzOptimierer"] > 0:
+    if data["anzOptimierer"] != 0:
         anzahlZubehoer += 1
     if data["anzWandhalterungSpeicher"] > 0:
         anzahlZubehoer += 1
@@ -1467,7 +1467,7 @@ def page4(pdf, data, eintrag, limit):
     # Zubehör mit Herstellerbezug
     if "hersteller" not in data or data["hersteller"] == "Huawei":
         # OPTIMIERER HUAWEI
-        if data["anzOptimierer"] > 0:
+        if data["anzOptimierer"] != 0:
 
             eintrag += 1
             tab25_eintrag_nummer = str(eintrag) + "."
@@ -1540,7 +1540,7 @@ def page4(pdf, data, eintrag, limit):
     elif data["hersteller"] == "Viessmann":
 
         # OPTIMIERER VIESSMANN
-        if data["anzOptimierer"] > 0:
+        if data["anzOptimierer"] != 0:
             eintrag += 1
             tab25_eintrag_nummer = str(eintrag) + "."
             tab25_content_1 = pdf.get_attribute_by_identifier(
