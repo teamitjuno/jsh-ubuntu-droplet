@@ -9,7 +9,6 @@ import os
 
 title = ""
 pages = 6
-global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
 
 class PDF(FPDF):
     """
@@ -552,17 +551,21 @@ class PDF(FPDF):
 
 
 def createOfferPdf(data, vertrieb_ticket, certifikate, user):
-    global title, pages, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
+    global title, pages
     title1 = f"{vertrieb_ticket.ticket_id}"
     pages = 4
-    zubehoerLimitMitWallbox = 13
-    zubehoerLimitOhneWallbox = 14
     if certifikate:
         pages += 1
+    zubehoerLimit = 13
+    if data["wallboxAnz"] > 0:
+        zubehoerLimit -= 1
+    if data["batterieVorh"]:
+        zubehoerLimit += 1
     anzZubehoer = anzahlZubehoer(data)
-    if (data["wallboxAnz"] > 0 and anzZubehoer > zubehoerLimitMitWallbox - 24) or anzZubehoer > zubehoerLimitOhneWallbox - 23:
-        pages += 1
     if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
+        pages += 1
+    # second page for additional Zubehör
+    if (data["wallboxAnz"] > 0 and anzZubehoer > 9) or anzZubehoer > 11:
         pages += 1
 
     pdf = PDF(title1)
@@ -572,7 +575,7 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     # create the offer-PDF
     eintrag = 0
     eintrag = pdf.page1(data, eintrag)
-    pdf, eintrag = page4(pdf, data, eintrag, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox)
+    pdf, eintrag = page4(pdf, data, eintrag, zubehoerLimit)
 
     pdf.pricePage(data)
     pdf = certPage(pdf, certifikate)

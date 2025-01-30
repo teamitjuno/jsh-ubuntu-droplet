@@ -18,7 +18,6 @@ import os
 
 title = ""
 pages = 6
-global zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
 
 class PDF(FPDF):
     """
@@ -1265,6 +1264,8 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["anzOptimierer"] > 0:
         anzahlZubehoer += 1
+    if data["anzWandhalterungSpeicher"] > 0:
+        anzahlZubehoer += 1
     if data["midZaehler"] > 0:
         anzahlZubehoer += 1
     if data["betaPlatte"]:
@@ -1276,21 +1277,26 @@ def anzahlZubehoer(data):
     return anzahlZubehoer
 
 def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
-    global title, pages, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox
+    global title, pages
     title1 = f"{vertrieb_angebot.angebot_id}"
     pages = 6
-    zubehoerLimitMitWallbox = 31
-    zubehoerLimitOhneWallbox = 34
     if certifikate:
         pages += 1
     if data["finanzierung"]:
         pages += 1
     if withCalc:
         pages += 2
+    zubehoerLimit = 32
+    if data["wallboxAnz"] > 0:
+        zubehoerLimit -= 1
+    if data["batterieVorh"]:
+        zubehoerLimit += 1
     anzZubehoer = anzahlZubehoer(data)
-    if (data["wallboxAnz"] > 0 and anzZubehoer > zubehoerLimitMitWallbox - 24) or anzZubehoer > zubehoerLimitOhneWallbox - 23:
-        pages += 1
+    # page for Zubehör
     if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
+        pages += 1
+    # second page for additional Zubehör
+    if (data["wallboxAnz"] > 0 and anzZubehoer > 9) or anzZubehoer > 11:
         pages += 1
 
     pdf = PDF(title1)
@@ -1302,7 +1308,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     eintrag = pdf.page1(data, eintrag)
     eintrag = pdf.page2(data, eintrag)
     eintrag = pdf.page3(data, eintrag)
-    pdf, eintrag = page4(pdf, data, eintrag, zubehoerLimitMitWallbox, zubehoerLimitOhneWallbox)
+    pdf, eintrag = page4(pdf, data, eintrag, zubehoerLimit)
 
     pdf.pricePage(data)
     pdf.financePage(data)
@@ -1322,7 +1328,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     pdf_content = pdf.output(dest="S").encode("latin1")  # type: ignore
     return pdf_content
 
-def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
+def page4(pdf, data, eintrag, limit):
     zubehoerVorhanden = anzahlZubehoer(data) > 0
     if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0:
         pdf.add_page()
@@ -1369,7 +1375,6 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
         )
 
     # OPTIONALES ZUBEHÖR
-    limitMitWallbox, limitOhneWallbox
     if zubehoerVorhanden:
         pdf.line(pdf.l_margin, pdf.get_y() + 5, 196.5, pdf.get_y() + 5)
         pdf.set_y(pdf.get_y() + 10)
@@ -1625,7 +1630,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
     addedPage = False
     if data["smartDongleLte"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
@@ -1640,7 +1645,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
         )
     if data["betaPlatte"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
@@ -1653,7 +1658,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
         )
     if data["metallZiegel"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
@@ -1666,7 +1671,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
         )
     if data["prefaBefestigung"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
@@ -1679,7 +1684,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
         )
     if data["geruestKunde"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
@@ -1695,7 +1700,7 @@ def page4(pdf, data, eintrag, limitMitWallbox, limitOhneWallbox):
 
     if data["dachhakenKunde"] == True:
         eintrag += 1
-        if not addedPage and ((data["wallboxAnz"] > 0 and eintrag > limitMitWallbox) or eintrag > limitOhneWallbox):
+        if not addedPage and eintrag > limit:
             pdf.add_page()
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
