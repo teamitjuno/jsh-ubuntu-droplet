@@ -2198,7 +2198,7 @@ class VertriebTicketForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "id": "angenommenes_angebot",
+                "id": "id_angenommenes_angebot",
             }
         ),
     )
@@ -2823,7 +2823,7 @@ class VertriebTicketForm(ModelForm):
         self.fields["zoho_kundennumer"].widget.attrs.update({"id": "zoho_kundennumer"})
 
         self.fields["angenommenes_angebot"].widget.attrs.update(
-            {"id": "angenommenes_angebot"}
+            {"id": "id_angenommenes_angebot"}
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
@@ -2887,15 +2887,56 @@ class VertriebTicketForm(ModelForm):
         if angenommenes_angebot is not None and angenommenes_angebot != "":
             if anzOptimizer is not None:
                 origOptimizer = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).anzOptimizer
-                if anzOptimizer > origOptimizer:
+                if origOptimizer + anzOptimizer < 0:
                     self.add_error(
                         "anzOptimizer",
                         ValidationError(
                             (
-                                "Die Anzahl der Optimierer kann nicht größer sein als die ursprüngliche Anzahl der Optimierer."
+                                "Die Anzahl der Optimierer kann nicht geringer sein als die ursprünglich angebotene Anzahl der Optimierer."
                             ),
                             params={
                                 "anzOptimizer": anzOptimizer,
+                            },
+                        ),
+                    )
+            if modulanzahl is not None:
+                origModule = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).modulanzahl
+                if origModule + modulanzahl < 0:
+                    self.add_error(
+                        "modulanzahl",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Module kann nicht geringer sein als die ursprünglich angebotene Anzahl der Module."
+                            ),
+                            params={
+                                "modulanzahl": modulanzahl,
+                            },
+                        ),
+                    )
+        else:
+            if anzOptimizer is not None:
+                if anzOptimizer < 0:
+                    self.add_error(
+                        "anzOptimizer",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Optimierer kann nicht geringer als 0 ohne ein ursprüngliches Angebot."
+                            ),
+                            params={
+                                "anzOptimizer": anzOptimizer,
+                            },
+                        ),
+                    )
+            if modulanzahl is not None:
+                if modulanzahl < 0:
+                    self.add_error(
+                        "modulanzahl",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Module kann nicht geringer als 0 ohne ein ursprüngliches Angebot."
+                            ),
+                            params={
+                                "modulanzahl": modulanzahl,
                             },
                         ),
                     )
@@ -2920,24 +2961,7 @@ class VertriebTicketForm(ModelForm):
             return cleaned_data
 
         interessent = cleaned_data.get("name")
-        modulanzahl = cleaned_data.get("modulanzahl")
         name_last_name = cleaned_data.get("name_last_name")
-        anzOptimizer = cleaned_data.get("anzOptimizer")
-
-        if anzOptimizer is not None and modulanzahl is not None:
-            if anzOptimizer > modulanzahl:
-                self.add_error(
-                    "anzOptimizer",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Optimierer kann nicht größer sein als die Anzahl der Module."
-                        ),
-                        params={
-                            "anzOptimizer": anzOptimizer,
-                            "modulanzahl": modulanzahl,
-                        },
-                    ),
-                )
 
         if interessent == "----":
             raise forms.ValidationError(

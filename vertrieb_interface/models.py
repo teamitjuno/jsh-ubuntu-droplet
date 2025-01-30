@@ -1748,7 +1748,7 @@ class VertriebTicket(TimeStampMixin):
         else:
             action_flag = CHANGE
 
-
+        self.angenommenes_angebot = self.angebot_finder
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -1756,7 +1756,6 @@ class VertriebTicket(TimeStampMixin):
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
-        self.angenommenes_angebot = self.angebot_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.smartmeter_angebot_price = self.smartmeter_preis
         tmpSumme, tmpRabatt = self.angebots_summe
@@ -1916,13 +1915,10 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def angebot_finder(self):
-        if self.angenommenes_angebot:
-            return self.angenommenes_angebot
-        else:
-            angebote = VertriebAngebot.objects.filter(zoho_id=self.zoho_id)
-            for an in angebote:
-                if an.angebot_id == an.angenommenes_angebot:
-                    return an.angebot_id
+        angebote = VertriebAngebot.objects.filter(zoho_id=self.zoho_id)
+        for an in angebote:
+            if an.angebot_id == an.angenommenes_angebot:
+                return an.angebot_id
         return ""
 
     @property
