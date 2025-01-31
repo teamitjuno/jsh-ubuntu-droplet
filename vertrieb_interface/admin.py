@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import admin
 from .models import VertriebAngebot, VertriebTicket
-from .models import Editierbarer_Text, Dokument_PDF
+from .models import Editierbarer_Text, Dokument_PDF, CustomLogEntry
 
 
 class VertriebAngebotAdmin(admin.ModelAdmin):
@@ -440,6 +440,17 @@ class EditierbarerTextAdmin(admin.ModelAdmin):
         ),
     )
     readonly_fields = ("last_updated",)
+
+
+@admin.register(CustomLogEntry)
+class CustomLogEntryAdmin(admin.ModelAdmin):
+    list_display = ("user_id", "content_type_id", "object_id")
+    list_filter = ("user_id", "change_message")
+    search_fields = ("user_id", "object_id", "change_message")
+    fieldsets = (
+        ("Allgemein", {"fields": ("object_id", "object_repr", "action_flag", "change_message")}),
+    )
+    readonly_fields = ("user_id")
 
 
 @admin.register(Dokument_PDF)
