@@ -656,17 +656,9 @@ $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleHeizstab(document.getElementById('thor').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
+    setFieldOptions();
     calculateGesamtkapazitat();
     $('#anz_speicher').change(calculateGesamtkapazitat);
-
-    $("#hersteller").change(function() {
-        toggleAnzWandhalterung($(this).val());
-        
-        calculateGesamtkapazitat(); // Recalculate when manufacturer changes
-        
-        var hersteller = $(this).val();
-        setFieldOptions(hersteller);
-    });
 });
 
 function toggleHeizstab(value){
@@ -687,28 +679,22 @@ function toggleGeruestOeff(value){
 
 function setFieldOptions(value) {
     var wechselrichterOptions, speicherOptions, smartmeterOptions;
-
-        if(value == "Viessmann") {
-            limitModulanzahl(28);
-            wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-            speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-            smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
-        } else if(value == "Huawei") {
-            wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-            if($('#speicher_model').val() == "LUNA 2000-5-S0"){
-                speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
-            }
-            else {
-                speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
-            }
-            if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
-                smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option>';
-            }
-            else {
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
-            }
-        } else {
-            wechselrichterOptions = speicherOptions = smartmeterOptions = '<option value="">-----</option>';
+    
+        wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+        if($('#speicher_model').val() == "LUNA 2000-5-S0"){
+            speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
+        }
+        else {
+            speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
+        }
+        if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
+            smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';
+        }
+        else if($('#smartmeter_model').val() == "EMMA-A02"){
+            smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="kein EMS">kein EMS</option>';
+        }
+        else {
+            smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
         }
 
         $("#wechselrichter_model").html(wechselrichterOptions);

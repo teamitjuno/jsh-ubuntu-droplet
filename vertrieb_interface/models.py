@@ -1985,12 +1985,16 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def modulsumme_kWp(self):
+        return round(self.existing_kWp() + self.ticket_kwp(),2)
+
+    def existing_kWp(self):
         existing = 0
         if self.angenommenes_angebot != "" and VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
             existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
-        return round(existing + (self.modulleistungWp * self.modulanzahl / 1000),2)
+        return round(existing, 2)
 
-
+    def ticket_kwp(self):
+        return round(self.modulleistungWp * self.modulanzahl / 1000, 2)
 
     @property
     def get_zuschlag(self):
@@ -2134,6 +2138,8 @@ class VertriebTicket(TimeStampMixin):
             "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
             "kWp": round(self.modulsumme_kWp,2),
             "kWpOhneRundung": self.modulsumme_kWp,
+            "existing_kWp":self.existing_kWp(),
+            "ticket_kWp":self.ticket_kwp(),
             "standort": self.anlagen_standort,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,

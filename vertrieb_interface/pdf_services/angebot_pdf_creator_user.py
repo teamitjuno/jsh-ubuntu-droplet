@@ -470,19 +470,20 @@ class PDF(FPDF):
             )
 
             # Tabelle Eintrag 3
+            if data["smartmeterModell"] != "kein EMS":
+                eintrag += 1
+                tab3_eintrag_nummer = str(eintrag) + "."
 
-            eintrag += 1
-            tab3_eintrag_nummer = str(eintrag) + "."
-            tab3_energiezahler = "Huawei " + data["smartmeterModell"]
-            tab3_energiezahler_props = self.get_attribute_by_identifier(
-                "tabelle_eintrag_3_huawei_2", "content"
-            )
-            self.setup_eintrag_text(
-                "tabelle_eintrag_3_huawei_2",
-                tab3_eintrag_nummer,
-                tab3_energiezahler,
-                content_4=tab3_energiezahler_props,
-            )
+                tab3_energiezahler = "Huawei " + data["smartmeterModell"]
+                tab3_energiezahler_props = self.get_attribute_by_identifier(
+                    "tabelle_eintrag_3_huawei_2", "content"
+                )
+                self.setup_eintrag_text(
+                    "tabelle_eintrag_3_huawei_2",
+                    tab3_eintrag_nummer,
+                    tab3_energiezahler,
+                    content_4=tab3_energiezahler_props,
+                )
 
             # Tabelle Eintrag 4
             # Batteriespeicher
@@ -1291,6 +1292,8 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
         zubehoerLimit -= 1
     if data["batterieVorh"]:
         zubehoerLimit += 1
+    if data["smartmeterModell"] == "kein EMS":
+        zubehoerLimit -= 1
     anzZubehoer = anzahlZubehoer(data)
     # page for Zubehör
     if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:

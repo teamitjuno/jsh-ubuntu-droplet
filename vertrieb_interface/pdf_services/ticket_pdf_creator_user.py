@@ -289,7 +289,7 @@ class PDF(FPDF):
         )
 
         # kWp_und_standort (variable)
-        kWp_und_standort_content = f'{str(data["kWp"])} kWp\n{data["standort"]}'
+        kWp_und_standort_content = f'{str(data["existing_kWp"])} kWp + {str(data["ticket_kWp"])} kWp = {str(data["kWp"])} kWp\n{data["standort"]}'
         self.setup_text("kWp_und_standort", kWp_und_standort_content, alignment="L")
 
         # anrede_content
@@ -369,18 +369,19 @@ class PDF(FPDF):
         )
 
         # Tabelle Eintrag 3
-        eintrag += 1
-        tab3_eintrag_nummer = str(eintrag) + "."
-        tab3_energiezahler = "Huawei " + data["smartmeterModell"]
-        tab3_energiezahler_props = self.get_attribute_by_identifier(
-            "tabelle_eintrag_3_huawei_2", "content"
-        )
-        self.setup_eintrag_text(
-            "tabelle_eintrag_3_huawei_2",
-            tab3_eintrag_nummer,
-            tab3_energiezahler,
-            content_4=tab3_energiezahler_props,
-        )
+        if data["smartmeterModell"] != "kein EMS":
+            eintrag += 1
+            tab3_eintrag_nummer = str(eintrag) + "."
+            tab3_energiezahler = "Huawei " + data["smartmeterModell"]
+            tab3_energiezahler_props = self.get_attribute_by_identifier(
+                "tabelle_eintrag_3_huawei_2", "content"
+            )
+            self.setup_eintrag_text(
+                "tabelle_eintrag_3_huawei_2",
+                tab3_eintrag_nummer,
+                tab3_energiezahler,
+                content_4=tab3_energiezahler_props,
+            )
 
         # Tabelle Eintrag 4
         # Batteriespeicher
@@ -458,7 +459,7 @@ class PDF(FPDF):
         netto = convertCurrency("{:,.2f} €".format(sum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
-        self.cell(0, 6, str(data["kWp"]) + " kWp", 0, 1, "R")
+        self.cell(0, 6, f'{str(data["existing_kWp"])} kWp + {str(data["ticket_kWp"])} kWp = {str(data["kWp"])} kWp', 0, 1, "R")
         self.cell(0, 6, "", 0, 1, "R")
         self.cell(0, 6, netto, 0, 1, "R")
         self.cell(0, 6, mwst, 0, 1, "R")
@@ -561,6 +562,8 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
         zubehoerLimit -= 1
     if data["batterieVorh"]:
         zubehoerLimit += 1
+    if data["smartmeterModell"] == "kein EMS":
+        zubehoerLimit -= 1
     anzZubehoer = anzahlZubehoer(data)
     if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
         pages += 1

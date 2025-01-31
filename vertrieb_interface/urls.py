@@ -103,11 +103,6 @@ path(
         name="create_ticket_new_pdf_user",
     ),
     path(
-        "vertrieb/create_ticket_pdf/<str:angebot_id>",
-        views.create_ticket_pdf,
-        name="create_ticket_pdf",
-    ),
-    path(
         "vertrieb/create_calc_pdf/<str:angebot_id>",
         views.create_calc_pdf,
         name="create_calc_pdf",
@@ -147,11 +142,6 @@ path(
         "serve_calc_pdf/<str:angebot_id>/", views.serve_calc_pdf, name="serve_calc_pdf"
     ),
     path(
-        "serve_ticket_pdf/<str:angebot_id>/",
-        views.serve_ticket_pdf,
-        name="serve_ticket_pdf",
-    ),
-    path(
         "serve_ticket_new_pdf/<str:ticket_id>/",
         views.serve_ticket_new_pdf,
         name="serve_ticket_new_pdf",
@@ -168,11 +158,6 @@ path(
         "document_and_calc_view/<str:angebot_id>/",
         DocumentAndCalcView.as_view(),
         name="document_and_calc_view",
-    ),
-    path(
-        "document_ticket/<str:angebot_id>/",
-        views.document_ticket_view,
-        name="document_ticket_view",
     ),
     path("serve_dokumentation/", views.serve_dokumentation, name="serve_dokumentation"),
     path("documentation_view/", views.documentation_view, name="documentation_view"),

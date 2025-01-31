@@ -66,7 +66,6 @@ from vertrieb_interface.pdf_services import (
     angebot_pdf_creator_user,
     ticket_pdf_creator_user,
     calc_pdf_creator,
-    ticket_pdf_creator,
 )
 from vertrieb_interface.permissions import admin_required, AdminRequiredMixin
 from vertrieb_interface.telegram_logs_sender import (
@@ -1001,29 +1000,10 @@ def create_ticket_new_pdf_user(request, ticket_id):
 
 
 @login_required
-def create_ticket_pdf(request, angebot_id):
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-    user = request.user
-    data = vertrieb_angebot.data
-
-    pdf_content = ticket_pdf_creator.createTicketPdf(data)
-    vertrieb_angebot.ticket_pdf = pdf_content
-    vertrieb_angebot.save()
-    return redirect("vertrieb_interface:document_ticket_view", angebot_id=angebot_id)
-
-
-@login_required
 def document_calc_view(request, angebot_id):
     pdf_url = reverse("vertrieb_interface:serve_calc_pdf", args=[angebot_id])
     context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
     return render(request, "vertrieb/document_calc_view.html", context)
-
-
-@login_required
-def document_ticket_view(request, angebot_id):
-    pdf_url = reverse("vertrieb_interface:serve_ticket_pdf", args=[angebot_id])
-    context = {"pdf_url": pdf_url, "angebot_id": angebot_id}
-    return render(request, "vertrieb/document_ticket_view.html", context)
 
 
 @login_required
@@ -1061,23 +1041,6 @@ def serve_calc_pdf(request, angebot_id):
 
     return response
 
-
-@login_required
-def serve_ticket_pdf(request, angebot_id):
-    decoded_angebot_id = unquote(angebot_id)
-    vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=decoded_angebot_id)
-    name = replace_spaces_with_underscores(vertrieb_angebot.name)
-    filename = f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf"
-    sleep(0.5)
-    if not vertrieb_angebot.ticket_pdf:
-        return StreamingHttpResponse("File not found.", status=404)
-
-    async_iterator = AsyncFileIter(vertrieb_angebot.ticket_pdf)
-
-    response = StreamingHttpResponse(async_iterator, content_type="application/pdf")
-    response["Content-Disposition"] = f"inline; filename={filename}"
-
-    return response
 
 @login_required
 def serve_ticket_new_pdf(request, ticket_id):

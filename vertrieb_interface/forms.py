@@ -822,7 +822,7 @@ class VertriebAngebotForm(ModelForm):
     ]
 
     SMARTMETER_MODEL_CHOICES = [
-        ("----", "----"),
+        ("kein EMS", "kein EMS"),
         ("EMMA-A02", "EMMA-A02"),
         ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
@@ -2128,7 +2128,7 @@ class VertriebTicketForm(ModelForm):
     ]
 
     SMARTMETER_MODEL_CHOICES = [
-        ("----", "----"),
+        ("kein EMS", "kein EMS"),
         ("EMMA-A02", "EMMA-A02"),
         ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
