@@ -213,6 +213,20 @@
                                                                             {{ form.modulanzahl }}
                                                                         </td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>Modulleistung</th>
+                                                                        <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_ticket.modulleistungWp }} Wp</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Modulsumme inkl. Originalangebot</th>
+                                                                        <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_ticket.modulsumme_kWp }} kWp</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
+                                                                            {{ form.anzOptimizer }}
+                                                                        </td>
+                                                                    </tr>
                                                                 </table>
                                                             </div>
                                                         </div>
@@ -220,12 +234,6 @@
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Wechselrichter & Speicher</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            {{ form.anzOptimizer }}
-                                                                        </td>
-                                                                    </tr>
                                                                     <tr>
                                                                         <th>{{ form.speicher_model.label_tag }}</th>
                                                                         <td>{{ form.speicher_model }}</td>
@@ -990,6 +998,7 @@ $(document).ready(function() {
                     name_first_name,
                     name_last_name,
                     zoho_id,
+                    angenommenes_angebot,
                     anrede,
                     zoho_kundennumer,
                     strasse,
@@ -1009,6 +1018,7 @@ $(document).ready(function() {
                 $("#id_vorname").val(name_first_name);
                 $("#id_nachname").val(name_last_name);
                 $("#id_zoho_id").val(zoho_id);
+                $("#id_angenommenes_angebot").val(angenommenes_angebot);
                 $anredeField.val(anrede);
                 $("#id_zoho_kundennumer").val(zoho_kundennumer);
                 $("#id_strasse").val(strasse);

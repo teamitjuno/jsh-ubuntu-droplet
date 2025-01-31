@@ -1172,7 +1172,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.Select(attrs={"class": "form-select", "id": "sonderrabatt"}),
     )
     anzOptimizer = forms.IntegerField(
-        label="Optimizer Anzahl",
+        label="Optimierer Anzahl",
         required=True,
         validators=[validate_integers],
         widget=forms.NumberInput(
@@ -2686,7 +2686,7 @@ class VertriebTicketForm(ModelForm):
         ),
     )
     anzOptimizer = forms.IntegerField(
-        label="Optimizer Anzahl",
+        label="Optimierer Anzahl",
         required=True,
         widget=forms.NumberInput(
             attrs={

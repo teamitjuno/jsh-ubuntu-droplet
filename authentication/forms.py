@@ -320,7 +320,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ),
     )
     initial_anzOptimizer = forms.IntegerField(
-        label="Optimizer Anzahl",
+        label="Optimierer Anzahl",
         required=True,
         validators=[validate_integers],
         widget=forms.NumberInput(

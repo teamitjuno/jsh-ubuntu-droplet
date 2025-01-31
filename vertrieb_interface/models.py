@@ -1748,6 +1748,7 @@ class VertriebTicket(TimeStampMixin):
         else:
             action_flag = CHANGE
 
+        self.zoho_kundennumer = self.kundennumer_finder
         self.angenommenes_angebot = self.angebot_finder
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
@@ -1755,7 +1756,6 @@ class VertriebTicket(TimeStampMixin):
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
-        self.zoho_kundennumer = self.kundennumer_finder
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
         self.smartmeter_angebot_price = self.smartmeter_preis
         tmpSumme, tmpRabatt = self.angebots_summe

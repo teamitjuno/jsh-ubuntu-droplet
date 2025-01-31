@@ -331,6 +331,12 @@
                                                                         <th>Modulsumme</th>
                                                                         <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
+                                                                            {{ form.anzOptimizer }}
+                                                                        </td>
+                                                                    </tr>
                                                                 </table>
                                                             </div>
                                                         </div>
@@ -351,12 +357,6 @@
                                                                     <tr id="garantieWR_row" class="conditional-row">
                                                                         <th>{{ form.garantieWR.label_tag }}</th>
                                                                         <td>{{ form.garantieWR }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            {{ form.anzOptimizer }}
-                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>{{ form.speicher_model.label_tag }}</th>
@@ -1649,14 +1649,6 @@ function submitFormWithAction(action) {
                                                                         <th>{{ form.garantieWR.label_tag }}</th>
                                                                         <td><input type="text" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
                                                                     </tr>
-
-                                                                    <tr>
-                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
-                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
-                                                                            <input type="text" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}" readonly>
-                                                                        </td>
-                                                                    </tr>
-
                                                                     <tr>
                                                                         <th>Modulleistung</th>
                                                                         <td id="modulleistungWp" name="modulleistungWp">{{ vertrieb_angebot.modulleistungWp }} Wp</td>
@@ -1664,6 +1656,12 @@ function submitFormWithAction(action) {
                                                                     <tr>
                                                                         <th>Modulsumme</th>
                                                                         <td id="modulsumme_kWp" name="modulsumme_kWp">{{ vertrieb_angebot.modulsumme_kWp }} kWp</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.anzOptimizer.label_tag }}</th>
+                                                                        <td id="anzOptimizer" name="anzOptimizer" data-bs-toggle="tooltip">
+                                                                            <input type="text" class="form-control" name="{{ form.anzOptimizer.name }}" value="{{ form.anzOptimizer.value }}" readonly>
+                                                                        </td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
