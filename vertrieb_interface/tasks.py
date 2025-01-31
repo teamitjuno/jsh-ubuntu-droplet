@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 from celery import shared_task
 from django.db import transaction, DatabaseError
-from vertrieb_interface.models import VertriebAngebot
+from vertrieb_interface.models import VertriebAngebot, VertriebTicket
 from celery.utils.log import get_task_logger
 import logging
 
@@ -31,6 +31,31 @@ def delete_unassigned_vertriebangebot_week_old():
     except DatabaseError as e:
         logger.error(
             f"Failed to delete VertriebAngebot instances due to a database error: {e}"
+        )
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+
+
+@shared_task
+def delete_unassigned_vertriebticket_day_old():
+    """
+    Löscht VertriebTicket-Instanzen, die keine zugewiesene Ticket_ID haben und seit mindestens einem Tag nicht aktualisiert wurden.
+    """
+    logger.info("Task - delete_unassigned_vertriebticket_day_old  - starting")
+    try:
+        one_day_ago = timezone.now() - timedelta(hours=1)
+        with transaction.atomic():
+            to_delete = VertriebTicket.objects.filter(
+                angebot_id_assigned=False, updated_at__lte=one_day_ago
+            )
+            count = to_delete.count()
+            to_delete.delete()
+            logger.info(
+                f"Deleted {count} unassigned VertriebTicket instances not updated for over a day."
+            )
+    except DatabaseError as e:
+        logger.error(
+            f"Failed to delete VertriebTicket instances due to a database error: {e}"
         )
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")

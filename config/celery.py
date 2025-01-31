@@ -21,6 +21,11 @@ app.conf.beat_schedule = {
         "task": "vertrieb_interface.tasks.delete_unassigned_vertriebangebot_week_old",
         "schedule": crontab(hour=0, minute=0),  # Täglich um Mitternacht
     },
+    "delete_unassigned_vertriebticket_day_old": {
+        # Task für die Löschung nicht zugewiesener Instanzen, die seit einem Tag nicht aktualisiert wurden
+        "task": "vertrieb_interface.tasks.delete_unassigned_vertriebticket_day_old",
+        "schedule": crontab(hour=0, minute=0),  # Täglich um Mitternacht
+    },
     "delete_vertriebangebot_six_weeks_old": {
         # Task für die Löschung aller Instanzen, die seit sechs Wochen nicht aktualisiert wurden
         "task": "vertrieb_interface.tasks.delete_vertriebangebot_six_weeks_old",
