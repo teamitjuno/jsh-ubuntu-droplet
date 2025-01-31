@@ -1986,9 +1986,8 @@ class VertriebTicket(TimeStampMixin):
     @property
     def modulsumme_kWp(self):
         existing = 0
-        if(self.angenommenes_angebot != ""):
-            if VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot) is not None:
-                existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
+        if self.angenommenes_angebot != "" and VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot) is not None:
+            existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
         return round(existing + (self.modulleistungWp * self.modulanzahl / 1000),2)
 
 
