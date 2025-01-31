@@ -2846,8 +2846,9 @@ class VertriebTicketForm(ModelForm):
                     form.status_change_field = now_localized
                     form.status_change_date = timezone.now().date().isoformat()
                     db_object.countdown_on = True
-                    if db_zoho_id:
-                        update_status(db_zoho_id, form.status)
+                    # no status change for Tickets
+                    # if db_zoho_id:
+                    #     update_status(db_zoho_id, form.status)
                     db_object.save()
                     form.save()
 

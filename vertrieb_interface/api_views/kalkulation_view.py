@@ -17,7 +17,7 @@ from vertrieb_interface.forms import (
     VertriebAngebotForm,
 )
 from vertrieb_interface.zoho_api_connector import (
-    pushTicket,
+    pushTicketOld,
 )
 from vertrieb_interface.models import VertriebAngebot
 

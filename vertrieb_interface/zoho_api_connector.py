@@ -419,35 +419,72 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
         pass
 
 
-def pushTicket(vertrieb_angebot, user_zoho_id):
+def pushTicket(vertrieb_ticket, user_zoho_id):
+    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
+    access_token = refresh_access_token()
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    date_obj_gultig = datetime.datetime.strptime(
+        vertrieb_ticket.angebot_gultig, "%d.%m.%Y"
+    )
+    formatted_gultig_date_str = date_obj_gultig.strftime("%d-%b-%Y")
+
+    dataMap = {
+        "data": {
+            "Angebot_ID": str(vertrieb_ticket.ticket_id),
+            "Privatkunde_ID": str(vertrieb_ticket.zoho_id),
+            "Vertriebler_ID": str(user_zoho_id),
+            "erstellt_am": str(vertrieb_ticket.anfrage_vom),
+            "g_ltig_bis": formatted_gultig_date_str,
+            "Anz_Speicher": str(vertrieb_ticket.anz_speicher),
+            "Wallbox_Typ": str(vertrieb_ticket.wallboxtyp),
+            "Wallbox_Anzahl": str(vertrieb_ticket.wallbox_anzahl),
+            "SolarModule_Typ": str(vertrieb_ticket.solar_module),
+            "SolarModule_Leistung": str(vertrieb_ticket.modulleistungWp),
+            "SolarModule_Menge": str(vertrieb_ticket.modulanzahl),
+            "Speicher_Typ": str(vertrieb_ticket.speicher_model),
+            "Smartmeter_Typ":str(vertrieb_ticket.smartmeter_model),
+            "Wandhalterung_Anzahl": int(
+                vertrieb_ticket.anz_wandhalterung_fuer_speicher
+            ),
+            "Notstrom": return_lower_bull(vertrieb_ticket.notstrom),
+            "Optimierer_Menge": str(vertrieb_ticket.anzOptimizer),
+            "AC_ELWA_2": return_lower_bull(vertrieb_ticket.elwa),
+            "AC_THOR": return_lower_bull(vertrieb_ticket.thor),
+            "AC_THOR_Heizstab": vertrieb_ticket.heizstab,
+            "Smart_Dongle_LTE": vertrieb_ticket.smartDongleLte,
+            "MID_Anzahl": int(vertrieb_ticket.midZaehler),
+            "APZ_Feld": return_lower_bull(vertrieb_ticket.apzFeld),
+            "Z_hlerschrank": return_lower_bull(vertrieb_ticket.zaehlerschrank),
+            "Potentialausgleich": return_lower_bull(vertrieb_ticket.potentialausgleich),
+            "Beta_Platte": return_lower_bull(vertrieb_ticket.beta_platte),
+            "Metalldachziegel": return_lower_bull(vertrieb_ticket.metall_ziegel),
+            "PREFA_Dachbefestigung": return_lower_bull(vertrieb_ticket.prefa_befestigung),
+            "Ger_st_durch_Kunde": return_lower_bull(vertrieb_ticket.geruestKunde),
+            "Ger_st_oeffentlich": return_lower_bull(vertrieb_ticket.geruestOeffentlich) and not return_lower_bull(vertrieb_ticket.geruestKunde),
+            "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_ticket.dachhakenKunde),
+            "Angebotssumme": str(vertrieb_ticket.angebotsumme),
+        }
+    }
+    try:
+        response = requests.post(url, json=dataMap, headers=headers)
+        response_data = response.json()
+        new_record_id = response_data["data"]["ID"]
+        log_and_notify(
+            f"Neues Ticket nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_ticket.angebotsumme}"
+        )
+        return response
+    except:
+        pass
+
+
+def pushTicketOld(vertrieb_angebot, user_zoho_id):
     url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form"
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
     Ticket_erstellt_am = datetime.datetime.now().strftime("%d-%b-%Y")
 
-    #     dataMap = {"Ticket" : {
-    #     "Wechselrichter" : {
-    #     "Hersteller_Typ": vertrieb_angebot.hersteller,
-    #     "Leistung_kVA": float/decimal,
-    #     "Status_Bau": String mit Optionen wie Status_PVA synchron gehalten (für Analyse/Lager relevant),
-    #     "PVA_klein": ID PVA_klein,
-    #     },
-    #     "PVA_klein": ID PVA_klein (Pflichtfeld)
-    #     "Privatkunde": ID Interessent
-    #     "Vertriebler": ID Vertriebler
-    #     "Status": Startwert ist immer "ausstehend"
-    #     "Optionen": "ausstehend","bearbeitet","freigegeben","on Hold"
-    #     "Ticket_erstellt_am": Datum
-    #     "Ticket_verl_ngert_am": Datum
-    #     "Bisher_geplante_Module": String (Text mit Info der Module aus PVA_klein)
-    #     "M_gliche_Anzahl_Module": Integer
-    #    "Modulanzahl": Startwert ist leer
-    #     "Optionen": "Anzahl gleichbleibend", "Anzahl muss angepasst werden"
-    #     "Notizen": String
-    #     "Ticket_erstellt_durch": ID von Innendienstler in Zoho, muss eventuell umgebaut werden, wenn Tickets aus Angebotstool erstellt werden
-    #     }
-    #     }
     dataMap = {
         "Ticket": {
             "Wechselrichter": {
@@ -495,53 +532,3 @@ def delete_redundant_angebot(angebot_zoho_id):
     else:
 
         pass
-
-
-# def fetch_angebote_all():
-#     all_provisione_list = []
-#     data = fetch_data_from_api(ANGEBOTE_URL)
-#     all_provisione_list.extend(data)
-#     return data
-
-
-# def fetch_provisione_all():
-#     all_provisione_list = []
-#     data = fetch_data_from_api(PROVISIONE_URL)
-#     all_provisione_list.extend(data)
-#     return data
-
-
-# def extract_values(request):
-#     user = request.user
-#     input_json = fetch_angebote_all()
-#     parsed_data = input_json
-#     target_vertriebler_id = f"{user.zoho_id}"
-
-#     # Filter the data
-#     filtered_angebote_data = [
-#         item
-#         for item in parsed_data["data"]
-#         if item["Vertriebler_ID"]["ID"] == target_vertriebler_id
-#     ]
-
-#     input_json = fetch_provisione_all()
-#     parsed_data = input_json
-#     filtered_provisione_data = [
-#         item
-#         for item in parsed_data["data"]
-#         if item["Vertriebler"]["ID"] == target_vertriebler_id
-#     ]
-#     angebotsumme_list = [
-#         item["Rechnungsh_he_netto_laut_Angebot"] for item in filtered_provisione_data
-#     ]
-
-#     filtered_existing_angebote_result_data = [
-#         item
-#         for item in filtered_angebote_data
-#         if item["Angebotssumme"] in angebotsumme_list
-#     ]
-#     existing_angebot_ids = [
-#         item["Angebot_ID"] for item in filtered_existing_angebote_result_data
-#     ]
-
-#     return existing_angebot_ids

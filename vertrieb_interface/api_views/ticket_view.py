@@ -14,7 +14,7 @@ from config.settings import TELEGRAM_LOGGING
 
 # Lokale Importe aus 'vertrieb_interface'
 from vertrieb_interface.forms import TicketForm
-from vertrieb_interface.zoho_api_connector import pushTicket
+from vertrieb_interface.zoho_api_connector import pushTicketOld
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.telegram_logs_sender import send_custom_message
 from vertrieb_interface.api_views.auth_checkers import VertriebCheckMixin
@@ -149,7 +149,7 @@ class TicketEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
                 vertrieb_angebot.angebot_id_assigned = True
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
-                response = pushTicket(vertrieb_angebot, user_zoho_id)
+                response = pushTicketOld(vertrieb_angebot, user_zoho_id)
                 if TELEGRAM_LOGGING:
                     send_custom_message(
                         user,

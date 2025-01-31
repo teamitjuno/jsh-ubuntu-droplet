@@ -20,7 +20,7 @@ from vertrieb_interface.forms import (
     VertriebTicketForm,
 )
 from vertrieb_interface.zoho_api_connector import (
-    pushAngebot,
+    pushTicket,
     put_form_data_to_zoho_jpp,
     fetch_user_angebote_all,
 )
@@ -275,7 +275,7 @@ class TicketNewEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View)
 
         """
         try:
-            response = pushAngebot(vertrieb_ticket, user_zoho_id)
+            response = pushTicket(vertrieb_ticket, user_zoho_id)
             response_data = response.json()
             new_record_id = response_data["data"]["ID"]
             vertrieb_ticket.angebot_zoho_id = new_record_id
