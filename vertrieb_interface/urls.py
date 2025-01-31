@@ -4,7 +4,6 @@ from django.urls import path, re_path
 from vertrieb_interface.api_views import views
 from vertrieb_interface.api_views.angebot_main_view import AngebotEditView
 from vertrieb_interface.api_views.ticket_main_view import TicketNewEditView
-from vertrieb_interface.api_views.ticket_view import TicketEditView
 from vertrieb_interface.api_views.kalkulation_view import KalkulationEditView
 from vertrieb_interface.api_views.auto_field_view import VertriebAutoFieldView
 from vertrieb_interface.api_views.alle_angebote_view import ViewOrders
@@ -74,11 +73,6 @@ path(
         name="delete_user_ticket_new",
     ),
     path(
-        "vertrieb/ticket_creation/",
-        views.TicketCreationView.as_view(),
-        name="ticket_creation",
-    ),
-    path(
         "vertrieb/edit_angebot/<str:angebot_id>/",
         AngebotEditView.as_view(),
         name="edit_angebot",
@@ -87,11 +81,6 @@ path(
         "vertrieb/edit_ticket_new/<str:ticket_id>/",
         TicketNewEditView.as_view(),
         name="edit_ticket_new",
-    ),
-    path(
-        "vertrieb/edit_ticket/<str:angebot_id>/",
-        TicketEditView.as_view(),
-        name="edit_ticket",
     ),
     path(
         "vertrieb/edit_calc/<str:angebot_id>/",

@@ -409,23 +409,8 @@ class VertriebAngebot(TimeStampMixin):
     geruestOeffentlich = models.BooleanField(default=False)
     smartDongleLte = models.BooleanField(default=False)
     dachhakenKunde = models.BooleanField(default=False)
-    # Ticket:
-    module_ticket = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-    )
-    modul_anzahl_ticket = models.IntegerField(default=0)
-    optimizer_ticket = models.IntegerField(default=0)
-    elwa_ticket = models.IntegerField(default=0)
-    thor_ticket = models.IntegerField(default=0)
-    heizstab_ticket = models.IntegerField(default=0)
-    wandhalterung_fuer_speicher_ticket = models.IntegerField(default=0)
-    batteriemodule_ticket = models.IntegerField(default=0)
-    notstrom_ticket = models.IntegerField(default=0)
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    total_anzahl = models.IntegerField(blank=True, null=True)
     zahlungsbedingungen = models.CharField(
         max_length=25,
         blank=True,
@@ -464,8 +449,6 @@ class VertriebAngebot(TimeStampMixin):
 
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
     rabattsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    fullticketpreis = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
-    Full_ticket_preis = models.FloatField(default=0.00)
 
     # Finanzierung
     finanzierung = models.BooleanField(default=False)
@@ -503,7 +486,6 @@ class VertriebAngebot(TimeStampMixin):
     angebot_pdf = models.BinaryField(blank=True, null=True)
     calc_pdf = models.BinaryField(blank=True, null=True)
     calc_graph_img = models.ImageField(null=True, blank=True)
-    ticket_pdf = models.BinaryField(blank=True, null=True)
     ag_data = models.TextField(blank=True)
     ag_fetched_data = models.TextField(blank=True, null=True)
     countdown_on = models.BooleanField(default=False)
@@ -558,7 +540,6 @@ class VertriebAngebot(TimeStampMixin):
         tmpSumme, tmpRabatt = self.angebots_summe
         self.angebotsumme = round(tmpSumme, 2)
         self.rabattsumme = round(tmpRabatt, 2)
-        self.fullticketpreis = self.full_ticket_preis
         self.anfrage_vom = self.get_current_date_formatted
         self.benotigte_restenergie = self.restenergie
         self.nutzbare_nutzenergie = self.nutz_energie
@@ -568,10 +549,8 @@ class VertriebAngebot(TimeStampMixin):
         self.Ersparnis = self.ersparnis
         self.kosten_fur_restenergie = self.kosten_rest_energie
         self.ag_data = self.data
-        self.total_anzahl = self.Total_anzahl
         self.Rest_liste = self.rest_liste
         self.Arbeits_liste = self.arbeits_liste
-        self.Full_ticket_preis = self.full_ticket_preis
         self.nettokreditbetrag = self.get_nettokreditbetrag
         super(VertriebAngebot, self).save(*args, **kwargs)
 
@@ -790,12 +769,6 @@ class VertriebAngebot(TimeStampMixin):
             return int(match.group(1))
         return 420
 
-    @property
-    def extract_modulleistungWp_from_ticket(self):
-        match = re.search(r"(\d+)", str(self.module_ticket))
-        if match:
-            return int(match.group(1))
-        return 420
 
     @property
     def leistungsmodul_preis(self):
@@ -898,15 +871,6 @@ class VertriebAngebot(TimeStampMixin):
             multiplier = 0
         price = get_price(model, name)
         return price * multiplier
-
-    @property
-    def Total_anzahl(self):
-        total = 0
-        if self.modulanzahl and self.modul_anzahl_ticket:
-            total += self.modulanzahl + self.modul_anzahl_ticket
-            return total
-        else:
-            return self.modulanzahl
 
     @property
     def modulleistung_price(self):
@@ -1155,118 +1119,6 @@ class VertriebAngebot(TimeStampMixin):
     def optimizer_full_preis(self):
         return self.anzOptimizer * self.optimizer_preis
 
-    """
-
-    CALCULATING   TICKET  
-
-    """
-
-    @property
-    def modul_ticket_preis(self):
-        name = self.module_ticket
-        return self.calculate_price(
-            SolarModulePreise, name, int(self.modul_anzahl_ticket)
-        )
-
-    @property
-    def optimizer_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "optimizer", int(self.optimizer_ticket)
-        )
-
-    @property
-    def batterie_ticket_preis(self):
-        if self.speicher_model == "LUNA 2000-5-S0":
-            return self.calculate_price(
-                OptionalAccessoriesPreise, "batteriemodul_huawei5", int(self.batteriemodule_ticket)
-            )
-        elif self.speicher_model == "LUNA 2000-7-S1":
-            return self.calculate_price(
-                OptionalAccessoriesPreise, "batteriemodul_huawei7", int(self.batteriemodule_ticket)
-            )
-        elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
-            return self.calculate_price(
-                OptionalAccessoriesPreise, "batteriemodul_viessmann", int(self.batteriemodule_ticket)
-            )
-        return 0.0
-
-    @property
-    def leistungsmodule(self):
-        if self.batteriemodule_ticket:
-            return max(
-                0,
-                ceil((int(self.batteriemodule_ticket) + int(self.anz_speicher)) / 3)
-                - ceil(int(self.batteriemodule_ticket) / 3),
-            )
-        else:
-            return 0
-
-    @property
-    def leistung_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "leistungsmodul", self.leistungsmodule
-        )
-
-    @property
-    def notstrom_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "backup_box", int(self.notstrom_ticket)
-        )
-
-    @property
-    def elwa_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "elwa_2", int(self.elwa_ticket)
-        )
-
-    @property
-    def wandhalterung_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise,
-            "wandhalterung_fuer_speicher",
-            int(self.wandhalterung_fuer_speicher_ticket),
-        )
-
-    @property
-    def thor_ticket_preis(self):
-        return self.calculate_price(
-            OptionalAccessoriesPreise, "ac_thor_3_kw", int(self.thor_ticket)
-        )
-
-    @property
-    def heizstab_ticket_preis(self):
-        hz_ticket_preis = 0
-        try:
-            if self.heizstab_ticket <= self.thor_ticket:
-                hz_ticket_preis += self.calculate_price(
-                    OptionalAccessoriesPreise, "heizstab", int(self.heizstab_ticket)
-                )
-        except:
-            hz_ticket_preis = 0
-        return hz_ticket_preis
-
-    @property
-    def leistungsgewinn(self):
-        return int(self.modulleistungWp) * int(self.modul_anzahl_ticket) / 1000
-
-    @property
-    def full_ticket_preis(self):
-        return sum(
-            filter(
-                None,
-                [
-                    self.modul_ticket_preis,
-                    self.optimizer_ticket_preis,
-                    self.batterie_ticket_preis,
-                    self.leistung_ticket_preis,
-                    self.notstrom_ticket_preis,
-                    self.elwa_ticket_preis,
-                    self.thor_ticket_preis,
-                    self.heizstab_ticket_preis,
-                    self.wandhalterung_ticket_preis,
-                ],
-            )
-        )
 
     """
 
@@ -1400,10 +1252,6 @@ class VertriebAngebot(TimeStampMixin):
             angebotsSumme += 300
         return angebotsSumme, rabatt
 
-    @property
-    def angebots_summe_mit_ticket_preis(self):
-        summe = float(self.angebots_summe[0]) + float(self.full_ticket_preis)
-        return summe
 
     @property
     def kosten_pva(self):
@@ -1525,29 +1373,6 @@ class VertriebAngebot(TimeStampMixin):
             "debug": False,
             "hersteller": self.hersteller,
             "version": 1.0,
-            "modulTicket": int(self.modul_anzahl_ticket),
-            "modulTicketArt":self.module_ticket,
-            "wpModuleTicket": self.extract_modulleistungWp_from_ticket,
-            "produktGarantieTicket": self.get_module_garantie(self.module_ticket),
-            "leistungsGarantieTicket": self.get_leistungs_garantie(self.module_ticket),
-            "optimizerTicket": int(self.optimizer_ticket),
-            "batterieTicket": int(self.batteriemodule_ticket),
-            "notstromTicket": int(self.notstrom_ticket),
-            "wandhalterungTicket": int(self.wandhalterung_fuer_speicher_ticket),
-            "elwaTicket": int(self.elwa_ticket),
-            "thorTicket": int(self.thor_ticket),
-            "heizstabTicket": int(self.heizstab_ticket),
-            "gewinnTicket": self.leistungsgewinn,
-            "modulTicketpreis": round(self.modul_ticket_preis, 2),
-            "optimizerTicketpreis": round(self.optimizer_ticket_preis, 2),
-            "batterieTicketpreis": round(self.batterie_ticket_preis, 2),
-            "leistungTicketpreis": round(self.leistung_ticket_preis, 2),
-            "notstromTicketpreis": round(self.notstrom_ticket_preis, 2),
-            "elwaTicketpreis": self.elwa_ticket_preis,
-            "thorTicketpreis": self.thor_ticket_preis,
-            "heizstabTicketpreis": self.heizstab_ticket_preis,
-            "wandhalterungTicketPreis": self.wandhalterung_ticket_preis,
-            "ticketPreis": round(self.Full_ticket_preis, 2),
             "stromverbrauch": self.verbrauch,
             "grundpreis": self.grundpreis,
             "arbeitspreis": self.arbeitspreis,
@@ -1762,7 +1587,6 @@ class VertriebTicket(TimeStampMixin):
         self.angebotsumme = round(tmpSumme, 2)
         self.anfrage_vom = self.get_current_date_formatted
         self.ag_data = self.data
-        self.total_anzahl = self.modulanzahl
         super(VertriebTicket, self).save(*args, **kwargs)
 
         CustomLogEntry.objects.log_action(
@@ -1987,12 +1811,6 @@ class VertriebTicket(TimeStampMixin):
             return int(match.group(1))
         return 420
 
-    @property
-    def extract_modulleistungWp_from_ticket(self):
-        match = re.search(r"(\d+)", str(self.module_ticket))
-        if match:
-            return int(match.group(1))
-        return 420
 
     @property
     def leistungsmodul_preis(self):
@@ -2170,7 +1988,7 @@ class VertriebTicket(TimeStampMixin):
         existing = 0
         if(self.angenommenes_angebot != ""):
             existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
-        return existing + (self.modulleistungWp * self.modulanzahl / 1000)
+        return round(existing + (self.modulleistungWp * self.modulanzahl / 1000),2)
 
 
 

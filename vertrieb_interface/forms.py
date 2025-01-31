@@ -1242,100 +1242,6 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "gesamtkreditbetrag"}),
     )
 
-    # Ticket
-    module_ticket = forms.ChoiceField(
-        label="Zusätzlich & Abzüge: Module",
-        choices=[
-            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
-            (
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-            ),
-        ],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "module_ticket"}),
-    )
-
-    modul_anzahl_ticket = forms.IntegerField(
-        label="Module Anzahl",
-        initial=0,
-        required=False,
-        validators=[validate_solar_module_ticket_anzahl],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
-        ),
-    )
-
-    wandhalterung_fuer_speicher_ticket = forms.IntegerField(
-        label="Wandhalterung für Batteriespeicher",
-        initial=0,
-        required=False,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "wandhalterung_fuer_speicher_ticket"}
-        ),
-    )
-    optimizer_ticket = forms.IntegerField(
-        label="Optimirer",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "optimizer_ticket"}
-        ),
-    )
-    batteriemodule_ticket = forms.IntegerField(
-        label="Batteriemodule",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "batteriemodule_ticket"}
-        ),
-    )
-    notstrom_ticket = forms.IntegerField(
-        label="Notstrom",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "notstrom_ticket"}
-        ),
-    )
-    elwa_ticket = forms.IntegerField(
-        label="ELWA 2",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "elwa_ticket"}),
-    )
-    thor_ticket = forms.IntegerField(
-        label="AC THOR 2 3kW ",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "thor_ticket",
-                "style": "max-width: 100px",
-            }
-        ),
-    )
-    heizstab_ticket = forms.IntegerField(
-        label="Heizstab für THOR",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "heizstab_ticket",
-                "style": "max-width: 100px",
-            }
-        ),
-    )
-
     class Meta:
         model = VertriebAngebot
         fields = [
@@ -1417,15 +1323,6 @@ class VertriebAngebotForm(ModelForm):
             "genehmigung_rabatt",
             "sonderrabatt_included",
             "sonderrabatt",
-            "module_ticket",
-            "modul_anzahl_ticket",
-            "elwa_ticket",
-            "wandhalterung_fuer_speicher_ticket",
-            "thor_ticket",
-            "heizstab_ticket",
-            "optimizer_ticket",
-            "batteriemodule_ticket",
-            "notstrom_ticket",
             "finanzierung",
             "anzahlung",
             "monatliche_rate",
@@ -1462,10 +1359,6 @@ class VertriebAngebotForm(ModelForm):
             self.fields["name"].choices = default_choice  # Fallback to default choice
 
         self.fields["solar_module"].choices = [
-            (module.name, module.name)
-            for module in SolarModulePreise.objects.filter(in_stock=True)
-        ]
-        self.fields["module_ticket"].choices = [
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter(in_stock=True)
         ]
@@ -1703,33 +1596,6 @@ class VertriebAngebotForm(ModelForm):
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
             )
-
-        modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
-        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
-            self.add_error(
-                "modul_anzahl_ticket",
-                ValidationError(
-                    ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
-                    params={
-                        "modul_anzahl_ticket": modul_anzahl_ticket,
-                    },
-                ),
-            )
-        optimizer_ticket = cleaned_data.get("optimizer_ticket")
-        if optimizer_ticket is not None and modul_anzahl_ticket is not None:
-            if (
-                optimizer_ticket > modul_anzahl_ticket
-                or (modul_anzahl_ticket - optimizer_ticket) < 0
-            ):
-                self.add_error(
-                    "modul_anzahl_ticket",
-                    ValidationError(
-                        ("Die Anzahl der Ticket kann nicht mehr als 4 sein"),
-                        params={
-                            "modul_anzahl_ticket": optimizer_ticket,
-                        },
-                    ),
-                )
 
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
@@ -1982,173 +1848,6 @@ class UpdateAdminAngebotForm(forms.ModelForm):
         model = VertriebAngebot
         fields = ["is_locked"]  # Add other fields as needed
 
-
-class TicketForm(forms.ModelForm):
-    name = forms.CharField(
-        label="Interessent",
-        widget=forms.Select(
-            attrs={"class": "form-select", "id": "id_name", "style": "max-width: 300px"}
-        ),
-    )
-    zoho_last_name = forms.CharField(
-        label="Nachname",
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "id": "id_nachname",
-            }
-        ),
-    )
-    module_ticket = forms.ChoiceField(
-        label="Zusätzlich & Abzüge: Module",
-        choices=[
-            ("Phono Solar PS420M7GFH-18/VNH", "Phono Solar PS420M7GFH-18/VNH"),
-            (
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-                "Jinko Solar Tiger Neo N-type JKM425N-54HL4-B",
-            ),
-        ],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "module_ticket"}),
-    )
-    HERSTELLER_CHOICES = [
-        ("----", "----"),
-        ("Huawei", "Huawei"),
-        ("Viessmann", "Viessmann"),
-    ]
-
-    hersteller = forms.ChoiceField(
-        label="Hersteller",
-        choices=HERSTELLER_CHOICES,
-        widget=forms.Select(attrs={"class": "form-select", "id": "hersteller"}),
-    )
-
-    modul_anzahl_ticket = forms.IntegerField(
-        label="Module Ticket-Anzahl",
-        initial=0,
-        required=False,
-        validators=[validate_solar_module_ticket_anzahl],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "modul_anzahl_ticket"}
-        ),
-    )
-    elwa_ticket = forms.IntegerField(
-        label="ELWA 2",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "elwa_ticket"}),
-    )
-    thor_ticket = forms.IntegerField(
-        label="AC THOR 2  ",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "thor_ticket"}),
-    )
-    heizstab_ticket = forms.IntegerField(
-        label="Heizstab ",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "heizstab_ticket"}
-        ),
-    )
-    wandhalterung_fuer_speicher_ticket = forms.IntegerField(
-        label="Wandhalterung für Batteriespeicher",
-        initial=0,
-        required=False,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "wandhalterung_fuer_speicher_ticket"}
-        ),
-    )
-    optimizer_ticket = forms.IntegerField(
-        label="Optimizer Ticket-Anzahl",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "optimizer_ticket"}
-        ),
-    )
-    batteriemodule_ticket = forms.IntegerField(
-        label="Batteriemodule Ticket-Anzahl",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "batteriemodule_ticket"}
-        ),
-    )
-    notstrom_ticket = forms.IntegerField(
-        label="Notstrom Ticket-Anzahl",
-        required=False,
-        initial=0,
-        validators=[validate_integers_ticket],
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "notstrom_ticket"}
-        ),
-    )
-
-    class Meta:
-        model = VertriebAngebot
-        fields = [
-            "is_locked",
-            "name",
-            "zoho_last_name",
-            "hersteller",
-            "module_ticket",
-            "elwa_ticket",
-            "wandhalterung_fuer_speicher_ticket",
-            "thor_ticket",
-            "modul_anzahl_ticket",
-            "optimizer_ticket",
-            "batteriemodule_ticket",
-            "notstrom_ticket",
-        ]
-
-    def __init__(self, *args, user, **kwargs):
-        super(TicketForm, self).__init__(*args, **kwargs)
-        self.fields["module_ticket"].choices = [
-            (module.name, module.name) for module in SolarModulePreise.objects.all()
-        ]
-        for field in self.fields:
-            if self.initial.get(field):
-                self.fields[field].widget.attrs.update(
-                    {"placeholder": self.initial[field]}
-                )
-
-    def save(self, commit=True):
-        form = super(TicketForm, self).save(commit=False)
-        if commit:
-            form.save()
-        return form
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        name = cleaned_data.get("name")
-        name = cleaned_data.get("hersteller")
-
-        if name is None or name == "----":
-            raise forms.ValidationError(
-                {"name": "Sie haben keinen Interessent ausgewählt"}
-            )
-
-        modul_anzahl_ticket = cleaned_data.get("modul_anzahl_ticket")
-        if modul_anzahl_ticket is not None and modul_anzahl_ticket > 4:
-            self.add_error(
-                "modul_anzahl_ticket",
-                ValidationError(
-                    ("Die Anzahl der Modul kann nicht mehr als 4 sein"),
-                    params={
-                        "modul_anzahl_ticket": modul_anzahl_ticket,
-                    },
-                ),
-            )
 
 class VertriebTicketForm(ModelForm):
     is_locked = forms.BooleanField(

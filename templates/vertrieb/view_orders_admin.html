@@ -221,16 +221,6 @@
                                                             <a href="{% url 'vertrieb_interface:serve_calc_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Kalkulation ansehen</a>
                                                             {% endif %}
                                                         </td>
-                                                        <td> 
-                                                            {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Ticket erstellen</a>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td> 
-                                                            {% if vertrieb_angebot.angebot_id_assigned %}
-                                                            <a href="{% url 'vertrieb_interface:serve_ticket_pdf' vertrieb_angebot.angebot_id %}"  class="btn btn-outline-info rounded-pill">Ticket ansehen</a>
-                                                            {% endif %}
-                                                        </td>
                                                     </tr>
                                                 
                                                 {% endfor %}

@@ -164,19 +164,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Anschluss und Ticket Details",
-            {
-                "fields": (
-                    "module_ticket",
-                    "modul_anzahl_ticket",
-                    "optimizer_ticket",
-                    "batteriemodule_ticket",
-                    "notstrom_ticket",
-                ),
-                "classes": ("collapse",),
-            },
-        ),
-        (
             "Preisdetails",
             {
                 "fields": (
@@ -450,7 +437,7 @@ class CustomLogEntryAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Allgemein", {"fields": ("object_id", "object_repr", "action_flag", "change_message")}),
     )
-    readonly_fields = ("user_id")
+    readonly_fields = ("user_id",)
 
 
 @admin.register(Dokument_PDF)

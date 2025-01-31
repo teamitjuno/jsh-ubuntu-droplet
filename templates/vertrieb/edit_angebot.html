@@ -78,14 +78,6 @@
                                                     <span class="d-none d-md-block h4">Zubehör</span>
                                                 </a>
                                             </li>
-                                            {% if vertrieb_angebot.status == "angenommen" %}
-                                            <li hidden class="nav-item" role="presentation">
-                                                <a href="#ticket" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-altimeter d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block h4">Ticket</span>
-                                                </a>
-                                            </li>
-                                            {% endif %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
@@ -804,88 +796,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        {% if vertrieb_angebot.status == "angenommen" %}
-                                        <div hidden class="tab-pane" id="ticket" role="presentation">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-5">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Solar Module & Anzahl </div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>{{ form.solar_module.label_tag }}</th>
-                                                                            <td>{{ form.module_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.modul_anzahl_ticket.label_tag }}</th>
-                                                                            <td>{{ form.modul_anzahl_ticket }}</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>{{ form.optimizer_ticket.label_tag }}</th>
-                                                                            <td>{{ form.optimizer_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.batteriemodule_ticket.label_tag }}</th>
-                                                                            <td>{{ form.batteriemodule_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.notstrom_ticket.label_tag }}</th>
-                                                                            <td>{{ form.notstrom_ticket }}</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>Gesamtticketpreis Netto</th>
-                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>Gesamtticketpreis Brutto</th>
-                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {% if vertrieb_angebot.angebot_id_assigned %}
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
-                                                            <div class="card-body">
-                                                                
-                                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Ticket Erstellen</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}                        
+                                                            
                                         <div class="tab-pane" id="kalkulationen" role="presentation">                       
                                             <div class="card-body">
                                                 <div class="row">
@@ -1531,14 +1442,6 @@ function submitFormWithAction(action) {
                                                     <span class="d-none d-md-block h4">Module & Zubehör</span>
                                                 </a>
                                             </li>
-                                            {% if vertrieb_angebot.status == "angenommen" %}
-                                            <li hidden class="nav-item" role="presentation">
-                                                <a href="#ticket" data-bs-toggle="tab" aria-expanded="true" class="nav-link" aria-selected="false" tabindex="-1" role="tab">
-                                                    <i class="mdi mdi-altimeter d-md-none d-block"></i>
-                                                    <span class="d-none d-md-block h4">Ticket</span>
-                                                </a>
-                                            </li>
-                                            {% endif %}
                                             <li class="nav-item" role="presentation">
                                                 <a href="#kalkulationen" data-bs-toggle="tab" aria-expanded="true" class="nav-link " aria-selected="false" tabindex="-1" role="tab">
                                                     <i class="mdi mdi-application-brackets-outline d-md-none d-block"></i>
@@ -2123,88 +2026,7 @@ function submitFormWithAction(action) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {% if vertrieb_angebot.status == "angenommen" %}
-                                        <div hidden class="tab-pane" id="ticket" role="presentation">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-5">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Solar Module & Anzahl </div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>{{ form.solar_module.label_tag }}</th>
-                                                                            <td>{{ form.module_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.modul_anzahl_ticket.label_tag }}</th>
-                                                                            <td>{{ form.modul_anzahl_ticket }}</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Zusätzlich & Abzüge:</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>{{ form.optimizer_ticket.label_tag }}</th>
-                                                                            <td>{{ form.optimizer_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.batteriemodule_ticket.label_tag }}</th>
-                                                                            <td>{{ form.batteriemodule_ticket }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>{{ form.notstrom_ticket.label_tag }}</th>
-                                                                            <td>{{ form.notstrom_ticket }}</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 bg-opacity-75 bg-gradient text-white">Ticket Preis</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <th>Gesamtticketpreis Netto</th>
-                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>Gesamtticketpreis Brutto</th>
-                                                                            <td>{{ vertrieb_angebot.Full_ticket_preis }} €</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {% if vertrieb_angebot.angebot_id_assigned %}
-                                                    <div class="col-lg-3">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Pdf-Erstellung verfügbar</div>
-                                                            <div class="card-body">
-                                                                
-                                                                <a href="{% url 'vertrieb_interface:create_ticket_pdf' vertrieb_angebot.angebot_id %}" class="btn btn-outline-info rounded-pill">PDF-Ticket Erstellen</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}                        
+                                        </div>                      
                                         <div class="tab-pane" id="kalkulationen" role="presentation">                       
                                             <div class="card-body">
                                                 <div class="row">

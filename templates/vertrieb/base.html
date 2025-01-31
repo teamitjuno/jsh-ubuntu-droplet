@@ -227,7 +227,7 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="create_blank_angebot" value="1">
                                         <a href="#"><i class=" ri-file-edit-line text-white"></i></a>
-                                        <span href="#"><a href="#" onclick="document.getElementById('create-angebot-form').submit(); " class="text-white">Neues Angebot erstellen</a></span>
+                                        <span href="#"><a href="#" onclick="document.getElementById('create-angebot-form').submit(); " class="text-white">Neues PV Angebot erstellen</a></span>
                                     </form>
                                 </ul>
                             </li>
@@ -243,14 +243,8 @@
                             </li>
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
-                                    <a href="{% url 'vertrieb_interface:ticket_creation' %}"><i class="uil-file-plus-alt text-white"></i></a>
-                                    <span href="{% url 'vertrieb_interface:ticket_creation' %}"><a href="{% url 'vertrieb_interface:ticket_creation' %}" class="text-white">Ticket erstellen</a></span>
-                                </ul>
-                            </li>
-                            <li class="side-nav-item">
-                                <ul class="side-nav-link">
                                     <a href="{% url 'vertrieb_interface:view_orders' %}"><i class="uil-list-ul text-white"></i></a>
-                                    <span href="{% url 'vertrieb_interface:view_orders' %}"><a href="{% url 'vertrieb_interface:view_orders' %}" class="text-white">Offene Angebote</a></span>
+                                    <span href="{% url 'vertrieb_interface:view_orders' %}"><a href="{% url 'vertrieb_interface:view_orders' %}" class="text-white">Offene PV Angebote</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
@@ -262,7 +256,7 @@
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
                                     <a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><i class="ri-file-pdf-fill text-white"></i></a>
-                                    <span href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="text-white">PDF Angebote</a></span>
+                                    <span href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_angebots_list_view' %}" class="text-white">PDF PV Angebote</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">

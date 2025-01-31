@@ -300,6 +300,9 @@ def home(request):
     vertriebangebots = VertriebAngebot.objects.filter(
         user=request.user, angebot_id_assigned=True
     )
+    vertriebtickets = VertriebTicket.objects.filter(
+        user=request.user, angebot_id_assigned=True
+    )
     current_user_vertriebangebots = vertriebangebots.count()
 
     current_user_vertriebangebots_month = VertriebAngebot.objects.filter(
@@ -312,21 +315,21 @@ def home(request):
     all_vertrieb_angebots = (
         VertriebAngebot.objects.filter(Q(status="angenommen"), angebot_id_assigned=True)
         .values("solar_module")
-        .annotate(total_modulanzahl=Sum("total_anzahl"))
+        .annotate(total_modulanzahl=Sum("modulanzahl"))
         .order_by("solar_module")
     )
 
     solar_module_stats = (
         vertriebangebots.filter(Q(status="angenommen"), angebot_id_assigned=True)
         .values("solar_module")
-        .annotate(total_modulanzahl=Sum("total_anzahl"))
+        .annotate(total_modulanzahl=Sum("modulanzahl"))
         .order_by("solar_module")
     )
 
     solar_module_ticket_stats = (
-        vertriebangebots.filter(status="angenommen")
+        vertriebtickets.filter(status="bekommen")
         .values("solar_module")
-        .annotate(total_modulanzahl=Sum("modul_anzahl_ticket"))
+        .annotate(total_modulanzahl=Sum("modulanzahl"))
         .order_by("solar_module")
     )
 
@@ -421,34 +424,6 @@ def home(request):
 
 def filter_bekommen(data):
     return [item for item in data if item.get("status") == "bekommen"]
-
-
-class TicketCreationView(LoginRequiredMixin, VertriebCheckMixin, ListView):
-    model = VertriebAngebot
-    template_name = "vertrieb/ticket_creation.html"
-    context_object_name = "angebots"
-
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = self.model.objects.filter(
-            user=self.request.user, status="angenommen", angebot_id_assigned=True
-        )
-
-        queryset = queryset.annotate(
-            zoho_kundennumer_int=Case(
-                When(
-                    zoho_kundennumer__isnull=False,
-                    then=Cast("zoho_kundennumer", IntegerField()),
-                ),
-                default=Value(0),  # or another appropriate default value
-                output_field=IntegerField(),
-            )
-        )
-        queryset = queryset.order_by("-zoho_kundennumer_int")
-
-        return queryset
 
 
 def reset_calculator(request):
