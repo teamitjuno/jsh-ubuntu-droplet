@@ -99,6 +99,7 @@ class DocumentViewTicketNew(LoginRequiredMixin, DetailView):
                 user.smtp_username,
                 [email_address, user_email],
                 connection=connection,
+                reply_to=[user_email],
             )
             self._attach_files(email, vertrieb_ticket, datenblatter)
             email.send()
