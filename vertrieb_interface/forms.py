@@ -2584,7 +2584,7 @@ class VertriebTicketForm(ModelForm):
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
             )
-        if angenommenes_angebot is not None and angenommenes_angebot != "":
+        if angenommenes_angebot is not None and angenommenes_angebot != "" and VertriebAngebot.objects.get(angebot_id=angenommenes_angebot) is not None:
             if anzOptimizer is not None:
                 origOptimizer = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).anzOptimizer
                 if origOptimizer + anzOptimizer < 0:
