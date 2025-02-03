@@ -16,9 +16,6 @@ from config.settings import TELEGRAM_LOGGING
 from vertrieb_interface.forms import (
     VertriebAngebotForm,
 )
-from vertrieb_interface.zoho_api_connector import (
-    pushTicketOld,
-)
 from vertrieb_interface.models import VertriebAngebot
 
 from vertrieb_interface.telegram_logs_sender import (

@@ -89,12 +89,15 @@ def fetch_user_angebote_all(request):
     user = request.user
     start_index = 1
     all_user_angebots_list = []
-
+    if user.role.name == "admin" or user.role.name == "manager":
+        crit = f'Vertriebler.ID != null && Anfrage_vom > today.subDay(100) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
+    else:
+        crit = f'Vertriebler.ID == {user.zoho_id} && Anfrage_vom > today.subDay(400) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
     while True:
         params = {
             "from": start_index,
             "limit": LIMIT_ALL,
-            "criteria": f'Vertriebler.ID == {user.zoho_id} && Anfrage_vom > today.subDay(400) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))',
+            "criteria": crit,
         }
 
         data = fetch_data_from_api(VERTRIEB_URL, params)
@@ -476,48 +479,6 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
         return response
     except:
         pass
-
-
-def pushTicketOld(vertrieb_angebot, user_zoho_id):
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Ticket_form"
-    access_token = refresh_access_token()
-    headers = {"Authorization": f"Bearer {access_token}"}
-
-    Ticket_erstellt_am = datetime.datetime.now().strftime("%d-%b-%Y")
-
-    dataMap = {
-        "Ticket": {
-            "Wechselrichter": {
-                "Hersteller_Typ": vertrieb_angebot.hersteller,
-                "Leistung_kVA": vertrieb_angebot.modulleistungWp,
-                "Status_Bau": "",
-                "PVA_klein": "",
-            },
-            "PVA_klein": "",
-            "Privatkunde": vertrieb_angebot.zoho_id,
-            "Vertriebler": user_zoho_id,
-            "Status": "ausstehend",
-            "Ticket_erstellt_am": Ticket_erstellt_am,
-            "Ticket_verl_ngert_am": Ticket_erstellt_am,
-            "Bisher_geplante_Module": vertrieb_angebot.solar_module,
-            "M_gliche_Anzahl_Module": vertrieb_angebot.modul_anzahl_ticket,
-            "Modulanzahl": "",
-            "Notizen": "",
-            "Ticket_erstellt_durch": user_zoho_id,
-        }
-    }
-
-    response = requests.post(url, json=dataMap, headers=headers)
-    response_data = response.json()
-    # new_record_id = response_data["data"]["ID"]
-    # log_and_notify(
-    #     f"Neue Angebot nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_angebot.angebotsumme}"
-    # )
-
-    return response_data
-
-
-import requests
 
 
 def delete_redundant_angebot(angebot_zoho_id):

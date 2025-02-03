@@ -197,7 +197,7 @@ def user_list_view(request):
         .annotate(month=ExtractMonth("current_date"), year=ExtractYear("current_date"))
         .values("month", "year", "solar_module")
         .annotate(
-            total_sold=Coalesce(Sum("modulanzahl") + Sum("modul_anzahl_ticket"), 0)
+            total_sold=Coalesce(Sum("modulanzahl"), 0)
         )
         .order_by("year", "month", "solar_module")
     )
