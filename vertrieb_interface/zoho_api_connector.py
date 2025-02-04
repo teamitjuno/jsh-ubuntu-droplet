@@ -369,6 +369,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
     dataMap = {
         "data": {
             "Angebot_ID": str(vertrieb_angebot.angebot_id),
+            "Typ": "Angebot PV",
             "Privatkunde_ID": str(vertrieb_angebot.zoho_id),
             "Vertriebler_ID": str(user_zoho_id),
             "erstellt_am": str(vertrieb_angebot.anfrage_vom),
@@ -435,6 +436,7 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
     dataMap = {
         "data": {
             "Angebot_ID": str(vertrieb_ticket.ticket_id),
+            "Typ": "Ticket",
             "Privatkunde_ID": str(vertrieb_ticket.zoho_id),
             "Vertriebler_ID": str(user_zoho_id),
             "erstellt_am": str(vertrieb_ticket.anfrage_vom),
