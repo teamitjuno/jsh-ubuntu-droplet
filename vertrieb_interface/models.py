@@ -1746,6 +1746,22 @@ class VertriebTicket(TimeStampMixin):
         return ""
 
     @property
+    def bauteile_finder(self):
+        if VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
+            angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
+            bauteileStr = ""
+            if angebot.modulanzahl > 0:
+                bauteileStr += str(angebot.modulanzahl) + "x " + angebot.solar_module + "\n"
+            if angebot.anzOptimizer > 0:
+                bauteileStr += str(angebot.anzOptimizer) + "x Optimierer" + "\n"
+            if angebot.anz_speicher > 0:
+                bauteileStr += str(angebot.anz_speicher) + "x Batteriemodul " + angebot.speicher_model + "\n"
+            if angebot.wallbox_anzahl > 0:
+                bauteileStr += str(angebot.wallbox_anzahl) + "x  " + angebot.wallboxtyp + "\n"
+            return bauteileStr
+        return ""
+
+    @property
     def get_building_insights(
         self, latitude=None, longitude=None, requiredQuality="HIGH"
     ):
