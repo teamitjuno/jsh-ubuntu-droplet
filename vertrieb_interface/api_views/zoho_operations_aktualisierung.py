@@ -137,7 +137,7 @@ def load_user_angebots(request):
 
     return JsonResponse({"status": "success"}, status=200)
 
-def changeVerguetung():
+def changeVerguetung(bis10, bis40):
     """
         Überschreibt den Startwert der Einspeisevergütungen für jeden Nutzer.
 
@@ -147,7 +147,8 @@ def changeVerguetung():
         Returns:
         None
         """
-    users = User.objects.all()
-    for user in users:
-        User.objects.filter(zoho_id=user.zoho_id).update(initial_bis10kWp=8.03)
-        User.objects.filter(zoho_id=user.zoho_id).update(initial_bis40kWp=6.95)
+    if bis10 is not None and bis40 is not None:
+        users = User.objects.all()
+        for user in users:
+            User.objects.filter(zoho_id=user.zoho_id).update(initial_bis10kWp=bis10)
+            User.objects.filter(zoho_id=user.zoho_id).update(initial_bis40kWp=bis40)

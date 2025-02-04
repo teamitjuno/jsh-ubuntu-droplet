@@ -184,10 +184,10 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     )
     initial_zeitraum = models.PositiveIntegerField(default=15)
     initial_bis10kWp = models.FloatField(
-        default=8.03, validators=[MinValueValidator(0)]  # type: ignore
+        default=7.95, validators=[MinValueValidator(0)]  # type: ignore
     )
     initial_bis40kWp = models.FloatField(
-        default=6.95, validators=[MinValueValidator(0)]  # type: ignore
+        default=6.88, validators=[MinValueValidator(0)]  # type: ignore
     )
 
     initial_anz_speicher = models.PositiveIntegerField(default=0)
