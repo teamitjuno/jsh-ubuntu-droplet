@@ -953,34 +953,24 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def batteriespeicher_preis(self):
+        batterieDict = {"LUNA 2000-5-S0": "batteriemodul_huawei5", "LUNA 2000-7-S1": "batteriemodul_huawei7",
+                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann"}
+        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False}
         batteriePreis = 0
         if self.anz_speicher != 0:
-            leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
-            if self.speicher_model == "LUNA 2000-5-S0":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_huawei5", anz_speicher
-                )
-                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
-                    leistungsmodulePreis
-                )
-            elif self.speicher_model == "LUNA 2000-7-S1":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_huawei7", anz_speicher
-                )
-                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
-                    leistungsmodulePreis
-                )
+            leistungsmodulNotwendig = leistModDict.get(self.speicher_model)
+            batterieDatensatz = batterieDict.get(self.speicher_model)
+            # Kein angenommenes Angebot oder angenommenes Angebot hatte keinen Speicher
+            if batterieDatensatz is not None:
+                batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                if leistungsmodulNotwendig:
+                    batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen
-                if(anz_speicher > 6 and self.modulsumme_kWp < 25.0):
+                if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and anz_speicher > 6:
                     batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
-            elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_viessmann", anz_speicher
-                )
-            return batteriePreis
-        elif self.anz_speicher == 0:
-            return batteriePreis
+                return batteriePreis
+        return batteriePreis
 
     @property
     def smartmeter_preis(self):
