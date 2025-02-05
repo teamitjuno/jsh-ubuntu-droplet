@@ -388,7 +388,7 @@ class PDF(FPDF):
         if data["batterieVorh"]:
             eintrag += 1
             tab4_eintrag_nummer = str(eintrag) + "."
-            tab4_content2_sub1 = str(ceil(data["batterieAnz"] / 3))
+            tab4_content2_sub1 = str(data["leistModAnz"])
             tab4_content2_sub2 = str(data["batterieAnz"])
             if data["batterieModell"] == "LUNA 2000-5-S0":
                 tab4_batterie_speicher = self.get_attribute_by_identifier(

@@ -1473,7 +1473,7 @@ class VertriebTicket(TimeStampMixin):
     )
     gesamtkapazitat = models.PositiveIntegerField(default=0)
     speicher = models.BooleanField(default=False)
-    anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
+    anz_speicher = models.IntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
     anz_wandhalterung_fuer_speicher = models.PositiveIntegerField(default=0)
     solar_module = models.CharField(
@@ -1953,34 +1953,44 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def batteriespeicher_preis(self):
+        batterieDict = {"LUNA 2000-5-S0": "batteriemodul_huawei5", "LUNA 2000-7-S1": "batteriemodul_huawei7",
+                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann"}
+        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False}
         batteriePreis = 0
         if self.anz_speicher != 0:
-            leistungsmodulePreis = self.leistungsmodul_preis
             anz_speicher = int(self.anz_speicher)
-            if self.speicher_model == "LUNA 2000-5-S0":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_huawei5", anz_speicher
-                )
-                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
-                    leistungsmodulePreis
-                )
-            elif self.speicher_model == "LUNA 2000-7-S1":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_huawei7", anz_speicher
-                )
-                batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(
-                    leistungsmodulePreis
-                )
+            leistungsmodulNotwendig = leistModDict.get(self.speicher_model)
+            batterieDatensatz = batterieDict.get(self.speicher_model)
+            # Kein angenommenes Angebot oder angenommenes Angebot hatte keinen Speicher
+            if batterieDatensatz is not None and (not VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot)
+                or VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).anz_speicher == 0):
+                batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                if leistungsmodulNotwendig:
+                    batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen
-                if(anz_speicher > 6 and self.modulsumme_kWp < 25.0):
+                if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and anz_speicher > 6:
                     batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
-            elif self.speicher_model == "Vitocharge VX3 PV-Stromspeicher":
-                batteriePreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "batteriemodul_viessmann", anz_speicher
-                )
-            return batteriePreis
-        elif self.anz_speicher == 0:
-            return batteriePreis
+                return batteriePreis
+            # Angenommenes Angebot mit angebotenem Speicher
+            elif VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
+                angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
+                # gleiches Speichermodell
+                if self.speicher_model == angebot.speicher_model:
+                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                    if leistungsmodulNotwendig:
+                        batteriePreis = float(batteriePreis) + ceil((anz_speicher + angebot.anz_speicher) / 3) * float(self.leistungsmodul_preis)
+                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(self.leistungsmodul_preis)
+                # abweichendes Speichermodell
+                else:
+                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                    batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher)
+                    if leistungsmodulNotwendig:
+                        batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
+                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(self.leistungsmodul_preis)
+                # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen, falls Limit jetzt erst überschritten
+                if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and angebot.anz_speicher <= 6 and (anz_speicher + angebot.anz_speicher) > 6:
+                    batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
+        return batteriePreis
 
     @property
     def smartmeter_preis(self):
@@ -2001,16 +2011,26 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def modulsumme_kWp(self):
-        return round(self.existing_kWp() + self.ticket_kwp(),2)
+        return round(self.existing_kWp + self.ticket_kwp,2)
 
+    @property
     def existing_kWp(self):
         existing = 0
         if self.angenommenes_angebot != "" and VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
             existing = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).modulsumme_kWp
         return round(existing, 2)
 
+    @property
     def ticket_kwp(self):
         return round(self.modulleistungWp * self.modulanzahl / 1000, 2)
+
+    @property
+    def anz_leistungs_module(self):
+        if self.angenommenes_angebot != "" and VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
+            angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
+            return ceil((self.anz_speicher + angebot.anz_speicher)/ 3) - ceil(angebot.anz_speicher / 3)
+        else:
+            return ceil(self.anz_speicher / 3)
 
     @property
     def get_zuschlag(self):
@@ -2154,8 +2174,8 @@ class VertriebTicket(TimeStampMixin):
             "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
             "kWp": round(self.modulsumme_kWp,2),
             "kWpOhneRundung": self.modulsumme_kWp,
-            "existing_kWp":self.existing_kWp(),
-            "ticket_kWp":self.ticket_kwp(),
+            "existing_kWp":self.existing_kWp,
+            "ticket_kWp":self.ticket_kwp,
             "standort": self.anlagen_standort,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,
@@ -2164,6 +2184,7 @@ class VertriebTicket(TimeStampMixin):
             "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
             "batterieAnz": self.anz_speicher,
+            "leistModAnz": self.anz_leistungs_module,
             "wallboxVorh": self.full_wallbox_preis,
             "wallboxTyp": self.wallboxtyp,
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),

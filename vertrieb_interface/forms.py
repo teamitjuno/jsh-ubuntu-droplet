@@ -191,22 +191,22 @@ def validate_solar_module_ticket_anzahl(value):
         )
 
 
-def validate_range(value, speicher_model):
+def validate_range(value, speicher_model, origAnzSpeicher=0):
     # Update the maximum values for different hersteller, including Huawei
     max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "default": 6}
     max_value = max_values.get(speicher_model, max_values["default"])
 
     # Update the error messages, including a specific message for Huawei
     error_messages = {
-        "Vitocharge VX3 PV-Stromspeicher": "Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 kann nicht mehr als 3 sein.",
-        "LUNA 2000-5-S0": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 6 sein.",
-        "LUNA 2000-7-S1": "Die Anzahl der Batteriespeicher von Huawei kann nicht mehr als 12 sein.",
-        "default": "Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen 0 und 6.",
+        "Vitocharge VX3 PV-Stromspeicher": f"Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 muss zwischen {-origAnzSpeicher} und {3-origAnzSpeicher} liegen.",
+        "LUNA 2000-5-S0": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {6-origAnzSpeicher} liegen.",
+        "LUNA 2000-7-S1": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {12-origAnzSpeicher} liegen.",
+        "default": f"Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen {-origAnzSpeicher} und {6-origAnzSpeicher}.",
     }
 
     # Check if value is within the valid range
     # Note: For Huawei, we check if value is strictly less than 18, as per your condition
-    if not isinstance(value, int) or not 0 <= value <= max_values.get(
+    if not isinstance(value, int) or not -origAnzSpeicher <= value <= max_values.get(
         speicher_model, max_value + 1
     ):
         # Use %(value)s for string interpolation in the default error message
@@ -1590,30 +1590,6 @@ class VertriebAngebotForm(ModelForm):
             except ValidationError:
                 raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
 
-        anz_speicher = cleaned_data.get("anz_speicher")
-        message, is_valid = validate_range(anz_speicher, speicher_model)
-        if not is_valid:
-            self.add_error(
-                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
-            )
-
-        wallbox = cleaned_data.get("wallbox")
-        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
-
-        if wallbox is not None and wallbox_anzahl is not None:
-            if wallbox == True and wallbox_anzahl == 0:
-                self.add_error(
-                    "wallbox",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
-                        ),
-                        params={
-                            "wallbox": wallbox,
-                            "wallbox_anzahl": wallbox_anzahl,
-                        },
-                    ),
-                )
         for (manufacturer, model), field_name in incompatible_combinations.items():
             if hersteller == manufacturer and cleaned_data.get(field_name) == model:
                 raise forms.ValidationError(
@@ -2579,12 +2555,18 @@ class VertriebTicketForm(ModelForm):
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
         angenommenes_angebot = cleaned_data.get("angenommenes_angebot")
-        message, is_valid = validate_range(anz_speicher, speicher_model)
+        origAngebot = None
+        if VertriebAngebot.objects.filter(angebot_id=angenommenes_angebot):
+            origAngebot = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot)
+        if origAngebot and origAngebot.speicher_model == speicher_model:
+            message, is_valid = validate_range(anz_speicher, speicher_model, origAngebot.anz_speicher)
+        else:
+            message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
             )
-        if angenommenes_angebot is not None and angenommenes_angebot != "" and VertriebAngebot.objects.filter(angebot_id=angenommenes_angebot):
+        if origAngebot:
             if anzOptimizer is not None:
                 origOptimizer = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).anzOptimizer
                 if origOptimizer + anzOptimizer < 0:
@@ -2613,6 +2595,20 @@ class VertriebTicketForm(ModelForm):
                             },
                         ),
                     )
+            if anz_speicher is not None:
+                origSpeicher = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).anz_speicher
+                if origSpeicher + anz_speicher < 0:
+                    self.add_error(
+                        "anz_speicher",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Speichermodule kann nicht geringer sein als die ursprünglich angebotene Anzahl der Speichermodule."
+                            ),
+                            params={
+                                "anz_speicher": anz_speicher,
+                            },
+                        ),
+                    )
         else:
             if anzOptimizer is not None:
                 if anzOptimizer < 0:
@@ -2620,7 +2616,7 @@ class VertriebTicketForm(ModelForm):
                         "anzOptimizer",
                         ValidationError(
                             (
-                                "Die Anzahl der Optimierer kann nicht geringer als 0 ohne ein ursprüngliches Angebot."
+                                "Die Anzahl der Optimierer kann ohne ein ursprüngliches Angebot nicht geringer als 0 sein."
                             ),
                             params={
                                 "anzOptimizer": anzOptimizer,
@@ -2633,10 +2629,23 @@ class VertriebTicketForm(ModelForm):
                         "modulanzahl",
                         ValidationError(
                             (
-                                "Die Anzahl der Module kann nicht geringer als 0 ohne ein ursprüngliches Angebot."
+                                "Die Anzahl der Module kann ohne ein ursprüngliches Angebot nicht geringer als 0 sein."
                             ),
                             params={
                                 "modulanzahl": modulanzahl,
+                            },
+                        ),
+                    )
+            if anz_speicher is not None:
+                if anz_speicher < 0:
+                    self.add_error(
+                        "anz_speicher",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Speichermodule kann ohne ein ursprüngliches Angebot nicht geringer als 0 sein."
+                            ),
+                            params={
+                                "anz_speicher": anz_speicher,
                             },
                         ),
                     )
@@ -2702,31 +2711,6 @@ class VertriebTicketForm(ModelForm):
                 validate_email(email)
             except ValidationError:
                 raise ValidationError("Geben Sie eine gültige E-Mail-Adresse ein")
-
-        anz_speicher = cleaned_data.get("anz_speicher")
-        message, is_valid = validate_range(anz_speicher, speicher_model)
-        if not is_valid:
-            self.add_error(
-                "anz_speicher", ValidationError(message, params={"value": anz_speicher})
-            )
-
-        wallbox = cleaned_data.get("wallbox")
-        wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
-
-        if wallbox is not None and wallbox_anzahl is not None:
-            if wallbox == True and wallbox_anzahl == 0:
-                self.add_error(
-                    "wallbox",
-                    ValidationError(
-                        (
-                            "Die Anzahl der Wallbox kann nicht 0 sein wenn die E-Ladestation (Wallbox) inkl. is True."
-                        ),
-                        params={
-                            "wallbox": wallbox,
-                            "wallbox_anzahl": wallbox_anzahl,
-                        },
-                    ),
-                )
 
         midZaehler = cleaned_data.get("midZaehler")
         wallbox_typ = cleaned_data.get("wallboxtyp")
