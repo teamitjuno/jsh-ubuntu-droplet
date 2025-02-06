@@ -2165,6 +2165,12 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def data(self):
+        batterieModellOrig = batterieAnzOrig = leistModAnzOrig = None
+        if VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
+            angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
+            batterieModellOrig = angebot.speicher_model
+            batterieAnzOrig = angebot.anz_speicher
+            leistModAnzOrig = ceil(angebot.anz_speicher / 3)
         dt = {
             "firma": self.firma,
             "anrede": self.anrede,
@@ -2185,12 +2191,15 @@ class VertriebTicket(TimeStampMixin):
             "standort": self.anlagen_standort,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,
+            "batterieModellOrig": batterieModellOrig,
+            "batterieAnz": self.anz_speicher,
+            "batterieAnzOrig": batterieAnzOrig,
+            "leistModAnz": self.anz_leistungs_module,
+            "leistModAnzOrig": leistModAnzOrig,
             "smartmeterModell": self.smartmeter_model,
             "wandhalterungSpeicher": self.wandhalterung_fuer_speicher,
             "anzWandhalterungSpeicher": self.anz_wandhalterung_fuer_speicher,
             "wandhalterungSpeicherPreis": self.wandhalterung_fuer_speicher_preis,
-            "batterieAnz": self.anz_speicher,
-            "leistModAnz": self.anz_leistungs_module,
             "wallboxVorh": self.full_wallbox_preis,
             "wallboxTyp": self.wallboxtyp,
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),

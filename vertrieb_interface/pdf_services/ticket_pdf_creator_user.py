@@ -386,52 +386,57 @@ class PDF(FPDF):
         # Tabelle Eintrag 4
         # Batteriespeicher
         if data["batterieVorh"]:
+            batterieDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 7}
+            batterieTyp = batterieDict.get(str(data["batterieModell"]))
             eintrag += 1
             tab4_eintrag_nummer = str(eintrag) + "."
             tab4_content2_sub1 = str(data["leistModAnz"])
             tab4_content2_sub2 = str(data["batterieAnz"])
-            if data["batterieModell"] == "LUNA 2000-5-S0":
-                tab4_batterie_speicher = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei5_1", "content"
+            tab4_batterie_speicher = self.get_attribute_by_identifier(
+                f"tabelle_eintrag_4_huawei{batterieTyp}_1", "content"
+            )
+            tab4_additional_content2 = self.get_attribute_by_identifier(
+                f"tabelle_eintrag_4_huawei{batterieTyp}_2", "content"
+            )
+            tab4_additional_content = "Leistungsmodule"
+            tab4_batterie_speicher_props = self.get_entladeleistung(data)
+            self.setup_eintrag_text(
+                f"tabelle_eintrag_4_huawei{batterieTyp}_3",
+                tab4_eintrag_nummer,
+                tab4_batterie_speicher,
+                content_2="",
+                content_4=tab4_batterie_speicher_props,
+                content_2_sub_1=tab4_content2_sub1,
+                content_2_sub_2=tab4_content2_sub2,
+                additional_content=tab4_additional_content,
+                additional_content_2=tab4_additional_content2,
+                alignment="",
+            )
+            # Bei Austausch des Speichertyps den Speicher aus angenommenem Angebot wieder abziehen
+            if data["batterieModellOrig"] and data["batterieModellOrig"] != data["batterieModell"]:
+                eintrag += 1
+                batterieTypOrig = batterieDict.get(str(data["batterieModellOrig"]))
+                tab4o_eintrag_nummer = str(eintrag) + "."
+                tab4o_content2_sub1 = str(-data["leistModAnzOrig"])
+                tab4o_content2_sub2 = str(-data["batterieAnzOrig"])
+                tab4o_batterie_speicher = self.get_attribute_by_identifier(
+                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_1", "content"
                 )
-                tab4_additional_content2 = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei5_2", "content"
+                tab4o_additional_content2 = self.get_attribute_by_identifier(
+                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_2", "content"
                 )
-                tab4_additional_content = "Leistungsmodule"
-                tab4_batterie_speicher_props = self.get_entladeleistung(data)
+                tab4o_additional_content = "Leistungsmodule"
+                tab4o_batterie_speicher_props = self.get_entladeleistung(data)
                 self.setup_eintrag_text(
-                    "tabelle_eintrag_4_huawei5_3",
-                    tab4_eintrag_nummer,
-                    tab4_batterie_speicher,
+                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_3",
+                    tab4o_eintrag_nummer,
+                    tab4o_batterie_speicher,
                     content_2="",
-                    content_4=tab4_batterie_speicher_props,
-                    content_2_sub_1=tab4_content2_sub1,
-                    content_2_sub_2=tab4_content2_sub2,
-                    additional_content=tab4_additional_content,
-                    additional_content_2=tab4_additional_content2,
-                    alignment="",
-                )
-            elif data["batterieModell"] == "LUNA 2000-7-S1":
-                tab4_batterie_speicher = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei7_1", "content"
-                )
-                tab4_additional_content2 = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei7_2", "content"
-                )
-                tab4_additional_content = "Leistungsmodule"
-                tab4_batterie_speicher_props = self.get_attribute_by_identifier(
-                    "tabelle_eintrag_4_huawei7_3", "content"
-                )
-                self.setup_eintrag_text(
-                    "tabelle_eintrag_4_huawei7_3",
-                    tab4_eintrag_nummer,
-                    tab4_batterie_speicher,
-                    content_2="",
-                    content_4=tab4_batterie_speicher_props,
-                    content_2_sub_1=tab4_content2_sub1,
-                    content_2_sub_2=tab4_content2_sub2,
-                    additional_content=tab4_additional_content,
-                    additional_content_2=tab4_additional_content2,
+                    content_4=tab4o_batterie_speicher_props,
+                    content_2_sub_1=tab4o_content2_sub1,
+                    content_2_sub_2=tab4o_content2_sub2,
+                    additional_content=tab4o_additional_content,
+                    additional_content_2=tab4o_additional_content2,
                     alignment="",
                 )
         return eintrag
@@ -562,6 +567,8 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
         zubehoerLimit -= 1
     if data["batterieVorh"]:
         zubehoerLimit += 1
+        if data["batterieModellOrig"] and data["batterieModellOrig"] != data["batterieModell"]:
+            zubehoerLimit += 1
     if data["smartmeterModell"] == "kein EMS":
         zubehoerLimit -= 1
     anzZubehoer = anzahlZubehoer(data)
