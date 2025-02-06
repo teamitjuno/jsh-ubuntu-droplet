@@ -245,8 +245,8 @@
                                                                         
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
+                                                                        <th>Gesamtkapazität inkl. Originalangebot</th>
+                                                                        <td>{{ vertrieb_ticket.gesamtkapazitat }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>{{ form.smartmeter_model.label_tag }}</th>
@@ -674,8 +674,6 @@ $(document).ready(function() {
     toggleHeizstab(document.getElementById('thor').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     setFieldOptions();
-    calculateGesamtkapazitat();
-    $('#anz_speicher').change(calculateGesamtkapazitat);
 });
 
 function toggleHeizstab(value){
@@ -727,24 +725,6 @@ function toggleAnzWandhalterung(value) {
         $('#anz_wandhalterung_row').show();
         $('#bool_elwa_row').show();
     }
-}
-
-
-function calculateGesamtkapazitat() {
-    var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
-    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
-    var modell = $('#speicher_model').val();
-
-    if (modell === 'LUNA 2000-5-S0') {
-        gesamtkapazitat = anz_speicher * 5;
-    } else if (modell === 'LUNA 2000-7-S1') {
-        gesamtkapazitat = anz_speicher * 6.9;
-    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
-    }
-
-    $('#gesamtkapazitat').val(gesamtkapazitat);
 }
 
 function limitModulanzahl(maxValue) {

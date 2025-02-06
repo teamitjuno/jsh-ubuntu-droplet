@@ -2122,18 +2122,7 @@ class VertriebTicketForm(ModelForm):
         widget=forms.Select(attrs={"class": "form-select", "id": "smartmeter_model"}),
     )
 
-    gesamtkapazitat = forms.IntegerField(
-        initial=0,
-        label="Gesamtkapazität",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "id": "gesamtkapazitat",
-                "readonly": "readonly",
-            }
-        ),
-    )
+
 
     speicher = forms.BooleanField(
         label="Speichermodule inkl.",
@@ -2403,7 +2392,6 @@ class VertriebTicketForm(ModelForm):
             "strasse",
             "ort",
             "anlagenstandort",
-            "gesamtkapazitat",
             "speicher_model",
             "speicher",
             "anz_speicher",
@@ -2501,7 +2489,6 @@ class VertriebTicketForm(ModelForm):
             {"id": "id_angenommenes_angebot"}
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
-        self.fields["gesamtkapazitat"].widget.attrs.update({"id": "id_gesamtkapazitat"})
         self.fields["name"].widget.attrs.update({"id": "id_name"})
 
     def save(self, commit=True):
@@ -2551,6 +2538,7 @@ class VertriebTicketForm(ModelForm):
 
         action = self.data.get("action_type")
         speicher_model = cleaned_data.get("speicher_model")
+        solar_module = cleaned_data.get("solar_module")
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
@@ -2582,13 +2570,25 @@ class VertriebTicketForm(ModelForm):
                         ),
                     )
             if modulanzahl is not None:
-                origModule = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot).modulanzahl
-                if origModule + modulanzahl < 0:
+                origAngebot = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot)
+                if origAngebot.modulanzahl + modulanzahl < 0:
                     self.add_error(
                         "modulanzahl",
                         ValidationError(
                             (
                                 "Die Anzahl der Module kann nicht geringer sein als die ursprünglich angebotene Anzahl der Module."
+                            ),
+                            params={
+                                "modulanzahl": modulanzahl,
+                            },
+                        ),
+                    )
+                elif modulanzahl < 0 and origAngebot.solar_module != solar_module:
+                    self.add_error(
+                        "modulanzahl",
+                        ValidationError(
+                            (
+                                "Die Anzahl der Module kann nicht geringer als 0 sein, wenn der Modultyp abweicht."
                             ),
                             params={
                                 "modulanzahl": modulanzahl,

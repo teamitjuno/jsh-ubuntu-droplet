@@ -361,8 +361,8 @@
                                                                         
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
+                                                                        <th>Gesamtkapazität</th>
+                                                                        <td>{{ vertrieb_angebot.gesamtkapazitat }} kWh</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>{{ form.smartmeter_model.label_tag }}</th>
@@ -1195,13 +1195,9 @@ $(document).ready(function() {
     toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
-    calculateGesamtkapazitat();
-    $('#anz_speicher').change(calculateGesamtkapazitat);
 
     $("#hersteller").change(function() {
         toggleAnzWandhalterung($(this).val());
-        
-        calculateGesamtkapazitat(); // Recalculate when manufacturer changes
         
         var hersteller = $(this).val();
         setFieldOptions(hersteller);
@@ -1283,24 +1279,6 @@ function toggleAnzWandhalterung(value) {
     }
 }
 
-
-
-function calculateGesamtkapazitat() {
-    var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
-    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
-    var modell = $('#speicher_model').val();
-
-    if (modell === 'LUNA 2000-5-S0') {
-        gesamtkapazitat = anz_speicher * 5;
-    } else if (modell === 'LUNA 2000-7-S1') {
-        gesamtkapazitat = anz_speicher * 6.9;
-    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
-    }
-
-    $('#gesamtkapazitat').val(gesamtkapazitat);
-}
 
 function limitModulanzahl(maxValue) {
     $('#modulanzahl').change(function() {
@@ -1594,8 +1572,8 @@ function submitFormWithAction(action) {
                                                                     </tr>
 
                                                                     <tr>
-                                                                        <th>{{ form.gesamtkapazitat.label_tag }}</th>
-                                                                        <td><input type="text" readonly class="form-control-plaintext" id="gesamtkapazitat" value="{{ form.gesamtkapazitat.value }} kWh"></td>
+                                                                       <th>Gesamtkapazität</th>
+                                                                        <td>{{ vertrieb_angebot.gesamtkapazitat }} kWh</td>
                                                                     </tr>
                                                                 </table>
                                                             </div>
@@ -2466,14 +2444,11 @@ $(document).ready(function() {
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     toggleBoolelwaRow($('#hersteller').val());
     setFieldOptions($('#hersteller').val());
-    calculateGesamtkapazitat();
-    $('#anz_speicher').change(calculateGesamtkapazitat);
 
     $("#hersteller").change(function() {
         toggleAnzWandhalterung($(this).val());
         toggleBoolelwaRow($(this).val());
-        calculateGesamtkapazitat(); // Recalculate when manufacturer changes
-        
+ 
         var hersteller = $(this).val();
         setFieldOptions(hersteller);
     });
@@ -2561,22 +2536,6 @@ function toggleBoolelwaRow(value) {
     }
 }
 
-function calculateGesamtkapazitat() {
-    var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-    var hersteller = $('#hersteller').val(); // Correctly get the value as a string
-    var gesamtkapazitat = 0; // Initialize to ensure it has a value even if conditions fail
-    var modell = $('#speicher_model').val();
-
-    if (modell === 'LUNA 2000-5-S0') {
-        gesamtkapazitat = anz_speicher * 5;
-    } else if (modell === 'LUNA 2000-7-S1') {
-        gesamtkapazitat = anz_speicher * 6.9;
-    } else if (hersteller === 'Viessmann') { // Corrected syntax for the if statement
-        gesamtkapazitat = anz_speicher * 5; // Adjusted calculation for Viessmann
-    }
-
-    $('#gesamtkapazitat').val(gesamtkapazitat.toFixed(2));
-}
 
 function limitModulanzahl(maxValue) {
     $('#modulanzahl').change(function() {

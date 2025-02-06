@@ -358,7 +358,6 @@ class VertriebAngebot(TimeStampMixin):
         max_length=100,
         default="----",
     )
-    gesamtkapazitat = models.PositiveIntegerField(default=0)
     speicher = models.BooleanField(default=False)
     anz_speicher = models.PositiveIntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
@@ -990,6 +989,13 @@ class VertriebAngebot(TimeStampMixin):
         return smartmeterPreis
 
     @property
+    def gesamtkapazitat(self):
+        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5}
+        if kapazitatDict.get(self.speicher_model):
+            return round(self.anz_speicher * kapazitatDict.get(self.speicher_model), 2)
+        return 0
+
+    @property
     def modulsumme_kWp(self):
         return self.modulleistungWp * self.modulanzahl / 1000
 
@@ -1461,7 +1467,6 @@ class VertriebTicket(TimeStampMixin):
         max_length=100,
         default="----",
     )
-    gesamtkapazitat = models.PositiveIntegerField(default=0)
     speicher = models.BooleanField(default=False)
     anz_speicher = models.IntegerField(default=0, validators=[validate_range])
     wandhalterung_fuer_speicher = models.BooleanField(default=False)
@@ -1998,6 +2003,17 @@ class VertriebTicket(TimeStampMixin):
                 OptionalAccessoriesPreise, "smartmeter_viessmann", 1
             )
         return smartmeterPreis
+
+    @property
+    def gesamtkapazitat(self):
+        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5}
+        if kapazitatDict.get(self.speicher_model):
+            if VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
+                angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
+                if angebot.speicher_model == self.speicher_model:
+                    return round((self.anz_speicher + angebot.anz_speicher) * kapazitatDict.get(self.speicher_model), 2)
+            return round(self.anz_speicher * kapazitatDict.get(self.speicher_model), 2)
+        return 0
 
     @property
     def modulsumme_kWp(self):
