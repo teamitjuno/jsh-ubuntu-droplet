@@ -1058,7 +1058,7 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
     notstrom = forms.BooleanField(
-        label="Notstro Backupbox",
+        label="Notstrom Backupbox",
         required=False,
         widget=forms.CheckboxInput(
             attrs={"class": "form-check-input", "id": "notstrom"}
