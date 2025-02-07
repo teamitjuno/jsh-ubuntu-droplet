@@ -221,7 +221,7 @@ class CustomLogEntry(LogEntry):
             else:
                 return f"Das Angebot wurde aktualisiert"
         elif self.is_deletion():
-            return f"Das Angebot wurde aktualisiert"
+            return f"Das Angebot wurde gelöscht"
         else:
             return "LogEntry Object"
 
@@ -1213,7 +1213,10 @@ class VertriebAngebot(TimeStampMixin):
         angebotsSumme += float(self.full_accessories_price)
 
         if self.hersteller == "Huawei" and self.garantieWR != "keine":
-            garantie_faktor = float(AndereKonfigurationWerte.objects.get(name="garantiefaktor").value)
+            if self.speicher_model == "LUNA 2000-7-S1" and self.anz_speicher > 0:
+                garantie_faktor = float(AndereKonfigurationWerte.objects.get(name="garantiefaktor").value)
+            else:
+                garantie_faktor = 1
             garantie_years = int(self.garantieWR.split(" ")[0])
             garantie_kw = next(
                 kw

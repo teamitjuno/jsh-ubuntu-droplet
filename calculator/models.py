@@ -515,14 +515,13 @@ class Calculator(models.Model):
         angebotsSumme += float(self.full_accessories_price)
 
         if self.garantieWR != "keine":
-            garantie_faktor = float(AndereKonfigurationWerte.objects.get(name="garantiefaktor").value)
             garantie_years = int(self.garantieWR.split(" ")[0])
             garantie_kw = next(
                 kw
                 for kw in [3, 4, 5, 6, 8, 10, 15, 16, 20, 25, 30]
                 if kwp <= kw
             )
-            angebotsSumme += get_garantie_price(garantie_kw, garantie_years) * garantie_faktor
+            angebotsSumme += get_garantie_price(garantie_kw, garantie_years)
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
