@@ -812,6 +812,8 @@ class VertriebAngebotForm(ModelForm):
     WECHSELRICHTER_MODEL_CHOICES = [
         ("----", "----"),
         ("SUN 2000", "SUN 2000"),
+        ("SUN 2000 MAP0", "SUN 2000 MAP0"),
+        ("SUN 2000 MB0", "SUN 2000 MB0"),
         ("Vitocharge VX3", "Vitocharge VX3"),
     ]
 
@@ -1484,6 +1486,8 @@ class VertriebAngebotForm(ModelForm):
         incompatible_combinations = {
             ("Viessmann", "Huawei FusionCharge AC"): "wallboxtyp",
             ("Viessmann", "SUN 2000"): "wechselrichter_model",
+            ("Viessmann", "SUN 2000 MAP0"): "wechselrichter_model",
+            ("Viessmann", "SUN 2000 MB0"): "wechselrichter_model",
             ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
             ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
             ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",

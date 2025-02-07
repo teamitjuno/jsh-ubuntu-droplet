@@ -702,9 +702,8 @@ function toggleGeruestOeff(value){
 }
 
 function setFieldOptions(value) {
-    var wechselrichterOptions, speicherOptions, smartmeterOptions;
+    var speicherOptions, smartmeterOptions;
     
-        wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
         if($('#speicher_model').val() == "LUNA 2000-5-S0"){
             speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
         }
@@ -720,8 +719,6 @@ function setFieldOptions(value) {
         else {
             smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
         }
-
-        $("#wechselrichter_model").html(wechselrichterOptions);
         $("#speicher_model").html(speicherOptions);
         $("#smartmeter_model").html(smartmeterOptions);
 }

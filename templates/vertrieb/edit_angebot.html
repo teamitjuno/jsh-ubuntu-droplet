@@ -1252,7 +1252,15 @@ function setFieldOptions(value) {
             smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
-            wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+            if($('#wechselrichter_model').val() == "SUN 2000 MAP0") {
+                wechselrichterOptions = '<option value="SUN 2000 MAP0">SUN 2000 MAP0</option><option value="SUN 2000 MB0">SUN 2000 MB0</option><option value="SUN 2000">SUN 2000</option>';
+            }
+            else if($('#wechselrichter_model').val() == "SUN 2000 MB0") {
+                wechselrichterOptions = '<option value="SUN 2000 MB0">SUN 2000 MB0</option><option value="SUN 2000">SUN 2000</option><option value="SUN 2000 MAP0">SUN 2000 MAP0</option>';
+            }
+            else {
+                wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option><option value="SUN 2000 MAP0">SUN 2000 MAP0</option><option value="SUN 2000 MB0">SUN 2000 MB0</option>';
+            }
             if($('#speicher_model').val() == "LUNA 2000-5-S0"){
                 speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             }
@@ -1304,68 +1312,6 @@ function submitFormWithAction(actionType) {
     document.getElementById('main-form').submit();
 }
 </script>
-
-
-
-        {% comment %} <script>
-        $(document).ready(function() {
-            toggleAnzWandhalterung($('#hersteller').val());
-            calculateGesamtkapazitat();
-            $('#anz_speicher').change(calculateGesamtkapazitat);
-
-            $("#hersteller").change(function() {
-                toggleAnzWandhalterung($(this).val());
-                
-                var hersteller = $(this).val();
-                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
-                
-                if(hersteller == "Viessmann") {
-                    limitModulanzahl(28);
-                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                } else if(hersteller == "Huawei") {
-                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                } else {
-                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
-                }
-
-                $("#wechselrichter_model").html(wechselrichterOptions);
-                $("#speicher_model").html(speicherOptions);
-                $("#wallboxtyp").html(wallboxtypOptions);
-            });
-        });
-
-        function toggleAnzWandhalterung(value) {
-            if (value === 'Viessmann') {
-                $('#anz_wandhalterung_row').hide();
-            } else {
-                $('#anz_wandhalterung_row').show();
-            }
-        }
-
-        function calculateGesamtkapazitat() {
-            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-            $('#gesamtkapazitat').val(anz_speicher * 5);
-        }
-
-        function limitModulanzahl(maxValue) {
-                $('#modulanzahl').change(function() {
-                    var value = parseInt($(this).val());
-                    if (value > maxValue) {
-                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-                        $(this).val(maxValue);
-                    }
-                });
-            }
-            function submitFormWithAction(actionType) {
-        document.getElementById('actionType').value = actionType;
-        document.getElementById('main-form').submit();
-    }
-        </script> {% endcomment %}
-
 
     <!--- #############################################################################################-->
 
@@ -2520,7 +2466,15 @@ function setFieldOptions(value) {
             smartmeterOptions = '<option value="Viessmann Energiezähler">Viessmann Energiezähler</option>';
             $('#garantieWR_row').hide();
         } else if(value == "Huawei") {
-            wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
+            if($('#wechselrichter_model').val() == "SUN 2000 MAP0") {
+                wechselrichterOptions = '<option value="SUN 2000 MAP0">SUN 2000 MAP0</option><option value="SUN 2000 MB0">SUN 2000 MB0</option><option value="SUN 2000">SUN 2000</option>';
+            }
+            else if($('#wechselrichter_model').val() == "SUN 2000 MB0") {
+                wechselrichterOptions = '<option value="SUN 2000 MB0">SUN 2000 MB0</option><option value="SUN 2000">SUN 2000</option><option value="SUN 2000 MAP0">SUN 2000 MAP0</option>';
+            }
+            else {
+                wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option><option value="SUN 2000 MAP0">SUN 2000 MAP0</option><option value="SUN 2000 MB0">SUN 2000 MB0</option>';
+            }
             if($('#speicher_model').val() == "LUNA 2000-5-S0"){
                 speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
             }
@@ -2570,61 +2524,7 @@ function submitFormWithAction(actionType) {
     document.getElementById('main-form').submit();
 }
 </script>
-
-        {% comment %} <script>
-        $(document).ready(function() {
-            toggleAnzWandhalterung($('#hersteller').val());
-            calculateGesamtkapazitat();
-            $('#anz_speicher').change(calculateGesamtkapazitat);
-
-            $("#hersteller").change(function() {
-                toggleAnzWandhalterung($(this).val());
-                
-                var hersteller = $(this).val();
-                var wechselrichterOptions, speicherOptions, wallboxtypOptions;
-                
-                if(hersteller == "Viessmann") {
-                    limitModulanzahl(28);
-                    wechselrichterOptions = '<option value="Vitocharge VX3">Vitocharge VX3</option>';
-                    speicherOptions = '<option value="Vitocharge VX3 PV-Stromspeicher">Vitocharge VX3 PV-Stromspeicher</option>';
-                    wallboxtypOptions = '<option value="Viessmann Charging Station">Viessmann Charging Station</option>';
-                } else if(hersteller == "Huawei") {
-                    wechselrichterOptions = '<option value="SUN 2000">SUN 2000</option>';
-                    speicherOptions = '<option value="LUNA 2000">LUNA 2000</option>';
-                    wallboxtypOptions = '<option value="Huawei FusionCharge AC">Huawei FusionCharge AC</option>';
-                } else {
-                    wechselrichterOptions = speicherOptions = wallboxtypOptions = '<option value="">-----</option>';
-                }
-
-                $("#wechselrichter_model").html(wechselrichterOptions);
-                $("#speicher_model").html(speicherOptions);
-                $("#wallboxtyp").html(wallboxtypOptions);
-            });
-        });
-
-        function toggleAnzWandhalterung(value) {
-            if (value === 'Viessmann') {
-                $('#anz_wandhalterung_row').hide();
-            } else {
-                $('#anz_wandhalterung_row').show();
-            }
-        }
-
-        function calculateGesamtkapazitat() {
-            var anz_speicher = parseInt($('#anz_speicher').val()) || 0;
-            $('#gesamtkapazitat').val(anz_speicher * 5);
-        }
-
-        function limitModulanzahl(maxValue) {
-                $('#modulanzahl').change(function() {
-                    var value = parseInt($(this).val());
-                    if (value > maxValue) {
-                        alert('Modulanzahl cannot be more than ' + maxValue + ' when Hersteller is Viessmann.');
-                        $(this).val(maxValue);
-                    }
-                });
-            }
-        </script> {% endcomment %}
+            
         {% endif %}
         <footer class="footer">
                 <div class="container-fluid">

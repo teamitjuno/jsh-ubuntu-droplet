@@ -457,9 +457,7 @@ class PDF(FPDF):
             # Wechselrichter
             eintrag += 1
             tab2_eintrag_nummer = str(eintrag) + "."
-            tab2_wr_model = self.get_attribute_by_identifier(
-                "tabelle_eintrag_2_huawei_1", "content"
-            )
+            tab2_wr_model = f'{self.get_attribute_by_identifier("tabelle_eintrag_2_huawei_1", "content")} {data["wechselrichter"]}'
             garantie = str(data["garantieJahre"])
             tab2_wr_model_props = f"{self.get_attribute_by_identifier('tabelle_eintrag_2_huawei_2', 'content')} {garantie}"
             self.setup_eintrag_text(

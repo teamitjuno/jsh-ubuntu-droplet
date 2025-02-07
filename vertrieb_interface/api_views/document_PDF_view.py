@@ -148,7 +148,8 @@ class DocumentView(LoginRequiredMixin, DetailView):
 
         if vertrieb_angebot.datenblatter_wechselrichter:
             if vertrieb_angebot.hersteller == "Huawei":
-                self._attach_datenblatter(email, datenblatter, "wechselrichter", "Huawei Wechselrichter")
+                wrDict = {"SUN 2000": "wechselrichter", "SUN 2000 MAP0": "wechselrichter_map0", "SUN 2000 MB0": "wechselrichter_mb0"}
+                self._attach_datenblatter(email, datenblatter, wrDict.get(vertrieb_angebot.wechselrichter_model), "Huawei Wechselrichter")
 
         if vertrieb_angebot.datenblatter_wallbox:
             self._attach_datenblatt_from_prices(

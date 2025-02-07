@@ -1372,6 +1372,7 @@ class VertriebAngebot(TimeStampMixin):
             "gesamtkreditbetrag": self.gesamtkreditbetrag,
             "debug": False,
             "hersteller": self.hersteller,
+            "wechselrichter": self.wechselrichter_model,
             "version": 1.0,
             "stromverbrauch": self.verbrauch,
             "grundpreis": self.grundpreis,

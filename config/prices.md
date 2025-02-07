@@ -459,7 +459,7 @@ Editierbarer_Text.objects.create(
 # Create 'tabelle_eintrag_2_huawei_1' and 'tabelle_eintrag_2_huawei_2' entries
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_2_huawei_1', 
-    content="Wechselrichter Huawei SUN2000", 
+    content="Wechselrichter Huawei", 
     font='JUNO Solar Lt', 
     y=180, 
     x=25,

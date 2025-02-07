@@ -8,6 +8,8 @@ class Datenblatter(models.Model):
         upload_to="uploads/", blank=True, null=True
     )
     wechselrichter = models.FileField(upload_to="uploads/", blank=True, null=True)
+    wechselrichter_map0 = models.FileField(upload_to="uploads/", blank=True, null=True)
+    wechselrichter_mb0 = models.FileField(upload_to="uploads/", blank=True, null=True)
     wechselrichter_viessman = models.FileField(
         upload_to="uploads/", blank=True, null=True
     )
