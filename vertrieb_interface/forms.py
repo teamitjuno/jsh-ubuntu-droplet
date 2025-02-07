@@ -405,6 +405,7 @@ class VertriebAngebotEmptyForm(ModelForm):
             "thor",
             "heizstab",
             "notstrom",
+            "ersatzstrom",
             "anzOptimizer",
             "wallboxtyp",
             "wallbox_anzahl",
@@ -1055,10 +1056,17 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
     notstrom = forms.BooleanField(
-        label="Notstrom",
+        label="Notstro Backupbox",
         required=False,
         widget=forms.CheckboxInput(
             attrs={"class": "form-check-input", "id": "notstrom"}
+        ),
+    )
+    ersatzstrom = forms.BooleanField(
+        label="Ersatzstrom",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "ersatzstrom"}
         ),
     )
     smartDongleLte = forms.BooleanField(
@@ -1310,6 +1318,7 @@ class VertriebAngebotForm(ModelForm):
             "prefa_befestigung",
             "heizstab",
             "notstrom",
+            "ersatzstrom",
             "smartDongleLte",
             "anzOptimizer",
             "geruestKunde",
@@ -2266,10 +2275,17 @@ class VertriebTicketForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
     notstrom = forms.BooleanField(
-        label="Notstrom",
+        label="Notstrom Backupbox",
         required=False,
         widget=forms.CheckboxInput(
             attrs={"class": "form-check-input", "id": "notstrom"}
+        ),
+    )
+    ersatzstrom = forms.BooleanField(
+        label="Ersatzstrom",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "ersatzstrom"}
         ),
     )
     smartDongleLte = forms.BooleanField(
@@ -2414,6 +2430,7 @@ class VertriebTicketForm(ModelForm):
             "prefa_befestigung",
             "heizstab",
             "notstrom",
+            "ersatzstrom",
             "smartDongleLte",
             "anzOptimizer",
             "geruestKunde",

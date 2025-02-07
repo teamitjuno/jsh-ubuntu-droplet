@@ -123,6 +123,7 @@ from prices.models import OptionalAccessoriesPreise
 OptionalAccessoriesPreise.objects.create(name='elwa_2', pdf_name='mypv AC ELWA 2', pdf_text='∙ 0 - 3,5 KW stufenlos geregeltes Warmwasserbereitungsgerät für netzgekoppelte Photovoltaikanlagen ∙ Produktgarantie: 2 Jahre', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='ac_thor_3_kw', pdf_name='mypv AC∙THOR', pdf_text='∙ 0- 3 KW stufenlos geregelter Photovoltaik Power-Manager für Warmwasser, elektrische Wärmequellen und optional Heizung ∙ Produktgarantie: 2 Jahre', price=1250.00)
 OptionalAccessoriesPreise.objects.create(name='heizstab', price=250.00)
+OptionalAccessoriesPreise.objects.create(name='ersatzstrom', pdf_name='Huawei SmartGuard 63A-T0', pdf_text='Ersatzstromversorgung bei Netzausfall ∙ max. 63A und max. 36 kW ∙ dreiphasig mit Wechselrichter der Baureihe SUN2000 MAP0, sonst nur einphasig', price=1500.00)
 OptionalAccessoriesPreise.objects.create(name='smartDongleLte', pdf_name='Smart Dongle LTE', pdf_text='Lieferung - ohne Montage, eine SIM Card ist erforderlich und muss separat gekauft werden.', price=200.00)
 OptionalAccessoriesPreise.objects.create(name='apzFeld', pdf_name='APZ-Feld Nachrüstung', price=777.78)
 OptionalAccessoriesPreise.objects.create(name='potentialausgleich', pdf_name='Potentialausgleich inkl. Erdspieß', price=1666.67)

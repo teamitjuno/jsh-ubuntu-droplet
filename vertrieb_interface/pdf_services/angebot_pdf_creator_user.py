@@ -1221,7 +1221,9 @@ def replace_spaces_with_underscores(s: str) -> str:
 
 def anzahlZubehoer(data):
     anzahlZubehoer = 0
-    if data["optionVorh"]:
+    if data["notstrom"]:
+        anzahlZubehoer += 1
+    if data["ersatzstrom"]:
         anzahlZubehoer += 1
     if data["elwa"]:
         anzahlZubehoer += 1
@@ -1609,6 +1611,21 @@ def page4(pdf, data, eintrag, limit):
                 content_4=tab29_content_4,
             )
     addedPage = False
+    if data["ersatzstrom"] == True:
+        eintrag += 1
+        if not addedPage and eintrag > limit:
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("ersatzstrom")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
     if data["smartDongleLte"] == True:
         eintrag += 1
         if not addedPage and eintrag > limit:

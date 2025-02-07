@@ -385,6 +385,7 @@ class VertriebAngebot(TimeStampMixin):
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
+    ersatzstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
     apzFeld = models.BooleanField(default=False)
@@ -1152,6 +1153,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.smartmeter_angebot_price)
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
+        if self.ersatzstrom:
+            accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
         if self.smartDongleLte:
             accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
         if self.midZaehler > 0:
@@ -1344,6 +1347,7 @@ class VertriebAngebot(TimeStampMixin):
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,
+            "ersatzstrom": self.ersatzstrom,
             "solarModulePreis": self.solar_module_gesamt_preis,
             "wallboxPreis": self.full_wallbox_preis,
             "notstromPreis": self.get_optional_accessory_price("backup_box"),
@@ -1484,6 +1488,7 @@ class VertriebTicket(TimeStampMixin):
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
     notstrom = models.BooleanField(default=False)
+    ersatzstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.IntegerField(default=0)
     apzFeld = models.BooleanField(default=False)
@@ -2110,6 +2115,8 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.smartmeter_angebot_price)
         if self.notstrom:
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
+        if self.ersatzstrom:
+            accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
         if self.smartDongleLte:
             accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
         if self.midZaehler > 0:
@@ -2222,6 +2229,7 @@ class VertriebTicket(TimeStampMixin):
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
             "notstrom": self.notstrom,
+            "ersatzstrom": self.ersatzstrom,
             "solarModulePreis": self.solar_module_gesamt_preis,
             "wallboxPreis": self.full_wallbox_preis,
             "notstromPreis": self.get_optional_accessory_price("backup_box"),

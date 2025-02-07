@@ -140,6 +140,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "notstrom",
+                    "ersatzstrom",
                     "smartDongleLte",
                     "thor",
                     "heizstab",
@@ -331,6 +332,7 @@ class VertriebTicketAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "notstrom",
+                    "ersatzstrom",
                     "smartDongleLte",
                     "thor",
                     "heizstab",
