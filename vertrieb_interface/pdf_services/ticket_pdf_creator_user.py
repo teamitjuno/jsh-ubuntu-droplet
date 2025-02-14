@@ -268,16 +268,28 @@ class PDF(FPDF):
         )
 
         # ANGEBOT_untertitel
-        ANGEBOT_untertitel_content = self.get_attribute_by_identifier(
-            "ZUSATZ_untertitel", "content"
-        )
-        self.setup_text(
-            "ZUSATZ_untertitel",
-            ANGEBOT_untertitel_content,
-            h=6,
-            bold=True,
-            alignment="L",
-        )
+        if data["istNachkauf"]:
+            ANGEBOT_untertitel_content = self.get_attribute_by_identifier(
+                "ANGEBOT_untertitel", "content"
+            )
+            self.setup_text(
+                "ANGEBOT_untertitel",
+                ANGEBOT_untertitel_content,
+                h=6,
+                bold=True,
+                alignment="L",
+            )
+        else:
+            ANGEBOT_untertitel_content = self.get_attribute_by_identifier(
+                "ZUSATZ_untertitel", "content"
+            )
+            self.setup_text(
+                "ZUSATZ_untertitel",
+                ANGEBOT_untertitel_content,
+                h=6,
+                bold=True,
+                alignment="L",
+            )
 
         # ANGEBOT_id_nummer (variable)
         ANGEBOT_id_nummer = f"{self.title1}"
@@ -453,16 +465,28 @@ class PDF(FPDF):
         self.set_fill_color(240)
         self.set_y(35)
         self.set_font("JUNO Solar Lt", "B", 17)
-        self.multi_cell(0, 6, "Aufpreissumme\n ", 0, "L", fill=True)
-        self.set_font("JUNO Solar Lt", "", 12)
-        self.set_y(45)
-        steuer = data["steuersatz"]
-        self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
-        self.cell(0, 6, "", 0, 1, "L", fill=True)
-        self.cell(0, 6, "zusätzliche Kosten", 0, 1, "L", fill=True)
-        self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
-        self.set_font("JUNO Solar Lt", "B", 12)
-        self.cell(0, 6, "Ihre zusätzlichen Kosten (inkl. MwSt.)", 0, 1, "L", fill=True)
+        if data["istNachkauf"]:
+            self.multi_cell(0, 6, "Angebotssumme\n ", 0, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_y(45)
+            steuer = data["steuersatz"]
+            self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
+            self.cell(0, 6, "", 0, 1, "L", fill=True)
+            self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
+            self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6, "Ihre Investition (inkl. MwSt.)", 0, 1, "L", fill=True)
+        else:
+            self.multi_cell(0, 6, "Aufpreissumme\n ", 0, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "", 12)
+            self.set_y(45)
+            steuer = data["steuersatz"]
+            self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
+            self.cell(0, 6, "", 0, 1, "L", fill=True)
+            self.cell(0, 6, "zusätzliche Kosten", 0, 1, "L", fill=True)
+            self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6, "Ihre zusätzlichen Kosten (inkl. MwSt.)", 0, 1, "L", fill=True)
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         sum = data["kostenPVA"]

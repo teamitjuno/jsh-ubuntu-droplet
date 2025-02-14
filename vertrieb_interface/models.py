@@ -1579,6 +1579,7 @@ class VertriebTicket(TimeStampMixin):
 
         self.zoho_kundennumer = self.kundennumer_finder
         self.angenommenes_angebot = self.angebot_finder
+        self.status_pva = self.get_status_pva
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
         self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
@@ -1748,6 +1749,30 @@ class VertriebTicket(TimeStampMixin):
             if an.angebot_id == an.angenommenes_angebot:
                 return an.angebot_id
         return ""
+
+    @property
+    def get_status_pva(self):
+        try:
+            data = json.loads(
+                self.user.zoho_data_text
+                or '[{"zoho_id": "default", "zoho_kundennumer": "default"}]'
+            )
+        except json.JSONDecodeError:
+            return ""
+
+        zoho_id = str(self.zoho_id)
+        return next(
+            (
+                item["status_pva"]
+                for item in data
+                if item.get("zoho_id") == zoho_id
+            ),
+            "",
+        )
+
+    @property
+    def istNachkauf(self):
+        return self.status_pva == "abgeschlossen" or self.status_pva == "Endabnahme erfolgt"
 
     @property
     def bauteile_finder(self):
@@ -2244,6 +2269,7 @@ class VertriebTicket(TimeStampMixin):
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
             ),
             "kostenPVA": self.kosten_pva,
+            "istNachkauf": self.istNachkauf,
             "debug": False,
             "version": 1.0,
         }
