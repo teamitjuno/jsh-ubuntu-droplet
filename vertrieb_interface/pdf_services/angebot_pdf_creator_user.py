@@ -1337,7 +1337,7 @@ def page4(pdf, data, eintrag, limit):
             content_4=tab23_content_4,
         )
 
-    if data["wallboxVorh"] or data["kabelanschluss"] >= 0:
+    if data["wallboxVorh"] or data["kabelanschluss"] > 0:
         pdf.line(pdf.l_margin, pdf.get_y() + 5, 196.5, pdf.get_y() + 5)
         pdf.set_y(pdf.get_y() + 10)
 

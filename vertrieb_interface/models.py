@@ -2242,7 +2242,7 @@ class VertriebTicket(TimeStampMixin):
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
-            "kabelanschluss": 0,
+            "kabelanschluss": 0.0,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,
