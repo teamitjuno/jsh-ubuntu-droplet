@@ -1504,6 +1504,9 @@ class VertriebAngebotForm(ModelForm):
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
+        notstrom = cleaned_data.get("notstrom")
+        ersatzstrom = cleaned_data.get("ersatzstrom")
+        smartmeter_model = cleaned_data.get("smartmeter_model")
         message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
@@ -1523,6 +1526,33 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        if notstrom and ersatzstrom:
+            self.add_error(
+                "notstrom",
+                ValidationError(
+                    (
+                        "Bei der Auswahl einer Notstrom Backupbox kann nicht der SmartGuard ausgewählt werden."
+                    ),
+                    params={
+                        "notstrom": notstrom,
+                        "ersatzstrom": ersatzstrom,
+                    },
+                ),
+            )
+        if ersatzstrom and smartmeter_model != "kein EMS":
+            self.add_error(
+                "ersatzstrom",
+                ValidationError(
+                    (
+                        "Bei der Auswahl eines SmartGuard kann kein EMS / Smart Meter ausgewählt werden."
+                    ),
+                    params={
+                        "smartmeter_model": smartmeter_model,
+                        "ersatzstrom": ersatzstrom,
+                    },
+                ),
+            )
+
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
 
@@ -2563,6 +2593,9 @@ class VertriebTicketForm(ModelForm):
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
+        notstrom = cleaned_data.get("notstrom")
+        ersatzstrom = cleaned_data.get("ersatzstrom")
+        smartmeter_model = cleaned_data.get("smartmeter_model")
         angenommenes_angebot = cleaned_data.get("angenommenes_angebot")
         origAngebot = None
         if VertriebAngebot.objects.filter(angebot_id=angenommenes_angebot):
@@ -2670,6 +2703,33 @@ class VertriebTicketForm(ModelForm):
                             },
                         ),
                     )
+
+        if notstrom and ersatzstrom:
+            self.add_error(
+                "notstrom",
+                ValidationError(
+                    (
+                        "Bei der Auswahl einer Notstrom Backupbox kann nicht der SmartGuard ausgewählt werden."
+                    ),
+                    params={
+                        "notstrom": notstrom,
+                        "ersatzstrom": ersatzstrom,
+                    },
+                ),
+            )
+        if ersatzstrom and smartmeter_model != "kein EMS":
+            self.add_error(
+                "ersatzstrom",
+                ValidationError(
+                    (
+                        "Bei der Auswahl eines SmartGuard kann kein EMS / Smart Meter ausgewählt werden."
+                    ),
+                    params={
+                        "smartmeter_model": smartmeter_model,
+                        "ersatzstrom": ersatzstrom,
+                    },
+                ),
+            )
         wallbox = cleaned_data.get("wallbox")
         wallbox_anzahl = cleaned_data.get("wallbox_anzahl")
 
