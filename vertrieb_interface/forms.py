@@ -1065,7 +1065,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     ersatzstrom = forms.BooleanField(
-        label="Ersatzstrom",
+        label="SmartGuard inkl. EMMA",
         required=False,
         widget=forms.CheckboxInput(
             attrs={"class": "form-check-input", "id": "ersatzstrom"}
@@ -2286,7 +2286,7 @@ class VertriebTicketForm(ModelForm):
         ),
     )
     ersatzstrom = forms.BooleanField(
-        label="Ersatzstrom",
+        label="SmartGuard inkl. EMMA",
         required=False,
         widget=forms.CheckboxInput(
             attrs={"class": "form-check-input", "id": "ersatzstrom"}
