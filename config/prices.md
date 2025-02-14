@@ -141,7 +141,7 @@ OptionalAccessoriesPreise.objects.create(name='batteriemodul_huawei7', price=332
 OptionalAccessoriesPreise.objects.create(name='batteriemodul_viessmann', price=3703.00)
 OptionalAccessoriesPreise.objects.create(name='leistungsmodul', price=1575.00)
 OptionalAccessoriesPreise.objects.create(name='power_boost', price=0.00)
-OptionalAccessoriesPreise.objects.create(name='kabelpreis', price=35.00)
+OptionalAccessoriesPreise.objects.create(name='kabelpreis', pdf_name='Meter zusätzliche AC-Anschlussleitung', price=35.00)
 OptionalAccessoriesPreise.objects.create(name='backup_box', price=1800.00)
 OptionalAccessoriesPreise.objects.create(name='wandhalterung_fuer_speicher', price=120.00)
 OptionalAccessoriesPreise.objects.create(name='smartmeter_dtsu', price=400.00)

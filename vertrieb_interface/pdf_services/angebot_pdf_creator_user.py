@@ -1337,7 +1337,7 @@ def page4(pdf, data, eintrag, limit):
             content_4=tab23_content_4,
         )
 
-    if data["wallboxVorh"]:
+    if data["wallboxVorh"] or data["kabelanschluss"] >= 0:
         pdf.line(pdf.l_margin, pdf.get_y() + 5, 196.5, pdf.get_y() + 5)
         pdf.set_y(pdf.get_y() + 10)
 
@@ -1347,18 +1347,32 @@ def page4(pdf, data, eintrag, limit):
         wallbox_2 = pdf.get_attribute_by_identifier("wallbox_2", "content")
         pdf.setup_text("wallbox_2", wallbox_2, alignment="L")
 
-        eintrag += 1
-        tab24_eintrag_nummer = str(eintrag) + "."
-        tab24_content_1 = str(data["wallboxTyp"])
-        tab24_content_2 = str(data["wallboxAnz"])
-        tab24_content_4 =  str(data["wallboxText"])
-        pdf.setup_eintrag_text(
-            "wallbox_typ",
-            tab24_eintrag_nummer,
-            content_1=tab24_content_1,
-            content_2=tab24_content_2,
-            content_4=tab24_content_4,
-        )
+        if data["wallboxVorh"]:
+            eintrag += 1
+            tab24_eintrag_nummer = str(eintrag) + "."
+            tab24_content_1 = str(data["wallboxTyp"])
+            tab24_content_2 = str(data["wallboxAnz"])
+            tab24_content_4 =  str(data["wallboxText"])
+            pdf.setup_eintrag_text(
+                "wallbox_typ",
+                tab24_eintrag_nummer,
+                content_1=tab24_content_1,
+                content_2=tab24_content_2,
+                content_4=tab24_content_4,
+            )
+        if data["kabelanschluss"] > 0.0:
+            eintrag += 1
+            tab28_eintrag_nummer = str(eintrag) + "."
+            tab28_content_1, tab28_content_4 = get_zubehoer_name("kabelpreis")
+            tab28_content_1 = str(data["kabelanschluss"]) + " " + tab28_content_1
+            tab28_content_2 = "1"
+            pdf.setup_eintrag_text(
+                "zubehoer_platzhalter",
+                tab28_eintrag_nummer,
+                tab28_content_1,
+                content_2=tab28_content_2,
+                content_4=tab28_content_4,
+            )
 
     # OPTIONALES ZUBEHÖR
     if zubehoerVorhanden:
