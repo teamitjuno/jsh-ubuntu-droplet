@@ -142,7 +142,8 @@ def changeVerguetung(bis10, bis40):
         Überschreibt den Startwert der Einspeisevergütungen für jeden Nutzer.
 
         Args:
-        None
+        bis10: Int, der als Centwert für die Vergütung bis 10 kWp gesetzt werden soll
+        bis40: Int, der als Centwert für die Vergütung bis 40 kWp gesetzt werden soll
 
         Returns:
         None
@@ -152,3 +153,31 @@ def changeVerguetung(bis10, bis40):
         for user in users:
             User.objects.filter(zoho_id=user.zoho_id).update(initial_bis10kWp=bis10)
             User.objects.filter(zoho_id=user.zoho_id).update(initial_bis40kWp=bis40)
+
+def changeKabel(initial):
+    """
+        Überschreibt den Startwert der Kabelanschlusslänge für jeden Nutzer.
+
+        Args:
+        initial: Int, der als initiale Kabelanschlusslänge gesetzt werden soll
+
+        Returns:
+        None
+        """
+    if initial is not None:
+        users = User.objects.all()
+        for user in users:
+            User.objects.filter(zoho_id=user.zoho_id).update(initial_kabelanschluss=initial)
+
+def activateAccount(email):
+    """
+        Aktiviert einen Nutzeraccount anhand der Mail-Adresse.
+
+        Args:
+        email: String, der Mail-Adresse des Nutzers enthält
+
+        Returns:
+        None
+        """
+    if email is not None:
+        User.objects.filter(email=email).update(is_active=True)

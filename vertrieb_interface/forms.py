@@ -1004,7 +1004,7 @@ class VertriebAngebotForm(ModelForm):
     )
     kabelanschluss = forms.FloatField(
         initial=10.0,
-        label="Kabelanschlusslänge [m]",
+        label="Kabelanschlusslänge >10m",
         required=False,
         widget=forms.NumberInput(
             attrs={

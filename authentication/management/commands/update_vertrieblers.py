@@ -45,7 +45,7 @@ class Command(BaseCommand):
             params = {
                 "from": start_index,
                 "limit": limit,
-                "criteria": "Unternehmen_verlassen_am == null"
+                "criteria": "Mail != null"
             }
             response = requests.get(url, headers=headers, params=params)  # type: ignore
             if response.status_code == 401:
@@ -70,12 +70,15 @@ class Command(BaseCommand):
                     and "ID" in record
                     and "Mobil" in record
                 ):
+                    is_active = record["Unternehmen_verlassen_am"] == ""
+                    print(f"{is_active}: {record}")
                     vertriebler_set.add(
                         (
                             record["Name"],
                             record["ID"],
                             record["Mail"],
                             record["Mobil"],
+                            is_active,
                         )
                     )
 
@@ -134,21 +137,20 @@ class Command(BaseCommand):
                 if len(kuerzel) > 3:
                     kuerzel = kuerzel[:3]
                 phone = user_info[3]
-                if phone == None or phone == "":
-                    phone = f"+49175{randint(1000000, 9999999)}"
+                if phone == "":
+                    phone = None
 
                 # Check if a User with the provided zoho_id exists
                 user_exists = User.objects.filter(zoho_id=zoho_id).exists()
 
                 # If the User does not exist, create a new User
-                if not user_exists:
+                if not user_exists and user_info[4]:
                     new_user = User.objects.create(
                         zoho_id=zoho_id,
                         email=email,
                         username=username,
                         first_name=first_name,
                         last_name=last_name,
-                        age=0,
                         phone=phone,
                         is_staff=False,
                         beruf="Vertrieb",
@@ -161,6 +163,11 @@ class Command(BaseCommand):
                     new_user.set_password(f"{DEFAULT_USER_CREATION_PASSWORD}")
                     new_user.save()
                     phone_counter += 1
+                else:
+                    User.objects.filter(zoho_id=zoho_id).update(phone=phone)
+                    User.objects.filter(zoho_id=zoho_id).update(first_name=first_name)
+                    User.objects.filter(zoho_id=zoho_id).update(last_name=last_name)
+                    User.objects.filter(zoho_id=zoho_id).update(is_active=user_info[4])
             else:
                 self.stdout.write(
                     f"Skipping user {user_info} due to incorrect data format."

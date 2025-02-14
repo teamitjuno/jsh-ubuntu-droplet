@@ -217,7 +217,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     )
     initial_wallbox_anzahl = models.PositiveIntegerField(default=0)
     initial_kabelanschluss = models.FloatField(
-        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
+        default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

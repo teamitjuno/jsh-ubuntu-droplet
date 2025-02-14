@@ -271,9 +271,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    initial_kabelanschluss = forms.FloatField(
-        initial=10.0,
-        label="Kabelanschlusslänge [m]",
+    anschluss = forms.FloatField(
+        initial=0.0,
+        label="Kabelanschlusslänge >10m",
         required=False,
         widget=forms.NumberInput(
             attrs={

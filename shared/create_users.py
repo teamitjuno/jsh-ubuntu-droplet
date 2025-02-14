@@ -11,6 +11,7 @@ zoho_users_list = fetch_vertriebler_list_IDs()
 
 
 def create_users(zoho_users_list):
+    # This is not the command called from the admin panel, see authentication/management/commands/update_vertrieblers.py
     phone_counter = 4
     for user_info in zoho_users_list:
         first_name, last_name = user_info[0].split(" ")

@@ -403,7 +403,7 @@ class VertriebAngebot(TimeStampMixin):
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
     kabelanschluss = models.FloatField(
-        default=10.0, validators=[MinValueValidator(0)], blank=True, null=True
+        default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
     geruestKunde = models.BooleanField(default=False)
     geruestOeffentlich = models.BooleanField(default=False)
@@ -1132,8 +1132,8 @@ class VertriebAngebot(TimeStampMixin):
         if self.wallbox_anzahl:
             preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
-            if self.kabelanschluss and self.kabelanschluss >= 10:
-                preis += (self.kabelanschluss - 10) * self.get_optional_accessory_price(
+            if self.kabelanschluss and self.kabelanschluss >= 0:
+                preis += self.kabelanschluss * self.get_optional_accessory_price(
                     "kabelpreis"
                 )
             return preis
