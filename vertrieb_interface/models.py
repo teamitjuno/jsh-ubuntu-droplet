@@ -1129,16 +1129,15 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def full_wallbox_preis(self):
+        preis = 0.0
         if self.wallbox_anzahl:
-            preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
+            preis += float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
-            if self.kabelanschluss and self.kabelanschluss >= 0:
-                preis += self.kabelanschluss * self.get_optional_accessory_price(
-                    "kabelpreis"
-                )
-            return preis
-        else:
-            return 0.00
+        if self.kabelanschluss and self.kabelanschluss >= 0:
+            preis += self.kabelanschluss * self.get_optional_accessory_price(
+                "kabelpreis"
+            )
+        return preis
 
     @property
     def full_accessories_price(self):
@@ -2128,16 +2127,15 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def full_wallbox_preis(self):
+        preis = 0.0
         if self.wallbox_anzahl:
-            preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
+            preis += float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
-            if self.kabelanschluss and self.kabelanschluss >= 0:
-                preis += self.kabelanschluss * self.get_optional_accessory_price(
-                    "kabelpreis"
-                )
-            return preis
-        else:
-            return 0.00
+        if self.kabelanschluss and self.kabelanschluss >= 0:
+            preis += self.kabelanschluss * self.get_optional_accessory_price(
+                "kabelpreis"
+            )
+        return preis
 
     @property
     def full_accessories_price(self):
