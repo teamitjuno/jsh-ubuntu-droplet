@@ -1258,6 +1258,13 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["prefaBefestigung"]:
         anzahlZubehoer += 1
+    # once for the text and additional for the entries
+    if data["kabelanschluss"] > 0 or data["wallboxAnz"] > 0:
+        anzahlZubehoer += 1
+    if data["kabelanschluss"] > 0:
+        anzahlZubehoer += 1
+    if data["wallboxAnz"] > 0:
+        anzahlZubehoer += 1
     return anzahlZubehoer
 
 def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
@@ -1271,7 +1278,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
     if withCalc:
         pages += 2
     zubehoerLimit = 32
-    if data["wallboxAnz"] > 0:
+    if data["wallboxAnz"] > 0 or data["kabelanschluss"] > 0:
         zubehoerLimit -= 1
     if data["batterieVorh"]:
         zubehoerLimit += 1
@@ -1279,10 +1286,10 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
         zubehoerLimit -= 1
     anzZubehoer = anzahlZubehoer(data)
     # page for Zubehör
-    if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
+    if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0 or data["kabelanschluss"] > 0:
         pages += 1
     # second page for additional Zubehör
-    if (data["wallboxAnz"] > 0 and anzZubehoer > 9) or anzZubehoer > 11:
+    if anzZubehoer > 11:
         pages += 1
 
     pdf = PDF(title1)
@@ -1316,7 +1323,7 @@ def createOfferPdf(data, vertrieb_angebot, certifikate, user, withCalc=False):
 
 def page4(pdf, data, eintrag, limit):
     zubehoerVorhanden = anzahlZubehoer(data) > 0
-    if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0:
+    if zubehoerVorhanden or data["wallboxVorh"] or data["kWp"] >= 25.0 or data["kabelanschluss"] > 0:
         pdf.add_page()
 
     if data["kWp"] >= 25.0:

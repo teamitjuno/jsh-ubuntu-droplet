@@ -353,6 +353,7 @@ class VertriebTicketAdmin(admin.ModelAdmin):
                     "anz_wandhalterung_fuer_speicher",
                     "wallboxtyp",
                     "wallbox_anzahl",
+                    "kabelanschluss",
                 ),
                 "classes": ("collapse",),
             },

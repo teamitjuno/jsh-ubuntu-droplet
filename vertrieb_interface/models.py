@@ -1510,6 +1510,9 @@ class VertriebTicket(TimeStampMixin):
         null=True,
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
+    kabelanschluss = models.FloatField(
+        default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )
     geruestKunde = models.BooleanField(default=False)
     geruestOeffentlich = models.BooleanField(default=False)
     smartDongleLte = models.BooleanField(default=False)
@@ -2128,6 +2131,10 @@ class VertriebTicket(TimeStampMixin):
         if self.wallbox_anzahl:
             preis = float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
+            if self.kabelanschluss and self.kabelanschluss >= 0:
+                preis += self.kabelanschluss * self.get_optional_accessory_price(
+                    "kabelpreis"
+                )
             return preis
         else:
             return 0.00
@@ -2242,7 +2249,7 @@ class VertriebTicket(TimeStampMixin):
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
-            "kabelanschluss": 0.0,
+            "kabelanschluss": self.kabelanschluss,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,

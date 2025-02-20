@@ -592,7 +592,7 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     if certifikate:
         pages += 1
     zubehoerLimit = 13
-    if data["wallboxAnz"] > 0:
+    if data["wallboxAnz"] > 0 or data["kabelanschluss"] > 0:
         zubehoerLimit -= 1
     if data["batterieVorh"]:
         zubehoerLimit += 1
@@ -601,10 +601,10 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     if data["smartmeterModell"] == "kein EMS":
         zubehoerLimit -= 1
     anzZubehoer = anzahlZubehoer(data)
-    if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0:
+    if anzZubehoer > 0 or data["wallboxVorh"] or data["kWp"] >= 25.0 or data["kabelanschluss"] > 0:
         pages += 1
     # second page for additional Zubehör
-    if (data["wallboxAnz"] > 0 and anzZubehoer > 9) or anzZubehoer > 11:
+    if anzZubehoer > 11:
         pages += 1
 
     pdf = PDF(title1)
