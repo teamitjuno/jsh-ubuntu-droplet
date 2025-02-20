@@ -1354,7 +1354,7 @@ def page4(pdf, data, eintrag, limit):
         wallbox_2 = pdf.get_attribute_by_identifier("wallbox_2", "content")
         pdf.setup_text("wallbox_2", wallbox_2, alignment="L")
 
-        if data["wallboxVorh"]:
+        if data["wallboxVorh"] and data["wallboxAnz"] > 0:
             eintrag += 1
             tab24_eintrag_nummer = str(eintrag) + "."
             tab24_content_1 = str(data["wallboxTyp"])
