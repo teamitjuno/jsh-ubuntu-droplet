@@ -148,13 +148,35 @@ class InitialAngebotDataViewForm(forms.ModelForm):
     )
 
     initial_text_for_email = forms.CharField(
-        label="Default Email-Text",
+        label="Standard Email-Text",
         required=False,
         widget=forms.Textarea(
             attrs={
                 "rows": 16,
                 "class": "form-control",
                 "id": "id_initial_text_for_email",
+            }
+        ),
+    )
+    smtp_subject = forms.CharField(
+        label="Standard Email-Betreff",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 1,
+                "class": "form-control",
+                "id": "id_smtp_subject",
+            }
+        ),
+    )
+    smtp_body = forms.CharField(
+        label="Standard Email-Signatur",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 10,
+                "class": "form-control",
+                "id": "id_smtp_body",
             }
         ),
     )
@@ -463,6 +485,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "anzahl_sol_module_view",
             "records_fetch_limit",
             "smtp_body",
+            "smtp_subject",
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -542,6 +565,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         )
         self.fields["initial_text_for_email"].widget.attrs.update(
             {"id": "id_initial_text_for_email"}
+        )
+        self.fields["smtp_subject"].widget.attrs.update(
+            {"id": "smtp_subject"}
         )
         self.fields["smtp_body"].widget.attrs.update(
             {"id": "smtp_body"}

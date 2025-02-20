@@ -110,18 +110,32 @@
                                 <p class="text-muted"><strong>Mobile :</strong><span class="ms-2">{{ user.phone }}</span></p>
 
                                 <p class="text-muted"><strong>Email :</strong> <span class="ms-2">{{ user.email }}</span></p>
-
-                                <p class="text-muted"><strong>Standort :</strong> <span class="ms-2">Deutschland</span></p>
-
-                                <p class="text-muted"><strong>Sprache :</strong>
-                                    <span class="ms-2"> English, German </span>
-                                </p>
-                                <p class="text-muted mb-0" id="tooltip-container"><strong>Anderswo :</strong>
-                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Facebook"><i class="mdi mdi-facebook"></i></a>
-                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Twitter"><i class="mdi mdi-twitter"></i></a>
-                                    <a class="d-inline-block ms-2 text-muted" data-bs-container="#tooltip-container" data-bs-placement="top" data-bs-toggle="tooltip" href="" title="Skype"><i class="mdi mdi-skype"></i></a>
-                                </p>
                             </div>
+                        </div>
+                    </div>
+                </div> <!-- end col-->
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-info border">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Email Standards</h5>
+                            <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th>{{ form.smtp_subject.label_tag }}</th>
+                                            <td>{{ form.smtp_subject }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.initial_text_for_email.label_tag }}</th>
+                                            <td>{{ form.initial_text_for_email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.smtp_body.label_tag }}</th>
+                                            <td>{{ form.smtp_body }}</td>
+                                        </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div> <!-- end col-->
@@ -166,7 +180,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </div> <!-- end col-->
@@ -311,15 +324,6 @@
                                             <th>{{ form.initial_bis40kWp.label_tag }}</th>
                                             <td>{{ form.initial_bis40kWp }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>{{ form.initial_text_for_email.label_tag }}</th>
-                                            <td>{{ form.initial_text_for_email }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.smtp_body.label_tag }}</th>
-                                            <td>{{ form.smtp_body }}</td>
-                                        </tr>
-
                                     </tbody>
                                 </table>
 

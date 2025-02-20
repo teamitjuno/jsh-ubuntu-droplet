@@ -115,6 +115,7 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "records_fetch_limit",
                     "is_staff",
                     "is_active",
+                    "zoho_data_text",
                 ),
             },
         ),
@@ -127,9 +128,9 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "smtp_username",
                     "smtp_password",
                     "smtp_subject",
+                    "initial_text_for_email",
                     "smtp_body",
                     "sonstiges",
-                    "zoho_data_text",
                 ),
             },
         ),
@@ -137,7 +138,6 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
             _("Initial data"),
             {
                 "fields": (
-                    "initial_text_for_email",
                     "initial_verbrauch",
                     "initial_grundpreis",
                     "initial_arbeitspreis",
