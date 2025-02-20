@@ -639,6 +639,18 @@ class VertriebAngebot(TimeStampMixin):
             return None
 
     @property
+    def salutation(self):
+        if "Herr" in self.anrede:
+            salutation = f"Sehr geehrter {self.anrede} {self.name_last_name},"
+        elif "Frau" in self.anrede:
+            salutation = f"Sehr geehrte {self.anrede} {self.name_last_name},"
+        elif self.anrede == "Familie":
+            salutation = f"Sehr geehrte Familie {self.name_last_name},"
+        else:
+            salutation = "Sehr geehrte Damen und Herren,"
+        return salutation
+
+    @property
     def swap_name_order(self):
         if self.anrede == "Firma":
             parts = self.name_last_name
@@ -1680,6 +1692,18 @@ class VertriebTicket(TimeStampMixin):
             return f"{int(days)} Tage, {int(hours)} Stunde, {int(minutes)} Minute"
         else:
             return None
+
+    @property
+    def salutation(self):
+        if "Herr" in self.anrede:
+            salutation = f"Sehr geehrter {self.anrede} {self.name_last_name},"
+        elif "Frau" in self.anrede:
+            salutation = f"Sehr geehrte {self.anrede} {self.name_last_name},"
+        elif self.anrede == "Familie":
+            salutation = f"Sehr geehrte Familie {self.name_last_name},"
+        else:
+            salutation = "Sehr geehrte Damen und Herren,"
+        return salutation
 
     @property
     def swap_name_order(self):

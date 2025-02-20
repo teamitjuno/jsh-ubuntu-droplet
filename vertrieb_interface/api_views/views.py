@@ -1215,57 +1215,6 @@ def send_calc_invoice(request, angebot_id):
         )
 
 
-@login_required
-def send_ticket_invoice(request, angebot_id):
-    if request.method == "POST":
-        user = request.user
-
-        vertrieb_angebot = get_object_or_404(VertriebAngebot, angebot_id=angebot_id)
-        pdf = vertrieb_angebot.ticket_pdf
-        subject = f"Ticket Photovoltaikanlage {angebot_id}"
-        geerter = f"Sehr geehrter {vertrieb_angebot.vorname_nachname}\n\n"
-        body = geerter + user.smtp_body
-        name = replace_spaces_with_underscores(vertrieb_angebot.name)
-        connection = get_connection(
-            backend=EMAIL_BACKEND,
-            host=user.smtp_server,
-            port=user.smtp_port,
-            username=user.smtp_username,
-            password=user.smtp_password,
-            use_tsl=True,
-            fail_silently=False,
-        )
-
-        email = EmailMultiAlternatives(
-            subject,
-            body,
-            user.smtp_username,
-            [f"{vertrieb_angebot.email}"],
-            connection=connection,
-        )
-
-        file_data = pdf.tobytes()  # type:ignore
-        email.attach(
-            f"Ticket_{name}_{vertrieb_angebot.angebot_id}.pdf",
-            file_data,
-            "application/pdf",
-        )
-
-        try:
-            email.send()
-            messages.success(request, "Email sent successfully")
-
-        except Exception as e:
-            messages.error(request, f"Failed to send email: {str(e)}")
-
-        return JsonResponse({"status": "success"}, status=200)
-
-    else:
-        return JsonResponse(
-            {"status": "failed", "error": "Not a POST request."}, status=400
-        )
-
-
 def get_angebots_and_urls(user_angebots):
     """
     Generate a list of tuples containing angebot, URL, and name with underscores.

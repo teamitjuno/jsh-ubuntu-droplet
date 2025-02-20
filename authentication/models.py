@@ -149,9 +149,28 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     smtp_body = models.TextField(
         blank=True,
         null=True,
-        default="""Sehr geehrter Kunde, in diesem Schreiben finden Sie die beigefügten PDF-Dokumente.
+        default="""Mit freundlichen Grüßen / Kind regards
+Name
+Stellenbezeichnung 
 
-                                                                    Mit freundlichen Grüßen, Juno-Solar""",
+T: +49 3761 4170800
+M: 
+E: @juno-solar.com 
+I: www.juno-solar.com
+
+Juno Solar Home GmbH & Co. KG
+Ziegelstraße 1a
+D-08412 Werdau
+            
+Juno Solar Home GmbH & Co. KG 
+Geschäftsführer: Denny Schädlich
+Registergericht: Amtsgericht Chemnitz, HRA 9415 
+Vertreten durch Juno Solar Home Verwaltungs GmbH 
+
+Diese Nachricht ist vertraulich. Sie darf ausschließlich durch den vorgesehenen Empfänger und Adressat gelesen, kopiert oder genutzt werden. Sollten Sie diese Nachricht versehentlich erhalten haben, bitten wir, den Absender (durch Antwort-E-Mail) hiervon unverzüglich zu informieren und die Nachricht zu löschen. Jede Nutzung oder Weitergabe des Inhalts dieser Nachricht ist unzulässig. 
+
+This message (including any attachments) is confidential and may be privileged. It may be read, copied and used only by the intended recipient. If you have received it in error, please contact the sender (by return e-mail) immediately and delete this message. Any unauthorised use or dissemination of this message in whole or in part is strictly prohibited.
+""",
     )
 
     top_verkaufer_container_view = models.BooleanField(default=True)

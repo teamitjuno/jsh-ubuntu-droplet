@@ -263,6 +263,30 @@ class VertriebAngebotEmailForm(ModelForm):
             }
         ),
     )
+    smtp_body = forms.CharField(
+        label="Signatur",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 10,
+                "class": "form-control",
+                "id": "id_smtp_body",
+                "disabled": True,
+            }
+        ),
+    )
+    salutation = forms.CharField(
+        label="Anrede",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 1,
+                "class": "form-control",
+                "id": "id_salutation",
+                "disabled": True,
+            }
+        ),
+    )
     datenblatter_solar_module = forms.BooleanField(
         label="Datenblatter Solar Module",
         required=False,
@@ -339,6 +363,8 @@ class VertriebAngebotEmailForm(ModelForm):
         fields = [
             "email",
             "text_for_email",
+            "smtp_body",
+            "salutation",
             "datenblatter_solar_module",
             "datenblatter_speichermodule",
             "datenblatter_smartmeter",
@@ -354,6 +380,8 @@ class VertriebAngebotEmailForm(ModelForm):
         if self.instance and self.instance.pk:
             self.fields["email"].initial = self.instance.email
             self.fields["text_for_email"].initial = self.instance.text_for_email
+            self.fields["smtp_body"].initial = self.instance.user.smtp_body
+            self.fields["salutation"].initial = self.instance.salutation
             self.fields["datenblatter_solar_module"].initial = (
                 self.instance.datenblatter_solar_module
             )
@@ -2906,12 +2934,38 @@ class VertriebTicketEmailForm(ModelForm):
             }
         ),
     )
+    smtp_body = forms.CharField(
+        label="Signatur",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 10,
+                "class": "form-control",
+                "id": "id_smtp_body",
+                "disabled": True,
+            }
+        ),
+    )
+    salutation = forms.CharField(
+        label="Anrede",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 1,
+                "class": "form-control",
+                "id": "id_salutation",
+                "disabled": True,
+            }
+        ),
+    )
 
     class Meta:
         model = VertriebTicket
         fields = [
             "email",
             "text_for_email",
+            "smtp_body",
+            "salutation",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -2920,6 +2974,8 @@ class VertriebTicketEmailForm(ModelForm):
         if self.instance and self.instance.pk:
             self.fields["email"].initial = self.instance.email
             self.fields["text_for_email"].initial = self.instance.text_for_email
+            self.fields["smtp_body"].initial = self.instance.user.smtp_body
+            self.fields["salutation"].initial = self.instance.salutation
 
     def save(self, commit=True):
         form = super(VertriebTicketEmailForm, self).save(commit=False)

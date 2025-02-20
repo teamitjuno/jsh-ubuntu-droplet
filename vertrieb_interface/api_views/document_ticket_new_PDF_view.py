@@ -80,7 +80,7 @@ class DocumentViewTicketNew(LoginRequiredMixin, DetailView):
         subject = f"Zusätzliche Vereinbarung Photovoltaikanlage {vertrieb_ticket.ticket_id}"
 
         user = self.request.user
-        body = f"{email_content}\n\n{user.smtp_body}"
+        body = f"{vertrieb_ticket.salutation}\n\n{email_content}\n\n{user.smtp_body}"
         user_email = user.email
 
         try:
