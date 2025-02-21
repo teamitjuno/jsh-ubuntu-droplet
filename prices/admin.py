@@ -93,6 +93,7 @@ class SonderrabattAdmin(admin.ModelAdmin):
         "name",
         "prozentsatz",
         "fixbetrag",
+        "is_active",
     )
     search_fields = ("name",)
     inlines = [PricesInline]

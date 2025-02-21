@@ -67,18 +67,15 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
     list_display = [
         "id",
         "username",
+        "is_active",
+        "role",
+        "kuerzel",
         "zoho_id",
         "email",
+        "phone",
         "first_name",
         "last_name",
-        "beruf",
-        "is_staff",
         "users_aufschlag",
-        "typ",
-        "kuerzel",
-        "sonstiges",
-        "phone",
-        "role",
         "last_login",
     ]
     list_filter = ["beruf", "typ", "role", "created_at"]

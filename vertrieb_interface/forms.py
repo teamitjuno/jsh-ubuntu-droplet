@@ -1407,7 +1407,7 @@ class VertriebAngebotForm(ModelForm):
         ]
         self.fields["sonderrabatt"].choices = [
             (sonderrab.name, sonderrab.name)
-            for sonderrab in Sonderrabatt.objects.filter()
+            for sonderrab in Sonderrabatt.objects.filter(is_active=True)
         ]
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
 

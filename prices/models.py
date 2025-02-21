@@ -112,6 +112,7 @@ class Sonderrabatt(models.Model):
     name = models.CharField(max_length=255, unique=True)
     prozentsatz = models.DecimalField(max_digits=10, decimal_places=2)
     fixbetrag = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField(default=True, null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.name}"
