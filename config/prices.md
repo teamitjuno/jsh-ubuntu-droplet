@@ -148,6 +148,8 @@ OptionalAccessoriesPreise.objects.create(name='smartmeter_dtsu', price=400.00)
 OptionalAccessoriesPreise.objects.create(name='smartmeter_emma', price=600.00)
 OptionalAccessoriesPreise.objects.create(name='smartmeter_viessmann', price=400.00)
 OptionalAccessoriesPreise.objects.create(name='zusatzwechselrichter', price=2500.00)
+OptionalAccessoriesPreise.objects.create(name='aufpreisMAP0', price=0.00)
+OptionalAccessoriesPreise.objects.create(name='aufpreisMB0', price=0.00)
 
 from prices.models import SolarModulePreise
 

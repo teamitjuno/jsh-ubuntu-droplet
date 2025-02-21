@@ -1136,6 +1136,14 @@ class VertriebAngebot(TimeStampMixin):
     """
 
     @property
+    def get_wechselrichter_price(self):
+        if self.wechselrichter_model == "SUN 2000 MAP0":
+            return self.get_optional_accessory_price("aufpreisMAP0")
+        elif self.wechselrichter_model == "SUN 2000 MB0":
+            return self.get_optional_accessory_price("aufpreisMB0")
+        return 0
+
+    @property
     def full_optimizer_preis(self):
         return self.anzOptimizer * self.get_optional_accessory_price("optimizer")
 
@@ -1222,6 +1230,7 @@ class VertriebAngebot(TimeStampMixin):
 
         angebotsSumme *= float(self.get_komplexity)
         angebotsSumme += float(self.full_accessories_price)
+        angebotsSumme += float(self.get_wechselrichter_price)
 
         if self.hersteller == "Huawei" and self.garantieWR != "keine":
             if self.speicher_model == "LUNA 2000-7-S1" and self.anz_speicher > 0:
