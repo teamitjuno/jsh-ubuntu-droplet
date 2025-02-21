@@ -50,6 +50,7 @@ from prices.forms import (
     WallBoxPreiseForm,
     OptionalAccessoriesPreiseForm,
     AndereKonfigurationWerteForm,
+    SonderrabattForm
 )
 from vertrieb_interface.models import VertriebAngebot
 from vertrieb_interface.permissions import AdminRequiredMixin
