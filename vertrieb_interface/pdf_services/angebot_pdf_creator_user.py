@@ -1003,11 +1003,12 @@ class PDF(FPDF):
         self.set_y(45)
         steuer = data["steuersatz"]
         ausweisung_rabatt = data["ausweisung_rabatt"]
+        wp_kombi_rabatt = data["wp_kombi_rabatt"]
         self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
-        if not ausweisung_rabatt:
+        if not ausweisung_rabatt and not wp_kombi_rabatt:
             self.cell(0, 6, "", 0, 1, "L", fill=True)
         self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
-        if ausweisung_rabatt:
+        if ausweisung_rabatt or wp_kombi_rabatt:
             self.set_font("JUNO Solar Lt", "B", 12)
             self.cell(0, 6, "Ihr individueller Rabatt", 0, 1, "L", fill=True)
             self.set_font("JUNO Solar Lt", "", 12)
@@ -1024,10 +1025,10 @@ class PDF(FPDF):
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
         self.cell(0, 6, str(data["kWp"]) + " kWp", 0, 1, "R")
-        if not ausweisung_rabatt:
+        if not ausweisung_rabatt and not wp_kombi_rabatt:
             self.cell(0, 6, "", 0, 1, "R")
             self.cell(0, 6, netto, 0, 1, "R")
-        if ausweisung_rabatt:
+        if ausweisung_rabatt or wp_kombi_rabatt:
             self.cell(0, 6, nettoVorRabatt, 0, 1, "R")
             self.set_font("JUNO Solar Lt", "B", 12)
             self.cell(0, 6,"-" + rab, 0, 1, "R")
@@ -1050,6 +1051,11 @@ class PDF(FPDF):
         y = self.get_y()
         self.set_xy(105, y - 5)
         self.cell(0, 6, data["gueltig"], 0, 0, "L")
+        if wp_kombi_rabatt:
+            self.set_y(y)
+            rabatt_wp_kombi = self.get_attribute_by_identifier("rabatt_wp_kombi", "content")
+            self.setup_text("rabatt_wp_kombi", rabatt_wp_kombi, alignment="L")
+            y += 5
         self.set_y(y + 5)
 
         # Vollmacht

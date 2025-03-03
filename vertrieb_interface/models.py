@@ -426,6 +426,7 @@ class VertriebAngebot(TimeStampMixin):
     )
     ausweisung_rabatt = models.BooleanField(default=False)
     genehmigung_rabatt = models.BooleanField(default=False)
+    wp_kombi_rabatt = models.BooleanField(default=False)
 
     # Result Prices :
     solar_module_angebot_price = models.FloatField(
@@ -1382,6 +1383,7 @@ class VertriebAngebot(TimeStampMixin):
             "rabattsumme": self.rabattsumme,
             "genehmigung_rabatt": self.genehmigung_rabatt,
             "ausweisung_rabatt": self.ausweisung_rabatt,
+            "wp_kombi_rabatt": self.wp_kombi_rabatt,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

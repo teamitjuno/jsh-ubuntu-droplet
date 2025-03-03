@@ -409,6 +409,15 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr id="wp_kombi_row" class="conditional-row">
+                                                                        <th>{{ form.wp_kombi_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="wp_kombi_rabatt" {% if form.wp_kombi_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.wp_kombi_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="wp_kombi_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr>
                                                                         <th>{{ form.sonderrabatt_included.label_tag }}</th>
                                                                         <td>
@@ -1217,12 +1226,15 @@ function toggleGenehmigung(value){
     if (value >= 6) {
         $('#genehmigung_row').show();
         $('#ausweisung_row').show();
+        $('#wp_kombi_row').show();
     } else if (value > 0) {
         $('#genehmigung_row').hide();   
         $('#ausweisung_row').show();
+        $('#wp_kombi_row').show();
     } else {
         $('#genehmigung_row').hide();
         $('#ausweisung_row').hide();
+        $('#wp_kombi_row').hide();
     }
 }
 
@@ -1568,6 +1580,15 @@ function submitFormWithAction(action) {
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="genehmigung_rabatt" {% if form.genehmigung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.genehmigung_rabatt.html_name }}" />
                                                                                 <label class="custom-control-label" for="genehmigung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="wp_kombi_row" class="conditional-row">
+                                                                        <th>{{ form.wp_kombi_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="wp_kombi_rabatt" {% if form.wp_kombi_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.wp_kombi_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="wp_kombi_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -2422,12 +2443,15 @@ function toggleGenehmigung(value){
     if (value >= 6) {
         $('#genehmigung_row').show();
         $('#ausweisung_row').show();
+        $('#wp_kombi_row').show();
     } else if (value > 0) {
         $('#genehmigung_row').hide();   
         $('#ausweisung_row').show();
+        $('#wp_kombi_row').show();
     } else {
         $('#genehmigung_row').hide();
         $('#ausweisung_row').hide();
+        $('#wp_kombi_row').hide();
     }
 }
 

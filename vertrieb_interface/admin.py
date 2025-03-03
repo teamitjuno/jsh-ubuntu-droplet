@@ -180,6 +180,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "rabattsumme",
                     "ausweisung_rabatt",
                     "genehmigung_rabatt",
+                    "wp_kombi_rabatt",
                     "sonderrabatt_included",
                     "sonderrabatt",
                     "angebotsumme",

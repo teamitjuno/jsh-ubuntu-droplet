@@ -1203,6 +1203,11 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
     )
+    wp_kombi_rabatt = forms.BooleanField(
+        label="Rabatt nur mit Wärmepumpe",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "wp_kombi_rabatt"}),
+    )
     sonderrabatt_included = forms.BooleanField(label="Sonderrabatt vorhanden",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "sonderrabatt_included"}),
@@ -1363,6 +1368,7 @@ class VertriebAngebotForm(ModelForm):
             "rabatt",
             "ausweisung_rabatt",
             "genehmigung_rabatt",
+            "wp_kombi_rabatt",
             "sonderrabatt_included",
             "sonderrabatt",
             "finanzierung",

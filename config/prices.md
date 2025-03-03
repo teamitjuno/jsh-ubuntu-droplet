@@ -1091,6 +1091,13 @@ Die Installation der Photovoltaikanlage erfolgt an einem Zählpunkt. Besitzt der
     font_size=11
 )
 
+Editierbarer_Text.objects.create(
+    identifier='rabatt_wp_kombi', 
+    content='''Der gewährte individuelle Rabatt ist nur in Verbindung mit dem Erwerb einer Wärmepumpe gültig.''', 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+
 # Create entries for each bold text section
 Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_1', content="""Allgemeine Geschäftsbedingungen der JUNO SOLAR Home GmbH & Co. KG über
 die Lieferung, Installation und Inbetriebnahme von Solaranlagen
