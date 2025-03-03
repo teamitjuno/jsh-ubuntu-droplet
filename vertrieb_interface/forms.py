@@ -1550,18 +1550,6 @@ class VertriebAngebotForm(ModelForm):
             self.add_error(
                 "anz_speicher", ValidationError(message, params={"value": anz_speicher})
             )
-        if wechselrichter_model == "SUN 2000 MAP0" or wechselrichter_model == "SUN 2000 MB0":
-            self.add_error(
-                "wechselrichter_model",
-                ValidationError(
-                    (
-                        "Derzeit können die Wechselrichter vom Typ MAP0 und MB0 noch nicht verkauft werden."
-                    ),
-                    params={
-                        "wechselrichter_model": wechselrichter_model,
-                    },
-                ),
-            )
         if anzOptimizer is not None and modulanzahl is not None:
             if anzOptimizer > modulanzahl:
                 self.add_error(
