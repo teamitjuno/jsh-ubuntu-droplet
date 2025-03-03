@@ -6,7 +6,7 @@ import re
 # Related third-party imports
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
+from django.core.validators import validate_email, MinValueValidator
 from django.forms import ModelForm
 from django.utils import timezone
 from django.utils.formats import date_format
@@ -169,7 +169,10 @@ def validate_integers_ticket(value):
 
 
 def validate_rabatt(value):
-    rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
+    if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+        rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
+    else:
+        rabatt_limit = 100
     if not isinstance(value, int) or not (0 <= value <= rabatt_limit):
         rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
         raise ValidationError(
@@ -1179,7 +1182,7 @@ class VertriebAngebotForm(ModelForm):
     rabatt = forms.IntegerField(
         initial=0,
         label="Rabatt in %",
-        validators=[validate_rabatt],
+        validators=[MinValueValidator(0)],
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -1611,6 +1614,21 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        rabatt = cleaned_data.get("rabatt")
+        rabatt_limit = 100
+        if rabatt:
+            if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+                rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
+        if isinstance(rabatt, int) and not (0 <= rabatt <= rabatt_limit):
+            rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
+            raise ValidationError(
+                (
+                    f"Ungültige Eingabe: {rabatt}. Die Höhe des Rabatts sollte zwischen 0%% und {rabattStr}%% liegen."
+                ),
+                params={
+                    "rabatt": rabatt,
+                }
+            )
         if action == "angebotsumme_rechnen":
             return cleaned_data
 
