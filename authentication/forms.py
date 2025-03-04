@@ -51,10 +51,10 @@ def validate_integers_ticket(value):
 
 
 def validate_solar_module_anzahl(value):
-    if value < 6 or value > 70:
+    if value < 0 or value > 70:
         raise ValidationError(
             (
-                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 6 und 70 liegen."
+                "Ungültige Eingabe: %(value)s. Die Menge der Solarmodule sollte zwischen 0 und 70 liegen."
             ),
             params={"value": value},
         )
@@ -135,7 +135,7 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         ),
     )
     records_fetch_limit = forms.IntegerField(
-        label="Anzahl der zuletzt aktualisierten Datensätze von JPP",
+        label="Anzahl an Tagen, wie alte Leads importiert werden sollen",
         required=True,
         # validators=[validate_integers],
         widget=forms.NumberInput(

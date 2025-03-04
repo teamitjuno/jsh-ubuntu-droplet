@@ -154,20 +154,23 @@ def changeVerguetung(bis10, bis40):
             User.objects.filter(zoho_id=user.zoho_id).update(initial_bis10kWp=bis10)
             User.objects.filter(zoho_id=user.zoho_id).update(initial_bis40kWp=bis40)
 
-def changeKabel(initial):
+def changeUserUniversal(key, value):
     """
-        Überschreibt den Startwert der Kabelanschlusslänge für jeden Nutzer.
+        Überschreibt den Wert des angegebenen Felds für jeden Nutzer.
 
         Args:
-        initial: Int, der als initiale Kabelanschlusslänge gesetzt werden soll
+        key: Name des Felds
+        value: Wert, der gesetzt werden soll
 
         Returns:
         None
         """
-    if initial is not None:
+    if key is not None and value is not None:
         users = User.objects.all()
         for user in users:
-            User.objects.filter(zoho_id=user.zoho_id).update(initial_kabelanschluss=initial)
+            tmpUser = User.objects.get(zoho_id=user.zoho_id)
+            tmpUser.__setattr__(key, value)
+            tmpUser.save()
 
 def activateAccount(email):
     """

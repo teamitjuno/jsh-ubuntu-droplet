@@ -90,9 +90,9 @@ def fetch_user_angebote_all(request):
     start_index = 1
     all_user_angebots_list = []
     if user.role.name == "admin" or user.role.name == "manager":
-        crit = f'Vertriebler.ID != null && Anfrage_vom > today.subDay(100) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
+        crit = f'Vertriebler.ID != null && Anfrage_vom > today.subDay({user.records_fetch_limit}) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
     else:
-        crit = f'Vertriebler.ID == {user.zoho_id} && Anfrage_vom > today.subDay(400) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
+        crit = f'Vertriebler.ID == {user.zoho_id} && Anfrage_vom > today.subDay({user.records_fetch_limit}) && (Status == null || Status == "" || (Status != "storniert" && Status != "abgelehnt" && Status != "nicht qualifiziert"))'
     while True:
         params = {
             "from": start_index,
