@@ -549,22 +549,22 @@ class PDF(FPDF):
         self.setup_text("auftragserteilung_2", auftragserteilung_2, alignment="L")
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
-        self.set_y(255)
+        self.set_y(265)
         self.cell(0, 6, "Datum", 0, 0, "L")
-        self.line(self.l_margin, 255, 88, 255)
+        self.line(self.l_margin, 265, 88, 265)
         self.set_x(46)
         self.cell(0, 6, "Unterschrift Auftraggeber", 0, 0, "L")
         self.set_x(120)
         self.cell(0, 6, "Datum", 0, 0, "L")
-        self.line(120, 255, 198, 255)
+        self.line(120, 265, 198, 265)
         self.cell(0, 6, "Unterschrift Auftragnehmer", 0, 0, "R")
-        self.set_y(250)
+        self.set_y(260)
         self.set_x(120)
         self.cell(0, 6, datetime.now().strftime("%d.%m.%Y"), 0, 0, "L")
         self.image(
             os.path.join(settings.STATIC_ROOT, "fonts/Stempel_blue.jpg"),
             x=160,
-            y=230,
+            y=240,
             w=32,
             h=24,
         )

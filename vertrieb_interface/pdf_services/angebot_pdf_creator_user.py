@@ -1051,12 +1051,14 @@ class PDF(FPDF):
         y = self.get_y()
         self.set_xy(105, y - 5)
         self.cell(0, 6, data["gueltig"], 0, 0, "L")
-        if wp_kombi_rabatt:
-            self.set_y(y)
-            rabatt_wp_kombi = self.get_attribute_by_identifier("rabatt_wp_kombi", "content")
-            self.setup_text("rabatt_wp_kombi", rabatt_wp_kombi, alignment="L")
-            y += 5
         self.set_y(y + 5)
+        if wp_kombi_rabatt:
+            rabatt_wp_kombi_1 = self.get_attribute_by_identifier("rabatt_wp_kombi_1", "content")
+            self.setup_text("rabatt_wp_kombi_1", rabatt_wp_kombi_1, bold=True, alignment="L")
+            rabatt_wp_kombi_2 = self.get_attribute_by_identifier("rabatt_wp_kombi_2", "content")
+            self.setup_text("rabatt_wp_kombi_2", rabatt_wp_kombi_2, alignment="L")
+            y += 25
+            self.set_y(y)
 
         # Vollmacht
         vollmacht_1 = self.get_attribute_by_identifier("vollmacht_1", "content")
@@ -1132,22 +1134,22 @@ class PDF(FPDF):
             self.multi_cell(0, 6, "20% bei Auftragsbestätigung\n70% bei Baubeginn\n10% bei Netzanschluss", 0, 0, "L")  # type: ignore
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
-        self.set_y(255)
+        self.set_y(265)
         self.cell(0, 6, "Datum", 0, 0, "L")
-        self.line(self.l_margin, 255, 88, 255)
+        self.line(self.l_margin, 265, 88, 265)
         self.set_x(46)
         self.cell(0, 6, "Unterschrift Auftraggeber", 0, 0, "L")
         self.set_x(120)
         self.cell(0, 6, "Datum", 0, 0, "L")
-        self.line(120, 255, 198, 255)
+        self.line(120, 265, 198, 265)
         self.cell(0, 6, "Unterschrift Auftragnehmer", 0, 0, "R")
-        self.set_y(250)
+        self.set_y(260)
         self.set_x(120)
         self.cell(0, 6, datetime.now().strftime("%d.%m.%Y"), 0, 0, "L")
         self.image(
             os.path.join(settings.STATIC_ROOT, "fonts/Stempel_blue.jpg"),
             x=160,
-            y=230,
+            y=240,
             w=32,
             h=24,
         )
