@@ -130,7 +130,7 @@ def create_project_instances_from_zoho():
             project.EDDI = record.get("EDDI") == "❌"
             project.Netzbetreiber = record.get("Netzbetreiber")
             project.Garantie_WR_beantragt_am = record.get("Garantie_WR_beantragt_am")
-            project.Ticket_form = str(record.get("Ticket_form"))
+            project.Ticket_form = str(record.get("Auftragspr_fung"))
             project.Status_Inbetriebnahmeprotokoll = record.get(
                 "Status_Inbetriebnahmeprotokoll"
             )
@@ -205,7 +205,7 @@ def populate_project_instance_from_zoho(project_id):
             "Besonderheiten": record.get("Besonderheiten", ""),
             "Netzbetreiber": record.get("Netzbetreiber", ""),
             "Garantie_WR_beantragt_am": record.get("Garantie_WR_beantragt_am", ""),
-            "Ticket_form": record.get("Ticket_form", ""),
+            "Ticket_form": record.get("Auftragspr_fung", ""),
             "Status_Inbetriebnahmeprotokoll": record.get(
                 "Status_Inbetriebnahmeprotokoll", ""
             ),
