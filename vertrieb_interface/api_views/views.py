@@ -827,7 +827,7 @@ class DeleteUserTicket(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if TELEGRAM_LOGGING:
-            send_custom_message(self.request.user, "Hat ein Ticket gelöscht", "Info")
+            send_custom_message(self.request.user, "Hat einen Nachverkauf gelöscht", "Info")
         return context
 
     def delete(self, request, *args, **kwargs):

@@ -478,7 +478,7 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
         response_data = response.json()
         new_record_id = response_data["data"]["ID"]
         log_and_notify(
-            f"Neues Ticket nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_ticket.angebotsumme}"
+            f"Neuen Nachverkauf nach Zoho gesendet record ID: {new_record_id}, Angebotssumme: {vertrieb_ticket.angebotsumme}"
         )
         return response
     except:

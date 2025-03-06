@@ -237,7 +237,7 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="create_blank_ticket_new" value="1">
                                         <a href="#"><i class=" ri-file-edit-line text-white"></i></a>
-                                        <span href="#"><a href="#" onclick="document.getElementById('create-ticket-new-form').submit(); " class="text-white">Neues Ticket erstellen</a></span>
+                                        <span href="#"><a href="#" onclick="document.getElementById('create-ticket-new-form').submit(); " class="text-white">Neuen Nachverkauf erstellen</a></span>
                                     </form>
                                 </ul>
                             </li>
@@ -250,7 +250,7 @@
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
                                     <a href="{% url 'vertrieb_interface:view_orders_ticket' %}"><i class="uil-list-ul text-white"></i></a>
-                                    <span href="{% url 'vertrieb_interface:view_orders_ticket' %}"><a href="{% url 'vertrieb_interface:view_orders_ticket' %}" class="text-white">Offene Tickets</a></span>
+                                    <span href="{% url 'vertrieb_interface:view_orders_ticket' %}"><a href="{% url 'vertrieb_interface:view_orders_ticket' %}" class="text-white">Offene Nachverkäufe</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
@@ -262,7 +262,7 @@
                             <li class="side-nav-item">
                                 <ul class="side-nav-link">
                                     <a href="{% url 'vertrieb_interface:pdf_tickets_list_view' %}"><i class="ri-file-pdf-fill text-white"></i></a>
-                                    <span href="{% url 'vertrieb_interface:pdf_tickets_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_tickets_list_view' %}" class="text-white">PDF Tickets</a></span>
+                                    <span href="{% url 'vertrieb_interface:pdf_tickets_list_view' %}"><a href="{% url 'vertrieb_interface:pdf_tickets_list_view' %}" class="text-white">PDF Nachverkäufe</a></span>
                                 </ul>
                             </li>
                             <li class="side-nav-item">
