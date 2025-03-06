@@ -562,7 +562,7 @@ class PDF(FPDF):
         self.set_x(120)
         self.cell(0, 6, datetime.now().strftime("%d.%m.%Y"), 0, 0, "L")
         self.image(
-            os.path.join(settings.MEDIA_ROOT, "fonts/Stempel_Home.jpg"),
+            os.path.join(settings.STATIC_ROOT, "fonts/Stempel_blue.jpg"),
             x=160,
             y=230,
             w=32,
