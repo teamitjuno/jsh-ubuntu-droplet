@@ -43,7 +43,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         angebot_id = kwargs.get("angebot_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.handle_status_change(angebot_id)
+        vertrieb_angebot = self.model.objects.get(angebot_id=angebot_id)
+        reload = vertrieb_angebot.name_display_value == "None None"
+        self.handle_status_change(angebot_id, reload)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -90,13 +92,9 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
         kwargs["user"] = self.request.user
         return kwargs
 
-    def handle_status_change(self, angebot_id):
+    def handle_status_change(self, angebot_id, reload):
         user = self.request.user
-        try:
-            all_user_angebots_list = fetch_user_angebote_all(self.request)
-            user.zoho_data_text = json.dumps(all_user_angebots_list)
-            user.save()
-        except:
+        if reload:
             all_user_angebots_list = fetch_user_angebote_all(self.request)
             user.zoho_data_text = json.dumps(all_user_angebots_list)
             user.save()

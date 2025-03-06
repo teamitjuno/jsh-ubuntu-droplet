@@ -43,7 +43,9 @@ class TicketNewEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View)
         ticket_id = kwargs.get("ticket_id")
         if not request.user.is_authenticated:
             raise PermissionDenied()
-        self.handle_status_change(ticket_id)
+        vertrieb_ticket = self.model.objects.get(ticket_id=ticket_id)
+        reload = vertrieb_ticket.name_display_value == "None None"
+        self.handle_status_change(ticket_id, reload)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -89,13 +91,9 @@ class TicketNewEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View)
         kwargs["user"] = self.request.user
         return kwargs
 
-    def handle_status_change(self, ticket_id):
+    def handle_status_change(self, ticket_id, reload):
         user = self.request.user
-        try:
-            all_user_angebots_list = fetch_user_angebote_all(self.request)
-            user.zoho_data_text = json.dumps(all_user_angebots_list)
-            user.save()
-        except:
+        if reload:
             all_user_angebots_list = fetch_user_angebote_all(self.request)
             user.zoho_data_text = json.dumps(all_user_angebots_list)
             user.save()
