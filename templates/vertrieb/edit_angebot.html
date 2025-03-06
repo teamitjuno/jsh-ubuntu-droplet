@@ -1234,7 +1234,12 @@ function toggleGenehmigung(value){
     } else {
         $('#genehmigung_row').hide();
         $('#ausweisung_row').hide();
-        $('#wp_kombi_row').hide();
+        if (document.getElementById('switch_indiv_price_included').checked){
+            $('#wp_kombi_row').show();
+        }
+        else {
+            $('#wp_kombi_row').hide();
+        }
     }
 }
 
@@ -2451,7 +2456,12 @@ function toggleGenehmigung(value){
     } else {
         $('#genehmigung_row').hide();
         $('#ausweisung_row').hide();
-        $('#wp_kombi_row').hide();
+         if (document.getElementById('switch_indiv_price_included').checked){
+            $('#wp_kombi_row').show();
+        }
+        else {
+            $('#wp_kombi_row').hide();
+        }
     }
 }
 

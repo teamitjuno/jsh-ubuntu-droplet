@@ -1249,15 +1249,17 @@ class VertriebAngebot(TimeStampMixin):
         if self.indiv_price_included:
             if self.user.typ == "Evolti":  # type: ignore
                 angebotsSumme *= 1.07
+            rabatt = angebotsSumme - self.indiv_price
             angebotsSumme = self.indiv_price
 
-        rabatt = angebotsSumme * (self.rabatt/100)
-        angebotsSumme *= (1-(self.rabatt/100))
+        else:
+            rabatt = angebotsSumme * (self.rabatt/100)
+            angebotsSumme *= (1-(self.rabatt/100))
 
-        # Sonderrabatte
-        if self.sonderrabatt_included and Sonderrabatt.objects.all().exists():
-            angebotsSumme *= (1-(float(Sonderrabatt.objects.get(name=self.sonderrabatt).prozentsatz)/100))
-            angebotsSumme -= float(Sonderrabatt.objects.get(name=self.sonderrabatt).fixbetrag)
+            # Sonderrabatte
+            if self.sonderrabatt_included and Sonderrabatt.objects.all().exists():
+                angebotsSumme *= (1-(float(Sonderrabatt.objects.get(name=self.sonderrabatt).prozentsatz)/100))
+                angebotsSumme -= float(Sonderrabatt.objects.get(name=self.sonderrabatt).fixbetrag)
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
@@ -1382,7 +1384,7 @@ class VertriebAngebot(TimeStampMixin):
             "rabatt": self.rabatt,
             "rabattsumme": self.rabattsumme,
             "genehmigung_rabatt": self.genehmigung_rabatt,
-            "ausweisung_rabatt": self.ausweisung_rabatt,
+            "ausweisung_rabatt": self.ausweisung_rabatt or self.indiv_price_included,
             "wp_kombi_rabatt": self.wp_kombi_rabatt,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
