@@ -1104,6 +1104,20 @@ Editierbarer_Text.objects.create(
     font_size=11
 )
 
+# Create entries for mail signature
+Editierbarer_Text.objects.create(
+    identifier='mail_signatur_1', 
+    content='''Juno Solar Home GmbH & Co. KG Ziegelstraße 1a 08412 Werdau''', 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+Editierbarer_Text.objects.create(
+    identifier='mail_signatur_2', 
+    content='''Juno Solar Home GmbH & Co. KG Geschäftsführer: Denny Schädlich Registergericht: Amtsgericht Chemnitz, HRA 9415 Vertreten durch Juno Solar Home Verwaltungs GmbH Diese Nachricht ist vertraulich. Sie darf ausschließlich durch den vorgesehenen Empfänger und Adressat gelesen, kopiert oder genutzt werden. Sollten Sie diese Nachricht versehentlich erhalten haben, bitten wir, den Absender (durch Antwort-E-Mail) hiervon unverzüglich zu informieren und die Nachricht zu löschen. Jede Nutzung oder Weitergabe des Inhalts dieser Nachricht ist unzulässig. This message (including any attachments) is confidential and may be privileged. It may be read, copied and used only by the intended recipient. If you have received it in error, please contact the sender (by return e-mail) immediately and delete this message. Any unauthorised use or dissemination of this message in whole or in part is strictly prohibited.''', 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+
 # Create entries for each bold text section
 Editierbarer_Text.objects.create(identifier='allgemeine_geschäftsbedingungen_bold_text_1', content="""Allgemeine Geschäftsbedingungen der JUNO SOLAR Home GmbH & Co. KG über
 die Lieferung, Installation und Inbetriebnahme von Solaranlagen

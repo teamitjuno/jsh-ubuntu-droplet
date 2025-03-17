@@ -17,6 +17,7 @@ from config.settings import (
     DEFAULT_PHONE,
     DEFAULT_USER_CREATION_PASSWORD,
 )
+from vertrieb_interface.models import Editierbarer_Text
 
 User = get_user_model()
 
@@ -115,6 +116,23 @@ class Command(BaseCommand):
         else:
             print(f"Error refreshing token: {response.status_code}")
 
+    def signatureCreator(self, user):
+        stellenbez = ""
+        if user.typ == "Vertrieb":
+            stellenbez = "Energiefachberater"
+        elif user.typ == "Regionalleitung":
+            stellenbez = "Regionalverkaufsleiter"
+        elif user.typ == "Handelsvertretung":
+            stellenbez = "Handelsvertreter"
+        if user.salutation == "Frau":
+            stellenbez += "in"
+        # configure signature
+        signatur = f"Mit freundlichen Grüßen\n\n{user.first_name} {user.last_name}\n{stellenbez}\n\n"
+        signatur += Editierbarer_Text.objects.get(identifier="mail_signatur_1").content + "\n\n"
+        signatur += f"T: +49 3761 417800\nM: {user.phone}\nE: {user.email}\nwww.juno-solar.com\n\n"
+        signatur += Editierbarer_Text.objects.get(identifier="mail_signatur_2").content + "\n"
+        return signatur
+
     def handle(self, *args, **kwargs):
         zoho_users_list = self.fetch_vertriebler_list_IDs()
         # Parse JSON string back to Python list
@@ -174,18 +192,22 @@ class Command(BaseCommand):
                         is_superuser=False,
                     )
                     new_user.set_password(f"{DEFAULT_USER_CREATION_PASSWORD}")
+                    new_user.smtp_body = self.signatureCreator(new_user)
                     new_user.save()
                     phone_counter += 1
-                else:
-                    User.objects.filter(zoho_id=zoho_id).update(email=email)
-                    User.objects.filter(zoho_id=zoho_id).update(username=username)
-                    User.objects.filter(zoho_id=zoho_id).update(salutation=user_info[4])
-                    User.objects.filter(zoho_id=zoho_id).update(phone=phone)
-                    User.objects.filter(zoho_id=zoho_id).update(first_name=first_name)
-                    User.objects.filter(zoho_id=zoho_id).update(last_name=last_name)
-                    User.objects.filter(zoho_id=zoho_id).update(typ=typ)
-                    User.objects.filter(zoho_id=zoho_id).update(kuerzel=kuerzel)
-                    User.objects.filter(zoho_id=zoho_id).update(is_active=user_info[6])
+                elif user_exists:
+                    updated_user = User.objects.get(zoho_id=zoho_id)
+                    updated_user.email = email
+                    updated_user.username = username
+                    updated_user.salutation = user_info[4]
+                    updated_user.phone = phone
+                    updated_user.first_name = first_name
+                    updated_user.last_name = last_name
+                    updated_user.typ = typ
+                    updated_user.kuerzel = kuerzel
+                    updated_user.is_active = user_info[6]
+                    updated_user.smtp_body = self.signatureCreator(updated_user)
+                    updated_user.save()
             else:
                 self.stdout.write(
                     f"Skipping user {user_info} due to incorrect data format."

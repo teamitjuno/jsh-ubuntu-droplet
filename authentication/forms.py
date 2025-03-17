@@ -169,17 +169,17 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    smtp_body = forms.CharField(
-        label="Standard Email-Signatur",
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "rows": 10,
-                "class": "form-control",
-                "id": "id_smtp_body",
-            }
-        ),
-    )
+    # smtp_body = forms.CharField(
+    #     label="Standard Email-Signatur",
+    #     required=False,
+    #     widget=forms.Textarea(
+    #         attrs={
+    #             "rows": 10,
+    #             "class": "form-control",
+    #             "id": "id_smtp_body",
+    #         }
+    #     ),
+    # )
     initial_ausrichtung = forms.ChoiceField(
         label="Ausrichtung PV-Anlage",
         initial="Sud",
@@ -484,9 +484,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             "pv_rechner_view",
             "anzahl_sol_module_view",
             "records_fetch_limit",
-            "smtp_body",
             "smtp_subject",
         ]
+        #"smtp_body",
 
     def __init__(self, *args, user, **kwargs):
         super(InitialAngebotDataViewForm, self).__init__(*args, **kwargs)
@@ -569,9 +569,9 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         self.fields["smtp_subject"].widget.attrs.update(
             {"id": "smtp_subject"}
         )
-        self.fields["smtp_body"].widget.attrs.update(
-            {"id": "smtp_body"}
-        )
+        # self.fields["smtp_body"].widget.attrs.update(
+        #     {"id": "smtp_body"}
+        # )
         self.fields["top_verkaufer_container_view"].widget.attrs.update(
             {"id": "id_top_verkaufer_container_view"}
         )
