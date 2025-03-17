@@ -69,6 +69,8 @@ class Command(BaseCommand):
                     and "Mail" in record
                     and "ID" in record
                     and "Mobil" in record
+                    and "Anrede" in record
+                    and "Stellenbezeichnung" in record
                 ):
                     is_active = record["Unternehmen_verlassen_am"] == ""
                     print(f"{is_active}: {record}")
@@ -78,6 +80,8 @@ class Command(BaseCommand):
                             record["ID"],
                             record["Mail"],
                             record["Mobil"],
+                            record["Anrede"],
+                            record["Stellenbezeichnung"],
                             is_active,
                         )
                     )
@@ -139,23 +143,29 @@ class Command(BaseCommand):
                 phone = user_info[3]
                 if phone == "":
                     phone = None
+                typ = "Vertrieb"
+                if user_info[5] == "Handelsvertreter/in":
+                    typ = "Handelsvertretung"
+                elif user_info[5] == "Regionalleitung":
+                    typ = "Regionalleitung"
 
-                # Check if a User with the provided zoho_id exists
+                    # Check if a User with the provided zoho_id exists
                 user_exists = User.objects.filter(zoho_id=zoho_id).exists()
 
                 # If the User does not exist, create a new User
-                if not user_exists and user_info[4]:
+                if not user_exists and user_info[6]:
                     new_user = User.objects.create(
                         zoho_id=zoho_id,
                         email=email,
                         username=username,
+                        salutation=user_info[4],
                         first_name=first_name,
                         last_name=last_name,
                         phone=phone,
                         is_staff=False,
                         beruf="Vertrieb",
                         users_aufschlag=0,
-                        typ="Vertrieb",
+                        typ=typ,
                         kuerzel=kuerzel,
                         is_active=True,
                         is_superuser=False,
@@ -167,7 +177,9 @@ class Command(BaseCommand):
                     User.objects.filter(zoho_id=zoho_id).update(phone=phone)
                     User.objects.filter(zoho_id=zoho_id).update(first_name=first_name)
                     User.objects.filter(zoho_id=zoho_id).update(last_name=last_name)
-                    User.objects.filter(zoho_id=zoho_id).update(is_active=user_info[4])
+                    User.objects.filter(zoho_id=zoho_id).update(salutation=user_info[4])
+                    User.objects.filter(zoho_id=zoho_id).update(typ=typ)
+                    User.objects.filter(zoho_id=zoho_id).update(is_active=user_info[6])
             else:
                 self.stdout.write(
                     f"Skipping user {user_info} due to incorrect data format."

@@ -1226,9 +1226,6 @@ class VertriebAngebot(TimeStampMixin):
             if lower < kwp
         )
 
-        if self.user.typ == "Evolti":  # type: ignore
-            angebotsSumme *= 1.05
-
         angebotsSumme *= float(self.get_komplexity)
         angebotsSumme += float(self.full_accessories_price)
         angebotsSumme += float(self.get_wechselrichter_price)
@@ -1247,8 +1244,6 @@ class VertriebAngebot(TimeStampMixin):
             angebotsSumme += get_garantie_price(garantie_kw, garantie_years) * garantie_faktor
 
         if self.indiv_price_included:
-            if self.user.typ == "Evolti":  # type: ignore
-                angebotsSumme *= 1.07
             rabatt = angebotsSumme - self.indiv_price
             angebotsSumme = self.indiv_price
 

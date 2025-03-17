@@ -69,6 +69,15 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     username = models.CharField(unique=True, max_length=100, null=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
+    salutation = models.CharField(
+        max_length=255,
+        choices=[
+            ("Herr", "Herr"),
+            ("Frau", "Frau"),
+        ],
+        null=True,
+        default=None,
+    )
     phone = models.CharField(
         ("phone"), max_length=15, unique=True, null=True, blank=True
     )
@@ -91,10 +100,9 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     typ = models.CharField(
         max_length=255,
         choices=[
-            ("keine", "keine"),
-            ("Evolti", "Evolti"),
+            ("Handelsvertretung", "Handelsvertretung"),
             ("Vertrieb", "Vertrieb"),
-            ("Freelancer", "Freelancer"),
+            ("Regionalleitung", "Regionalleitung"),
         ],
         null=True,
         default=None,

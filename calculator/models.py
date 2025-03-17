@@ -508,9 +508,6 @@ class Calculator(models.Model):
             if lower < kwp
         )
 
-        if self.user.typ == "Evolti":  # type: ignore
-            angebotsSumme *= 1.05
-
         angebotsSumme *= float(self.get_komplexity)
         angebotsSumme += float(self.full_accessories_price)
 
