@@ -174,11 +174,14 @@ class Command(BaseCommand):
                     new_user.save()
                     phone_counter += 1
                 else:
+                    User.objects.filter(zoho_id=zoho_id).update(email=email)
+                    User.objects.filter(zoho_id=zoho_id).update(username=username)
+                    User.objects.filter(zoho_id=zoho_id).update(salutation=user_info[4])
                     User.objects.filter(zoho_id=zoho_id).update(phone=phone)
                     User.objects.filter(zoho_id=zoho_id).update(first_name=first_name)
                     User.objects.filter(zoho_id=zoho_id).update(last_name=last_name)
-                    User.objects.filter(zoho_id=zoho_id).update(salutation=user_info[4])
                     User.objects.filter(zoho_id=zoho_id).update(typ=typ)
+                    User.objects.filter(zoho_id=zoho_id).update(kuerzel=kuerzel)
                     User.objects.filter(zoho_id=zoho_id).update(is_active=user_info[6])
             else:
                 self.stdout.write(
