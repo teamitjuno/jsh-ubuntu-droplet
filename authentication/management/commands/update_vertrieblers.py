@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from dotenv import set_key
+from authentication.models import Role
 import requests
 import json
 from random import randint
@@ -118,6 +119,7 @@ class Command(BaseCommand):
         zoho_users_list = self.fetch_vertriebler_list_IDs()
         # Parse JSON string back to Python list
         zoho_users_list = json.loads(zoho_users_list)
+        standardRole = Role.objects.get(name="user")
 
         phone_counter = 4
         for user_info in zoho_users_list:
@@ -163,6 +165,7 @@ class Command(BaseCommand):
                         last_name=last_name,
                         phone=phone,
                         is_staff=False,
+                        role=standardRole,
                         beruf="Vertrieb",
                         users_aufschlag=0,
                         typ=typ,
