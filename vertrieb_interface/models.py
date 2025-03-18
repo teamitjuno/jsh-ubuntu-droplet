@@ -425,7 +425,6 @@ class VertriebAngebot(TimeStampMixin):
         default="----",
     )
     ausweisung_rabatt = models.BooleanField(default=False)
-    genehmigung_rabatt = models.BooleanField(default=False)
     wp_kombi_rabatt = models.BooleanField(default=False)
 
     # Result Prices :
@@ -1378,7 +1377,6 @@ class VertriebAngebot(TimeStampMixin):
             "zahlungs_bedingungen": self.zahlungsbedingungen,
             "rabatt": self.rabatt,
             "rabattsumme": self.rabattsumme,
-            "genehmigung_rabatt": self.genehmigung_rabatt,
             "ausweisung_rabatt": self.ausweisung_rabatt or self.indiv_price_included,
             "wp_kombi_rabatt": self.wp_kombi_rabatt,
             "angebotssumme": self.angebotsumme,

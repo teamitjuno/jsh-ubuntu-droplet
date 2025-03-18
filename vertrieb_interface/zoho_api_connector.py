@@ -406,7 +406,6 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Ger_st_oeffentlich": return_lower_bull(vertrieb_angebot.geruestOeffentlich) and not return_lower_bull(vertrieb_angebot.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_angebot.dachhakenKunde),
             "Rabatt": int(vertrieb_angebot.rabatt),
-            "Rabatt_genehmigt": return_lower_bull(vertrieb_angebot.genehmigung_rabatt),
             "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
             "Finanzierung": return_lower_bull(vertrieb_angebot.finanzierung),

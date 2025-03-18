@@ -1193,11 +1193,6 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-    genehmigung_rabatt = forms.BooleanField(
-        label="Genehmigung Rabatt",
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "genehmigung_rabatt"}),
-    )
     ausweisung_rabatt = forms.BooleanField(
         label="Ausweisung Rabatt auf Angebot",
         required=False,
@@ -1367,7 +1362,6 @@ class VertriebAngebotForm(ModelForm):
             "zahlungsbedingungen",
             "rabatt",
             "ausweisung_rabatt",
-            "genehmigung_rabatt",
             "wp_kombi_rabatt",
             "sonderrabatt_included",
             "sonderrabatt",
