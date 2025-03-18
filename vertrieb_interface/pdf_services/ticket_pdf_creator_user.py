@@ -466,36 +466,48 @@ class PDF(FPDF):
         self.set_y(35)
         self.set_font("JUNO Solar Lt", "B", 17)
         if data["istNachkauf"]:
-            self.multi_cell(0, 6, "Angebotssumme\n ", 0, "L", fill=True)
-            self.set_font("JUNO Solar Lt", "", 12)
-            self.set_y(45)
-            steuer = data["steuersatz"]
-            self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
-            self.cell(0, 6, "", 0, 1, "L", fill=True)
-            self.cell(0, 6, "Investitionskosten", 0, 1, "L", fill=True)
-            self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
-            self.set_font("JUNO Solar Lt", "B", 12)
-            self.cell(0, 6, "Ihre Investition (inkl. MwSt.)", 0, 1, "L", fill=True)
+            headlineText = "Angebotssumme"
+            investText = "Investitionskosten"
+            sumText = "Ihre Investition (inkl. MwSt.)"
         else:
-            self.multi_cell(0, 6, "Aufpreissumme\n ", 0, "L", fill=True)
-            self.set_font("JUNO Solar Lt", "", 12)
-            self.set_y(45)
-            steuer = data["steuersatz"]
-            self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
+            headlineText = "Aufpreissumme"
+            investText = "zusätzliche Kosten"
+            sumText = "Ihre zusätzlichen Kosten (inkl. MwSt.)"
+        self.multi_cell(0, 6, f"{headlineText}\n ", 0, "L", fill=True)
+        self.set_font("JUNO Solar Lt", "", 12)
+        self.set_y(45)
+        steuer = data["steuersatz"]
+        ausweisung_rabatt = data["ausweisung_rabatt"]
+        wp_kombi_rabatt = data["wp_kombi_rabatt"]
+        self.cell(0, 6, "Anlagengröße", 0, 1, "L", fill=True)
+        if not ausweisung_rabatt and not wp_kombi_rabatt:
             self.cell(0, 6, "", 0, 1, "L", fill=True)
-            self.cell(0, 6, "zusätzliche Kosten", 0, 1, "L", fill=True)
-            self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
+        self.cell(0, 6, investText, 0, 1, "L", fill=True)
+        if ausweisung_rabatt or wp_kombi_rabatt:
             self.set_font("JUNO Solar Lt", "B", 12)
-            self.cell(0, 6, "Ihre zusätzlichen Kosten (inkl. MwSt.)", 0, 1, "L", fill=True)
+            self.cell(0, 6, "Ihr individueller Rabatt", 0, 1, "L", fill=True)
+            self.set_font("JUNO Solar Lt", "", 12)
+        self.cell(0, 6, "zzgl. MwSt.", 0, 1, "L", fill=True)
+        self.set_font("JUNO Solar Lt", "B", 12)
+        self.cell(0, 6, sumText, 0, 1, "L", fill=True)
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(45)
         sum = data["kostenPVA"]
+        rabatsum = data["rabattsumme"]
         netto = convertCurrency("{:,.2f} €".format(sum))
+        nettoVorRabatt = convertCurrency("{:,.2f} €".format(sum + rabatsum))
+        rab = convertCurrency("{:,.2f} €".format(rabatsum))
         mwst = convertCurrency("{:,.2f} €".format(sum * steuer))
         brutto = convertCurrency("{:,.2f} €".format(sum * (1 + steuer)))
         self.cell(0, 6, f'{str(data["existing_kWp"])} kWp + {str(data["ticket_kWp"])} kWp = {str(data["kWp"])} kWp', 0, 1, "R")
-        self.cell(0, 6, "", 0, 1, "R")
-        self.cell(0, 6, netto, 0, 1, "R")
+        if not ausweisung_rabatt and not wp_kombi_rabatt:
+            self.cell(0, 6, "", 0, 1, "R")
+            self.cell(0, 6, netto, 0, 1, "R")
+        if ausweisung_rabatt or wp_kombi_rabatt:
+            self.cell(0, 6, nettoVorRabatt, 0, 1, "R")
+            self.set_font("JUNO Solar Lt", "B", 12)
+            self.cell(0, 6, "-" + rab, 0, 1, "R")
+            self.set_font("JUNO Solar Lt", "", 12)
         self.cell(0, 6, mwst, 0, 1, "R")
         self.set_font("JUNO Solar Lt", "B", 12)
         self.cell(0, 6, brutto, 0, 1, "R")
@@ -515,6 +527,13 @@ class PDF(FPDF):
         self.set_xy(105, y - 5)
         self.cell(0, 6, data["gueltig"], 0, 0, "L")
         self.set_y(y + 5)
+        if wp_kombi_rabatt:
+            rabatt_wp_kombi_1 = self.get_attribute_by_identifier("rabatt_wp_kombi_1", "content")
+            self.setup_text("rabatt_wp_kombi_1", rabatt_wp_kombi_1, bold=True, alignment="L")
+            rabatt_wp_kombi_2 = self.get_attribute_by_identifier("rabatt_wp_kombi_2", "content")
+            self.setup_text("rabatt_wp_kombi_2", rabatt_wp_kombi_2, alignment="L")
+            y += 25
+            self.set_y(y)
 
         # Vollmacht
         vollmacht_1 = self.get_attribute_by_identifier("vollmacht_1", "content")

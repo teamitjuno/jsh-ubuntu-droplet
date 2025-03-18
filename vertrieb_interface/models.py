@@ -1535,6 +1535,19 @@ class VertriebTicket(TimeStampMixin):
     smartDongleLte = models.BooleanField(default=False)
     dachhakenKunde = models.BooleanField(default=False)
 
+    indiv_price_included = models.BooleanField(default=False)
+    indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    rabatt = models.IntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
+    sonderrabatt_included = models.BooleanField(default=False)
+    sonderrabatt = models.CharField(
+        max_length=100,
+        default="----",
+    )
+    ausweisung_rabatt = models.BooleanField(default=False)
+    wp_kombi_rabatt = models.BooleanField(default=False)
+
     # Result Prices :
     solar_module_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
@@ -1556,6 +1569,7 @@ class VertriebTicket(TimeStampMixin):
     )
 
     angebotsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    rabattsumme = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
 
     # Files and other fields:
     profile_foto = models.BinaryField(blank=True, null=True)
@@ -1611,6 +1625,7 @@ class VertriebTicket(TimeStampMixin):
         self.smartmeter_angebot_price = self.smartmeter_preis
         tmpSumme, tmpRabatt = self.angebots_summe
         self.angebotsumme = round(tmpSumme, 2)
+        self.rabattsumme = round(tmpRabatt, 2)
         self.anfrage_vom = self.get_current_date_formatted
         self.ag_data = self.data
         super(VertriebTicket, self).save(*args, **kwargs)
@@ -2217,7 +2232,18 @@ class VertriebTicket(TimeStampMixin):
             angebotsSumme *= (1 + (float(Sonderrabatt.objects.get(name="aufpreisNachkauf").prozentsatz) / 100))
             angebotsSumme += float(Sonderrabatt.objects.get(name="aufpreisNachkauf").fixbetrag)
 
-        rabatt = 0
+        if self.indiv_price_included:
+            rabatt = angebotsSumme - self.indiv_price
+            angebotsSumme = self.indiv_price
+
+        else:
+            rabatt = angebotsSumme * (self.rabatt/100)
+            angebotsSumme *= (1-(self.rabatt/100))
+
+            # Sonderrabatte
+            if self.sonderrabatt_included and Sonderrabatt.objects.all().exists():
+                angebotsSumme *= (1-(float(Sonderrabatt.objects.get(name=self.sonderrabatt).prozentsatz)/100))
+                angebotsSumme -= float(Sonderrabatt.objects.get(name=self.sonderrabatt).fixbetrag)
 
         userAufschlag = float(self.user.users_aufschlag) / 100 + 1  # type: ignore
         angebotsSumme *= userAufschlag
@@ -2305,6 +2331,11 @@ class VertriebTicket(TimeStampMixin):
             "notstromPreis": self.get_optional_accessory_price("backup_box"),
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
+            "angebotssumme": self.angebotsumme,
+            "rabatt": self.rabatt,
+            "rabattsumme": self.rabattsumme,
+            "ausweisung_rabatt": self.ausweisung_rabatt or self.indiv_price_included,
+            "wp_kombi_rabatt": self.wp_kombi_rabatt,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

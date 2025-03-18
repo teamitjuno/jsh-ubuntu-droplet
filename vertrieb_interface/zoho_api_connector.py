@@ -469,6 +469,7 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
             "Ger_st_durch_Kunde": return_lower_bull(vertrieb_ticket.geruestKunde),
             "Ger_st_oeffentlich": return_lower_bull(vertrieb_ticket.geruestOeffentlich) and not return_lower_bull(vertrieb_ticket.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_ticket.dachhakenKunde),
+            "Rabatt": int(vertrieb_ticket.rabatt),
             "Angebotssumme": str(vertrieb_ticket.angebotsumme),
         }
     }

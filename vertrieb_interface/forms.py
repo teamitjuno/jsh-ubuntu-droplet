@@ -2457,6 +2457,41 @@ class VertriebTicketForm(ModelForm):
             attrs={"class": "form-select", "id": "zahlungsbedingungen"}
         ),
     )
+    rabatt = forms.IntegerField(
+        initial=0,
+        label="Rabatt in %",
+        validators=[MinValueValidator(0)],
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "rabatt",
+                "data-toggle": "touchspin",
+                "value": "0",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    ausweisung_rabatt = forms.BooleanField(
+        label="Ausweisung Rabatt auf Angebot",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "ausweisung_rabatt"}),
+    )
+    wp_kombi_rabatt = forms.BooleanField(
+        label="Rabatt nur mit Wärmepumpe",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "wp_kombi_rabatt"}),
+    )
+    sonderrabatt_included = forms.BooleanField(label="Sonderrabatt vorhanden",
+       required=False,
+       widget=forms.CheckboxInput(
+           attrs={"class": "form-check-input", "id": "sonderrabatt_included"}),
+    )
+    sonderrabatt = forms.ChoiceField(
+        label="Sonderrabatt",
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "id": "sonderrabatt"}),
+    )
     anzOptimizer = forms.IntegerField(
         label="Optimierer Anzahl",
         required=True,
@@ -2467,6 +2502,18 @@ class VertriebTicketForm(ModelForm):
                 "style": "max-width: 300px",
             }
         ),
+    )
+    indiv_price_included = forms.BooleanField(
+        label="Indiv. Preis",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "id": "indiv_price_included"}
+        ),
+    )
+    indiv_price = forms.FloatField(
+        label="Individual Preis: ",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control", "id": "indiv_price"}),
     )
 
     class Meta:
@@ -2529,6 +2576,13 @@ class VertriebTicketForm(ModelForm):
             "geruestKunde",
             "geruestOeffentlich",
             "dachhakenKunde",
+            "indiv_price_included",
+            "indiv_price",
+            "rabatt",
+            "ausweisung_rabatt",
+            "wp_kombi_rabatt",
+            "sonderrabatt_included",
+            "sonderrabatt",
         ]
 
     def __init__(self, *args, user, **kwargs):
@@ -2565,10 +2619,17 @@ class VertriebTicketForm(ModelForm):
             (module.name, module.name)
             for module in WallBoxPreise.objects.filter(in_stock=True)
         ]
+        self.fields["sonderrabatt"].choices = [
+            (sonderrab.name, sonderrab.name)
+            for sonderrab in Sonderrabatt.objects.filter(is_active=True)
+        ]
         self.fields["wallboxtyp"].widget.attrs.update({"id": "wallboxtyp"})
 
         self.fields["angebot_id_assigned"].widget.attrs.update(
             {"id": "angebot_id_assigned"}
+        )
+        self.fields["rabatt"].widget.attrs.update(
+            {"id": "rabatt"}
         )
         self.fields["notizen"].widget.attrs.update({"id": "id_notizen"})
         self.fields["vorname_nachname"].widget.attrs.update(
@@ -2598,6 +2659,9 @@ class VertriebTicketForm(ModelForm):
 
         self.fields["angenommenes_angebot"].widget.attrs.update(
             {"id": "id_angenommenes_angebot"}
+        )
+        self.fields["indiv_price_included"].widget.attrs.update(
+            {"id": "indiv_price_included-checkbox"}
         )
         self.fields["email"].widget.attrs.update({"id": "id_email"})
         self.fields["name"].widget.attrs.update({"id": "id_name"})
@@ -2807,6 +2871,21 @@ class VertriebTicketForm(ModelForm):
                         },
                     ),
                 )
+        rabatt = cleaned_data.get("rabatt")
+        rabatt_limit = 100
+        if rabatt:
+            if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+                rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
+        if isinstance(rabatt, int) and not (0 <= rabatt <= rabatt_limit):
+            rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
+            raise ValidationError(
+                (
+                    f"Ungültige Eingabe: {rabatt}. Die Höhe des Rabatts sollte zwischen 0%% und {rabattStr}%% liegen."
+                ),
+                params={
+                    "rabatt": rabatt,
+                }
+            )
         if action == "angebotsumme_rechnen":
             return cleaned_data
 

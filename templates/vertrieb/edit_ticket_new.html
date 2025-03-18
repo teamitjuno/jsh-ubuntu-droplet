@@ -452,6 +452,78 @@
                                                             <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Gesamtpreis Nachverkauf</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
+                                                                    {% if user.role.name == "admin" or user.role.name == "manager" %}
+                                                                    <tr>
+                                                                        <th>{{ form.rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="ausweisung_row" class="conditional-row">
+                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="wp_kombi_row" class="conditional-row">
+                                                                        <th>{{ form.wp_kombi_rabatt.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="wp_kombi_rabatt" {% if form.wp_kombi_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.wp_kombi_rabatt.html_name }}" />
+                                                                                <label class="custom-control-label" for="wp_kombi_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="sonderrabatt_row" class="conditional-row">
+                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
+                                                                        <td>{{ form.sonderrabatt }}</td>
+                                                                    </tr>
+                                                                    <script type="text/javascript">
+                                                                        $(document).ready(function() {
+                                                                            updateSonderrabattRow();
+                                                                            toggleGenehmigung($('#rabatt').val());
+                                                                            // On 'Finanzierung' checkbox state change
+                                                                            $('#switch_sonderrabatt').change(function() {
+                                                                                updateSonderrabattRow();
+                                                                            });
+                                                                            function updateSonderrabattRow() {
+                                                                                if ($('#switch_sonderrabatt').is(':checked')) {
+                                                                                    // If checkbox is checked, show 'Inddiv Preis' row
+                                                                                    $('#sonderrabatt_row').show();
+                                                                                } else {
+                                                                                    // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                                    $('#sonderrabatt_row').hide();
+                                                                                }
+                                                                            }
+                                                                            function toggleGenehmigung(value){
+                                                                                if (value > 0) {
+                                                                                    $('#ausweisung_row').show();
+                                                                                    $('#wp_kombi_row').show();
+                                                                                } else {
+                                                                                    $('#ausweisung_row').hide();
+                                                                                     $('#wp_kombi_row').hide();
+                                                                                    {% if user.role.name == "admin" %}
+                                                                                    if (document.getElementById('switch_indiv_price_included').checked){
+                                                                                        $('#wp_kombi_row').show();
+                                                                                    }
+                                                                                    {% endif %}
+                                                                                }
+}
+                                                                        });
+                                                                    </script>
+                                                                    {% endif %}
                                                                     <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td class="text-success-emphasis">{{ vertrieb_ticket.angebotsumme|format_price }}</td>
@@ -463,27 +535,48 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        {% if user.role.name == "admin" %}
                                                         <div class="card mb-3">
-                                                        <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Angenommenes Angebot</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
-                                                                    <tbody>
-                                                                         <tr>
-                                                                            <th> Angebot ID</th>
-                                                                            <td>{{ vertrieb_ticket.angenommenes_angebot }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th> Status PVA</th>
-                                                                            <td>{{ vertrieb_ticket.status_pva }}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th> Bauteile</th>
-                                                                            <td>{{ vertrieb_ticket.bauteile_finder|linebreaks }}</td>
-                                                                        </tr>
-                                                                    </tbody>
+                                                                    <tr>
+                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="indiv_price_row">
+                                                                        <th>{{form.indiv_price.label_tag }}</th>
+                                                                        <td>{{ form.indiv_price }}</td>
+                                                                    </tr>
                                                                 </table>
+                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                                                <script type="text/javascript">
+                                                                    $(document).ready(function() {
+                                                                        // Initial state of 'Inddiv Preis' row
+                                                                        updateIndivPreisRow();
+                                                                        // On 'Indiv Preis inkl.' checkbox state change
+                                                                        $('#switch_indiv_price_included').change(function() {
+                                                                            updateIndivPreisRow();
+                                                                        });
+                                                                        function updateIndivPreisRow() {
+                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
+                                                                                // If checkbox is checked, show 'Inddiv Preis' row
+                                                                                $('#indiv_price_row').show();
+                                                                            } else {
+                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
+                                                                                $('#indiv_price_row').hide();
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                </script>
                                                             </div>
                                                         </div>
+                                                        {% endif %}
                                                     </div>
                                                 </div> 
                                             </div>
@@ -499,9 +592,7 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-file-document widget-icon"></i>
-                                            </div>
+                                            <h5 class="text-muted fw-normal mt-0">Kundennummer {{ vertrieb_ticket.zoho_kundennumer}}</h5>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
                                             <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
                                             {% if vertrieb_ticket.countdown %}
@@ -522,11 +613,23 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-account widget-icon"></i>
-                                            </div>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ vertrieb_ticket.zoho_kundennumer }}">
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Angenommenes Angebot</h5>
+                                            <table class="table table-sm table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th> Angebot ID</th>
+                                                        <td>{{ vertrieb_ticket.angenommenes_angebot }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Status PVA</th>
+                                                        <td>{{ vertrieb_ticket.status_pva }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Bauteile</th>
+                                                        <td>{{ vertrieb_ticket.bauteile_finder|linebreaks }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div> 
                                     </div> 
                                 </div> 
@@ -910,11 +1013,10 @@ function submitFormWithAction(action) {
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-file-document widget-icon"></i>
-                                            </div>
+                                            <h5 class="text-muted fw-normal mt-0">Kundennummer {{ vertrieb_ticket.zoho_kundennumer}}</h5>
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
                                             <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
+                                            
                                             {% if vertrieb_ticket.countdown %}
                                             <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_ticket.countdown }}</span><span class="text-nowrap h4"> ab.</span>
                                             <p></p>
