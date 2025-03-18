@@ -587,84 +587,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xxl-4">
+                        <div class="col-xxl-6">
                             <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body border-info border">
-                                            <h5 class="text-muted fw-normal mt-0">Kundennummer {{ vertrieb_ticket.zoho_kundennumer}}</h5>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
-                                            {% if vertrieb_ticket.countdown %}
-                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_ticket.countdown }}</span><span class="text-nowrap h4"> ab.</span>
-                                            <p></p>
-                                            {% endif %}
-                                            <p class="mb-0 text-muted">
-                                                {% if not vertrieb_ticket.is_locked %}
-                                                    <span class="text-success me-2"></i> Verfügbar</span>
-                                                {% else %}
-                                                    <span class="text-danger me-2"></i> Nicht verfügbar</span>
-                                                {% endif %}    
-                                                    <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
-                                            </p>
-                                        </div> 
-                                    </div> 
-                                </div> 
-                                <div class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body border-info border">
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Angenommenes Angebot</h5>
-                                            <table class="table table-sm table-hover">
-                                                <tbody>
-                                                    <tr>
-                                                        <th> Angebot ID</th>
-                                                        <td>{{ vertrieb_ticket.angenommenes_angebot }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th> Status PVA</th>
-                                                        <td>{{ vertrieb_ticket.status_pva }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th> Bauteile</th>
-                                                        <td>{{ vertrieb_ticket.bauteile_finder|linebreaks }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div> 
-                                    </div> 
-                                </div> 
-                            </div> 
-                            <div class="row">
-                                <div hidden class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body">
-                                            {% if vertrieb_ticket.status == 'bekommen' %} 
-                                            <div class="float-end">
-                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
-                                            </div>
-                                            {% endif %}
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_ticket.anfrage_vom }}</h5>
-                                            <p></p>
-                                            {% if not vertrieb_ticket.is_locked %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            {% else %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                                
-                                            {% endif %}
-                                            {% if vertrieb_ticket.status == 'bekommen' %} 
-                                            <p class="mb-0 text-muted">
-                                                    <span class="text-success me-2"></i> {{ vertrieb_ticket.status_change_field }}</span>
-                                                    <span class="text-nowrap">Änderungsdatum</span>
-                                            </p>
-                                            {% endif %}
-                                        </div> 
-                                    </div> 
-                                </div> 
-
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
@@ -765,6 +689,83 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <h5 class="text-muted fw-normal mt-0">Kundennummer {{ vertrieb_ticket.zoho_kundennumer}}</h5>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
+                                            <h3 class="mt-3 mb-3">{{ vertrieb_ticket.ticket_id}}</h3>
+                                            {% if vertrieb_ticket.countdown %}
+                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_ticket.countdown }}</span><span class="text-nowrap h4"> ab.</span>
+                                            <p></p>
+                                            {% endif %}
+                                            <p class="mb-0 text-muted">
+                                                {% if not vertrieb_ticket.is_locked %}
+                                                    <span class="text-success me-2"></i> Verfügbar</span>
+                                                {% else %}
+                                                    <span class="text-danger me-2"></i> Nicht verfügbar</span>
+                                                {% endif %}    
+                                                    <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
+                                            </p>
+                                        </div> 
+                                    </div> 
+                                </div>
+                                <div hidden class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            {% if vertrieb_ticket.status == 'bekommen' %} 
+                                            <div class="float-end">
+                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
+                                            </div>
+                                            {% endif %}
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_ticket.anfrage_vom }}</h5>
+                                            <p></p>
+                                            {% if not vertrieb_ticket.is_locked %}
+                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                                <h4 hidden>{{ form.status }}</h4>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                            {% else %}
+                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                                <h4 hidden>{{ form.status }}</h4>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                                
+                                            {% endif %}
+                                            {% if vertrieb_ticket.status == 'bekommen' %} 
+                                            <p class="mb-0 text-muted">
+                                                    <span class="text-success me-2"></i> {{ vertrieb_ticket.status_change_field }}</span>
+                                                    <span class="text-nowrap">Änderungsdatum</span>
+                                            </p>
+                                            {% endif %}
+                                        </div> 
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Angenommenes Angebot</h5>
+                                            <table class="table table-sm table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th> Angebot ID</th>
+                                                        <td>{{ vertrieb_ticket.angenommenes_angebot }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Status PVA</th>
+                                                        <td>{{ vertrieb_ticket.status_pva }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Bauteile</th>
+                                                        <td>{{ vertrieb_ticket.bauteile_finder|linebreaks }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                                    </div> 
+                                </div> 
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
@@ -1008,8 +1009,10 @@ function submitFormWithAction(action) {
                         </div>
                     </div>
                 <div class="row">
-                        <div class="col-xxl-4">
+                        <div class="col-xxl-6">
                             <div class="row">
+                                <div class="col-sm-6">
+                                </div>
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
@@ -1032,6 +1035,33 @@ function submitFormWithAction(action) {
                                         </div> 
                                     </div> 
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Angenommenes Angebot</h5>
+                                            <table class="table table-sm table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th> Angebot ID</th>
+                                                        <td>{{ vertrieb_ticket.angenommenes_angebot }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Status PVA</th>
+                                                        <td>{{ vertrieb_ticket.status_pva }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> Bauteile</th>
+                                                        <td>{{ vertrieb_ticket.bauteile_finder|linebreaks }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                                    </div> 
+                                </div> 
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">

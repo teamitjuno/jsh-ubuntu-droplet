@@ -927,85 +927,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xxl-4">
+                        <div class="col-xxl-6">
                             <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body border-info border">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-file-document widget-icon"></i>
-                                            </div>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
-                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
-                                            {% if vertrieb_angebot.countdown %}
-                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
-                                            <p></p>
-                                            {% endif %}
-                                            <p class="mb-0 text-muted">
-                                                {% if not vertrieb_angebot.is_locked %}
-                                                    <span class="text-success me-2"></i> Verfügbar</span>
-                                                {% else %}
-                                                    <span class="text-danger me-2"></i> Nicht verfügbar</span>
-                                                {% endif %}    
-                                                    <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
-                                            </p>
-                                        </div> 
-                                    </div> 
-                                </div> 
-                                <div class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body border-info border">
-                                            <div class="float-end">
-                                                <i class="mdi mdi-account widget-icon"></i>
-                                            </div>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ vertrieb_angebot.zoho_kundennumer }}">
-                                            {% comment %} <p>{{ vertrieb_angebot.zoho_kundennumer}}</p> {% endcomment %}
-                                            {% comment %} <p hidden>{{ form.zoho_kundennumer}}</p>  {% endcomment %}
-                                            
-                                            <p class="mb-0 text-muted">
-                                            {% if not vertrieb_angebot.termine_text %}
-                                                <span class="text-danger me-2"></i> Kein Termin</span>
-                                            {% else %}
-                                                <span class="text-success me-2"></i> {{ vertrieb_angebot.termine_text }}</span>
-                                            {% endif %}
-                                                <span class="text-nowrap">Termin</span>
-                                            </p>
-                                        </div> 
-                                    </div> 
-                                </div> 
-                            </div> 
-                            <div class="row">
-                                <div hidden class="col-sm-6">
-                                    <div class="card widget-flat">
-                                        <div class="card-body">
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <div class="float-end">
-                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
-                                            </div>
-                                            {% endif %}
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
-                                            <p></p>
-                                            {% if not vertrieb_angebot.is_locked %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            {% else %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                                
-                                            {% endif %}
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <p class="mb-0 text-muted">
-                                                    <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
-                                                    <span class="text-nowrap">Änderungsdatum</span>
-                                            </p>
-                                            {% endif %}
-                                        </div> 
-                                    </div> 
-                                </div> 
-
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
@@ -1015,7 +938,7 @@
                                                                 document.getElementById('actionType').value = value;
                                                             }
                                                         </script>
-                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Verfügbare Aktionen:</h5>
 
                                                     <script>
                                                         function showSpinner() {
@@ -1159,6 +1082,30 @@
                                 <div class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body border-info border">
+                                            <div class="float-end">
+                                                <i class="mdi mdi-file-document widget-icon"></i>
+                                            </div>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
+                                            <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
+                                            {% if vertrieb_angebot.countdown %}
+                                            <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
+                                            <p></p>
+                                            {% endif %}
+                                            <p class="mb-0 text-muted">
+                                                {% if not vertrieb_angebot.is_locked %}
+                                                    <span class="text-success me-2"></i> Verfügbar</span>
+                                                {% else %}
+                                                    <span class="text-danger me-2"></i> Nicht verfügbar</span>
+                                                {% endif %}    
+                                                    <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
+                                            </p>
+                                        </div> 
+                                    </div> 
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body border-info border">
                                             <table class="table table-sm table-hover">
                                                 <tr>
                                                     <th>Preis Netto</th>
@@ -1172,9 +1119,40 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div> 
+                            <div class="row">
+                                <div hidden class="col-sm-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            {% if vertrieb_angebot.status == 'bekommen' %} 
+                                            <div class="float-end">
+                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
+                                            </div>
+                                            {% endif %}
+                                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
+                                            <p></p>
+                                            {% if not vertrieb_angebot.is_locked %}
+                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                                <h4 hidden>{{ form.status }}</h4>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                            {% else %}
+                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                                <h4 hidden>{{ form.status }}</h4>
+                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                                
+                                            {% endif %}
+                                            {% if vertrieb_angebot.status == 'bekommen' %} 
+                                            <p class="mb-0 text-muted">
+                                                    <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
+                                                    <span class="text-nowrap">Änderungsdatum</span>
+                                            </p>
+                                            {% endif %}
+                                        </div> 
+                                    </div> 
+                                </div>
                             </div>
                         </div>    
-                        <div class="col-xxl-8">
+                        <div class="col-xxl-6">
                             <div class="card border-info border">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="header-title">Visualisierung der voraussichtlichen Amortisationszeit</h4>
@@ -1542,51 +1520,6 @@ function submitFormWithAction(action) {
                                                             <div class="card-body">
                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>{{ form.komplex.label_tag }}</th>
-                                                                        <td id="komplex" name="komplex">{{ form.komplex }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Zahlungsmodalitäten</th>
-                                                                        <td>{{ form.zahlungsbedingungen }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <input type="number" id="rabatt" class="form-control" name="{{ form.rabatt.html_name }}" value="{{ form.rabatt.value }}" />
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="ausweisung_row" class="conditional-row">
-                                                                        <th>{{ form.ausweisung_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="ausweisung_rabatt" {% if form.ausweisung_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.ausweisung_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="ausweisung_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="wp_kombi_row" class="conditional-row">
-                                                                        <th>{{ form.wp_kombi_rabatt.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="wp_kombi_rabatt" {% if form.wp_kombi_rabatt.value %}checked{% endif %} data-switch="success" name="{{ form.wp_kombi_rabatt.html_name }}" />
-                                                                                <label class="custom-control-label" for="wp_kombi_rabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.sonderrabatt_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_sonderrabatt" {% if form.sonderrabatt_included.value %}checked{% endif %} data-switch="success" name="{{ form.sonderrabatt_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_sonderrabatt" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="sonderrabatt_row" class="conditional-row">
-                                                                        <th>{{ form.sonderrabatt.label_tag }}</th>
-                                                                        <td>{{ form.sonderrabatt }}</td>
-                                                                    </tr>
-                                                                    <tr>
                                                                         <th>Preis Netto</th>
                                                                         <td>{{ vertrieb_angebot.angebotsumme|format_price }}</td>
                                                                     </tr>
@@ -1602,134 +1535,6 @@ function submitFormWithAction(action) {
                                                                 {% endif %}
                                                             </div>
                                                         </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateSonderrabattRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_sonderrabatt').change(function() {
-                                                                    updateSonderrabattRow();
-                                                                });
-                                                                function updateSonderrabattRow() {
-                                                                    if ($('#switch_sonderrabatt').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#sonderrabatt_row').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                       <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Finanzierung</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.finanzierung.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_finanzierung" {% if form.finanzierung.value %}checked{% endif %} data-switch="success" name="{{ form.finanzierung.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_finanzierung" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                                <table id="finanzierung_table" class="table table-sm table-hover">
-                                                                    <tr class="conditional-row">
-                                                                        <th>Barzahlungspreis</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.angebotsumme|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.anzahlung.label_tag }}</th>
-                                                                        <td>{{ form.anzahlung }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>Nettokreditbetrag</th>
-                                                                        <td class="text-success-emphasis">{{ vertrieb_angebot.nettokreditbetrag|format_price }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.monatliche_rate.label_tag }}</th>
-                                                                        <td>{{ form.monatliche_rate }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.laufzeit.label_tag }}</th>
-                                                                        <td>{{ form.laufzeit }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.sollzinssatz.label_tag }}</th>
-                                                                        <td>{{ form.sollzinssatz }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.effektiver_zins.label_tag }}</th>
-                                                                        <td>{{ form.effektiver_zins }}</td>
-                                                                    </tr>
-                                                                    <tr class="conditional-row">
-                                                                        <th>{{ form.gesamtkreditbetrag.label_tag }}</th>
-                                                                        <td>{{ form.gesamtkreditbetrag }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <script type="text/javascript">
-                                                            $(document).ready(function() {
-                                                                updateFinanzierungRow();
-                                                                // On 'Finanzierung' checkbox state change
-                                                                $('#switch_finanzierung').change(function() {
-                                                                    updateFinanzierungRow();
-                                                                });
-                                                                function updateFinanzierungRow() {
-                                                                    if ($('#switch_finanzierung').is(':checked')) {
-                                                                        // If checkbox is checked, show 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').show();
-                                                                    } else {
-                                                                        // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                        $('#finanzierung_table').hide();
-                                                                    }
-                                                                }
-                                                            });
-                                                        </script>
-                                                        {% if user.role.name == "admin" %}
-                                                        <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Individual Preis</div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm table-hover">
-                                                                    <tr>
-                                                                        <th>{{ form.indiv_price_included.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch_indiv_price_included" {% if form.indiv_price_included.value %}checked{% endif %} data-switch="success" name="{{ form.indiv_price_included.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch_indiv_price_included" data-on-label="Yes" data-off-label="No"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr id="indiv_price_row">
-                                                                        <th>{{form.indiv_price.label_tag }}</th>
-                                                                        <td>{{ form.indiv_price }}</td>
-                                                                    </tr>
-                                                                </table>
-                                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                                                                <script type="text/javascript">
-                                                                    $(document).ready(function() {
-                                                                        // Initial state of 'Inddiv Preis' row
-                                                                        updateIndivPreisRow();
-                                                                        // On 'Indiv Preis inkl.' checkbox state change
-                                                                        $('#switch_indiv_price_included').change(function() {
-                                                                            updateIndivPreisRow();
-                                                                        });
-                                                                        function updateIndivPreisRow() {
-                                                                            if ($('#switch_indiv_price_included').is(':checked')) {
-                                                                                // If checkbox is checked, show 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').show();
-                                                                            } else {
-                                                                                // If checkbox is not checked, hide 'Inddiv Preis' row
-                                                                                $('#indiv_price_row').hide();
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                </script>
-                                                            </div>
-                                                        </div>
-                                                        {% endif %}
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="card mb-3">
@@ -2100,82 +1905,7 @@ function submitFormWithAction(action) {
                             <div class="col-sm-6">
                                 <div class="card widget-flat">
                                     <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="mdi mdi-file-document widget-icon"></i>
-                                        </div>
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
-                                        <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
-                                        {% if vertrieb_angebot.countdown and vertrieb_angebot.status == 'bekommen' %}
-                                        <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
-                                        <p></p>
-                                        {% endif %}
-                                        <p class="mb-0 text-muted">
-                                            {% if not vertrieb_angebot.is_locked %}
-                                                <span class="text-success me-2"></i> Verfügbar</span>
-                                            {% else %}
-                                                <span class="text-danger me-2"></i> Nicht verfügbar</span>
-                                            {% endif %}    
-                                                <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
-                                        </p>
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="mdi mdi-account widget-icon"></i>
-                                        </div>
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Kundennumer</h5>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="zoho_kundennumer" value="{{ form.zoho_kundennumer.value }}">
-                                            <p hidden>{{ form.zoho_kundennumer}}</p>
-                                            <p></p>
-                                        <p class="mb-0 text-muted">
-                                        {% if not vertrieb_angebot.termine_text %}
-                                            <span class="text-danger me-2"></i> Kein Termin</span>
-                                        {% else %}
-                                            <span class="text-success me-2"></i> {{ vertrieb_angebot.termine_text }}</span>
-                                        {% endif %}
-                                            <span class="text-nowrap">Termin</span>
-                                        </p>
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                        </div> <!-- end row -->
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
-                                        <div class="float-end">
-                                            <button hidden name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
-                                        </div>
-                                        {% endif %}
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
-                                        <p></p>
-                                        {% if not vertrieb_angebot.is_locked %}
-                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            <h4 hidden>{{ form.status }}</h4>
-                                        {% else %}
-                                        <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                        <h4 hidden>{{ form.status }}</h4>
-                                           <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
-                                        {% endif %}
-                                        {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
-                                            <p class="mb-0 text-muted">                                         
-                                                <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
-                                                <span class="text-nowrap">Änderungsdatum</span>
-                                            </p>
-                                        {% endif %}
-                                        
-                                    </div> <!-- end card-body-->
-                                </div> <!-- end card-->
-                            </div> <!-- end col-->
-                            <div class="col-sm-6">
-                                <div class="card widget-flat">
-                                    <div class="card-body">
-                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">verfügbare Aktionen:</h5>
+                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Verfügbare Aktionen:</h5>
 
                                                     <script>
                                                         function showSpinner() {
@@ -2283,10 +2013,62 @@ function submitFormWithAction(action) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="card widget-flat">
+                                    <div class="card-body">
+                                        <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Nachverkauf ID</h5>
+                                        <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Angebot ID</h5>
+                                        <h3 class="mt-3 mb-3">{{ vertrieb_angebot.angebot_id}}</h3>
+                                        {% if vertrieb_angebot.countdown and vertrieb_angebot.status == 'bekommen' %}
+                                        <span class="text-nowrap h4"> läuft in  </span><span class="text-danger me-2 text-nowrap h4">{{ vertrieb_angebot.countdown }}</span><span class="text-nowrap h4"> ab.</span>
+                                        <p></p>
+                                        {% endif %}
+                                        <p class="mb-0 text-muted">
+                                            {% if not vertrieb_angebot.is_locked %}
+                                                <span class="text-success me-2"></i> Verfügbar</span>
+                                            {% else %}
+                                                <span class="text-danger me-2"></i> Nicht verfügbar</span>
+                                            {% endif %}    
+                                                <span class="text-nowrap">Zugriff auf die Bearbeitung</span>  
+                                        </p>
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card-->
+                            </div> <!-- end col-->
+                        </div> <!-- end row -->
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="card widget-flat">
+                                    <div class="card-body">
+                                        {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
+                                        <div class="float-end">
+                                            <button hidden name="change_status_button" id="changeStatusButton" class="btn btn-soft-info rounded-pill" type="submit">finalisieren</button>
+                                        </div>
+                                        {% endif %}
+                                        <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
+                                        <p></p>
+                                        {% if not vertrieb_angebot.is_locked %}
+                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
+                                            <h4 hidden>{{ form.status }}</h4>
+                                        {% else %}
+                                        <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                        <h4 hidden>{{ form.status }}</h4>
+                                           <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
+                                        {% endif %}
+                                        {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
+                                            <p class="mb-0 text-muted">                                         
+                                                <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
+                                                <span class="text-nowrap">Änderungsdatum</span>
+                                            </p>
+                                        {% endif %}
+                                        
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card-->
+                            </div> <!-- end col-->
                         </div>
                     </div>
                         
-                    <div class="col-xxl-8">
+                    <div class="col-xxl-6">
                         <div class="card border-info border">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4 class="header-title">Visualisierung der voraussichtlichen Amortisationszeit</h4>
