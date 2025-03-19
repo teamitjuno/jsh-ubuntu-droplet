@@ -101,7 +101,7 @@ class SonderrabattAdmin(admin.ModelAdmin):
 
 @admin.register(AndereKonfigurationWerte)
 class AndereKonfigurationWerteAdmin(admin.ModelAdmin):
-    list_display = ("name", "value")
+    list_display = ("name", "value", "text")
     search_fields = ("name",)
 
 

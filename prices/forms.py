@@ -21,10 +21,16 @@ class AndereKonfigurationWerteForm(forms.ModelForm):
             attrs={"class": "form-control", "id": "id_andere_konfiguration_value"}
         ),
     )
+    text = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "id": "id_andere_konfiguration_text"}
+        ),
+    )
 
     class Meta:
         model = AndereKonfigurationWerte
-        fields = ["name", "value"]
+        fields = ["name", "value", "text"]
 
 
 class OptionalAccessoriesPreiseForm(forms.ModelForm):
