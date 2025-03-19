@@ -179,6 +179,8 @@ AndereKonfigurationWerte.objects.create(name='sehr_komplex', value=1.10)
 AndereKonfigurationWerte.objects.create(name='erzeugung_sued', value=950.00)
 AndereKonfigurationWerte.objects.create(name='erzeugung_ost_west', value=880.00)
 AndereKonfigurationWerte.objects.create(name='rabatt_limit', value=12.00)
+AndereKonfigurationWerte.objects.create(name='rabatt_limit_mail', value=10.00)
+AndereKonfigurationWerte.objects.create(name='vertriebsleitung', value=0.00, text='')
 
 
 from vertrieb_interface.models import Dokument_PDF

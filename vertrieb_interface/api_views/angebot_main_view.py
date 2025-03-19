@@ -7,13 +7,14 @@ from django.contrib.admin.models import CHANGE
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
 
 # Local imports from 'config'
-from config.settings import TELEGRAM_LOGGING
+from config.settings import TELEGRAM_LOGGING, EMAIL_BACKEND
 
 # Local imports from 'vertrieb_interface'
 from vertrieb_interface.forms import (
@@ -24,6 +25,7 @@ from vertrieb_interface.zoho_api_connector import (
     put_form_data_to_zoho_jpp,
     fetch_user_angebote_all,
 )
+from prices.models import AndereKonfigurationWerte
 from vertrieb_interface.models import CustomLogEntry, VertriebAngebot
 from vertrieb_interface.telegram_logs_sender import (
     send_message_to_bot,
@@ -311,6 +313,43 @@ class AngebotEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, View):
             error_message = f"ZOHO connection Fehler: {str(e)}"
             form.add_error(None, error_message)
             return self.form_invalid(form, vertrieb_angebot, request)
+        email_address = AndereKonfigurationWerte.objects.get(name="vertriebsleitung").text
+        user = vertrieb_angebot.user
+        user_email = user.email
+        if vertrieb_angebot.rabatt > AndereKonfigurationWerte.objects.get(name="rabatt_limit_mail").value and user_email != email_address:
+            subject = f"Rabattierung >10% {vertrieb_angebot.angebot_id}"
+            email_content = f"""Es wurde ein Rabatt in Höhe von {vertrieb_angebot.rabatt}% gegeben in dem Angebot {vertrieb_angebot.angebot_id} für {vertrieb_angebot.name}.
+
+Investitionskosten: {vertrieb_angebot.angebotsumme + vertrieb_angebot.rabattsumme}€
+Rabatt: {vertrieb_angebot.rabattsumme}€
+Angebotssumme: {vertrieb_angebot.angebotsumme}€
+
+Dies ist eine automatisierte Mail, ausgelöst durch:
+"""
+            body = f"Guten Tag,\n\n{email_content}\n\n{user.smtp_body}"
+            try:
+                connection = get_connection(
+                    backend=EMAIL_BACKEND,
+                    host=user.smtp_server,
+                    port=user.smtp_port,
+                    username=user.smtp_username,
+                    password=user.smtp_password,
+                    use_tls=True,
+                    fail_silently=False,
+                )
+                email = EmailMultiAlternatives(
+                    subject,
+                    body,
+                    user.smtp_username,
+                    [email_address],
+                    connection=connection,
+                    reply_to=[user_email],
+                )
+                email.send()
+                return True
+            except Exception as e:
+                messages.error(self.request, f"Failed to send email: {str(e)}")
+                return self.form_invalid(form, vertrieb_angebot, request)
 
     def form_invalid(self, form, vertrieb_angebot, request, *args, **kwargs):
         context = self.get_context_data()
