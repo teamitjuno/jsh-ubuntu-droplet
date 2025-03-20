@@ -12,13 +12,13 @@ logger.setLevel(logging.INFO)
 
 
 @shared_task
-def delete_unassigned_vertriebangebot_week_old():
+def delete_unassigned_vertriebangebot_day_old():
     """
     Löscht VertriebAngebot-Instanzen, die keine zugewiesene Angebot_ID haben und seit mindestens einer Woche nicht aktualisiert wurden.
     """
-    logger.info("Task - delete_unassigned_vertriebangebot_week_old  - starting")
+    logger.info("Task - delete_unassigned_vertriebangebot_day_old  - starting")
     try:
-        one_week_ago = timezone.now() - timedelta(weeks=1)
+        one_week_ago = timezone.now() - timedelta(days=1)
         with transaction.atomic():
             to_delete = VertriebAngebot.objects.filter(
                 angebot_id_assigned=False, updated_at__lte=one_week_ago
@@ -43,7 +43,7 @@ def delete_unassigned_vertriebticket_day_old():
     """
     logger.info("Task - delete_unassigned_vertriebticket_day_old  - starting")
     try:
-        one_day_ago = timezone.now() - timedelta(hours=1)
+        one_day_ago = timezone.now() - timedelta(days=1)
         with transaction.atomic():
             to_delete = VertriebTicket.objects.filter(
                 angebot_id_assigned=False, updated_at__lte=one_day_ago

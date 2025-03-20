@@ -47,7 +47,12 @@
 <div id="update-users-progress" class="progress-container" style="visibility: hidden; margin-left: 10px;">
   <div id="update-users-bar" class="progress-bar"></div>
 </div>
-
+    
+<button id="delete-unused-data-button" style="margin-left: 25px;" class="button">Delete unused data</button>
+<div id="delete-unused-data-progress" class="progress-container" style="visibility: hidden; margin-left: 10px;">
+  <div id="delete-unused-data-bar" class="progress-bar"></div>
+</div>
+    
 <button id="update-elektrikers-button" style="margin-left: 25px;" class="button">Update Elektrikers</button>
 <div id="update-elektrikers-progress" class="progress-container" style="visibility: hidden; margin-left: 10px;">
   <div id="update-elektrikers-bar" class="progress-bar"></div>
@@ -98,7 +103,38 @@ $(document).ready(function(){
           }
         });
       });
+      
+      $('#delete-unused-data-button').click(function(){
+        $(this).prop('disabled', true);
+        $('.progress').show();
   
+        // start the simulated progress
+        var progress = 0;
+        var progressInterval = setInterval(function(){
+          progress += 3;
+          if (progress > 100) progress = 100;  // cap the progress at 100%
+          $('#delete-unused-data-progress').css('width', progress + '%').attr('aria-valuenow', progress).text(progress + '%');
+        }, 1000);  // update progress every second
+        
+        $.ajax({
+          method: 'POST',
+          url: "{% url 'delete_unused_data' %}",
+          data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(){
+            clearInterval(progressInterval);  // stop the simulated progress
+            $('#delete-unused-data-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('Unused data deleted successfully.');
+          },
+          error: function(){
+            clearInterval(progressInterval);  // stop the simulated progress in case of an error
+            $('#delete-unused-data-button').prop('disabled', false);
+            $('.progress').hide();
+            alert('An error occurred while deleting unused data.');
+          }
+        });
+      });
+      
       $('#update-elektrikers-button').click(function(){
         $(this).prop('disabled', true);
         $('.progress').show();

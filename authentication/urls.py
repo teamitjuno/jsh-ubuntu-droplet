@@ -6,6 +6,7 @@ from authentication.api import LoginView, LogoutView
 from invoices.views import home
 from authentication.views import (
     update_vertrieblers,
+    delete_unused_data,
     update_elektrikers,
     protected_schema_view,
     zoho_callback,
@@ -24,6 +25,7 @@ general_patterns = [
 # URL patterns related to updating various entities
 update_patterns = [
     path("update_vertrieblers/", update_vertrieblers, name="update_vertrieblers"),
+    path("delete_unused_data/", delete_unused_data, name="delete_unused_data"),
     path("admin/update_elektrikers/", update_elektrikers, name="update_elektrikers"),
     path("admin/schema/", protected_schema_view, name="schema_view"),
 ]

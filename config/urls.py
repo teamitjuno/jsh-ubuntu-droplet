@@ -7,6 +7,7 @@ from invoices.views import handler403, handler404, handler500
 from authentication.views import (
     update_vertrieblers,
     update_elektrikers,
+    delete_unused_data,
     protected_schema_view,
 )
 
@@ -33,6 +34,7 @@ urlpatterns = [
     ),
     path("update_vertrieblers/", update_vertrieblers, name="update_vertrieblers"),
     path("update_elektrikers/", update_elektrikers, name="update_elektrikers"),
+    path("delete_unused_data/", delete_unused_data, name="delete_unused_data"),
     path("admin/schema/", protected_schema_view, name="schema_view"),
 ]
 

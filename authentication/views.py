@@ -35,6 +35,21 @@ def update_vertrieblers(request):
 
     return response
 
+@staff_member_required
+def delete_unused_data(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    def stream_response():
+        yield "Starting deletion of unused data\n"
+        call_command("delete_unused_data")
+        yield "Deletion of unused data completed\n"
+
+    response = StreamingHttpResponse(stream_response())
+    response["X-Accel-Buffering"] = "no"
+    response["Cache-Control"] = "no-cache"
+
+    return response
 
 @staff_member_required
 def protected_schema_view(request):
