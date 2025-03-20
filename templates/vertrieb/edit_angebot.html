@@ -1124,29 +1124,11 @@
                                 <div hidden class="col-sm-6">
                                     <div class="card widget-flat">
                                         <div class="card-body">
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <div class="float-end">
-                                                <button name="change_status_button" id="changeStatusButton" class="btn btn-soft-success rounded-pill" type="submit">finalisieren</button>
-                                            </div>
-                                            {% endif %}
                                             <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
                                             <p></p>
-                                            {% if not vertrieb_angebot.is_locked %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            {% else %}
-                                                <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                                <h4 hidden>{{ form.status }}</h4>
-                                                <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                                
-                                            {% endif %}
-                                            {% if vertrieb_angebot.status == 'bekommen' %} 
-                                            <p class="mb-0 text-muted">
-                                                    <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
-                                                    <span class="text-nowrap">Änderungsdatum</span>
-                                            </p>
-                                            {% endif %}
+                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                            <h4 hidden>{{ form.status }}</h4>
+                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                         </div> 
                                     </div> 
                                 </div>
@@ -2046,15 +2028,9 @@ function submitFormWithAction(action) {
                                         {% endif %}
                                         <h5 class="text-muted fw-normal mt-0" title="Number of Orders">{{ vertrieb_angebot.anfrage_vom }}</h5>
                                         <p></p>
-                                        {% if not vertrieb_angebot.is_locked %}
-                                            <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
-                                            <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
-                                            <h4 hidden>{{ form.status }}</h4>
-                                        {% else %}
                                         <h4 class="text-muted fw-normal mt-0" title="Number of Orders">{{ form.status.label_tag}}:</h4>
+                                        <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">
                                         <h4 hidden>{{ form.status }}</h4>
-                                           <input type="text" readonly class="form-control-plaintext h2" id="id_status" value="{{ form.status.value }}">                                                 
-                                        {% endif %}
                                         {% if vertrieb_angebot.status == 'bekommen' or vertrieb_angebot.status == 'abgelaufen'%} 
                                             <p class="mb-0 text-muted">                                         
                                                 <span class="text-success me-2"></i> {{ vertrieb_angebot.status_change_field }}</span>
@@ -2118,6 +2094,7 @@ $(document).ready(function() {
     }
 
     // Function to handle AJAX request for name field change
+    // Is triggered on selection in Interessent
     function handleNameChange() {
         var name = $nameField.val();
         var url = "{% url 'vertrieb_interface:vertrieb_autofield' %}"; // Ensure the URL is correct and this script is processed by Django

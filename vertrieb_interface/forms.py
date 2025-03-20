@@ -2956,7 +2956,6 @@ class VertriebTicketForm(ModelForm):
                     params={"name_first_name": name_first_name},
                 )
             return cleaned_data
-
         else:
             if interessent == "----":
                 raise forms.ValidationError(

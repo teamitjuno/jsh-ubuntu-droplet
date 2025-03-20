@@ -634,7 +634,6 @@ def create_angebot(request):
         "kabelanschluss": user.initial_kabelanschluss,
         "map_notizen_container_view": user.map_notizen_container_view,
     }
-
     form_angebot = VertriebAngebotForm(request.POST or initial_data, user=user)
 
     if TELEGRAM_LOGGING:
@@ -678,6 +677,27 @@ def create_angebot(request):
         blank_angebot.save()
         return HttpResponseRedirect(
             reverse("vertrieb_interface:edit_angebot", args=[blank_angebot.angebot_id])
+        )
+
+    elif request.POST and "create_duplicate_angebot" in request.POST:
+        duplicate_angebot = VertriebAngebot.objects.get(angebot_id= request.POST.get("an_id"))
+        duplicate_angebot.pk = None
+        duplicate_angebot.user = request.user
+        duplicate_angebot.status = ""
+        duplicate_angebot.status_change_date = None
+        duplicate_angebot.status_change_field = None
+        duplicate_angebot.is_locked = False
+        duplicate_angebot.angebot_id_assigned = False
+        duplicate_angebot.angebot_id = duplicate_angebot.generate_angebot_id()
+        duplicate_angebot.angebot_zoho_id = None
+        duplicate_angebot.angebot_pdf = None
+        duplicate_angebot.calc_pdf = None
+        duplicate_angebot.calc_graph_img = None
+        duplicate_angebot.save()
+        print(request.POST.get("an_id"))
+        print(duplicate_angebot.angebot_id)
+        return HttpResponseRedirect(
+            reverse("vertrieb_interface:edit_angebot", args=[duplicate_angebot.angebot_id])
         )
 
     if not form_angebot.is_valid():
@@ -1265,11 +1285,18 @@ class PDFAngebotsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return vertrieb_check(self.request.user)
 
     def get_queryset(self):
-        queryset = (
-            super()
-            .get_queryset()
-            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
-        )
+        if self.request.user.role.name == "admin" or self.request.user.role.name == "manager":
+            queryset = (
+                super()
+                .get_queryset()
+                .filter(angebot_id_assigned=True, status="bekommen")
+            )
+        else:
+            queryset = (
+                super()
+                .get_queryset()
+                .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
+            )
         query = self.request.GET.get("q")
         if query:
             queryset = filter_by_query(queryset, query)
@@ -1297,11 +1324,18 @@ class PDFTicketsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return vertrieb_check(self.request.user)
 
     def get_queryset(self):
-        queryset = (
-            super()
-            .get_queryset()
-            .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
-        )
+        if self.request.user.role.name == "admin" or self.request.user.role.name == "manager":
+            queryset = (
+                super()
+                .get_queryset()
+                .filter(angebot_id_assigned=True, status="bekommen")
+            )
+        else:
+            queryset = (
+                super()
+                .get_queryset()
+                .filter(user=self.request.user, angebot_id_assigned=True, status="bekommen")
+            )
         query = self.request.GET.get("q")
         if query:
             queryset = filter_by_query(queryset, query)

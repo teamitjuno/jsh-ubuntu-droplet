@@ -32,6 +32,9 @@
                                             <th>Datum</th>
                                             <th>Angebot PDF</th>
                                             <th>Kalkulation</th>
+                                            {% if user.role.name == "admin" or user.role.name == "manager" %}
+                                                <th>Duplizieren</th>
+                                            {% endif %}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -78,14 +81,21 @@
                                                     </a>                    
                                                 </td>
                                                 <td>
-                                                   
                                                     {% if angebot.angebot_id %}
     <a href="{% url 'vertrieb_interface:edit_calc' angebot.angebot_id %}" class="btn btn-outline-info rounded-pill btn-sm">Kalkulation</a>
-{% else %}
-    None
-{% endif %}
-                                                
+                                                    {% endif %}
                                                 </td>
+                                                {% if user.role.name == "admin" or user.role.name == "manager" %}
+                                                    <td>
+                                                        <form id="duplicate-angebot-form{{angebot.angebot_id}}" method="POST" action="{% url 'vertrieb_interface:create_angebot' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="create_duplicate_angebot" value="1">
+                                                            <input type="hidden" name="an_id" value= {{angebot.angebot_id}}>
+                                                            <a href="#"><i class=" ri-file-edit-line text-white"></i></a>
+                                                            <span href="#"><a href="#" onclick="document.getElementById('duplicate-angebot-form{{angebot.angebot_id}}').submit(); " class="btn btn-outline-info rounded-pill btn-sm">Duplizieren</a></span>
+                                                        </form>
+                                                    </td>
+                                                {% endif %}
                                             </tr>
                                         {% empty %}
                                             <tr>
