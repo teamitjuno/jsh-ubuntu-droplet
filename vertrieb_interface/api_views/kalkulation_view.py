@@ -55,7 +55,7 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
 
     def get(self, request, angebot_id, *args, **kwargs):
         vertrieb_angebot = self.model.objects.get(
-            angebot_id=angebot_id, user=request.user
+            angebot_id=angebot_id #, user=request.user
         )
 
         form = self.form_class(instance=vertrieb_angebot, user=request.user)

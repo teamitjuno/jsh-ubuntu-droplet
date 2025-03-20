@@ -1183,6 +1183,7 @@ class VertriebAngebotForm(ModelForm):
         initial=0,
         label="Rabatt in %",
         validators=[MinValueValidator(0)],
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -1497,7 +1498,6 @@ class VertriebAngebotForm(ModelForm):
                     form.status_change_date = db_object.status_change_date
                     form.status_change_field = db_object.status_change_field
                     form.save()
-
             except VertriebAngebot.DoesNotExist:
                 pass
 
@@ -1690,7 +1690,7 @@ class VertriebAngebotForm(ModelForm):
 
         midZaehler = cleaned_data.get("midZaehler")
         wallbox_typ = cleaned_data.get("wallboxtyp")
-        if midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
+        if midZaehler is not None and midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
             raise ValidationError(
                 (
                     f"Sie haben eine Wallbox vom Typ {wallbox_typ} ausgewählt. Sie können keinen MID-Zähler auswählen. Überprüfen Sie die Daten."
@@ -2934,7 +2934,7 @@ class VertriebTicketForm(ModelForm):
 
         midZaehler = cleaned_data.get("midZaehler")
         wallbox_typ = cleaned_data.get("wallboxtyp")
-        if midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
+        if midZaehler is not None and midZaehler > 0 and wallbox_anzahl > 0 and (wallbox_typ == "Huawei FusionCharge AC" or wallbox_typ == "Viessmann Charging Station"):
             raise ValidationError(
                 (
                     f"Sie haben eine Wallbox vom Typ {wallbox_typ} ausgewählt. Sie können keinen MID-Zähler auswählen. Überprüfen Sie die Daten."
