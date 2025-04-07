@@ -169,7 +169,9 @@ def validate_integers_ticket(value):
 
 
 def validate_rabatt(value):
-    if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+    if self.instance.user.typ == "Kooperationspartner":
+        rabatt_limit = 0
+    elif self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
         rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
     else:
         rabatt_limit = 100
@@ -1605,7 +1607,9 @@ class VertriebAngebotForm(ModelForm):
         rabatt = cleaned_data.get("rabatt")
         rabatt_limit = 100
         if rabatt:
-            if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+            if self.instance.user.typ == "Kooperationspartner":
+                rabatt_limit = 0
+            elif self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
                 rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
         if isinstance(rabatt, int) and not (0 <= rabatt <= rabatt_limit):
             rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
@@ -2874,7 +2878,9 @@ class VertriebTicketForm(ModelForm):
         rabatt = cleaned_data.get("rabatt")
         rabatt_limit = 100
         if rabatt:
-            if self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
+            if self.instance.user.typ == "Kooperationspartner":
+                rabatt_limit = 0
+            elif self.instance.user.role.name != "admin" and self.instance.user.role.name != "manager":
                 rabatt_limit = AndereKonfigurationWerte.objects.get(name="rabatt_limit").value
         if isinstance(rabatt, int) and not (0 <= rabatt <= rabatt_limit):
             rabattStr = str(rabatt_limit).rstrip("0").rstrip(".")
