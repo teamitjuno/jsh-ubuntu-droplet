@@ -102,6 +102,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
             ("Handelsvertretung", "Handelsvertretung"),
             ("Vertrieb", "Vertrieb"),
             ("Regionalleitung", "Regionalleitung"),
+            ("Kooperationspartner", "Kooperationspartner"),
         ],
         null=True,
         default=None,

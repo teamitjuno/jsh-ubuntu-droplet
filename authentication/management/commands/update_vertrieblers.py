@@ -124,6 +124,8 @@ class Command(BaseCommand):
             stellenbez = "Regionalverkaufsleiter"
         elif user.typ == "Handelsvertretung":
             stellenbez = "Handelsvertreter"
+        elif user.typ == "Kooperationspartner":
+            stellenbez = "Kooperationspartner"
         if user.salutation == "Frau":
             stellenbez += "in"
         # configure signature
@@ -168,6 +170,8 @@ class Command(BaseCommand):
                     typ = "Handelsvertretung"
                 elif user_info[5] == "Regionalleitung":
                     typ = "Regionalleitung"
+                elif user_info[5] == "Kooperationspartner":
+                    typ = "Kooperationspartner"
 
                     # Check if a User with the provided zoho_id exists
                 user_exists = User.objects.filter(zoho_id=zoho_id).exists()
