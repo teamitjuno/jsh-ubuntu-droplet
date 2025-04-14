@@ -1479,10 +1479,9 @@ class VertriebAngebotForm(ModelForm):
 
         if form.status == "bekommen":
             try:
-
                 db_object = VertriebAngebot.objects.get(angebot_id=form.angebot_id)
                 db_countdown_on = db_object.countdown_on
-                db_zoho_id = db_object.zoho_id
+                # db_zoho_id = db_object.zoho_id
                 if db_countdown_on == False:
                     form.status = "bekommen"
                     form.is_locked = True
@@ -1491,12 +1490,12 @@ class VertriebAngebotForm(ModelForm):
                     form.status_change_field = now_localized
                     form.status_change_date = timezone.now().date().isoformat()
                     db_object.countdown_on = True
-                    if db_zoho_id:
-                        update_status(db_zoho_id, form.status)
+                    # moved the status change to happen in JPP on creation of Angebot
+                    # if db_zoho_id:
+                    #     update_status(db_zoho_id, form.status)
                     db_object.save()
                     form.save()
-
-                if db_countdown_on == True:
+                else:
                     form.status_change_date = db_object.status_change_date
                     form.status_change_field = db_object.status_change_field
                     form.save()
@@ -2675,10 +2674,9 @@ class VertriebTicketForm(ModelForm):
 
         if form.status == "bekommen":
             try:
-
                 db_object = VertriebTicket.objects.get(ticket_id=form.ticket_id)
                 db_countdown_on = db_object.countdown_on
-                db_zoho_id = db_object.zoho_id
+                # db_zoho_id = db_object.zoho_id
                 if db_countdown_on == False:
                     form.status = "bekommen"
                     form.is_locked = True
@@ -2692,8 +2690,7 @@ class VertriebTicketForm(ModelForm):
                     #     update_status(db_zoho_id, form.status)
                     db_object.save()
                     form.save()
-
-                if db_countdown_on == True:
+                else:
                     form.status_change_date = db_object.status_change_date
                     form.status_change_field = db_object.status_change_field
                     form.save()
