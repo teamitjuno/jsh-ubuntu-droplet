@@ -15,6 +15,7 @@ class Datenblatter(models.Model):
     )
     backup_box = models.FileField(upload_to="uploads/", blank=True, null=True)
     backup_box_viessmann = models.FileField(upload_to="uploads/", blank=True, null=True)
+    smartguard =  models.FileField(upload_to="uploads/", blank=True, null=True)
     optimizer = models.FileField(upload_to="uploads/", blank=True, null=True)
     huawei_smartmeter_dtsu = models.FileField(upload_to="uploads/", blank=True, null=True)
     huawei_smartmeter_emma = models.FileField(upload_to="uploads/", blank=True, null=True)
