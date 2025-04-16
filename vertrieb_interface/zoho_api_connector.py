@@ -406,6 +406,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Ger_st_oeffentlich": return_lower_bull(vertrieb_angebot.geruestOeffentlich) and not return_lower_bull(vertrieb_angebot.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_angebot.dachhakenKunde),
             "Rabatt": int(vertrieb_angebot.rabatt),
+            "Individueller_Text": str(vertrieb_angebot.indiv_text),
             "Zahlungsmodalit_ten": str(vertrieb_angebot.zahlungsbedingungen),
             "Angebotssumme": str(vertrieb_angebot.angebotsumme),
             "Finanzierung": return_lower_bull(vertrieb_angebot.finanzierung),
@@ -470,6 +471,7 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
             "Ger_st_oeffentlich": return_lower_bull(vertrieb_ticket.geruestOeffentlich) and not return_lower_bull(vertrieb_ticket.geruestKunde),
             "Dachhaken_durch_Kunde": return_lower_bull(vertrieb_ticket.dachhakenKunde),
             "Rabatt": int(vertrieb_ticket.rabatt),
+            "Individueller_Text": str(vertrieb_ticket.indiv_text),
             "Angebotssumme": str(vertrieb_ticket.angebotsumme),
         }
     }
