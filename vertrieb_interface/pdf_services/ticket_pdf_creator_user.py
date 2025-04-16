@@ -372,18 +372,19 @@ class PDF(FPDF):
 
         # Tabelle Eintrag 1
         # Solar Module
-        eintrag += 1
-        tab1_eintrag_nummer = str(eintrag) + "."
-        tab1_module = data["module"]
-        tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModule"])} Wp\n∙ Produktgarantie: {str(data["produktGarantie"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantie"])}'
-        tab1_module_anzahl = f'{str(data["anzModule"])}'
-        self.setup_eintrag_text(
-            "tabelle_eintrag_1",
-            tab1_eintrag_nummer,
-            content_1=tab1_module,
-            content_2=tab1_module_anzahl,
-            content_4=tab1_module_props,
-        )
+        if data["anzModule"] > 0:
+            eintrag += 1
+            tab1_eintrag_nummer = str(eintrag) + "."
+            tab1_module = data["module"]
+            tab1_module_props = f'∙ Leistung pro Modul: {str(data["wpModule"])} Wp\n∙ Produktgarantie: {str(data["produktGarantie"])}\n∙ Leistungsgarantie: {str(data["leistungsGarantie"])}'
+            tab1_module_anzahl = f'{str(data["anzModule"])}'
+            self.setup_eintrag_text(
+                "tabelle_eintrag_1",
+                tab1_eintrag_nummer,
+                content_1=tab1_module,
+                content_2=tab1_module_anzahl,
+                content_4=tab1_module_props,
+            )
 
         # Tabelle Eintrag 3
         if data["smartmeterModell"] != "kein EMS":
@@ -610,7 +611,9 @@ def createOfferPdf(data, vertrieb_ticket, certifikate, user):
     pages = 4
     if certifikate:
         pages += 1
-    zubehoerLimit = 13
+    zubehoerLimit = 12
+    if data["anzModule"] > 0:
+        zubehoerLimit += 1
     if data["wallboxAnz"] > 0 or data["kabelanschluss"] > 0:
         zubehoerLimit -= 1
     if data["batterieVorh"]:

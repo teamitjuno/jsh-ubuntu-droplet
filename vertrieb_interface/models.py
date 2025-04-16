@@ -411,6 +411,7 @@ class VertriebAngebot(TimeStampMixin):
     dachhakenKunde = models.BooleanField(default=False)
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    indiv_text = models.TextField(blank=True, null=True)
     zahlungsbedingungen = models.CharField(
         max_length=25,
         blank=True,
@@ -1379,6 +1380,8 @@ class VertriebAngebot(TimeStampMixin):
             "rabattsumme": self.rabattsumme,
             "ausweisung_rabatt": self.ausweisung_rabatt or self.indiv_price_included,
             "wp_kombi_rabatt": self.wp_kombi_rabatt,
+            "indiv_included:": self.indiv_price_included,
+            "indiv_text": self.indiv_text,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value
@@ -1537,6 +1540,7 @@ class VertriebTicket(TimeStampMixin):
 
     indiv_price_included = models.BooleanField(default=False)
     indiv_price = models.FloatField(default=0.00, validators=[MinValueValidator(0)])
+    indiv_text = models.TextField(blank=True, null=True)
     rabatt = models.IntegerField(
         default=0, validators=[MinValueValidator(0)]
     )
@@ -2331,11 +2335,12 @@ class VertriebTicket(TimeStampMixin):
             "notstromPreis": self.get_optional_accessory_price("backup_box"),
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
-            "angebotssumme": self.angebotsumme,
             "rabatt": self.rabatt,
             "rabattsumme": self.rabattsumme,
             "ausweisung_rabatt": self.ausweisung_rabatt or self.indiv_price_included,
             "wp_kombi_rabatt": self.wp_kombi_rabatt,
+            "indiv_included:": self.indiv_price_included,
+            "indiv_text": self.indiv_text,
             "angebotssumme": self.angebotsumme,
             "steuersatz": float(
                 AndereKonfigurationWerte.objects.get(name="steuersatz").value

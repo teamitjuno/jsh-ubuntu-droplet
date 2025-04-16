@@ -1232,6 +1232,8 @@ def replace_spaces_with_underscores(s: str) -> str:
 
 def anzahlZubehoer(data):
     anzahlZubehoer = 0
+    if data["indiv_text"] != "":
+        anzahlZubehoer += 1
     if data["notstrom"]:
         anzahlZubehoer += 1
     if data["ersatzstrom"]:
@@ -1407,6 +1409,17 @@ def page4(pdf, data, eintrag, limit):
             "optionales_zubehoer_2", optionales_zubehoer_2, alignment="L"
         )
 
+    if data["indiv_text"] != "":
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1 = "Individuelle Vereinbarung"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2="",
+            content_4=data["indiv_text"],
+        )
     if data["thor"] == True:
         eintrag += 1
         tab28_eintrag_nummer = str(eintrag) + "."

@@ -1235,11 +1235,23 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     indiv_price = forms.FloatField(
-        label="Individual Preis: ",
+        label="Individueller Preis: ",
         required=False,
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "indiv_price"}),
     )
-
+    indiv_text = forms.CharField(
+        label="Individueller Text",
+        max_length=200,
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows":5,
+                "class": "form-control",
+                "placeholder": "Individueller Text",
+                "id": "id_indiv_text",
+            }
+        ),
+    )
     # Finanzierung
     finanzierung = forms.BooleanField(
         label="Finanzierung",
@@ -1362,6 +1374,7 @@ class VertriebAngebotForm(ModelForm):
             "dachhakenKunde",
             "indiv_price_included",
             "indiv_price",
+            "indiv_text",
             "zahlungsbedingungen",
             "rabatt",
             "ausweisung_rabatt",
@@ -2514,9 +2527,22 @@ class VertriebTicketForm(ModelForm):
         ),
     )
     indiv_price = forms.FloatField(
-        label="Individual Preis: ",
+        label="Individueller Preis: ",
         required=False,
         widget=forms.NumberInput(attrs={"class": "form-control", "id": "indiv_price"}),
+    )
+    indiv_text = forms.CharField(
+        label="Individueller Text",
+        max_length=200,
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "class": "form-control",
+                "placeholder": "Individueller Text",
+                "id": "id_indiv_text",
+            }
+        ),
     )
 
     class Meta:
@@ -2581,6 +2607,7 @@ class VertriebTicketForm(ModelForm):
             "dachhakenKunde",
             "indiv_price_included",
             "indiv_price",
+            "indiv_text",
             "rabatt",
             "ausweisung_rabatt",
             "wp_kombi_rabatt",

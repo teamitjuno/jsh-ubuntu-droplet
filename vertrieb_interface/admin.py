@@ -171,6 +171,7 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                 "fields": (
                     "indiv_price_included",
                     "indiv_price",
+                    "indiv_text",
                     "solar_module_angebot_price",
                     "batteriespeicher_angebot_price",
                     "wallbox_angebot_price",
@@ -362,6 +363,9 @@ class VertriebTicketAdmin(admin.ModelAdmin):
             "Preisdetails",
             {
                 "fields": (
+                    "indiv_price_included",
+                    "indiv_price",
+                    "indiv_text",
                     "solar_module_angebot_price",
                     "batteriespeicher_angebot_price",
                     "wallbox_angebot_price",

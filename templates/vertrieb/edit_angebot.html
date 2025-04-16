@@ -537,6 +537,10 @@
                                                                         <th>{{form.indiv_price.label_tag }}</th>
                                                                         <td>{{ form.indiv_price }}</td>
                                                                     </tr>
+                                                                    <tr id="indiv_text_row">
+                                                                        <th>{{form.indiv_text.label_tag }}</th>
+                                                                        <td>{{ form.indiv_text }}</td>
+                                                                    </tr>
                                                                 </table>
                                                                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                                                                 <script type="text/javascript">
@@ -551,9 +555,11 @@
                                                                             if ($('#switch_indiv_price_included').is(':checked')) {
                                                                                 // If checkbox is checked, show 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').show();
+                                                                                $('#indiv_text_row').show();
                                                                             } else {
                                                                                 // If checkbox is not checked, hide 'Inddiv Preis' row
                                                                                 $('#indiv_price_row').hide();
+                                                                                $('#indiv_text_row').hide();
                                                                             }
                                                                         }
                                                                     });
