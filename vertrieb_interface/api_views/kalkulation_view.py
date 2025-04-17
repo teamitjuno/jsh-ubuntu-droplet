@@ -98,51 +98,13 @@ class KalkulationEditView(LoginRequiredMixin, VertriebCheckMixin, FormMixin, Vie
         if "pdf_erstellen" in request.POST:
             if form.is_valid():
                 vertrieb_angebot.angebot_id_assigned = True
-
-                data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-                name_to_kundennumer = {
-                    item["name"]: item["zoho_kundennumer"] for item in data
-                }
-                name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-                name = form.cleaned_data["name"]
-                zoho_id = form.cleaned_data["zoho_id"]
-                kundennumer = name_to_kundennumer[name]
-
-                zoho_id = name_to_zoho_id[name]
-
-                vertrieb_angebot.zoho_kundennumer = kundennumer
-                vertrieb_angebot.zoho_id = int(zoho_id)
                 vertrieb_angebot.save()
                 form.save()  # type:ignore
-                if TELEGRAM_LOGGING:
-                    send_custom_message(
-                        user,
-                        "hat eine PDF Kalkulation für einen Interessenten erstellt.",
-                        f"Kunde: {vertrieb_angebot.name} 📊",
-                    )
-
-                return redirect(
-                    "vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id
-                )
+                return redirect("vertrieb_interface:create_calc_pdf", vertrieb_angebot.angebot_id)
         elif form.is_valid():
             vertrieb_angebot.angebot_id_assigned = True
-
-            data = json.loads(user.zoho_data_text or '[["test", "test"]]')
-            name_to_kundennumer = {
-                item["name"]: item["zoho_kundennumer"] for item in data
-            }
-            name_to_zoho_id = {item["name"]: item["zoho_id"] for item in data}
-            name = form.cleaned_data["name"]
-            zoho_id = form.cleaned_data["zoho_id"]
-            kundennumer = name_to_kundennumer[name]
-
-            zoho_id = name_to_zoho_id[name]
-
-            vertrieb_angebot.zoho_kundennumer = kundennumer
-            vertrieb_angebot.zoho_id = int(zoho_id)
             vertrieb_angebot.save()
             form.save()  # type:ignore
-
             return redirect("vertrieb_interface:edit_calc", vertrieb_angebot.angebot_id)
         return self.form_invalid(form, vertrieb_angebot)
 

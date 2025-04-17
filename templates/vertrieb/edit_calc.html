@@ -75,9 +75,9 @@
                                                                             <th>AngebotsID-Nummer:</th>
                                                                             <td>{{ vertrieb_angebot.angebot_id }}</td>
                                                                         </tr>
-                                                                        <tr>
+                                                                        <tr hidden>
                                                                             <th>Kundenname:</th>
-                                                                            <td><input type="text" class="form-control" name="{{ form.name.name }}" value="{{ form.name.value }}" readonly></td>
+                                                                            <td>{{ form.name }}</td>
                                                                         </tr>
                                                                         <tr hidden>
                                                                             <th>{{ form.name_first_name.label_tag }}</th>
@@ -85,11 +85,8 @@
                                                                         </tr>
                                                                         <tr hidden>
                                                                             <th>{{ form.name_last_name.label_tag }}</th>
-                                                                            <td>{{ form.name_last_name }}
-                                                                                
-                                                                            </td>
+                                                                            <td>{{ form.name_last_name }}</td>
                                                                         </tr>
-                                                                        
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -220,10 +217,6 @@
                                                                                 <label class="custom-control-label" for="switch10" data-on-label="Yes" data-off-label="No"></label>
                                                                             </div>
                                                                         </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.name.label_tag }}</th>
-                                                                        <td><input type="text" class="form-control" name="{{ form.name.name }}" value="{{ form.name.value }}" readonly></td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>{{ form.anrede.label_tag }}</th>
