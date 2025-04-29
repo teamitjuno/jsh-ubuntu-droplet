@@ -746,7 +746,8 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def get_vertribler(self):
-        return f"{self.user.first_name} {self.user.last_name} \nMobil: {self.user.phone}\nEmail: {self.user.email}"  # type: ignore
+        mobil = f"Mobil: {self.user.phone}\n" if self.user.phone else ""
+        return f"{self.user.first_name} {self.user.last_name} \n{mobil}Email: {self.user.email}"  # type: ignore
 
     @property
     def vertrieb_abk(self):
@@ -1872,7 +1873,8 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def get_vertribler(self):
-        return f"{self.user.first_name} {self.user.last_name} \nMobil: {self.user.phone}\nEmail: {self.user.email}"  # type: ignore
+        mobil = f"Mobil: {self.user.phone}\n" if self.user.phone else ""
+        return f"{self.user.first_name} {self.user.last_name} \n{mobil}Email: {self.user.email}"  # type: ignore
 
     @property
     def vertrieb_abk(self):

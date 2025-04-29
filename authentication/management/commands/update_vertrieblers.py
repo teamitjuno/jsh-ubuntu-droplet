@@ -131,7 +131,8 @@ class Command(BaseCommand):
         # configure signature
         signatur = f"Mit freundlichen Grüßen\n\n{user.first_name} {user.last_name}\n{stellenbez}\n\n"
         signatur += Editierbarer_Text.objects.get(identifier="mail_signatur_1").content + "\n\n"
-        signatur += f"T: +49 3761 417800\nM: {user.phone}\nE: {user.email}\nwww.juno-solar.com\n\n"
+        mobil = f"M: {user.phone}\n" if user.phone else ""
+        signatur += f"T: +49 3761 417800\n{mobil}E: {user.email}\nwww.juno-solar.com\n\n"
         signatur += Editierbarer_Text.objects.get(identifier="mail_signatur_2").content + "\n"
         return signatur
 

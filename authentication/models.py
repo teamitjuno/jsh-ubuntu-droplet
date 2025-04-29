@@ -73,6 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         choices=[
             ("Herr", "Herr"),
             ("Frau", "Frau"),
+            ("Firma", "Firma"),
         ],
         null=True,
         default=None,
