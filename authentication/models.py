@@ -250,8 +250,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         return self.first_name
 
     def save(self, *args, **kwargs):
-        self.smtp_server = "send.one.com"
-
+        #self.smtp_server = "send.one.com"
         super().save(*args, **kwargs)
 
     def set_password(self, raw_password):

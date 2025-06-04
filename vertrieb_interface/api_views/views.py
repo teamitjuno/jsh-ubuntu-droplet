@@ -1109,7 +1109,7 @@ def send_support_message(request):
             port=user.smtp_port,
             username=user.smtp_username,
             password=user.smtp_password,
-            use_tsl=True,
+            use_tls=True,
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
@@ -1153,7 +1153,7 @@ def send_invoice(request, angebot_id):
             port=user.smtp_port,
             username=user.smtp_username,
             password=user.smtp_password,
-            use_tsl=True,
+            use_tls=True,
             fail_silently=False,
         )
         email = EmailMultiAlternatives(
@@ -1201,7 +1201,7 @@ def send_calc_invoice(request, angebot_id):
             port=user.smtp_port,
             username=user.smtp_username,
             password=user.smtp_password,
-            use_tsl=True,
+            use_tls=True,
             fail_silently=False,
         )
 

@@ -261,7 +261,7 @@ def send_project_invoice(user, project_id):
         port=user.smtp_port,
         username=user.smtp_username,
         password=user.smtp_password,
-        use_tsl=True,
+        use_tls=True,
         fail_silently=False,
     )
 
