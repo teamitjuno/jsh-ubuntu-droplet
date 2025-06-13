@@ -405,6 +405,9 @@ class VertriebAngebot(TimeStampMixin):
     kabelanschluss = models.FloatField(
         default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
+    kabelSmartGuard = models.FloatField(
+        default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )
     geruestKunde = models.BooleanField(default=False)
     geruestOeffentlich = models.BooleanField(default=False)
     smartDongleLte = models.BooleanField(default=False)
@@ -1123,6 +1126,12 @@ class VertriebAngebot(TimeStampMixin):
         return float(OptionalAccessoriesPreise.objects.get(name="kabelpreis").price)
 
     @property
+    def smartguard_kabel_preis(self):
+        if self.kabelSmartGuard and self.kabelSmartGuard >= 0:
+            return self.kabelSmartGuard * self.get_optional_accessory_price("kabelpreis_smartguard")
+        return 0
+
+    @property
     def optimizer_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
 
@@ -1176,6 +1185,7 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.ersatzstrom:
             accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
+            accessories_price += float(self.smartguard_kabel_preis)
         if self.smartDongleLte:
             accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
         if self.midZaehler > 0:
@@ -1353,6 +1363,7 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "kabelanschluss": self.kabelanschluss,
+            "kabelSmartGuard": self.kabelSmartGuard if self.ersatzstrom else 0,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,
@@ -1532,6 +1543,9 @@ class VertriebTicket(TimeStampMixin):
     )
     wallbox_anzahl = models.PositiveIntegerField(default=0)
     kabelanschluss = models.FloatField(
+        default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
+    )
+    kabelSmartGuard = models.FloatField(
         default=0.0, validators=[MinValueValidator(0)], blank=True, null=True
     )
     geruestKunde = models.BooleanField(default=False)
@@ -2159,6 +2173,12 @@ class VertriebTicket(TimeStampMixin):
         return float(OptionalAccessoriesPreise.objects.get(name="kabelpreis").price)
 
     @property
+    def smartguard_kabel_preis(self):
+        if self.kabelSmartGuard and self.kabelSmartGuard >= 0:
+            return self.kabelSmartGuard * self.get_optional_accessory_price("kabelpreis_smartguard")
+        return 0
+
+    @property
     def optimizer_preis(self):
         return float(OptionalAccessoriesPreise.objects.get(name="optimizer").price)
 
@@ -2203,6 +2223,8 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.ersatzstrom:
             accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
+        if self.kabelSmartGuard:
+            accessories_price += float(self.smartguard_kabel_preis)
         if self.smartDongleLte:
             accessories_price += float(self.get_optional_accessory_price("smartDongleLte"))
         if self.midZaehler > 0:
@@ -2314,6 +2336,7 @@ class VertriebTicket(TimeStampMixin):
             "wallboxAnz": self.wallbox_anzahl,
             "optionVorh": self.notstrom,
             "kabelanschluss": self.kabelanschluss,
+            "kabelSmartGuard": self.kabelSmartGuard,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,

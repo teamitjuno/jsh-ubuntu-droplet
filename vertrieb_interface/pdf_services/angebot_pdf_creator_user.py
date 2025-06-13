@@ -1238,6 +1238,8 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["ersatzstrom"]:
         anzahlZubehoer += 1
+    if data["kabelSmartGuard"] > 0:
+        anzahlZubehoer += 1
     if data["elwa"]:
         anzahlZubehoer += 1
     if data["thor"]:
@@ -1663,6 +1665,22 @@ def page4(pdf, data, eintrag, limit):
             addedPage = True
         tab28_eintrag_nummer = str(eintrag) + "."
         tab28_content_1, tab28_content_4 = get_zubehoer_name("ersatzstrom")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["kabelSmartGuard"] > 0:
+        eintrag += 1
+        if not addedPage and eintrag > limit:
+            pdf.add_page()
+            addedPage = True
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("kabelpreis_smartguard")
+        tab28_content_1 = str(data["kabelSmartGuard"]) + " " + tab28_content_1
         tab28_content_2 = "1"
         pdf.setup_eintrag_text(
             "zubehoer_platzhalter",

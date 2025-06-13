@@ -648,10 +648,8 @@
                                                                  </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Ersatzstrom</div>
                                                             <div class="card-body">
                                                                  <table class="table table-sm table-hover">
                                                                     <tr>
@@ -672,6 +670,19 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr id="kabelSmartGuard_row" class="conditional-row">
+                                                                        <th>{{ form.kabelSmartGuard.label_tag }}</th>
+                                                                        <td>{{ form.kabelSmartGuard }}</td>
+                                                                    </tr>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-body">
+                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>{{ form.smartDongleLte.label_tag }}</th>
                                                                         <td>
@@ -1169,6 +1180,7 @@ $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
+    toggleKabelSmartGuard(document.getElementById('ersatzstrom').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
 
     $("#hersteller").change(function() {
@@ -1199,6 +1211,14 @@ function toggleHeizstab(value){
         $('#heizstab_row').show();
     } else {
         $('#heizstab_row').hide();
+    }
+}
+
+function toggleKabelSmartGuard(value){
+    if (value === true) {
+        $('#kabelSmartGuard_row').show();
+    } else {
+        $('#kabelSmartGuard_row').hide();
     }
 }
 
@@ -1604,10 +1624,8 @@ function submitFormWithAction(action) {
                                                                  </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
                                                         <div class="card mb-3">
-                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Ersatzstrom</div>
                                                             <div class="card-body">
                                                                  <table class="table table-sm table-hover">
                                                                     <tr>
@@ -1628,6 +1646,19 @@ function submitFormWithAction(action) {
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.kabelSmartGuard.label_tag }}</th>
+                                                                        <td>{{ form.kabelSmartGuard }}</td>
+                                                                    </tr>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Zubehör</div>
+                                                            <div class="card-body">
+                                                                 <table class="table table-sm table-hover">
                                                                     <tr>
                                                                         <th>{{ form.smartDongleLte.label_tag }}</th>
                                                                         <td>
@@ -2172,6 +2203,7 @@ $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleGenehmigung($('#rabatt').val());
     toggleHeizstab(document.getElementById('thor').checked);
+    toggleKabelSmartGuard(document.getElementById('ersatzstrom').checked);
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     toggleBoolelwaRow($('#hersteller').val());
     setFieldOptions($('#hersteller').val());
@@ -2207,6 +2239,14 @@ function toggleHeizstab(value){
         $('#heizstab_row').hide();
     }
 
+}
+
+function toggleKabelSmartGuard(value){
+    if (value === true) {
+        $('#kabelSmartGuard_row').show();
+    } else {
+        $('#kabelSmartGuard_row').hide();
+    }
 }
 
 function toggleGeruestOeff(value){

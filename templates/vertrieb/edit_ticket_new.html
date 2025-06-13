@@ -262,24 +262,6 @@
                                                             <div class="card-body">
                                                                  <table class="table table-sm table-hover">
                                                                     <tr>
-                                                                        <th>{{ form.notstrom.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
-                                                                                <label class="custom-control-label" for="switch04" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.ersatzstrom.label_tag }}</th>
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="ersatzstrom" {% if form.ersatzstrom.value %}checked{% endif %} data-switch="success" name="{{ form.ersatzstrom.html_name }}" />
-                                                                                <label class="custom-control-label" for="ersatzstrom" data-on-label="Ja" data-off-label="Nein"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
                                                                         <th>{{ form.smartDongleLte.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -444,6 +426,35 @@
                                                                     <tr>
                                                                         <th>{{ form.kabelanschluss.label_tag }}</th>
                                                                         <td>{{ form.kabelanschluss }}</td>
+                                                                    </tr>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card mb-3">
+                                                            <div class="card-header bg-primary p-2 text-white bg-opacity-75 bg-gradient text-white">Ersatzstrom</div>
+                                                            <div class="card-body">
+                                                                 <table class="table table-sm table-hover">
+                                                                    <tr>
+                                                                        <th>{{ form.notstrom.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}" />
+                                                                                <label class="custom-control-label" for="switch04" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.ersatzstrom.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="ersatzstrom" {% if form.ersatzstrom.value %}checked{% endif %} data-switch="success" name="{{ form.ersatzstrom.html_name }}" />
+                                                                                <label class="custom-control-label" for="ersatzstrom" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr id="kabelSmartGuard_row" class="conditional-row">
+                                                                        <th>{{ form.kabelSmartGuard.label_tag }}</th>
+                                                                        <td>{{ form.kabelSmartGuard }}</td>
                                                                     </tr>
                                                                  </table>
                                                             </div>
@@ -799,6 +810,7 @@
 $(document).ready(function() {
     toggleAnzWandhalterung($('#hersteller').val());
     toggleHeizstab(document.getElementById('thor').checked);
+    {#toggleKabelSmartGuard(document.getElementById('ersatzstrom').checked);#}
     toggleGeruestOeff(document.getElementById('geruestKunde').checked);
     setFieldOptions();
 });
@@ -808,6 +820,14 @@ function toggleHeizstab(value){
         $('#heizstab_row').show();
     } else {
         $('#heizstab_row').hide();
+    }
+}
+
+function toggleKabelSmartGuard(value){
+    if (value === true) {
+        $('#kabelSmartGuard_row').show();
+    } else {
+        $('#kabelSmartGuard_row').hide();
     }
 }
 

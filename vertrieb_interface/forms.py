@@ -443,6 +443,7 @@ class VertriebAngebotEmptyForm(ModelForm):
             "wallboxtyp",
             "wallbox_anzahl",
             "kabelanschluss",
+            "kabelSmartGuard",
             "rabatt"
         ]
 
@@ -1036,7 +1037,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     kabelanschluss = forms.FloatField(
-        initial=10.0,
+        initial=0.0,
         label="Kabelanschlusslänge >10m",
         required=False,
         widget=forms.NumberInput(
@@ -1047,7 +1048,18 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-
+    kabelSmartGuard = forms.FloatField(
+        initial=0.0,
+        label="Kabel SmartGuard >10m",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "kabelSmartGuard",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
     solar_module = forms.ChoiceField(
         label="Solar Module",
         widget=forms.Select(attrs={"class": "form-select", "id": "solar_module"}),
@@ -1352,6 +1364,7 @@ class VertriebAngebotForm(ModelForm):
             "wallboxtyp",
             "wallbox_anzahl",
             "kabelanschluss",
+            "kabelSmartGuard",
             "solar_module",
             "modulanzahl",
             "garantieWR",
@@ -1469,6 +1482,7 @@ class VertriebAngebotForm(ModelForm):
         )
 
         self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
+        self.fields["kabelSmartGuard"].widget.attrs.update({"id": "kabelSmartGuard"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "wandhalterung_fuer_speicher"}
         )
@@ -2338,13 +2352,25 @@ class VertriebTicketForm(ModelForm):
         ),
     )
     kabelanschluss = forms.FloatField(
-        initial=10.0,
+        initial=0.0,
         label="Kabelanschlusslänge >10m",
         required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "id": "kabelanschluss",
+                "style": "max-width: 300px",
+            }
+        ),
+    )
+    kabelSmartGuard = forms.FloatField(
+        initial=0.0,
+        label="Kabel SmartGuard >10m",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "kabelSmartGuard",
                 "style": "max-width: 300px",
             }
         ),
@@ -2586,6 +2612,7 @@ class VertriebTicketForm(ModelForm):
             "wallboxtyp",
             "wallbox_anzahl",
             "kabelanschluss",
+            "kabelSmartGuard",
             "solar_module",
             "modulanzahl",
             "elwa",
@@ -2679,6 +2706,7 @@ class VertriebTicketForm(ModelForm):
             {"id": "id_postanschrift_longitude"}
         )
         self.fields["kabelanschluss"].widget.attrs.update({"id": "kabelanschluss"})
+        self.fields["kabelSmartGuard"].widget.attrs.update({"id": "kabelSmartGuard"})
         self.fields["wandhalterung_fuer_speicher"].widget.attrs.update(
             {"id": "wandhalterung_fuer_speicher"}
         )
