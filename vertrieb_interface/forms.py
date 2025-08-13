@@ -2670,7 +2670,7 @@ class VertriebTicketForm(ModelForm):
 
         self.fields["solar_module"].choices = [
             (module.name, module.name)
-            for module in SolarModulePreise.objects.filter(in_stock=True)
+            for module in SolarModulePreise.objects.filter()
         ]
         self.fields["wallboxtyp"].choices = [
             (module.name, module.name)
