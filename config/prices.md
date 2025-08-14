@@ -622,7 +622,7 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='tabelle_eintrag_10_2', 
-    content="Der Potentialausgleich ist in DIN VDE 0100, Teil 540 festgelegt. Er dient der Erdung der PV-Anlage und erfolgt nach DIN EN 50083-1 (VDE 0855-1).", 
+    content="Die Erdungseinrichtung muss bauseits vorhanden sein oder durch den Auftraggeber errichtet werden.", 
     font='JUNO Solar Lt', 
     font_size=10
 )
@@ -650,7 +650,7 @@ Editierbarer_Text.objects.create(
 )
 Editierbarer_Text.objects.create(
     identifier='wechselstromseitige_installation_und_inbetriebnahme_2', 
-    content="Die wechselstromseitige Installation beschreibt sämtliche Bauteile sowie Dienstleistungen, die sich im Wechselstromkreis befinden. Die Installation des Wechselrichters stellt hierbei den Schnittpunkt zur gleichstromseitigen Installation dar. Kundenseitig stellt der Zählerschrank bzw. die Übergabestation die Schnittstelle zum Energieversorger dar.", 
+    content="Die wechselstromseitige Installation beschreibt sämtliche Bauteile sowie Dienstleistungen, die sich im Wechselstromkreis befinden. Die Installation des Wechselrichters stellt hierbei den Schnittpunkt zur gleichstromseitigen Installation dar. Kundenseitig stellt der Zählerschrank bzw. die Übergabestation die Schnittstelle zum Energieversorger dar. Der Zählerschrank muss bauseits zum Zeitpunkt der Inbetriebnahme den gültigen Technischen Anschlussbedingungen (TAB) entsprechen.", 
     font='JUNO Solar Lt', 
     font_size=11
 )
