@@ -789,7 +789,10 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def leistungsmodul_preis(self):
-        return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+        if self.speicher_model == "LUNA 2000-7-S1":
+            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
+        else:
+            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
 
     @property
     def stromgrundpreis_gesamt(self):
@@ -946,15 +949,16 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
+        wandDict = {"LUNA 2000-5-S0": "wandhalterung_fuer_speicher", "LUNA 2000-7-S1": "wandhalterung_fuer_speicher_7",
+                        "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher"}
         if self.anz_wandhalterung_fuer_speicher != 0:
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
                 OptionalAccessoriesPreise,
-                "wandhalterung_fuer_speicher",
+                wandDict.get(self.speicher_model),
                 anz_wandhalterung_fuer_speicher,
             )
-
-            return wandhalterung_preis
+        return wandhalterung_preis
 
     @property
     def midZaehler_preis(self):
@@ -1927,7 +1931,10 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def leistungsmodul_preis(self):
-        return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+        if self.speicher_model == "LUNA 2000-7-S1":
+            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
+        else:
+            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
 
     @property
     def stromgrundpreis_gesamt(self):
@@ -2026,15 +2033,16 @@ class VertriebTicket(TimeStampMixin):
     @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
+        wandDict = {"LUNA 2000-5-S0": "wandhalterung_fuer_speicher", "LUNA 2000-7-S1": "wandhalterung_fuer_speicher_7",
+                    "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher"}
         if self.anz_wandhalterung_fuer_speicher != 0:
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
                 OptionalAccessoriesPreise,
-                "wandhalterung_fuer_speicher",
+                wandDict.get(self.speicher_model),
                 anz_wandhalterung_fuer_speicher,
             )
-
-            return wandhalterung_preis
+        return wandhalterung_preis
 
     @property
     def midZaehler_preis(self):
@@ -2076,14 +2084,14 @@ class VertriebTicket(TimeStampMixin):
                     batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
                     if leistungsmodulNotwendig:
                         batteriePreis = float(batteriePreis) + ceil((anz_speicher + angebot.anz_speicher) / 3) * float(self.leistungsmodul_preis)
-                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(self.leistungsmodul_preis)
+                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
                 # abweichendes Speichermodell
                 else:
                     batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
                     batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher)
                     if leistungsmodulNotwendig:
                         batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
-                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(self.leistungsmodul_preis)
+                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen, falls Limit jetzt erst überschritten
                 if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and angebot.anz_speicher <= 6 and (anz_speicher + angebot.anz_speicher) > 6:
                     batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
