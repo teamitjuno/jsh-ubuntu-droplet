@@ -142,6 +142,7 @@ class AndereKonfigurationWerte(models.Model):
 
 class Prices(models.Model):
     elektrik_prices = models.ForeignKey(ElektrikPreis, on_delete=models.CASCADE)
+    kwp_prices = models.ForeignKey(SolarModulePreise, on_delete=models.CASCADE)
     modul_prices = models.ForeignKey(KwpPreise, on_delete=models.CASCADE)
     wr_garantie_preise = models.ForeignKey(
         WrGarantiePreise, on_delete=models.CASCADE
