@@ -298,6 +298,7 @@ class VertriebAngebot(TimeStampMixin):
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
     postanschrift = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift_name = models.CharField(max_length=100, blank=True, null=True)
     postanschrift_ort = models.CharField(max_length=100, blank=True, null=True)
 
     # Kalkulations
@@ -776,9 +777,12 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def post_anschrift(self):
         if self.postanschrift:
-            return f"{self.postanschrift}\n{self.postanschrift_ort}"
+            if self.postanschrift_name:
+                return f"{self.postanschrift_name}\n{self.postanschrift}\n{self.postanschrift_ort}"
+            else:
+                return f"{self.name_display_value}\n{self.postanschrift}\n{self.postanschrift_ort}"
         else:
-            return f"{self.strasse}\n{self.ort}"
+            return f"{self.name_display_value}\n{self.strasse}\n{self.ort}"
 
     @property
     def extract_modulleistungWp_from_name(self):
@@ -1501,6 +1505,7 @@ class VertriebTicket(TimeStampMixin):
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
     postanschrift = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift_name = models.CharField(max_length=100, blank=True, null=True)
     postanschrift_ort = models.CharField(max_length=100, blank=True, null=True)
 
 
@@ -1919,9 +1924,12 @@ class VertriebTicket(TimeStampMixin):
     @property
     def post_anschrift(self):
         if self.postanschrift:
-            return f"{self.postanschrift}\n{self.postanschrift_ort}"
+            if self.postanschrift_name:
+                return f"{self.postanschrift_name}\n{self.postanschrift}\n{self.postanschrift_ort}"
+            else:
+                return f"{self.name_display_value}\n{self.postanschrift}\n{self.postanschrift_ort}"
         else:
-            return f"{self.strasse}\n{self.ort}"
+            return f"{self.name_display_value}\n{self.strasse}\n{self.ort}"
 
     @property
     def extract_modulleistungWp_from_name(self):

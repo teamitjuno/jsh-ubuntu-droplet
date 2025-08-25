@@ -176,6 +176,10 @@
                                                                             
                                                                             </td>
                                                                         </tr>
+                                                                        <tr>                                                                            
+                                                                            <th>{{ form.postanschrift_name.label_tag }}</th>
+                                                                            <td>{{ form.postanschrift_name }}</td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.postanschrift.label_tag }}</th>
                                                                             <td>{{ form.postanschrift }}</td>                                                                            
@@ -1013,6 +1017,10 @@ function submitFormWithAction(action) {
                                                                             <th>{{ form.ort.label_tag }}</th>
                                                                             <td><input type="text" class="form-control" name="{{ form.ort.name }}" value="{{ form.ort.value }}" readonly></td>
                                                                         </tr>
+                                                                        <tr>                                                                            
+                                                                            <th>{{ form.postanschrift_name.label_tag }}</th>
+                                                                            <td>{{ form.postanschrift_name }}</td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th>{{ form.postanschrift.label_tag }}</th>
                                                                             <td><input type="text" class="form-control" name="{{ form.postanschrift.name }}" value="{{ form.postanschrift.value }}" readonly></td>
@@ -1165,6 +1173,7 @@ $(document).ready(function() {
                     telefon_festnetz,
                     ort,
                     postanschrift,
+                    postanschrift_name,
                     postanschrift_ort,
                     notizen,
                     anfrage_vom,
@@ -1187,6 +1196,7 @@ $(document).ready(function() {
                 $("#id_telefon_festnetz").val(telefon_festnetz);
                 $("#id_ort").val(ort);
                 $("#id_postanschrift").val(postanschrift);
+                $("#id_postanschrift_name").val(postanschrift_name);
                 $("#id_postanschrift_ort").val(postanschrift_ort);
                 $("#id_notizen").val(notizen);
                 $("#id_angebot_bekommen_am").val(anfrage_vom);

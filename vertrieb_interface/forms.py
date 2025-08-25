@@ -722,7 +722,7 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     postanschrift = forms.CharField(
-        label="Postanschrift (falls abweichend)",
+        label="Postanschrift Strasse",
         max_length=100,
         required=False,
         widget=forms.TextInput(
@@ -730,6 +730,18 @@ class VertriebAngebotForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Postanschrift",
                 "id": "id_postanschrift",
+            }
+        ),
+    )
+    postanschrift_name = forms.CharField(
+        label="Postanschrift (falls abweichend)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Postanschrift Name",
+                "id": "id_postanschrift_name",
             }
         ),
     )
@@ -1354,6 +1366,7 @@ class VertriebAngebotForm(ModelForm):
             "strasse",
             "ort",
             "postanschrift",
+            "postanschrift_name",
             "postanschrift_ort",
             "verbrauch",
             "grundpreis",
@@ -2199,7 +2212,7 @@ class VertriebTicketForm(ModelForm):
         ),
     )
     postanschrift = forms.CharField(
-        label="Postanschrift (falls abweichend)",
+        label="Postanschrift Strasse",
         max_length=100,
         required=False,
         widget=forms.TextInput(
@@ -2207,6 +2220,18 @@ class VertriebTicketForm(ModelForm):
                 "class": "form-control",
                 "placeholder": "Postanschrift",
                 "id": "id_postanschrift",
+            }
+        ),
+    )
+    postanschrift_name = forms.CharField(
+        label="Postanschrift (falls abweichend)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Postanschrift Name",
+                "id": "id_postanschrift_name",
             }
         ),
     )
@@ -2627,6 +2652,7 @@ class VertriebTicketForm(ModelForm):
             "strasse",
             "ort",
             "postanschrift",
+            "postanschrift_name",
             "postanschrift_ort",
             "speicher_model",
             "speicher",

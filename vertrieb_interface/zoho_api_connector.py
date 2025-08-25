@@ -141,6 +141,9 @@ def process_all_user_data(data):
                     "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
                     + " "
                     + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift_name": item.get("Name_Postanschrift", {}).get("prefix", "")
+                    + " " + item.get("Name_Postanschrift", {}).get("first_name", "")
+                    + " " + item.get("Name_Postanschrift", {}).get("last_name", ""),
                     "postanschrift": item.get("Postanschrift", {}).get("address_line_1", ""),
                     "postanschrift_ort": item.get("Postanschrift", {}).get("postal_code", "")
                     + " " + item.get("Postanschrift", {}).get("district_city", ""),
@@ -187,6 +190,9 @@ def process_all_user_data(data):
                     "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
                     + " "
                     + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift_name": item.get("Name_Postanschrift", {}).get("prefix", "")
+                    + " " + item.get("Name_Postanschrift", {}).get("first_name", "")
+                    + " " + item.get("Name_Postanschrift", {}).get("last_name", ""),
                     "postanschrift": item.get("Postanschrift", {}).get("address_line_1", ""),
                     "postanschrift_ort": item.get("Postanschrift", {}).get("postal_code", "")
                     + " " + item.get("Postanschrift", {}).get("district_city", ""),

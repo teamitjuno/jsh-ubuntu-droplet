@@ -266,7 +266,7 @@ class PDF(FPDF):
 
         # kundendatei_variable
         kundendatei_variable_content = (
-            f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["postanschrift"]}'
+            f'{data["postanschrift"]}'
         )
         self.setup_text("kundendatei_variable", kundendatei_variable_content)
 
