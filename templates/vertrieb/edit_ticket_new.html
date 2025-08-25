@@ -177,16 +177,15 @@
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>{{ form.anlagenstandort.label_tag }}</th>
-                                                                            <td>{{ form.anlagenstandort }}</td>
-                                                                            
+                                                                            <th>{{ form.postanschrift.label_tag }}</th>
+                                                                            <td>{{ form.postanschrift }}</td>                                                                            
                                                                             <td hidden><input type="text" id="longitude" name="postanschrift_longitude" value="{{ form.postanschrift_longitude.value }}"></td>
                                                                             <td hidden><input type="text" id="latitude" name="postanschrift_latitude" value="{{ form.postanschrift_latitude.value }}"></td>
-                                                                            
-
-
                                                                         </tr>
-                                                                        
+                                                                        <tr>                                                                            
+                                                                            <th>{{ form.postanschrift_ort.label_tag }}</th>
+                                                                            <td>{{ form.postanschrift_ort }}</td>
+                                                                        </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1015,12 +1014,15 @@ function submitFormWithAction(action) {
                                                                             <td><input type="text" class="form-control" name="{{ form.ort.name }}" value="{{ form.ort.value }}" readonly></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>{{ form.anlagenstandort.label_tag }}</th>
-                                                                            <td><input type="text" class="form-control" name="{{ form.anlagenstandort.name }}" value="{{ form.anlagenstandort.value }}" readonly></td>
+                                                                            <th>{{ form.postanschrift.label_tag }}</th>
+                                                                            <td><input type="text" class="form-control" name="{{ form.postanschrift.name }}" value="{{ form.postanschrift.value }}" readonly></td>
                                                                             <td hidden>{{ form.postanschrift_latitude }}</td>
                                                                             <td hidden>{{ form.postanschrift_longitude }}</td>
                                                                         </tr>
-                                                                        
+                                                                        <tr>                                                                            
+                                                                            <th>{{ form.postanschrift_ort.label_tag }}</th>
+                                                                            <td>{{ form.postanschrift_ort }}</td>
+                                                                        </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1162,6 +1164,8 @@ $(document).ready(function() {
                     telefon_mobil,
                     telefon_festnetz,
                     ort,
+                    postanschrift,
+                    postanschrift_ort,
                     notizen,
                     anfrage_vom,
                     postanschrift_longitude: longitude,
@@ -1182,6 +1186,8 @@ $(document).ready(function() {
                 $("#id_telefon_mobil").val(telefon_mobil);
                 $("#id_telefon_festnetz").val(telefon_festnetz);
                 $("#id_ort").val(ort);
+                $("#id_postanschrift").val(postanschrift);
+                $("#id_postanschrift_ort").val(postanschrift_ort);
                 $("#id_notizen").val(notizen);
                 $("#id_angebot_bekommen_am").val(anfrage_vom);
                 $("#longitude").val(longitude);

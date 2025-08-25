@@ -85,7 +85,7 @@ def calcPage1(pdf, data):
     pdf.ln(15)
     pdf.set_font("JUNO Solar Lt", "", 11)
     pdf.set_text_color(0)
-    pdf.multi_cell(0, 5, f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}', 0, 0, "L")  # type: ignore
+    pdf.multi_cell(0, 5, f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["postanschrift"]}', 0, 0, "L")  # type: ignore
     # pdf.line(10,65,80,65) #unter Adresse
     pdf.set_x(130)
     pdf.set_y(33)

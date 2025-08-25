@@ -243,7 +243,7 @@ class PDF(FPDF):
 
         # kundendatei_variable
         kundendatei_variable_content = (
-            f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["adresse"]}'
+            f'{data["firma"]}\n{data["anrede"]} {data["kunde"]}\n{data["postanschrift"]}'
         )
         self.setup_text("kundendatei_variable", kundendatei_variable_content)
 
@@ -306,7 +306,7 @@ class PDF(FPDF):
         )
 
         # kWp_und_standort (variable)
-        kWp_und_standort_content = f'{str(data["existing_kWp"])} kWp + {str(data["ticket_kWp"])} kWp = {str(data["kWp"])} kWp\n{data["standort"]}'
+        kWp_und_standort_content = f'{str(data["existing_kWp"])} kWp + {str(data["ticket_kWp"])} kWp = {str(data["kWp"])} kWp\n{data["adresse"]}'
         self.setup_text("kWp_und_standort", kWp_und_standort_content, alignment="L")
 
         # anrede_content

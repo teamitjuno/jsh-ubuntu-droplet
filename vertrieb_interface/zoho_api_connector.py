@@ -141,6 +141,9 @@ def process_all_user_data(data):
                     "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
                     + " "
                     + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift": item.get("Postanschrift", {}).get("address_line_1", ""),
+                    "postanschrift_ort": item.get("Postanschrift", {}).get("postal_code", "")
+                    + " " + item.get("Postanschrift", {}).get("district_city", ""),
                     "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
                         "longitude", ""
                     ),
@@ -184,6 +187,9 @@ def process_all_user_data(data):
                     "ort": item.get("Adresse_PVA", {}).get("postal_code", "")
                     + " "
                     + item.get("Adresse_PVA", {}).get("district_city", ""),
+                    "postanschrift": item.get("Postanschrift", {}).get("address_line_1", ""),
+                    "postanschrift_ort": item.get("Postanschrift", {}).get("postal_code", "")
+                    + " " + item.get("Postanschrift", {}).get("district_city", ""),
                     "postanschrift_longitude": item.get("Adresse_PVA", {}).get(
                         "longitude", ""
                     ),

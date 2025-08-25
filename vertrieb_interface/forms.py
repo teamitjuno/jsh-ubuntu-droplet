@@ -721,15 +721,27 @@ class VertriebAngebotForm(ModelForm):
             }
         ),
     )
-    anlagenstandort = forms.CharField(
-        label="Anlagenstandort (falls abweichend)",
+    postanschrift = forms.CharField(
+        label="Postanschrift (falls abweichend)",
         max_length=100,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Anlagenstandort",
-                "id": "anlagenstandort",
+                "placeholder": "Postanschrift",
+                "id": "id_postanschrift",
+            }
+        ),
+    )
+    postanschrift_ort = forms.CharField(
+        label="Postanschrift Ort & PLZ",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Postanschrift Ort",
+                "id": "id_postanschrift_ort",
             }
         ),
     )
@@ -1341,7 +1353,8 @@ class VertriebAngebotForm(ModelForm):
             "firma",
             "strasse",
             "ort",
-            "anlagenstandort",
+            "postanschrift",
+            "postanschrift_ort",
             "verbrauch",
             "grundpreis",
             "arbeitspreis",
@@ -2185,15 +2198,27 @@ class VertriebTicketForm(ModelForm):
             }
         ),
     )
-    anlagenstandort = forms.CharField(
-        label="Anlagenstandort (falls abweichend)",
+    postanschrift = forms.CharField(
+        label="Postanschrift (falls abweichend)",
         max_length=100,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Anlagenstandort",
-                "id": "anlagenstandort",
+                "placeholder": "Postanschrift",
+                "id": "id_postanschrift",
+            }
+        ),
+    )
+    postanschrift_ort = forms.CharField(
+        label="Postanschrift Ort & PLZ",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Postanschrift Ort",
+                "id": "id_postanschrift_ort",
             }
         ),
     )
@@ -2601,7 +2626,8 @@ class VertriebTicketForm(ModelForm):
             "firma",
             "strasse",
             "ort",
-            "anlagenstandort",
+            "postanschrift",
+            "postanschrift_ort",
             "speicher_model",
             "speicher",
             "anz_speicher",

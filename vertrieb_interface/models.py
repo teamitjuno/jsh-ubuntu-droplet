@@ -297,7 +297,8 @@ class VertriebAngebot(TimeStampMixin):
     firma = models.CharField(max_length=100, blank=True)
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
-    anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift_ort = models.CharField(max_length=100, blank=True, null=True)
 
     # Kalkulations
     verbrauch = models.FloatField(
@@ -770,14 +771,14 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def full_adresse(self):
-        return f"{self.strasse}\n{self.ort}"
+        return f"{self.strasse}, {self.ort}"
 
     @property
-    def anlagen_standort(self):
-        if self.anlagenstandort:
-            return self.anlagenstandort
+    def post_anschrift(self):
+        if self.postanschrift:
+            return f"{self.postanschrift}\n{self.postanschrift_ort}"
         else:
-            return f"{self.strasse}, {self.ort}"
+            return f"{self.strasse}\n{self.ort}"
 
     @property
     def extract_modulleistungWp_from_name(self):
@@ -1352,7 +1353,7 @@ class VertriebAngebot(TimeStampMixin):
             "leistungsGarantie": self.get_leistungs_garantie(self.solar_module),
             "kWp": self.modulsumme_kWp,
             "kWpOhneRundung": self.modulsumme_kWp,
-            "standort": self.anlagen_standort,
+            "postanschrift": self.post_anschrift,
             "garantieJahre": self.garantieWR,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,
@@ -1499,7 +1500,8 @@ class VertriebTicket(TimeStampMixin):
     firma = models.CharField(max_length=100, blank=True)
     strasse = models.CharField(max_length=100, blank=True)
     ort = models.CharField(max_length=100, blank=True)
-    anlagenstandort = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift = models.CharField(max_length=100, blank=True, null=True)
+    postanschrift_ort = models.CharField(max_length=100, blank=True, null=True)
 
 
     # Module & Zubehör
@@ -1912,14 +1914,14 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def full_adresse(self):
-        return f"{self.strasse}\n{self.ort}"
+        return f"{self.strasse}, {self.ort}"
 
     @property
-    def anlagen_standort(self):
-        if self.anlagenstandort:
-            return self.anlagenstandort
+    def post_anschrift(self):
+        if self.postanschrift:
+            return f"{self.postanschrift}\n{self.postanschrift_ort}"
         else:
-            return f"{self.strasse}, {self.ort}"
+            return f"{self.strasse}\n{self.ort}"
 
     @property
     def extract_modulleistungWp_from_name(self):
@@ -2326,7 +2328,7 @@ class VertriebTicket(TimeStampMixin):
             "kWpOhneRundung": self.modulsumme_kWp,
             "existing_kWp":self.existing_kWp,
             "ticket_kWp":self.ticket_kwp,
-            "standort": self.anlagen_standort,
+            "postanschrift": self.post_anschrift,
             "batterieVorh": self.batteriespeicher_preis,
             "batterieModell": self.speicher_model,
             "batterieModellOrig": batterieModellOrig,
