@@ -1234,6 +1234,8 @@ def anzahlZubehoer(data):
     anzahlZubehoer = 0
     if data["indiv_text"] != "":
         anzahlZubehoer += 1
+    if data["wr_tausch"] != "Kein Tausch":
+        anzahlZubehoer += 1
     if data["notstrom"]:
         anzahlZubehoer += 1
     if data["ersatzstrom"]:
@@ -1423,6 +1425,19 @@ def page4(pdf, data, eintrag, limit):
             tab28_content_1,
             content_2="",
             content_4=data["indiv_text"],
+        )
+    if data["wr_tausch"] != "Kein Tausch":
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1 = data["wr_tausch_text"][0]
+        tab28_content_4 = data["wr_tausch_text"][1]
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
         )
     if data["thor"] == True:
         eintrag += 1

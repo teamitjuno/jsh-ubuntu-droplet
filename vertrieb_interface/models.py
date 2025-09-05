@@ -1378,6 +1378,8 @@ class VertriebAngebot(TimeStampMixin):
             "optionVorh": self.notstrom,
             "kabelanschluss": self.kabelanschluss,
             "kabelSmartGuard": self.kabelSmartGuard if self.ersatzstrom else 0,
+            "wr_tausch": "Kein Tausch",
+            "wr_tausch_text": "",
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,
@@ -1862,6 +1864,11 @@ class VertriebTicket(TimeStampMixin):
     @property
     def istNachkauf(self):
         return self.status_pva == "abgeschlossen" or self.status_pva == "Endabnahme erfolgt"
+
+    @property
+    def wr_tausch_text(self):
+        wrTausch = WrTauschPreise.objects.get(name=self.wr_tausch)
+        return (wrTausch.pdf_name, wrTausch.pdf_text)
 
     @property
     def bauteile_finder(self):
@@ -2393,6 +2400,7 @@ class VertriebTicket(TimeStampMixin):
             "kabelanschluss": self.kabelanschluss,
             "kabelSmartGuard": self.kabelSmartGuard,
             "wr_tausch": self.wr_tausch,
+            "wr_tausch_text": self.wr_tausch_text,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,
