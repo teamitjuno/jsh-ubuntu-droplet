@@ -2281,9 +2281,8 @@ class VertriebTicket(TimeStampMixin):
         angebotsSumme = float(SolarModulePreise.objects.get(name=self.solar_module).price * self.modulanzahl)
         angebotsSumme += float(self.full_accessories_price)
 
-        if self.istNachkauf and Sonderrabatt.objects.filter(name="aufpreisNachkauf").exists():
-            angebotsSumme *= (1 + (float(Sonderrabatt.objects.get(name="aufpreisNachkauf").prozentsatz) / 100))
-            angebotsSumme += float(Sonderrabatt.objects.get(name="aufpreisNachkauf").fixbetrag)
+        #if self.istNachkauf:
+        # ToDo
 
         if self.indiv_price_included:
             rabatt = angebotsSumme - self.indiv_price
