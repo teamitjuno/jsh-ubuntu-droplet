@@ -8,6 +8,7 @@ from prices.models import (
     OptionalAccessoriesPreise,
     Sonderrabatt,
     AndereKonfigurationWerte,
+    PLZAufpreisNachkauf,
     Prices,
 )
 
@@ -101,6 +102,12 @@ class SonderrabattAdmin(admin.ModelAdmin):
 
 @admin.register(AndereKonfigurationWerte)
 class AndereKonfigurationWerteAdmin(admin.ModelAdmin):
+    list_display = ("name", "value", "text")
+    search_fields = ("name",)
+
+
+@admin.register(PLZAufpreisNachkauf)
+class PLZAufpreisNachkaufAdmin(admin.ModelAdmin):
     list_display = ("name", "value", "text")
     search_fields = ("name",)
 

@@ -140,6 +140,20 @@ class AndereKonfigurationWerte(models.Model):
         new_position.save()
 
 
+class PLZAufpreisNachkauf(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    value = models.DecimalField(max_digits=10, decimal_places=3)
+    text = models.TextField(default="", blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.value}"
+
+    @staticmethod
+    def add_position(name, value=0.00, text=""):
+        new_position = PLZAufpreisNachkauf.objects.create(name=name, value=value, text=text)
+        new_position.save()
+
+
 class Prices(models.Model):
     elektrik_prices = models.ForeignKey(ElektrikPreis, on_delete=models.CASCADE)
     modul_prices = models.ForeignKey(KwpPreise, on_delete=models.CASCADE)

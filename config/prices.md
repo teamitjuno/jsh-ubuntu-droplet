@@ -128,7 +128,7 @@ OptionalAccessoriesPreise.objects.create(name='smartDongleLte', pdf_name='Smart 
 OptionalAccessoriesPreise.objects.create(name='apzFeld', pdf_name='APZ-Feld Nachrüstung im vorh. ZS', price=780)
 OptionalAccessoriesPreise.objects.create(name='apzFeldUVV', pdf_name='APZ-Feld Nachrüstung mit UVV', price=1030)
 OptionalAccessoriesPreise.objects.create(name='potentialausgleich', pdf_name='Potentialausgleich inkl. Erdspieß', price=1666.67)
-OptionalAccessoriesPreise.objects.create(name='zaehlerschrank', pdf_name='Zählerschrankerneuerung nach TAB', price=2777.78)
+OptionalAccessoriesPreise.objects.create(name='zaehlerschrank', pdf_name='Zählerschrankerneuerung nach TAB', price=2800)
 OptionalAccessoriesPreise.objects.create(name='mid_zaehler', pdf_name='MID-Zähler für Wallbox', price=211.11)
 OptionalAccessoriesPreise.objects.create(name='geruestKunde', pdf_name='Gerüst durch Kunden gestellt', price=500.00)
 OptionalAccessoriesPreise.objects.create(name='geruestOeffentlich', price=2500.00)

@@ -33,6 +33,7 @@ from prices.models import (
     Sonderrabatt,
     SolarModulePreise,
     WallBoxPreise,
+    PLZAufpreisNachkauf,
 )
 from shared.models import TimeStampMixin
 from vertrieb_interface.utils import (
@@ -2129,6 +2130,20 @@ class VertriebTicket(TimeStampMixin):
             )
         return smartmeterPreis
 
+
+    @property
+    def PLZ_Aufpreis(self):
+        aufpreis = 0
+        if self.ort != None and self.ort != "":
+            plz = self.ort[0:5]
+            plzObj = PLZAufpreisNachkauf.objects.filter(text__icontains=plz)
+            if any(plzObj):
+                aufpreis = float(plzObj[0].value)
+            else:
+                aufpreis = float(PLZAufpreisNachkauf.objects.get(name="ab 500 km").value)
+        return aufpreis
+
+
     @property
     def gesamtkapazitat(self):
         kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5}
@@ -2281,9 +2296,6 @@ class VertriebTicket(TimeStampMixin):
         angebotsSumme = float(SolarModulePreise.objects.get(name=self.solar_module).price * self.modulanzahl)
         angebotsSumme += float(self.full_accessories_price)
 
-        #if self.istNachkauf:
-        # ToDo
-
         if self.indiv_price_included:
             rabatt = angebotsSumme - self.indiv_price
             angebotsSumme = self.indiv_price
@@ -2308,6 +2320,11 @@ class VertriebTicket(TimeStampMixin):
         if self.dachhakenKunde:
             angebotsSumme -= float(self.get_optional_accessory_price("dachhakenKunde"))
             rabatt += float(self.get_optional_accessory_price("dachhakenKunde"))
+
+        # Aufpreis PLZ als allerletztes
+        if self.istNachkauf:
+            angebotsSumme += self.PLZ_Aufpreis
+
         return angebotsSumme, rabatt
 
 
