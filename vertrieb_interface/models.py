@@ -1540,7 +1540,7 @@ class VertriebTicket(TimeStampMixin):
     # Zubehör
     wr_tausch = models.CharField(
         max_length=100,
-        default="----",
+        default="Kein Tausch",
     )
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
@@ -2253,7 +2253,10 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def wr_tausch_preis(self):
-        return float(WrTauschPreise.objects.get(name=self.wr_tausch).price)
+        if any(WrTauschPreise.objects.filter(name=self.wr_tausch)):
+            return float(WrTauschPreise.objects.get(name=self.wr_tausch).price)
+        else:
+            return 0
 
     @property
     def full_accessories_price(self):

@@ -265,6 +265,10 @@
                                                             <div class="card-body">
                                                                  <table class="table table-sm table-hover">
                                                                     <tr>
+                                                                        <th>{{ form.wr_tausch.label_tag }}</th>
+                                                                        <td>{{ form.wr_tausch }}</td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>{{ form.smartDongleLte.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -272,10 +276,6 @@
                                                                                 <label class="custom-control-label" for="smartDongleLte" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>{{ form.wr_tausch.label_tag }}</th>
-                                                                        <td>{{ form.wr_tausch }}</td>
                                                                     </tr>
                                                                     <tr id="bool_elwa_row">
                                                                         <th>{{ form.elwa.label_tag }}</th>
