@@ -1148,9 +1148,14 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     apzFeld = forms.BooleanField(
-        label="APZ-Feld Nachrüstung",
+        label="APZ-Feld Nachrüstung in vorh. ZS",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
+    )
+    apzFeldUVV = forms.BooleanField(
+        label="APZ-Feld Nachrüstung mit UVV",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
     )
     zaehlerschrank = forms.BooleanField(
         label="Zählerschrankerneuerung nach TAB",
@@ -1398,6 +1403,7 @@ class VertriebAngebotForm(ModelForm):
             "thor",
             "midZaehler",
             "apzFeld",
+            "apzFeldUVV",
             "zaehlerschrank",
             "potentialausgleich",
             "beta_platte",
@@ -2484,6 +2490,11 @@ class VertriebTicketForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
     )
+    apzFeldUVV = forms.BooleanField(
+        label="APZ-Feld Nachrüstung mit UVV",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
+    )
     zaehlerschrank = forms.BooleanField(
         label="Zählerschrankerneuerung nach TAB",
         required=False,
@@ -2671,6 +2682,7 @@ class VertriebTicketForm(ModelForm):
             "thor",
             "midZaehler",
             "apzFeld",
+            "apzFeldUVV",
             "zaehlerschrank",
             "potentialausgleich",
             "beta_platte",

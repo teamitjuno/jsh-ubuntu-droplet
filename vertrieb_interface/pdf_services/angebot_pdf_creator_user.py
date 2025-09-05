@@ -1248,6 +1248,8 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["apzFeld"]:
         anzahlZubehoer += 1
+    if data["apzFeldUVV"]:
+        anzahlZubehoer += 1
     if data["smartDongleLte"]:
         anzahlZubehoer += 1
     if data["zaehlerschrank"]:
@@ -1462,6 +1464,18 @@ def page4(pdf, data, eintrag, limit):
         eintrag += 1
         tab28_eintrag_nummer = str(eintrag) + "."
         tab28_content_1, tab28_content_4 = get_zubehoer_name("apzFeld")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["apzFeldUVV"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("apzFeldUVV")
         tab28_content_2 = "1"
         pdf.setup_eintrag_text(
             "zubehoer_platzhalter",

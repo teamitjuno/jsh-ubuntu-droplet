@@ -748,6 +748,15 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
+                                                                        <th>{{ form.apzFeldUVV.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="apzFeldUVV" {% if form.apzFeldUVV.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeldUVV.html_name }}" />
+                                                                                <label class="custom-control-label" for="apzFeldUVV" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
                                                                         <th>{{ form.zaehlerschrank.label_tag }}</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
@@ -1727,6 +1736,15 @@ function submitFormWithAction(action) {
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="apzFeld" {% if form.apzFeld.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeld.html_name }}" />
                                                                                 <label class="custom-control-label" for="apzFeld" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.apzFeldUVV.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="apzFeldUVV" {% if form.apzFeldUVV.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeldUVV.html_name }}" />
+                                                                                <label class="custom-control-label" for="apzFeldUVV" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
