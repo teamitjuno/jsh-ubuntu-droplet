@@ -108,6 +108,24 @@ class OptionalAccessoriesPreise(models.Model):
         new_position.save()
 
 
+
+class WrTauschPreise(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    pdf_name = models.CharField(max_length=255, default="", blank=True)
+    pdf_text = models.TextField(help_text="Inhalt" ,default="", blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.price}"
+
+    @staticmethod
+    def add_position(name, price=0.00):
+        new_position = WrTauschPreise.objects.create(
+            name=name, price=price
+        )
+        new_position.save()
+
+
 class Sonderrabatt(models.Model):
     name = models.CharField(max_length=255, unique=True)
     prozentsatz = models.DecimalField(max_digits=10, decimal_places=2)

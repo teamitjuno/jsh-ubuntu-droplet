@@ -30,6 +30,7 @@ from prices.models import (
     WrGarantiePreise,
     KwpPreise,
     OptionalAccessoriesPreise,
+    WrTauschPreise,
     Sonderrabatt,
     SolarModulePreise,
     WallBoxPreise,
@@ -1537,6 +1538,10 @@ class VertriebTicket(TimeStampMixin):
         default=0, validators=[MinValueValidator(-50)]
     )
     # Zubehör
+    wr_tausch = models.CharField(
+        max_length=100,
+        default="----",
+    )
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
@@ -2247,6 +2252,10 @@ class VertriebTicket(TimeStampMixin):
         return preis
 
     @property
+    def wr_tausch_preis(self):
+        return float(WrTauschPreise.objects.get(name=self.wr_tausch).price)
+
+    @property
     def full_accessories_price(self):
         accessories_price = 0
         if self.full_optimizer_preis:
@@ -2283,6 +2292,8 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.prefa_befestigung_preis)
         if self.wandhalterung_fuer_speicher_preis:
             accessories_price += float(self.wandhalterung_fuer_speicher_preis)
+        if(self.wr_tausch):
+            accessories_price += float(self.wr_tausch_preis)
         if self.elwa:
             accessories_price += float(self.elwa_price)
         if self.thor:
@@ -2378,6 +2389,7 @@ class VertriebTicket(TimeStampMixin):
             "optionVorh": self.notstrom,
             "kabelanschluss": self.kabelanschluss,
             "kabelSmartGuard": self.kabelSmartGuard,
+            "wr_tausch": self.wr_tausch,
             "elwa": self.elwa,
             "thor": self.thor,
             "midZaehler": self.midZaehler,

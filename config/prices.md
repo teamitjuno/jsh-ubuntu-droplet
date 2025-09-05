@@ -154,6 +154,16 @@ OptionalAccessoriesPreise.objects.create(name='zusatzwechselrichter', price=2500
 OptionalAccessoriesPreise.objects.create(name='aufpreisMAP0', price=0.00)
 OptionalAccessoriesPreise.objects.create(name='aufpreisMB0', price=0.00)
 
+from prices.models import WrTauschPreise
+
+WrTauschPreise.objects.create(name='Kein Tausch', price=0.00)
+WrTauschPreise.objects.create(name='SUN2000-5K-MAPO (bis 9 kWp) 5 kW AC', pdf_name='SUN2000-5K-MAPO 5 kW AC', pdf_text='Tausch des Wechselrichters', price=2252.50)
+WrTauschPreise.objects.create(name='SUN2000-5K-MAPO (bis 11 kWp) 6 kW AC', pdf_name='SUN2000-5K-MAPO 6 kW AC', pdf_text='Tausch des Wechselrichters', price=2517.50)
+WrTauschPreise.objects.create(name='SUN2000-5K-MAPO (bis 14,6 kWp) 8 kW AC', pdf_name='SUN2000-5K-MAPO 8 kW AC', pdf_text='Tausch des Wechselrichters', price=2985.00)
+WrTauschPreise.objects.create(name='SUN2000-5K-MAPO (bis 18 kWp) 10 kW AC', pdf_name='SUN2000-5K-MAPO 10 kW AC', pdf_text='Tausch des Wechselrichters', price=3352.50)
+WrTauschPreise.objects.create(name='SUN2000-5K-MAPO (bis 22 kWp) 12 kW AC', pdf_name='SUN2000-5K-MAPO 12 kW AC', pdf_text='Tausch des Wechselrichters', price=3622.50)
+
+
 from prices.models import SolarModulePreise
 
 SolarModulePreise.objects.create(name='Phono Solar PS430M8GF-18/VNH', price=582.70)

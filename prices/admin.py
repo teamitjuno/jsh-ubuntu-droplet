@@ -6,6 +6,7 @@ from prices.models import (
     WallBoxPreise,
     SolarModulePreise,
     OptionalAccessoriesPreise,
+    WrTauschPreise,
     Sonderrabatt,
     AndereKonfigurationWerte,
     PLZAufpreisNachkauf,
@@ -86,6 +87,18 @@ class OptionalAccessoriesPreisAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
     inlines = [PricesInline]
+
+
+
+@admin.register(WrTauschPreise)
+class WrTauschPreisAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "price",
+        "pdf_name",
+        "pdf_text",
+    )
+    search_fields = ("name",)
 
 
 @admin.register(Sonderrabatt)

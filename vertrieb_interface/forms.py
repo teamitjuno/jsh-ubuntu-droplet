@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 # Local application/library specific imports
 from authentication.models import User
 from config.settings import ENV_FILE, GOOGLE_MAPS_API_KEY
-from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte, Sonderrabatt
+from prices.models import SolarModulePreise, WallBoxPreise, AndereKonfigurationWerte, Sonderrabatt, WrTauschPreise
 from vertrieb_interface.models import VertriebAngebot, VertriebTicket
 from vertrieb_interface.zoho_api_connector import (
     update_status,
@@ -2448,6 +2448,13 @@ class VertriebTicketForm(ModelForm):
             }
         ),
     )
+    wr_tausch = forms.ChoiceField(
+        required=False,
+        label="Wechselrichtertausch",
+        initial="Kein Tausch",
+        choices=("Kein Tausch", "Kein Tausch"),
+        widget=forms.Select(attrs={"class": "form-select", "id": "wr_tausch"}),
+    )
     elwa = forms.BooleanField(
         label="AC-ELWA 2",
         required=False,
@@ -2678,6 +2685,7 @@ class VertriebTicketForm(ModelForm):
             "kabelSmartGuard",
             "solar_module",
             "modulanzahl",
+            "wr_tausch",
             "elwa",
             "thor",
             "midZaehler",
@@ -2735,6 +2743,10 @@ class VertriebTicketForm(ModelForm):
         self.fields["solar_module"].choices = [
             (module.name, module.name)
             for module in SolarModulePreise.objects.filter()
+        ]
+        self.fields["wr_tausch"].choices = [
+            (wr.name, wr.name)
+            for wr in WrTauschPreise.objects.filter()
         ]
         self.fields["wallboxtyp"].choices = [
             (module.name, module.name)

@@ -345,6 +345,7 @@ class VertriebTicketAdmin(admin.ModelAdmin):
                     "thor",
                     "heizstab",
                     "elwa",
+                    "wr_tausch",
                     "apzFeld",
                     "apzFeldUVV",
                     "zaehlerschrank",
