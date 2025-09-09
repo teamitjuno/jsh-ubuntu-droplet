@@ -2026,10 +2026,7 @@ class VertriebTicket(TimeStampMixin):
         kwp = min(30, self.modulsumme_kWp)
         kwpUpper = min(upper for upper in limits if upper >= kwp)
         namePlatte = "BetaPlatte" + str(kwpUpper)
-        if self.istNachkauf:
-            return float(KwpPreise.objects.get(name=namePlatte).price_other)
-        else:
-            return float(KwpPreise.objects.get(name=namePlatte).price)
+        return float(KwpPreise.objects.get(name=namePlatte).price)
 
 
     @property
@@ -2038,10 +2035,7 @@ class VertriebTicket(TimeStampMixin):
         kwp = min(30, self.modulsumme_kWp)
         kwpUpper = min(upper for upper in limits if upper >= kwp)
         nameZiegel = "MetallZiegel" + str(kwpUpper)
-        if self.istNachkauf:
-            return float(KwpPreise.objects.get(name=nameZiegel).price_other)
-        else:
-            return float(KwpPreise.objects.get(name=nameZiegel).price)
+        return float(KwpPreise.objects.get(name=nameZiegel).price)
 
     @property
     def prefa_befestigung_preis(self):
