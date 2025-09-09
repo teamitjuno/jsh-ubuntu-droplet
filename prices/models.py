@@ -71,6 +71,7 @@ class SolarModulePreise(models.Model):
 class WallBoxPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    price_other = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     pdf_text = models.TextField(help_text="Inhalt", default="<<kein editierbarer text>>")
     in_stock = models.BooleanField(default=True, null=True, blank=True)
     filename = models.CharField(max_length=255, default="Wallbox")
@@ -94,6 +95,7 @@ class WallBoxPreise(models.Model):
 class OptionalAccessoriesPreise(models.Model):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    price_other = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     pdf_name = models.CharField(max_length=255, default="", blank=True)
     pdf_text = models.TextField(help_text="Inhalt" ,default="", blank=True)
 

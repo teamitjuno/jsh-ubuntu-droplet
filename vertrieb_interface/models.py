@@ -151,19 +151,14 @@ def get_modulleistungWp_from_map(module_name_map):
     return result
 
 
-def get_price(model, name):
-    model_name = model.__name__
-    key = f"{model_name}_{name}"
-
-    sanitized_key = sanitize_cache_key(key)
-
-    price = cache.get(sanitized_key)
-    if price is None:
-        try:
+def get_price(model, name, istNachkauf=False):
+    try:
+        if istNachkauf:
+            price = model.objects.get(name=name).price_other
+        else:
             price = model.objects.get(name=name).price
-        except ObjectDoesNotExist:
-            price = 0
-        cache.set(sanitized_key, price)
+    except ObjectDoesNotExist:
+        price = 0
     return price
 
 
@@ -1622,7 +1617,10 @@ class VertriebTicket(TimeStampMixin):
     countdown_on = models.BooleanField(default=False)
 
     def get_optional_accessory_price(self, name):
-        return float(OptionalAccessoriesPreise.objects.get(name=name).price)
+        if self.istNachkauf:
+            return float(OptionalAccessoriesPreise.objects.get(name=name).price_other)
+        else:
+            return float(OptionalAccessoriesPreise.objects.get(name=name).price)
 
     def get_module_preis(self, name):
         return float(SolarModulePreise.objects.get(name=name).price)
@@ -1957,12 +1955,17 @@ class VertriebTicket(TimeStampMixin):
         return 420
 
 
-    @property
-    def leistungsmodul_preis(self):
+    def leistungsmodul_preis(self, istNachkauf):
         if self.speicher_model == "LUNA 2000-7-S1":
-            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
+            if istNachkauf:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price_other)
+            else:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
         else:
-            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+            if istNachkauf:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price_other)
+            else:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
 
     @property
     def stromgrundpreis_gesamt(self):
@@ -1996,33 +1999,14 @@ class VertriebTicket(TimeStampMixin):
     def get_module_prices():
         return {obj.name: obj.price for obj in SolarModulePreise.objects.all()}
 
-    def calculate_price(self, model, name, multiplier):
+    def calculate_price(self, model, name, multiplier, istNachkauf=False):
         try:
             multiplier = int(multiplier)
         except ValueError:
             multiplier = 0
-        price = get_price(model, name)
+        price = get_price(model, name, istNachkauf)
         return price * multiplier
 
-    @property
-    def modulleistung_price(self):
-        prices = self.get_prices()
-        return float(prices[ACCESSORY_NAME])
-
-    @property
-    def elwa_price(self):
-        prices = self.get_prices()
-        return float(prices["elwa_2"])
-
-    @property
-    def thor_price(self):
-        prices = self.get_prices()
-        return float(prices["ac_thor_3_kw"])
-
-    @property
-    def heizstab_price(self):
-        prices = self.get_prices()
-        return float(prices["heizstab"])
 
     @property
     def solar_module_gesamt_preis(self):
@@ -2042,8 +2026,11 @@ class VertriebTicket(TimeStampMixin):
         kwp = min(30, self.modulsumme_kWp)
         kwpUpper = min(upper for upper in limits if upper >= kwp)
         namePlatte = "BetaPlatte" + str(kwpUpper)
-        beta_preis = float(KwpPreise.objects.get(name=namePlatte).price)
-        return beta_preis
+        if self.istNachkauf:
+            return float(KwpPreise.objects.get(name=namePlatte).price_other)
+        else:
+            return float(KwpPreise.objects.get(name=namePlatte).price)
+
 
     @property
     def metall_ziegel_preis(self):
@@ -2051,13 +2038,19 @@ class VertriebTicket(TimeStampMixin):
         kwp = min(30, self.modulsumme_kWp)
         kwpUpper = min(upper for upper in limits if upper >= kwp)
         nameZiegel = "MetallZiegel" + str(kwpUpper)
-        ziegel_preis = float(KwpPreise.objects.get(name=nameZiegel).price)
-        return ziegel_preis
+        if self.istNachkauf:
+            return float(KwpPreise.objects.get(name=nameZiegel).price_other)
+        else:
+            return float(KwpPreise.objects.get(name=nameZiegel).price)
 
     @property
     def prefa_befestigung_preis(self):
-        prefa_preis = OptionalAccessoriesPreise.objects.get(name="prefa_befestigung").price * self.modulanzahl
-        return prefa_preis
+        if self.istNachkauf:
+            return OptionalAccessoriesPreise.objects.get(name="prefa_befestigung").price_other * self.modulanzahl
+        else:
+            return OptionalAccessoriesPreise.objects.get(name="prefa_befestigung").price * self.modulanzahl
+
+
     @property
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
@@ -2069,6 +2062,7 @@ class VertriebTicket(TimeStampMixin):
                 OptionalAccessoriesPreise,
                 wandDict.get(self.speicher_model),
                 anz_wandhalterung_fuer_speicher,
+                self.istNachkauf,
             )
         return wandhalterung_preis
 
@@ -2081,6 +2075,7 @@ class VertriebTicket(TimeStampMixin):
                 OptionalAccessoriesPreise,
                 "mid_zaehler",
                 anz_midZaehler,
+                self.istNachkauf,
             )
             return midZaehler_preis
 
@@ -2097,9 +2092,9 @@ class VertriebTicket(TimeStampMixin):
             # Kein angenommenes Angebot oder angenommenes Angebot hatte keinen Speicher
             if batterieDatensatz is not None and (not VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot)
                 or VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot).anz_speicher == 0):
-                batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher, self.istNachkauf)
                 if leistungsmodulNotwendig:
-                    batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
+                    batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis(self.istNachkauf))
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen
                 if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and anz_speicher > 6:
                     batteriePreis += self.get_optional_accessory_price("zusatzwechselrichter")
@@ -2109,16 +2104,19 @@ class VertriebTicket(TimeStampMixin):
                 angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)
                 # gleiches Speichermodell
                 if self.speicher_model == angebot.speicher_model:
-                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
+                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher, self.istNachkauf)
                     if leistungsmodulNotwendig:
-                        batteriePreis = float(batteriePreis) + ceil((anz_speicher + angebot.anz_speicher) / 3) * float(self.leistungsmodul_preis)
-                        batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
+                        abweichung = ceil((anz_speicher + angebot.anz_speicher) / 3) - ceil(angebot.anz_speicher / 3)
+                        if abweichung >= 0:
+                            batteriePreis = float(batteriePreis) + abweichung * float(self.leistungsmodul_preis(self.istNachkauf))
+                        else:
+                            batteriePreis = float(batteriePreis) + abweichung * float(angebot.leistungsmodul_preis)
                 # abweichendes Speichermodell
                 else:
-                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher)
-                    batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher)
+                    batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher, self.istNachkauf)
+                    batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher, False)
                     if leistungsmodulNotwendig:
-                        batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis)
+                        batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis(self.istNachkauf))
                         batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen, falls Limit jetzt erst überschritten
                 if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and angebot.anz_speicher <= 6 and (anz_speicher + angebot.anz_speicher) > 6:
@@ -2130,15 +2128,15 @@ class VertriebTicket(TimeStampMixin):
         smartmeterPreis = 0
         if self.smartmeter_model == "Smart Power Sensor DTSU666H":
             smartmeterPreis = self.calculate_price(
-                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1
+                    OptionalAccessoriesPreise, "smartmeter_dtsu", 1, self.istNachkauf,
                 )
         elif self.smartmeter_model == "EMMA-A02":
             smartmeterPreis = self.calculate_price(
-                OptionalAccessoriesPreise, "smartmeter_emma", 1
+                OptionalAccessoriesPreise, "smartmeter_emma", 1, self.istNachkauf,
             )
         elif self.smartmeter_model == "Viessmann Energiezähler":
             smartmeterPreis = self.calculate_price(
-                OptionalAccessoriesPreise, "smartmeter_viessmann", 1
+                OptionalAccessoriesPreise, "smartmeter_viessmann", 1, self.istNachkauf,
             )
         return smartmeterPreis
 
@@ -2250,12 +2248,13 @@ class VertriebTicket(TimeStampMixin):
     def full_wallbox_preis(self):
         preis = 0.0
         if self.wallbox_anzahl:
-            preis += float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
+            if self.istNachkauf:
+                preis += float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price_other)
+            else:
+                preis += float(WallBoxPreise.objects.get(name=str(self.wallboxtyp)).price)
             preis *= self.wallbox_anzahl
         if self.kabelanschluss and self.kabelanschluss >= 0:
-            preis += self.kabelanschluss * self.get_optional_accessory_price(
-                "kabelpreis"
-            )
+            preis += float(self.calculate_price(OptionalAccessoriesPreise,"kabelpreis", self.kabelanschluss, self.istNachkauf))
         return preis
 
     @property
@@ -2305,11 +2304,11 @@ class VertriebTicket(TimeStampMixin):
         if(self.wr_tausch):
             accessories_price += float(self.wr_tausch_preis)
         if self.elwa:
-            accessories_price += float(self.elwa_price)
+            accessories_price += float(self.get_optional_accessory_price("elwa_2"))
         if self.thor:
-            accessories_price += float(self.thor_price)
+            accessories_price += float(self.get_optional_accessory_price("ac_thor_3_kw"))
         if self.heizstab:
-            accessories_price += float(self.heizstab_price)
+            accessories_price += float(self.get_optional_accessory_price("heizstab"))
         return accessories_price
 
     @property

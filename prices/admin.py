@@ -69,6 +69,7 @@ class WallBoxPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
+        "price_other",
         "pdf_text",
         "in_stock",
         "filename",
@@ -82,6 +83,7 @@ class OptionalAccessoriesPreisAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "price",
+        "price_other",
         "pdf_name",
         "pdf_text",
     )
