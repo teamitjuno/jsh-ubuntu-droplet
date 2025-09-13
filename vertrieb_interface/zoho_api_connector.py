@@ -369,7 +369,7 @@ def return_lower_bull(val):
 
 
 def pushAngebot(vertrieb_angebot, user_zoho_id):
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
+    url = f"https://creator.zoho.eu/api/v2/junosolar/juno-kleinanlagen-portal/form/Angebot"
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
@@ -438,7 +438,7 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
 
 
 def pushTicket(vertrieb_ticket, user_zoho_id):
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/form/Angebot"
+    url = f"https://creator.zoho.eu/api/v2/junosolar/juno-kleinanlagen-portal/form/Angebot"
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 
@@ -503,7 +503,7 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
 
 
 def delete_redundant_angebot(angebot_zoho_id):
-    url = f"https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/Angebote/{angebot_zoho_id}"
+    url = f"https://creator.zoho.eu/api/v2/junosolar/juno-kleinanlagen-portal/report/Angebote/{angebot_zoho_id}"
     access_token = refresh_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
 

@@ -13,7 +13,7 @@ from config.settings import (
     ZOHO_REFRESH_TOKEN,
 )
 
-BASE_URL = "https://creator.zoho.eu/api/v2/thomasgroebckmann/juno-kleinanlagen-portal/report/PVA_klein1"
+BASE_URL = "https://creator.zoho.eu/api/v2/junosolar/juno-kleinanlagen-portal/report/PVA_klein1"
 
 User = get_user_model()
 
