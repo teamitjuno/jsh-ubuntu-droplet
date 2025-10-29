@@ -4,6 +4,7 @@ from django.db import models
 class Datenblatter(models.Model):
     speicher_module = models.FileField(upload_to="uploads/", blank=True, null=True)
     speicher_module_huawei7 = models.FileField(upload_to="uploads/", blank=True, null=True)
+    speicher_module_atmoce = models.FileField(upload_to="uploads/", blank=True, null=True)
     speicher_module_viessmann = models.FileField(
         upload_to="uploads/", blank=True, null=True
     )

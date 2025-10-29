@@ -792,10 +792,10 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def leistungsmodul_preis(self):
-        if self.speicher_model == "LUNA 2000-7-S1":
-            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
-        else:
+        if self.speicher_model == "LUNA 2000-5-S0":
             return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+        else:
+            return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
 
     @property
     def stromgrundpreis_gesamt(self):
@@ -953,7 +953,7 @@ class VertriebAngebot(TimeStampMixin):
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
         wandDict = {"LUNA 2000-5-S0": "wandhalterung_fuer_speicher", "LUNA 2000-7-S1": "wandhalterung_fuer_speicher_7",
-                        "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher"}
+                        "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher", "ATMOCE M-ELV Akku MS-7K-U": "wandhalterung_fuer_speicher_7"}
         if self.anz_wandhalterung_fuer_speicher != 0:
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
@@ -978,8 +978,8 @@ class VertriebAngebot(TimeStampMixin):
     @property
     def batteriespeicher_preis(self):
         batterieDict = {"LUNA 2000-5-S0": "batteriemodul_huawei5", "LUNA 2000-7-S1": "batteriemodul_huawei7",
-                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann"}
-        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False}
+                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann", "ATMOCE M-ELV Akku MS-7K-U": "batteriemodul_atmoce"}
+        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False, "ATMOCE M-ELV Akku MS-7K-U": False}
         batteriePreis = 0
         if self.anz_speicher != 0:
             anz_speicher = int(self.anz_speicher)
@@ -1015,7 +1015,7 @@ class VertriebAngebot(TimeStampMixin):
 
     @property
     def gesamtkapazitat(self):
-        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5}
+        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5, "ATMOCE M-ELV Akku MS-7K-U": 7}
         if kapazitatDict.get(self.speicher_model):
             return round(self.anz_speicher * kapazitatDict.get(self.speicher_model), 2)
         return 0
@@ -1046,10 +1046,10 @@ class VertriebAngebot(TimeStampMixin):
         if self.erzeugte_energie < nutzEnergie:
             nutzEnergie = float(self.erzProJahr) * float(self.modulsumme_kWp)
         if self.anz_speicher != 0:
-            if self.speicher_model == "LUNA 2000-7-S1":
-                kwh = self.anz_speicher * 7
-            else:
+            if self.speicher_model == "LUNA 2000-5-S0":
                 kwh = self.anz_speicher * 5
+            else:
+                kwh = self.anz_speicher * 7
             # Limitierung bis 6 Speichermodule, danach pauschal kein noch besserer Eigenverbrauch
             nutzEnergie = nutzEnergie * BATT_DICT[min(kwh,42)]
         else:
@@ -1956,16 +1956,16 @@ class VertriebTicket(TimeStampMixin):
 
 
     def leistungsmodul_preis(self, istNachkauf):
-        if self.speicher_model == "LUNA 2000-7-S1":
-            if istNachkauf:
-                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price_other)
-            else:
-                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
-        else:
+        if self.speicher_model == "LUNA 2000-5-S0":
             if istNachkauf:
                 return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price_other)
             else:
                 return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul").price)
+        else:
+            if istNachkauf:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price_other)
+            else:
+                return float(OptionalAccessoriesPreise.objects.get(name="leistungsmodul_7").price)
 
     @property
     def stromgrundpreis_gesamt(self):
@@ -2049,7 +2049,7 @@ class VertriebTicket(TimeStampMixin):
     def wandhalterung_fuer_speicher_preis(self):
         wandhalterung_preis = 0
         wandDict = {"LUNA 2000-5-S0": "wandhalterung_fuer_speicher", "LUNA 2000-7-S1": "wandhalterung_fuer_speicher_7",
-                    "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher"}
+                    "Vitocharge VX3 PV-Stromspeicher": "wandhalterung_fuer_speicher", "ATMOCE M-ELV Akku MS-7K-U": "wandhalterung_fuer_speicher_7"}
         if self.anz_wandhalterung_fuer_speicher != 0:
             anz_wandhalterung_fuer_speicher = int(self.anz_wandhalterung_fuer_speicher)
             wandhalterung_preis = self.calculate_price(
@@ -2076,8 +2076,8 @@ class VertriebTicket(TimeStampMixin):
     @property
     def batteriespeicher_preis(self):
         batterieDict = {"LUNA 2000-5-S0": "batteriemodul_huawei5", "LUNA 2000-7-S1": "batteriemodul_huawei7",
-                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann"}
-        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False}
+                        "Vitocharge VX3 PV-Stromspeicher": "batteriemodul_viessmann", "ATMOCE M-ELV Akku MS-7K-U": "batteriemodul_atmoce"}
+        leistModDict = {"LUNA 2000-5-S0": True, "LUNA 2000-7-S1": True, "Vitocharge VX3 PV-Stromspeicher": False, "ATMOCE M-ELV Akku MS-7K-U": False}
         batteriePreis = 0
         if self.anz_speicher != 0:
             anz_speicher = int(self.anz_speicher)
@@ -2150,7 +2150,7 @@ class VertriebTicket(TimeStampMixin):
 
     @property
     def gesamtkapazitat(self):
-        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5}
+        kapazitatDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 6.9, "Vitocharge VX3 PV-Stromspeicher": 5, "ATMOCE M-ELV Akku MS-7K-U": 7}
         if kapazitatDict.get(self.speicher_model):
             if VertriebAngebot.objects.filter(angebot_id=self.angenommenes_angebot):
                 angebot = VertriebAngebot.objects.get(angebot_id=self.angenommenes_angebot)

@@ -198,7 +198,7 @@ def validate_solar_module_ticket_anzahl(value):
 
 def validate_range(value, speicher_model, origAnzSpeicher=0):
     # Update the maximum values for different hersteller, including Huawei
-    max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "default": 6}
+    max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "ATMOCE M-ELV Akku MS-7K-U": 3, "default": 6}
     max_value = max_values.get(speicher_model, max_values["default"])
 
     # Update the error messages, including a specific message for Huawei
@@ -206,6 +206,7 @@ def validate_range(value, speicher_model, origAnzSpeicher=0):
         "Vitocharge VX3 PV-Stromspeicher": f"Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 muss zwischen {-origAnzSpeicher} und {3-origAnzSpeicher} liegen.",
         "LUNA 2000-5-S0": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {6-origAnzSpeicher} liegen.",
         "LUNA 2000-7-S1": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {12-origAnzSpeicher} liegen.",
+        "ATMOCE M-ELV Akku MS-7K-U": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {3-origAnzSpeicher} liegen.",
         "default": f"Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen {-origAnzSpeicher} und {6-origAnzSpeicher}.",
     }
 
@@ -879,6 +880,7 @@ class VertriebAngebotForm(ModelForm):
         ("----", "----"),
         ("LUNA 2000-7-S1", "LUNA 2000-7-S1"),
         ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
+        ("ATMOCE M-ELV Akku MS-7K-U","ATMOCE M-ELV Akku MS-7K-U"),
         ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
     ]
 
@@ -1581,6 +1583,7 @@ class VertriebAngebotForm(ModelForm):
             ("Viessmann", "SUN 2000 MB0"): "wechselrichter_model",
             ("Viessmann", "LUNA 2000-5-S0"): "speicher_model",
             ("Viessmann", "LUNA 2000-7-S1"): "speicher_model",
+            ("Viessmann", "ATMOCE M-ELV Akku MS-7K-U"): "speicher_model",
             ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",
             ("Viessmann", "EMMA-A02"): "smartmeter_model",
             ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
@@ -2276,6 +2279,7 @@ class VertriebTicketForm(ModelForm):
         ("----", "----"),
         ("LUNA 2000-7-S1", "LUNA 2000-7-S1"),
         ("LUNA 2000-5-S0", "LUNA 2000-5-S0"),
+        ("ATMOCE M-ELV Akku MS-7K-U", "ATMOCE M-ELV Akku MS-7K-U"),
         ("Vitocharge VX3 PV-Stromspeicher", "Vitocharge VX3 PV-Stromspeicher"),
     ]
 

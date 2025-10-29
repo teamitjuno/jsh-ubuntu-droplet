@@ -859,10 +859,13 @@ function setFieldOptions(value) {
     var speicherOptions, smartmeterOptions;
     
         if($('#speicher_model').val() == "LUNA 2000-5-S0"){
-            speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option>';
+            speicherOptions = '<option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="ATMOCE M-ELV Akku MS-7K-U">ATMOCE M-ELV Akku MS-7K-U</option>';
+        }
+        else if($('#speicher_model').val() == "LUNA 2000-7-S1"){
+            speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option><option value="ATMOCE M-ELV Akku MS-7K-U">ATMOCE M-ELV Akku MS-7K-U</option>';
         }
         else {
-            speicherOptions = '<option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
+            speicherOptions = '<option value="ATMOCE M-ELV Akku MS-7K-U">ATMOCE M-ELV Akku MS-7K-U</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
         }
         if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
             smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';

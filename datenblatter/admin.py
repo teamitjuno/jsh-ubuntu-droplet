@@ -31,6 +31,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
                     "viessmann_tigo",
                     "speicher_module",
                     "speicher_module_huawei7",
+                    "speicher_module_atmoce",
                     "speicher_module_viessmann",
                     "wechselrichter",
                     "wechselrichter_map0",
