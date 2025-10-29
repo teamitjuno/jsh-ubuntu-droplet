@@ -140,8 +140,8 @@ class DocumentAndCalcView(LoginRequiredMixin, DetailView):
                     self._attach_datenblatter(email, datenblatter, "speicher_module", "Huawei S0 Speicher 5kWh")
                 elif vertrieb_angebot.speicher_model == "LUNA 2000-7-S1":
                     self._attach_datenblatter(email, datenblatter, "speicher_module_huawei7", "Huawei S1 Speicher 7kWh")
-            elif vertrieb_angebot.speicher_model == "ATMOCE M-ELV Akku MS-7K-U":
-                self._attach_datenblatter(email, datenblatter, "speicher_module_atmoce", "ATMOCE Speicher 7kWh")
+                elif vertrieb_angebot.speicher_model == "ATMOCE M-ELV Akku MS-7K-U":
+                    self._attach_datenblatter(email, datenblatter, "speicher_module_atmoce", "ATMOCE Speicher 7kWh")
             else:
                 self._attach_datenblatter(
                     email, datenblatter, "speicher_module_viessmann", "VIESSMANN Speicher"
