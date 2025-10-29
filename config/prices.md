@@ -547,6 +547,18 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     font_size=10
 )
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_atmoce_1', 
+    content="Batteriespeicher: ATMOCE M-ELV Akku MS-7K-U", 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_4_atmoce_2', 
+    content="∙ Akkunennenergie: 7 kWh\n∙ Maximale Ausgangsleistung: 4,5 kW\n∙ Produktgarantie: 15 Jahre", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
 
 # Create 'tabelle_eintrag_5_1' and 'tabelle_eintrag_5_2' entries
 Editierbarer_Text.objects.create(

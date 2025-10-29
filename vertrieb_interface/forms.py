@@ -198,7 +198,7 @@ def validate_solar_module_ticket_anzahl(value):
 
 def validate_range(value, speicher_model, origAnzSpeicher=0):
     # Update the maximum values for different hersteller, including Huawei
-    max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "ATMOCE M-ELV Akku MS-7K-U": 3, "default": 6}
+    max_values = {"Vitocharge VX3 PV-Stromspeicher": 3, "LUNA 2000-5-S0": 6, "LUNA 2000-7-S1": 12, "ATMOCE M-ELV Akku MS-7K-U": 6, "default": 6}
     max_value = max_values.get(speicher_model, max_values["default"])
 
     # Update the error messages, including a specific message for Huawei
@@ -206,7 +206,7 @@ def validate_range(value, speicher_model, origAnzSpeicher=0):
         "Vitocharge VX3 PV-Stromspeicher": f"Die Anzahl der Batteriespeicher Viessmann Vitocharge VX3 muss zwischen {-origAnzSpeicher} und {3-origAnzSpeicher} liegen.",
         "LUNA 2000-5-S0": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {6-origAnzSpeicher} liegen.",
         "LUNA 2000-7-S1": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {12-origAnzSpeicher} liegen.",
-        "ATMOCE M-ELV Akku MS-7K-U": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {3-origAnzSpeicher} liegen.",
+        "ATMOCE M-ELV Akku MS-7K-U": f"Die Anzahl der Batteriespeicher von Huawei muss zwischen {-origAnzSpeicher} und {6-origAnzSpeicher} liegen.",
         "default": f"Ungültige Eingabe: %(value)s. Der gültige Bereich ist zwischen {-origAnzSpeicher} und {6-origAnzSpeicher}.",
     }
 

@@ -164,6 +164,10 @@ class PDF(FPDF):
             entladeleistung = self.get_attribute_by_identifier(
                 "tabelle_eintrag_4_huawei7_3", "content"
             )
+        elif batterieModell == "ATMOCE M-ELV Akku MS-7K-U":
+            entladeleistung = self.get_attribute_by_identifier(
+                "tabelle_eintrag_4_atmoce_2", "content"
+            )
         else:
             if str(data["batterieAnz"]) == "1":
                 entladeleistung = self.get_attribute_by_identifier(
@@ -404,59 +408,90 @@ class PDF(FPDF):
         # Tabelle Eintrag 4
         # Batteriespeicher
         if data["batterieVorh"]:
-            batterieDict = {"LUNA 2000-5-S0": 5, "LUNA 2000-7-S1": 7}
+            batterieDict = {"LUNA 2000-5-S0": "huawei5", "LUNA 2000-7-S1": "huawei7",
+                            "ATMOCE M-ELV Akku MS-7K-U": "atmoce"}
             batterieTyp = batterieDict.get(str(data["batterieModell"]))
             eintrag += 1
             tab4_eintrag_nummer = str(eintrag) + "."
-            tab4_content2_sub1 = str(data["leistModAnz"])
-            tab4_content2_sub2 = str(data["batterieAnz"])
-            tab4_batterie_speicher = self.get_attribute_by_identifier(
-                f"tabelle_eintrag_4_huawei{batterieTyp}_1", "content"
-            )
-            tab4_additional_content2 = self.get_attribute_by_identifier(
-                f"tabelle_eintrag_4_huawei{batterieTyp}_2", "content"
-            )
-            tab4_additional_content = "Leistungsmodule"
-            tab4_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModell"]))
-            self.setup_eintrag_text(
-                f"tabelle_eintrag_4_huawei{batterieTyp}_3",
-                tab4_eintrag_nummer,
-                tab4_batterie_speicher,
-                content_2="",
-                content_4=tab4_batterie_speicher_props,
-                content_2_sub_1=tab4_content2_sub1,
-                content_2_sub_2=tab4_content2_sub2,
-                additional_content=tab4_additional_content,
-                additional_content_2=tab4_additional_content2,
-                alignment="",
-            )
+            if (str(data["batterieModell"]) == "ATMOCE M-ELV Akku MS-7K-U"):
+                tab4_content2_sub1 = str(data["batterieAnz"])
+                tab4_batterie_speicher = self.get_attribute_by_identifier(
+                    f"tabelle_eintrag_4_{batterieTyp}_1", "content"
+                )
+                tab4_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModell"]))
+                self.setup_eintrag_text(
+                    f"tabelle_eintrag_4_{batterieTyp}_2",
+                    tab4_eintrag_nummer,
+                    tab4_batterie_speicher,
+                    content_2=tab4_content2_sub1,
+                    content_4=tab4_batterie_speicher_props,
+                    alignment="",
+                )
+            else:
+                tab4_content2_sub1 = str(data["leistModAnz"])
+                tab4_content2_sub2 = str(data["batterieAnz"])
+                tab4_batterie_speicher = self.get_attribute_by_identifier(
+                    f"tabelle_eintrag_4_{batterieTyp}_1", "content"
+                )
+                tab4_additional_content2 = self.get_attribute_by_identifier(
+                    f"tabelle_eintrag_4_{batterieTyp}_2", "content"
+                )
+                tab4_additional_content = "Leistungsmodule"
+                tab4_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModell"]))
+                self.setup_eintrag_text(
+                    f"tabelle_eintrag_4_{batterieTyp}_3",
+                    tab4_eintrag_nummer,
+                    tab4_batterie_speicher,
+                    content_2="",
+                    content_4=tab4_batterie_speicher_props,
+                    content_2_sub_1=tab4_content2_sub1,
+                    content_2_sub_2=tab4_content2_sub2,
+                    additional_content=tab4_additional_content,
+                    additional_content_2=tab4_additional_content2,
+                    alignment="",
+                )
             # Bei Austausch des Speichertyps den Speicher aus angenommenem Angebot wieder abziehen
             if data["batterieModellOrig"] and data["batterieModellOrig"] != data["batterieModell"]:
                 eintrag += 1
                 batterieTypOrig = batterieDict.get(str(data["batterieModellOrig"]))
                 tab4o_eintrag_nummer = str(eintrag) + "."
-                tab4o_content2_sub1 = str(-data["leistModAnzOrig"])
-                tab4o_content2_sub2 = str(-data["batterieAnzOrig"])
-                tab4o_batterie_speicher = self.get_attribute_by_identifier(
-                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_1", "content"
-                )
-                tab4o_additional_content2 = self.get_attribute_by_identifier(
-                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_2", "content"
-                )
-                tab4o_additional_content = "Leistungsmodule"
-                tab4o_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModellOrig"]))
-                self.setup_eintrag_text(
-                    f"tabelle_eintrag_4_huawei{batterieTypOrig}_3",
-                    tab4o_eintrag_nummer,
-                    tab4o_batterie_speicher,
-                    content_2="",
-                    content_4=tab4o_batterie_speicher_props,
-                    content_2_sub_1=tab4o_content2_sub1,
-                    content_2_sub_2=tab4o_content2_sub2,
-                    additional_content=tab4o_additional_content,
-                    additional_content_2=tab4o_additional_content2,
-                    alignment="",
-                )
+                if (str(data["batterieModellOrig"]) == "ATMOCE M-ELV Akku MS-7K-U"):
+                    tab4_content2_sub1 = str(data["batterieAnzOrig"])
+                    tab4_batterie_speicher = self.get_attribute_by_identifier(
+                        f"tabelle_eintrag_4_{batterieTypOrig}_1", "content"
+                    )
+                    tab4_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModellOrig"]))
+                    self.setup_eintrag_text(
+                        f"tabelle_eintrag_4_{batterieTypOrig}_2",
+                        tab4_eintrag_nummer,
+                        tab4_batterie_speicher,
+                        content_2=tab4_content2_sub1,
+                        content_4=tab4_batterie_speicher_props,
+                        alignment="",
+                    )
+                else:
+                    tab4o_content2_sub1 = str(-data["leistModAnzOrig"])
+                    tab4o_content2_sub2 = str(-data["batterieAnzOrig"])
+                    tab4o_batterie_speicher = self.get_attribute_by_identifier(
+                        f"tabelle_eintrag_4_{batterieTypOrig}_1", "content"
+                    )
+                    tab4o_additional_content2 = self.get_attribute_by_identifier(
+                        f"tabelle_eintrag_4_{batterieTypOrig}_2", "content"
+                    )
+                    tab4o_additional_content = "Leistungsmodule"
+                    tab4o_batterie_speicher_props = self.get_entladeleistung(data, str(data["batterieModellOrig"]))
+                    self.setup_eintrag_text(
+                        f"tabelle_eintrag_4_{batterieTypOrig}_3",
+                        tab4o_eintrag_nummer,
+                        tab4o_batterie_speicher,
+                        content_2="",
+                        content_4=tab4o_batterie_speicher_props,
+                        content_2_sub_1=tab4o_content2_sub1,
+                        content_2_sub_2=tab4o_content2_sub2,
+                        additional_content=tab4o_additional_content,
+                        additional_content_2=tab4o_additional_content2,
+                        alignment="",
+                    )
         return eintrag
 
     def pricePage(self, data):
