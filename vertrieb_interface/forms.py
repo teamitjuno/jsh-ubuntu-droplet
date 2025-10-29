@@ -888,6 +888,7 @@ class VertriebAngebotForm(ModelForm):
         ("kein EMS", "kein EMS"),
         ("EMMA-A02", "EMMA-A02"),
         ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
+        ("ATMOCE Gateway MG100","ATMOCE Gateway MG100"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
     ]
 
@@ -1586,6 +1587,7 @@ class VertriebAngebotForm(ModelForm):
             ("Viessmann", "ATMOCE M-ELV Akku MS-7K-U"): "speicher_model",
             ("Viessmann", "Smart Power Sensor DTSU666H"): "smartmeter_model",
             ("Viessmann", "EMMA-A02"): "smartmeter_model",
+            ("Viessmann", "ATMOCE Gateway MG100"): "smartmeter_model",
             ("Huawei", "Viessmann Charging Station"): "wallboxtyp",
             ("Huawei", "Vitocharge VX3"): "wechselrichter_model",
             ("Huawei", "Vitocharge VX3 PV-Stromspeicher"): "speicher_model",
@@ -2287,6 +2289,7 @@ class VertriebTicketForm(ModelForm):
         ("kein EMS", "kein EMS"),
         ("EMMA-A02", "EMMA-A02"),
         ("Smart Power Sensor DTSU666H", "Smart Power Sensor DTSU666H"),
+        ("ATMOCE Gateway MG100", "ATMOCE Gateway MG100"),
         ("Viessmann Energiezähler", "Viessmann Energiezähler"),
     ]
 

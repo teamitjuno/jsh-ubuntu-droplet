@@ -27,6 +27,7 @@ class DatenblatterAdmin(admin.ModelAdmin):
                     "huawei_smartmeter_dtsu",
                     "huawei_smartmeter_emma",
                     "huawei_smart_energie_controller",
+                    "smartmeter_atmoce",
                     "optimizer_viessmann",
                     "viessmann_tigo",
                     "speicher_module",

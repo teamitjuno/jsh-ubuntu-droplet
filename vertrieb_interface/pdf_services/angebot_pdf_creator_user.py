@@ -480,8 +480,10 @@ class PDF(FPDF):
             if data["smartmeterModell"] != "kein EMS":
                 eintrag += 1
                 tab3_eintrag_nummer = str(eintrag) + "."
-
-                tab3_energiezahler = "Huawei " + data["smartmeterModell"]
+                if "ATMOCE" in data["smartmeterModell"]:
+                    tab3_energiezahler = data["smartmeterModell"]
+                else:
+                    tab3_energiezahler = "Huawei " + data["smartmeterModell"]
                 tab3_energiezahler_props = self.get_attribute_by_identifier(
                     "tabelle_eintrag_3_huawei_2", "content"
                 )

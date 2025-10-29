@@ -147,6 +147,8 @@ class DocumentView(LoginRequiredMixin, DetailView):
                 self._attach_datenblatter(email, datenblatter, "huawei_smartmeter_dtsu", "Smart Power Sensor")
             elif vertrieb_angebot.smartmeter_model == "EMMA-A02":
                 self._attach_datenblatter(email, datenblatter, "huawei_smartmeter_emma", "EMMA-A02")
+            elif vertrieb_angebot.smartmeter_model == "ATMOCE Gateway MG100":
+                self._attach_datenblatter(email, datenblatter, "smartmeter_atmoce", "ATMOCE Gateway MG100")
 
         if vertrieb_angebot.datenblatter_wechselrichter:
             if vertrieb_angebot.hersteller == "Huawei":

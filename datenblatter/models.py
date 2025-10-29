@@ -23,6 +23,7 @@ class Datenblatter(models.Model):
     huawei_smart_energie_controller = models.FileField(
         upload_to="uploads/", blank=True, null=True
     )
+    smartmeter_atmoce = models.FileField(upload_to="uploads/", blank=True, null=True)
     optimizer_viessmann = models.FileField(upload_to="uploads/", blank=True, null=True)
     viessmann_tigo = models.FileField(upload_to="uploads/", blank=True, null=True)
     viessmann_allgemeine_bedingungen = models.FileField(

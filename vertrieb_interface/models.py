@@ -1011,6 +1011,10 @@ class VertriebAngebot(TimeStampMixin):
             smartmeterPreis = self.calculate_price(
                 OptionalAccessoriesPreise, "smartmeter_viessmann", 1
             )
+        elif self.smartmeter_model == "ATMOCE Gateway MG100":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_atmoce", 1
+            )
         return smartmeterPreis
 
     @property
@@ -2131,6 +2135,10 @@ class VertriebTicket(TimeStampMixin):
         elif self.smartmeter_model == "Viessmann Energiezähler":
             smartmeterPreis = self.calculate_price(
                 OptionalAccessoriesPreise, "smartmeter_viessmann", 1, self.istNachkauf,
+            )
+        elif self.smartmeter_model == "ATMOCE Gateway MG100":
+            smartmeterPreis = self.calculate_price(
+                OptionalAccessoriesPreise, "smartmeter_atmoce", 1, self.istNachkauf,
             )
         return smartmeterPreis
 

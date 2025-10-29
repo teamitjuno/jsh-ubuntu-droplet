@@ -1272,13 +1272,16 @@ function setFieldOptions(value) {
                 speicherOptions = '<option value="ATMOCE M-ELV Akku MS-7K-U">ATMOCE M-ELV Akku MS-7K-U</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
             }
             if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
-            smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';
+            smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="kein EMS">kein EMS</option>';
             }
             else if($('#smartmeter_model').val() == "EMMA-A02"){
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="kein EMS">kein EMS</option>';
+                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="kein EMS">kein EMS</option>';
+            }
+            else if($('#smartmeter_model').val() == "ATMOCE Gateway MG100"){
+                smartmeterOptions = '<option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';
             }
             else {
-                smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
+                smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option>';
             }
             $('#garantieWR_row').show();
         } else {
@@ -2332,13 +2335,16 @@ function setFieldOptions(value) {
                 speicherOptions = '<option value="ATMOCE M-ELV Akku MS-7K-U">ATMOCE M-ELV Akku MS-7K-U</option><option value="LUNA 2000-7-S1">LUNA 2000-7-S1</option><option value="LUNA 2000-5-S0">LUNA 2000-5-S0</option>';
             }
             if($('#smartmeter_model').val() == "Smart Power Sensor DTSU666H"){
-            smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';
+            smartmeterOptions = '<option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="kein EMS">kein EMS</option>';
             }
             else if($('#smartmeter_model').val() == "EMMA-A02"){
-                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="kein EMS">kein EMS</option>';
+                smartmeterOptions = '<option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="kein EMS">kein EMS</option>';
+            }
+            else if($('#smartmeter_model').val() == "ATMOCE Gateway MG100"){
+                smartmeterOptions = '<option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="EMMA-A02">EMMA-A02</option><option value="kein EMS">kein EMS</option>';
             }
             else {
-                smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option>';
+                smartmeterOptions = '<option value="kein EMS">kein EMS</option><option value="EMMA-A02">EMMA-A02</option><option value="Smart Power Sensor DTSU666H">Smart Power Sensor DTSU666H</option><option value="ATMOCE Gateway MG100">ATMOCE Gateway MG100</option>';
             }
             $('#garantieWR_row').show();
         } else {
