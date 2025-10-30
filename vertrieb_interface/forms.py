@@ -1097,12 +1097,12 @@ class VertriebAngebotForm(ModelForm):
         ),
     )
     apzFeld = forms.BooleanField(
-        label="APZ-Feld Nachrüstung in vorh. ZS",
+        label="APZ-Feld Nachrüstung",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
     )
     apzFeldUVV = forms.BooleanField(
-        label="APZ-Feld Nachrüstung mit UVV",
+        label="APZ-Feld Nachrüstung",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
     )
@@ -2428,7 +2428,7 @@ class VertriebTicketForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeld"}),
     )
     apzFeldUVV = forms.BooleanField(
-        label="APZ-Feld Nachrüstung mit UVV",
+        label="APZ-Feld Nachrüstung",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
     )

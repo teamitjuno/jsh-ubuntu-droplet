@@ -320,7 +320,7 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.apzFeld.label_tag }}</th>
+                                                                        <th>{{ form.apzFeld.label_tag }}<br>Nachrüstung im vorhandenen Zählerschrank, wenn dreireihiges Einzelfeld frei ist</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="apzFeld" {% if form.apzFeld.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeld.html_name }}" />
@@ -329,7 +329,7 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>{{ form.apzFeldUVV.label_tag }}</th>
+                                                                        <th>{{ form.apzFeldUVV.label_tag }}<br>Nachrüstung im vorhandenen Zählerschrank, wenn Umbau notwendig, um drei freie Hutschienen unten rechts freizubekommen</th>
                                                                         <td>
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="apzFeldUVV" {% if form.apzFeldUVV.value %}checked{% endif %} data-switch="success" name="{{ form.apzFeldUVV.html_name }}" />
