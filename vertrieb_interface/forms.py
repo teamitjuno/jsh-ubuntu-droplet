@@ -67,40 +67,6 @@ AUSRICHTUNG_CHOICES = (
     ("Sud", "Sud"),
     ("Ost/West", "Ost/West"),
 )
-LEADSTATUS_CHOICES = (
-    ("ausstehend", "ausstehend"),
-    ("reklamiert", "reklamiert"),
-    ("akzeptiert", "akzeptiert"),
-    ("abgelehnt", "abgelehnt"),
-)
-STORNIERUNGSGRUND_CHOICES = (
-    (
-        "Abweichende Kundenvorstellung zum Thema PVA",
-        "Kundenvorstellung zum Thema PVA unterscheidet sich",
-    ),
-    ("Gebäude ungeeignet", "Das Gebäude ist nicht geeignet"),
-    ("Günstigerer Mitbewerber", "Ein Konkurrent bietet günstigere Optionen"),
-    ("Investition lohnt sich nicht", "Eine Investition lohnt sich nicht"),
-    ("Investition zu teuer", "Die Investitionskosten sind zu hoch"),
-    ("Kunde hat kein Interesse mehr", "Der Kunde hat kein Interesse mehr"),
-    ("Kunde ist zu alt", "Der Kunde ist nicht mehr interessiert"),
-    (
-        "Kunde möchte 3-phasige Notstromversorgung",
-        "Der Kunde benötigt eine 3-phasige Notstromversorgung",
-    ),
-    ("Kunde möchte deutsche Produkte", "Der Kunde bevorzugt deutsche Produkte"),
-    (
-        "Kunde möchte erst später bauen",
-        "Der Kunde möchte zu einem späteren Zeitpunkt bauen",
-    ),
-    ("Kunde möchte Förderung abwarten", "Der Kunde möchte auf Fördermittel warten"),
-    (
-        "Kunde möchte lokalen Ansprechpartner",
-        "Der Kunde wünscht einen Ansprechpartner vor Ort",
-    ),
-    ("Kunde möchte PVA nur mieten", "Der Kunde möchte die PVA-Anlage nur mieten"),
-    ("Kunde war nicht erreichbar", "Der Kunde war nicht erreichbar"),
-)
 
 
 def validate_german_mobile_number(value):
@@ -438,7 +404,6 @@ class VertriebAngebotEmptyForm(ModelForm):
             "elwa",
             "thor",
             "heizstab",
-            "notstrom",
             "ersatzstrom",
             "anzOptimizer",
             "wallboxtyp",
@@ -543,18 +508,6 @@ class VertriebAngebotForm(ModelForm):
                 "id": "angebot_bekommen_am",
             }
         ),
-    )
-    ablehnungs_grund = forms.ChoiceField(
-        choices=STORNIERUNGSGRUND_CHOICES,
-        label="Grund für die Ablehnung des Auftrags",
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "ablehnungs_grund"}),
-    )
-    leadstatus = forms.ChoiceField(
-        label="Leadstatus",
-        choices=LEADSTATUS_CHOICES,
-        widget=forms.Select(attrs={"class": "form-select", "id": "leadstatus"}),
-        required=False,
     )
 
     ausrichtung_choices = (
@@ -1129,13 +1082,6 @@ class VertriebAngebotForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
-    notstrom = forms.BooleanField(
-        label="Notstrom Backupbox",
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={"class": "form-check-input", "id": "notstrom"}
-        ),
-    )
     ersatzstrom = forms.BooleanField(
         label="SmartGuard inkl. EMMA",
         required=False,
@@ -1364,7 +1310,6 @@ class VertriebAngebotForm(ModelForm):
             "angebot_bekommen_am",
             "status_change_date",
             "status_change_field",
-            "ablehnungs_grund",
             "name",
             "vorname_nachname",
             "name_first_name",
@@ -1413,7 +1358,6 @@ class VertriebAngebotForm(ModelForm):
             "metall_ziegel",
             "prefa_befestigung",
             "heizstab",
-            "notstrom",
             "ersatzstrom",
             "smartDongleLte",
             "anzOptimizer",
@@ -1601,7 +1545,6 @@ class VertriebAngebotForm(ModelForm):
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
-        notstrom = cleaned_data.get("notstrom")
         ersatzstrom = cleaned_data.get("ersatzstrom")
         smartmeter_model = cleaned_data.get("smartmeter_model")
         message, is_valid = validate_range(anz_speicher, speicher_model)
@@ -1623,19 +1566,6 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
-        if notstrom and ersatzstrom:
-            self.add_error(
-                "notstrom",
-                ValidationError(
-                    (
-                        "Bei der Auswahl einer Notstrom Backupbox kann nicht der SmartGuard ausgewählt werden."
-                    ),
-                    params={
-                        "notstrom": notstrom,
-                        "ersatzstrom": ersatzstrom,
-                    },
-                ),
-            )
         if ersatzstrom and smartmeter_model != "kein EMS":
             self.add_error(
                 "ersatzstrom",
@@ -2478,13 +2408,6 @@ class VertriebTicketForm(ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "thor"}),
     )
-    notstrom = forms.BooleanField(
-        label="Notstrom Backupbox",
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={"class": "form-check-input", "id": "notstrom"}
-        ),
-    )
     ersatzstrom = forms.BooleanField(
         label="SmartGuard inkl. EMMA",
         required=False,
@@ -2704,7 +2627,6 @@ class VertriebTicketForm(ModelForm):
             "metall_ziegel",
             "prefa_befestigung",
             "heizstab",
-            "notstrom",
             "ersatzstrom",
             "smartDongleLte",
             "anzOptimizer",
@@ -2856,7 +2778,6 @@ class VertriebTicketForm(ModelForm):
         modulanzahl = cleaned_data.get("modulanzahl")
         anzOptimizer = cleaned_data.get("anzOptimizer")
         anz_speicher = cleaned_data.get("anz_speicher")
-        notstrom = cleaned_data.get("notstrom")
         ersatzstrom = cleaned_data.get("ersatzstrom")
         smartmeter_model = cleaned_data.get("smartmeter_model")
         angenommenes_angebot = cleaned_data.get("angenommenes_angebot")
@@ -2967,19 +2888,6 @@ class VertriebTicketForm(ModelForm):
                         ),
                     )
 
-        if notstrom and ersatzstrom:
-            self.add_error(
-                "notstrom",
-                ValidationError(
-                    (
-                        "Bei der Auswahl einer Notstrom Backupbox kann nicht der SmartGuard ausgewählt werden."
-                    ),
-                    params={
-                        "notstrom": notstrom,
-                        "ersatzstrom": ersatzstrom,
-                    },
-                ),
-            )
         if ersatzstrom and smartmeter_model != "kein EMS":
             self.add_error(
                 "ersatzstrom",

@@ -334,13 +334,6 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             }
         ),
     )
-    initial_notstrom = forms.BooleanField(
-        label="Notstrom",
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={"class": "form-check-input", "id": "id_initial_notstrom"}
-        ),
-    )
     initial_anzOptimizer = forms.IntegerField(
         label="Optimierer Anzahl",
         required=True,
@@ -471,7 +464,6 @@ class InitialAngebotDataViewForm(forms.ModelForm):
             # "initial_elwa",
             "initial_thor",
             "initial_heizstab",
-            "initial_notstrom",
             "initial_anzOptimizer",
             "initial_wallboxtyp",
             "initial_wallbox_anzahl",
@@ -547,9 +539,6 @@ class InitialAngebotDataViewForm(forms.ModelForm):
         self.fields["initial_thor"].widget.attrs.update({"id": "id_initial_thor"})
         self.fields["initial_heizstab"].widget.attrs.update(
             {"id": "id_initial_heizstab"}
-        )
-        self.fields["initial_notstrom"].widget.attrs.update(
-            {"id": "id_initial_notstrom"}
         )
         self.fields["initial_anzOptimizer"].widget.attrs.update(
             {"id": "id_initial_anzOptimizer"}

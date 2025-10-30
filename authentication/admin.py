@@ -155,7 +155,6 @@ class CustomUserAdmin(ReadOnlyFieldsMixin, DefaultUserAdmin):
                     "initial_elwa",
                     "initial_thor",
                     "initial_heizstab",
-                    "initial_notstrom",
                     "initial_anzOptimizer",
                     "initial_wallboxtyp",
                     "initial_wallbox_anzahl",

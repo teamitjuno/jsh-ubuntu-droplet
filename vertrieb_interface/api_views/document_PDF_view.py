@@ -164,8 +164,6 @@ class DocumentView(LoginRequiredMixin, DetailView):
 
         if vertrieb_angebot.datenblatter_backup_box:
             if vertrieb_angebot.hersteller == "Huawei":
-                if vertrieb_angebot.notstrom == True:
-                    self._attach_datenblatter(email, datenblatter, "backup_box", "Huawei Backup Box")
                 if vertrieb_angebot.ersatzstrom == True:
                     self._attach_datenblatter(email, datenblatter, "smartguard", "Huawei SmartGuard")
 

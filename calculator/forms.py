@@ -113,13 +113,6 @@ class CalculatorForm(forms.ModelForm):
             attrs={"class": "form-check-input form-check-input mb-3", "id": "optimizer"}
         ),
     )
-    notstrom = forms.BooleanField(
-        label="Notstrom",
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={"class": "form-check-input form-check-input mb-3", "id": "notstrom"}
-        ),
-    )
     elwa = forms.BooleanField(
         label="AC-ELWA 2",
         required=False,
@@ -221,7 +214,6 @@ class CalculatorForm(forms.ModelForm):
         fields = [
             "solar_module",
             "modulanzahl",
-            "notstrom",
             "elwa",
             "thor",
             "heizstab",

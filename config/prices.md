@@ -941,19 +941,6 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     font_size=10
 )
-# Create Huawei backup box entry
-Editierbarer_Text.objects.create(
-    identifier='notstrom_huawei_1', 
-    content="Huawei Backup-Box-B1", 
-    font='JUNO Solar Lt', 
-    font_size=11
-)
-Editierbarer_Text.objects.create(
-    identifier='notstrom_huawei_2', 
-    content="∙ Einphasige Stromversorgung über Notstromsteckdose\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
-)
 # Create wall mount for battery storage entry
 Editierbarer_Text.objects.create(
     identifier='wandhalterung_huawei_1', 
@@ -1011,26 +998,6 @@ Editierbarer_Text.objects.create(
     content="Tigo Cloud Connect Advances (CCA)", 
     font='JUNO Solar Lt', 
     font_size=11
-)
-# Create entries for emergency power solutions for both Huawei and Viessmann
-Editierbarer_Text.objects.create(
-    identifier='notstrom_huawei_1', 
-    content="Huawei Backup-Box-B1\n∙ Einphasige Stromversorgung über Notstromsteckdose\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
-)
-
-Editierbarer_Text.objects.create(
-    identifier='notstrom_viessmann_1', 
-    content="Viessmann VX3 Backup-Box", 
-    font='JUNO Solar Lt', 
-    font_size=11
-)
-Editierbarer_Text.objects.create(
-    identifier='notstrom_viessmann_2', 
-    content="Dreiphasige Notstromversorgung bei Netzausfall\n∙ max. 40A pro Phase (bei Umgebungstemperatur von 35°C)\n∙ Produktgarantie: 2 Jahre", 
-    font='JUNO Solar Lt', 
-    font_size=10
 )
 # Create 'gridbox_viessmann_1' and 'gridbox_vieessmann_2' entries
 Editierbarer_Text.objects.create(

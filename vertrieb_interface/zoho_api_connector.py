@@ -400,7 +400,6 @@ def pushAngebot(vertrieb_angebot, user_zoho_id):
             "Wandhalterung_Anzahl": int(
                 vertrieb_angebot.anz_wandhalterung_fuer_speicher
             ),
-            "Notstrom": return_lower_bull(vertrieb_angebot.notstrom),
             "Ersatzstrom": return_lower_bull(vertrieb_angebot.ersatzstrom),
             "Optimierer_Menge": str(vertrieb_angebot.anzOptimizer),
             "AC_ELWA_2": return_lower_bull(vertrieb_angebot.elwa),
@@ -466,7 +465,6 @@ def pushTicket(vertrieb_ticket, user_zoho_id):
             "Wandhalterung_Anzahl": int(
                 vertrieb_ticket.anz_wandhalterung_fuer_speicher
             ),
-            "Notstrom": return_lower_bull(vertrieb_ticket.notstrom),
             "Ersatzstrom": return_lower_bull(vertrieb_ticket.ersatzstrom),
             "Optimierer_Menge": str(vertrieb_ticket.anzOptimizer),
             "WR_Tausch": str(vertrieb_ticket.wr_tausch),

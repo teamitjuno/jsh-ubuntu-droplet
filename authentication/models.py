@@ -214,7 +214,6 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     initial_elwa = models.BooleanField(default=False)
     initial_thor = models.BooleanField(default=False)
     initial_heizstab = models.BooleanField(default=False)
-    initial_notstrom = models.BooleanField(default=False)
     initial_anzOptimizer = models.PositiveIntegerField(default=0)
 
     initial_wallboxtyp = models.CharField(

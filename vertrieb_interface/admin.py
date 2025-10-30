@@ -44,7 +44,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
         "solar_module_angebot_price",
         "batteriespeicher_angebot_price",
         "wallbox_angebot_price",
-        "notstrom_angebot_price",
         "optimizer_angebot_price",
         "angebotsumme",
         "angebot_pdf",
@@ -142,7 +141,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
             "Zubehör",
             {
                 "fields": (
-                    "notstrom",
                     "ersatzstrom",
                     "smartDongleLte",
                     "thor",
@@ -178,7 +176,6 @@ class VertriebAngebotAdmin(admin.ModelAdmin):
                     "solar_module_angebot_price",
                     "batteriespeicher_angebot_price",
                     "wallbox_angebot_price",
-                    "notstrom_angebot_price",
                     "optimizer_angebot_price",
                     "rabatt",
                     "rabattsumme",
@@ -263,7 +260,6 @@ class VertriebTicketAdmin(admin.ModelAdmin):
         "solar_module_angebot_price",
         "batteriespeicher_angebot_price",
         "wallbox_angebot_price",
-        "notstrom_angebot_price",
         "optimizer_angebot_price",
         "angebotsumme",
         "ticket_pdf",
@@ -339,7 +335,6 @@ class VertriebTicketAdmin(admin.ModelAdmin):
             "Zubehör",
             {
                 "fields": (
-                    "notstrom",
                     "ersatzstrom",
                     "smartDongleLte",
                     "thor",
@@ -376,7 +371,6 @@ class VertriebTicketAdmin(admin.ModelAdmin):
                     "solar_module_angebot_price",
                     "batteriespeicher_angebot_price",
                     "wallbox_angebot_price",
-                    "notstrom_angebot_price",
                     "optimizer_angebot_price",
                     "rabatt",
                     "rabattsumme",

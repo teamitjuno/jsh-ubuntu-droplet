@@ -342,15 +342,6 @@
                                         <td><input type="number" class="form-control" id="id_anz_speicher" name="{{ calculator_form.anz_speicher.html_name }}" value="{{ calculator_form.anz_speicher.value }}" data-resettable="true" /></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Notstrom</strong></td>
-                                        <td>
-                                            <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input" id="notstrom" {% if calculator_form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ calculator_form.notstrom.html_name }}" data-resettable="true" />
-                                                <label class="custom-control-label" for="notstrom" data-on-label="Ja" data-off-label="Nein"></label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <th>{{ calculator_form.elwa.label_tag }}</th>
                                         <td>
                                             <div class="custom-control custom-switch">

@@ -109,7 +109,6 @@ class Calculator(models.Model):
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
-    notstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
 
@@ -129,9 +128,6 @@ class Calculator(models.Model):
         default=0.00, validators=[MinValueValidator(0)]
     )
     wallbox_angebot_price = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    notstrom_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
     optimizer_angebot_price = models.FloatField(
@@ -175,7 +171,6 @@ class Calculator(models.Model):
 
     def save(self, *args, **kwargs):
         self.wallbox_angebot_price = self.full_wallbox_preis
-        self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         if self.batteriespeicher_preis:
             self.batteriespeicher_angebot_price = self.batteriespeicher_preis
@@ -468,8 +463,6 @@ class Calculator(models.Model):
             accessories_price += float(self.full_wallbox_preis)
         if self.batteriespeicher_angebot_price:
             accessories_price += float(self.batteriespeicher_angebot_price)
-        if self.notstrom:
-            accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.hub_included == True:
             accessories_price += float(self.get_optional_accessory_price("hub"))
         if self.elwa:

@@ -68,40 +68,6 @@ ANGEBOT_STATUS_CHOICES = [
     ("storniert", "storniert"),
 ]
 
-LEADSTATUS_CHOICES = (
-    ("ausstehend", "ausstehend"),
-    ("reklamiert", "reklamiert"),
-    ("akzeptiert", "akzeptiert"),
-    ("abgelehnt", "abgelehnt"),
-)
-STORNIERUNGSGRUND_CHOICES = (
-    (
-        "Abweichende Kundenvorstellung zum Thema PVA",
-        "Kundenvorstellung zum Thema PVA unterscheidet sich",
-    ),
-    ("Gebäude ungeeignet", "Das Gebäude ist nicht geeignet"),
-    ("Günstigerer Mitbewerber", "Ein Konkurrent bietet günstigere Optionen"),
-    ("Investition lohnt sich nicht", "Eine Investition lohnt sich nicht"),
-    ("Investition zu teuer", "Die Investitionskosten sind zu hoch"),
-    ("Kunde hat kein Interesse mehr", "Der Kunde hat kein Interesse mehr"),
-    ("Kunde ist zu alt", "Der Kunde ist nicht mehr interessiert"),
-    (
-        "Kunde möchte 3-phasige Notstromversorgung",
-        "Der Kunde benötigt eine 3-phasige Notstromversorgung",
-    ),
-    ("Kunde möchte deutsche Produkte", "Der Kunde bevorzugt deutsche Produkte"),
-    (
-        "Kunde möchte erst später bauen",
-        "Der Kunde möchte zu einem späteren Zeitpunkt bauen",
-    ),
-    ("Kunde möchte Förderung abwarten", "Der Kunde möchte auf Fördermittel warten"),
-    (
-        "Kunde möchte lokalen Ansprechpartner",
-        "Der Kunde wünscht einen Ansprechpartner vor Ort",
-    ),
-    ("Kunde möchte PVA nur mieten", "Der Kunde möchte die PVA-Anlage nur mieten"),
-    ("Kunde war nicht erreichbar", "Der Kunde war nicht erreichbar"),
-)
 TEXT_FOR_EMAIL = """
                 Sehr geehrter Interessent,
 
@@ -275,16 +241,10 @@ class VertriebAngebot(TimeStampMixin):
     name_last_name = models.CharField(max_length=255, blank=True, null=True)
     name_suffix = models.CharField(max_length=255, blank=True, null=True)
     name_first_name = models.CharField(max_length=255, blank=True, null=True)
-    leadstatus = models.CharField(
-        choices=LEADSTATUS_CHOICES, max_length=255, blank=True, null=True
-    )
     anfrage_ber = models.CharField(max_length=255, blank=True, null=True)
     empfohlen_von = models.CharField(max_length=255, blank=True, null=True)
     termine_text = models.CharField(max_length=255, blank=True, null=True)
     termine_id = models.CharField(max_length=255, blank=True, null=True)
-    ablehnungs_grund = models.CharField(
-        choices=STORNIERUNGSGRUND_CHOICES, max_length=255, blank=True, null=True
-    )
 
     anrede = models.CharField(choices=ANREDE_CHOICES, blank=True, max_length=20)
     name = models.CharField(max_length=100, blank=True, default="------")
@@ -383,7 +343,6 @@ class VertriebAngebot(TimeStampMixin):
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
-    notstrom = models.BooleanField(default=False)
     ersatzstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.PositiveIntegerField(default=0)
@@ -442,9 +401,6 @@ class VertriebAngebot(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     wallbox_angebot_price = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    notstrom_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
     optimizer_angebot_price = models.FloatField(
@@ -534,7 +490,6 @@ class VertriebAngebot(TimeStampMixin):
 
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
-        self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
@@ -1192,8 +1147,6 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.batteriespeicher_angebot_price)
         if self.smartmeter_angebot_price:
             accessories_price += float(self.smartmeter_angebot_price)
-        if self.notstrom:
-            accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.ersatzstrom:
             accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
             accessories_price += float(self.smartguard_kabel_preis)
@@ -1374,7 +1327,7 @@ class VertriebAngebot(TimeStampMixin):
             "wallboxTyp": self.wallboxtyp,
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),
             "wallboxAnz": self.wallbox_anzahl,
-            "optionVorh": self.notstrom,
+            "optionVorh": self.ersatzstrom,
             "kabelanschluss": self.kabelanschluss,
             "kabelSmartGuard": self.kabelSmartGuard if self.ersatzstrom else 0,
             "wr_tausch": "Kein Tausch",
@@ -1396,11 +1349,9 @@ class VertriebAngebot(TimeStampMixin):
             "smartDongleLte": self.smartDongleLte,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
-            "notstrom": self.notstrom,
             "ersatzstrom": self.ersatzstrom,
             "solarModulePreis": self.solar_module_gesamt_preis,
             "wallboxPreis": self.full_wallbox_preis,
-            "notstromPreis": self.get_optional_accessory_price("backup_box"),
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "zahlungs_bedingungen": self.zahlungsbedingungen,
@@ -1546,7 +1497,6 @@ class VertriebTicket(TimeStampMixin):
     elwa = models.BooleanField(default=False)
     thor = models.BooleanField(default=False)
     heizstab = models.BooleanField(default=False)
-    notstrom = models.BooleanField(default=False)
     ersatzstrom = models.BooleanField(default=False)
     optimizer = models.BooleanField(default=False)
     anzOptimizer = models.IntegerField(default=0)
@@ -1601,9 +1551,6 @@ class VertriebTicket(TimeStampMixin):
         default=0.00, validators=[MinValueValidator(0)]
     )
     wallbox_angebot_price = models.FloatField(
-        default=0.00, validators=[MinValueValidator(0)]
-    )
-    notstrom_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
     optimizer_angebot_price = models.FloatField(
@@ -1662,7 +1609,6 @@ class VertriebTicket(TimeStampMixin):
         self.status_pva = self.get_status_pva
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
-        self.notstrom_angebot_price = self.get_optional_accessory_price("backup_box")
         self.optimizer_angebot_price = float(self.full_optimizer_preis)
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
@@ -2277,8 +2223,6 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.batteriespeicher_angebot_price)
         if self.smartmeter_angebot_price:
             accessories_price += float(self.smartmeter_angebot_price)
-        if self.notstrom:
-            accessories_price += float(self.get_optional_accessory_price("backup_box"))
         if self.ersatzstrom:
             accessories_price += float(self.get_optional_accessory_price("ersatzstrom"))
         if self.kabelSmartGuard:
@@ -2397,7 +2341,7 @@ class VertriebTicket(TimeStampMixin):
             "wallboxTyp": self.wallboxtyp,
             "wallboxText": self.get_wallbox_text(self.wallboxtyp),
             "wallboxAnz": self.wallbox_anzahl,
-            "optionVorh": self.notstrom,
+            "optionVorh": self.ersatzstrom,
             "kabelanschluss": self.kabelanschluss,
             "kabelSmartGuard": self.kabelSmartGuard,
             "wr_tausch": self.wr_tausch,
@@ -2419,11 +2363,9 @@ class VertriebTicket(TimeStampMixin):
             "smartDongleLte": self.smartDongleLte,
             "optimierer": self.optimizer,
             "anzOptimierer": self.anzOptimizer,
-            "notstrom": self.notstrom,
             "ersatzstrom": self.ersatzstrom,
             "solarModulePreis": self.solar_module_gesamt_preis,
             "wallboxPreis": self.full_wallbox_preis,
-            "notstromPreis": self.get_optional_accessory_price("backup_box"),
             "batterieSpeicherPreis": self.batteriespeicher_preis,
             "gesamtOptimizerPreis": self.full_optimizer_preis,
             "rabatt": self.rabatt,

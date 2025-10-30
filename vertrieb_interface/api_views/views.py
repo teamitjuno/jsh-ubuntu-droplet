@@ -520,7 +520,6 @@ def create_angebot_redirect(request):
         "elwa": user.initial_elwa,
         "thor": user.initial_thor,
         "heizstab": user.initial_heizstab,
-        "notstrom": user.initial_notstrom,
         "anzOptimizer": user.initial_anzOptimizer,
         "wallboxtyp": user.initial_wallboxtyp,
         "wallbox_anzahl": user.initial_wallbox_anzahl,
@@ -553,7 +552,6 @@ def create_angebot_redirect(request):
             "elwa",
             "thor",
             "heizstab",
-            "notstrom",
             "anzOptimizer",
             "wallboxtyp",
             "wallbox_anzahl",
@@ -588,7 +586,6 @@ def create_angebot_redirect(request):
         blank_angebot.elwa = user.initial_elwa
         blank_angebot.thor = user.initial_thor
         blank_angebot.heizstab = user.initial_heizstab
-        blank_angebot.notstrom = user.initial_notstrom
         blank_angebot.anzOptimizer = user.initial_anzOptimizer
         blank_angebot.wallboxtyp = user.initial_wallboxtyp
         blank_angebot.wallbox_anzahl = user.initial_wallbox_anzahl
@@ -627,7 +624,6 @@ def create_angebot(request):
         "elwa": user.initial_elwa,
         "thor": user.initial_thor,
         "heizstab": user.initial_heizstab,
-        "notstrom": user.initial_notstrom,
         "anzOptimizer": user.initial_anzOptimizer,
         "wallboxtyp": user.initial_wallboxtyp,
         "wallbox_anzahl": user.initial_wallbox_anzahl,
@@ -668,7 +664,6 @@ def create_angebot(request):
         blank_angebot.elwa = user.initial_elwa
         blank_angebot.thor = user.initial_thor
         blank_angebot.heizstab = user.initial_heizstab
-        blank_angebot.notstrom = user.initial_notstrom
         blank_angebot.anzOptimizer = user.initial_anzOptimizer
         blank_angebot.wallboxtyp = user.initial_wallboxtyp
         blank_angebot.wallbox_anzahl = user.initial_wallbox_anzahl
@@ -719,7 +714,6 @@ def create_ticket_new(request):
         "elwa": user.initial_elwa,
         "thor": user.initial_thor,
         "heizstab": user.initial_heizstab,
-        "notstrom": user.initial_notstrom,
         "anzOptimizer": user.initial_anzOptimizer,
         "wallboxtyp": user.initial_wallboxtyp,
         "wallbox_anzahl": user.initial_wallbox_anzahl,

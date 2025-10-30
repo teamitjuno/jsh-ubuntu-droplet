@@ -299,36 +299,6 @@
                                                                         <td><input type="text" id="garantieWR" class="form-control" name="{{ form.garantieWR.name }}" value="{{ form.garantieWR.value }}" readonly></td>
                                                                         {% endif %}
                                                                     </tr>
-                                                                    
-                                                                    <tr>
-                                                                        <th>{{ form.notstrom.label_tag }}</th>
-                                                                        {% if user.role.name == "admin" %}
-                                                                        <td>
-                                                                            <div class="custom-control custom-switch">
-                                                                                <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}"/>
-                                                                                <label class="custom-control-label" for="switch04" data-on-label="Yes" data-off-label="No"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                        {% else %}
-                                                                            <td hidden>
-                                                                                <div class="custom-control custom-switch">
-                                                                                    <input type="checkbox" class="custom-control-input" id="switch04" {% if form.notstrom.value %}checked{% endif %} data-switch="success" name="{{ form.notstrom.html_name }}"/>
-                                                                                    <label class="custom-control-label" for="switch04" data-on-label="Yes" data-off-label="No"></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        {% if not vertrieb_angebot.notstrom %}
-                                                                            <td>
-                                                                                <span class="badge bg-danger rounded-pill">Keine</span>
-                                                                            </td>
-                                                                        {% endif %}
-                        
-                                                                        {% if  vertrieb_angebot.notstrom %}
-                                                                            <td>
-                                                                                <span class="badge bg-success rounded-pill">Ja</span>
-                                                                            </td>
-                                                                        {% endif %}
-                                                                    {% endif %}
-                                                                    </tr>
                                                                     <tr>
                                                                         <th>{{ form.anzOptimizer.label_tag }}</th>
                                                                         {% if user.role.name == "admin" %}

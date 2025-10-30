@@ -1258,8 +1258,6 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["wr_tausch"] != "Kein Tausch":
         anzahlZubehoer += 1
-    if data["notstrom"]:
-        anzahlZubehoer += 1
     if data["ersatzstrom"]:
         anzahlZubehoer += 1
     if data["kabelSmartGuard"] > 0:
@@ -1567,25 +1565,6 @@ def page4(pdf, data, eintrag, limit):
                 content_4=tab25_content_4,
             )
 
-        # NOTSTROM
-        if data["notstrom"]:
-            eintrag += 1
-            tab26_eintrag_nummer = str(eintrag) + "."
-            tab26_content_1 = pdf.get_attribute_by_identifier(
-                "notstrom_huawei_1", "content"
-            )
-            tab26_content_2 = "1"
-            tab26_content_4 = pdf.get_attribute_by_identifier(
-                "notstrom_huawei_2", "content"
-            )
-            pdf.setup_eintrag_text(
-                "notstrom_huawei_2",
-                tab26_eintrag_nummer,
-                tab26_content_1,
-                content_2=tab26_content_2,
-                content_4=tab26_content_4,
-            )
-
         # WANDHALTERUNG
         if data["anzWandhalterungSpeicher"] > 0:
 
@@ -1668,25 +1647,6 @@ def page4(pdf, data, eintrag, limit):
                 tab27_eintrag_nummer,
                 tab27_content_1,
                 content_2=tab27_content_2,
-            )
-
-        if data["notstrom"]:
-
-            eintrag += 1
-            tab28_eintrag_nummer = str(eintrag) + "."
-            tab28_content_1 = pdf.get_attribute_by_identifier(
-                "notstrom_viessmann_1", "content"
-            )
-            tab28_content_2 = "1"
-            tab28_content_4 = pdf.get_attribute_by_identifier(
-                "notstrom_viessmann_2", "content"
-            )
-            pdf.setup_eintrag_text(
-                "notstrom_viessmann_2",
-                tab28_eintrag_nummer,
-                tab28_content_1,
-                content_2=tab28_content_2,
-                content_4=tab28_content_4,
             )
 
         # GRIDBOX
