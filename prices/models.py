@@ -184,6 +184,9 @@ class Prices(models.Model):
     optional_accessories_prices = models.ForeignKey(
         OptionalAccessoriesPreise, on_delete=models.CASCADE
     )
+    plzAufpreis_nachverkauf = models.ForeignKey(
+        PLZAufpreisNachkauf, on_delete=models.CASCADE
+    )
     sonder_rabatt = models.ForeignKey(Sonderrabatt, on_delete=models.CASCADE)
     andere_preise = models.ForeignKey(
         AndereKonfigurationWerte, on_delete=models.CASCADE
