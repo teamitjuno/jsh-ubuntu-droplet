@@ -2060,8 +2060,9 @@ class VertriebTicket(TimeStampMixin):
                     leistungsmodulNotwendigOrig = leistModDict.get(angebot.speicher_model)
                     batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher, self.istNachkauf)
                     batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher, False)
-                    if leistungsmodulNotwendigOrig:
+                    if leistungsmodulNotwendig:
                         batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis(self.istNachkauf))
+                    if leistungsmodulNotwendigOrig:
                         batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen, falls Limit jetzt erst überschritten
                 if self.modulsumme_kWp < 25.0 and self.speicher_model == "LUNA 2000-7-S1" and angebot.anz_speicher <= 6 and (anz_speicher + angebot.anz_speicher) > 6:
