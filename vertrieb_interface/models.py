@@ -2057,9 +2057,10 @@ class VertriebTicket(TimeStampMixin):
                             batteriePreis = float(batteriePreis) + abweichung * float(angebot.leistungsmodul_preis)
                 # abweichendes Speichermodell
                 else:
+                    leistungsmodulNotwendigOrig = leistModDict.get(angebot.speicher_model)
                     batteriePreis = self.calculate_price(OptionalAccessoriesPreise, batterieDatensatz, anz_speicher, self.istNachkauf)
                     batteriePreis -= self.calculate_price(OptionalAccessoriesPreise, batterieDict.get(angebot.speicher_model), angebot.anz_speicher, False)
-                    if leistungsmodulNotwendig:
+                    if leistungsmodulNotwendigOrig:
                         batteriePreis = float(batteriePreis) + ceil(anz_speicher / 3) * float(self.leistungsmodul_preis(self.istNachkauf))
                         batteriePreis = float(batteriePreis) - ceil(angebot.anz_speicher / 3) * float(angebot.leistungsmodul_preis)
                 # Falls mehr als 6 Speichermodule bei Huawei 7 eventuell Zusatzwechselrichter notwendig wegen fehlenden Steckplätzen, falls Limit jetzt erst überschritten
