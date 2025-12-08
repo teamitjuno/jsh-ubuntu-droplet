@@ -753,6 +753,18 @@ Editierbarer_Text.objects.create(
     font='JUNO Solar Lt', 
     font_size=10
 )
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_24', 
+    content="2 Jahre kostenloser Remote- & Update-Service", 
+    font='JUNO Solar Lt', 
+    font_size=11
+)
+Editierbarer_Text.objects.create(
+    identifier='tabelle_eintrag_24_1', 
+    content="Bei Fehlermeldungen oder Problemen können wir direkt auf Ihre Anlage zugreifen, diese prüfen und optimieren. Außerdem erhalten Sie regelmäßige Software-Updates – alles ohne Vor-Ort-Termin.", 
+    font='JUNO Solar Lt', 
+    font_size=10
+)
 
 # Create 'netzanschlussmanagement_1' and 'netzanschlussmanagement_2' entries
 Editierbarer_Text.objects.create(

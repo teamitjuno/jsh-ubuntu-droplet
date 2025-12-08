@@ -827,6 +827,23 @@ class PDF(FPDF):
                 content_2="1",
                 content_4=tab15_content_4,
             )
+        # Tabelle Eintrag 24 Update Service
+
+        eintrag += 1
+        tab24_eintrag_nummer = str(eintrag) + "."
+        tab24_content_1 = self.get_attribute_by_identifier(
+            "tabelle_eintrag_24", "content"
+        )
+        tab24_content_4 = self.get_attribute_by_identifier(
+            "tabelle_eintrag_24_1", "content"
+        )
+        self.setup_eintrag_text(
+            "tabelle_eintrag_24_1",
+            tab24_eintrag_nummer,
+            tab24_content_1,
+            content_2="1",
+            content_4=tab24_content_4,
+        )
 
         ###########################################################################
         self.line(self.l_margin, self.get_y() + 5, 196.5, self.get_y() + 5)
