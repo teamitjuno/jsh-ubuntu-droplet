@@ -756,6 +756,15 @@
                                                                             </div>
                                                                         </td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.zaehlerschrank_2.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="zaehlerschrank_2" {% if form.zaehlerschrank_2.value %}checked{% endif %} data-switch="success" name="{{ form.zaehlerschrank_2.html_name }}" />
+                                                                                <label class="custom-control-label" for="zaehlerschrank_2" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                     <tr hidden>
                                                                         <th>{{ form.potentialausgleich.label_tag }}</th>
                                                                         <td>
@@ -1742,6 +1751,15 @@ function submitFormWithAction(action) {
                                                                             <div class="custom-control custom-switch">
                                                                                 <input type="checkbox" class="custom-control-input" id="zaehlerschrank" {% if form.zaehlerschrank.value %}checked{% endif %} data-switch="success" name="{{ form.zaehlerschrank.html_name }}" />
                                                                                 <label class="custom-control-label" for="zaehlerschrank" data-on-label="Ja" data-off-label="Nein"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{{ form.zaehlerschrank_2.label_tag }}</th>
+                                                                        <td>
+                                                                            <div class="custom-control custom-switch">
+                                                                                <input type="checkbox" class="custom-control-input" id="zaehlerschrank_2" {% if form.zaehlerschrank_2.value %}checked{% endif %} data-switch="success" name="{{ form.zaehlerschrank_2.html_name }}" />
+                                                                                <label class="custom-control-label" for="zaehlerschrank_2" data-on-label="Ja" data-off-label="Nein"></label>
                                                                             </div>
                                                                         </td>
                                                                     </tr>

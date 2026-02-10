@@ -1107,9 +1107,14 @@ class VertriebAngebotForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
     )
     zaehlerschrank = forms.BooleanField(
-        label="Zählerschrankerneuerung nach TAB",
+        label="Zählerschrankerneuerung nach TAB (2-feldriger Zählerschrank mit einem Zählerplatz)",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank"}),
+    )
+    zaehlerschrank_2 = forms.BooleanField(
+        label="Zählerschrankerneuerung nach TAB (3-feldriger Zählerschrank mit zwei Zählerplätzen)",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank_2"}),
     )
     potentialausgleich = forms.BooleanField(
         label="Potentialausgleich inkl. Erdspieß",
@@ -1353,6 +1358,7 @@ class VertriebAngebotForm(ModelForm):
             "apzFeld",
             "apzFeldUVV",
             "zaehlerschrank",
+            "zaehlerschrank_2",
             "potentialausgleich",
             "beta_platte",
             "metall_ziegel",
@@ -2433,9 +2439,14 @@ class VertriebTicketForm(ModelForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "apzFeldUVV"}),
     )
     zaehlerschrank = forms.BooleanField(
-        label="Zählerschrankerneuerung nach TAB",
+        label="Zählerschrankerneuerung nach TAB (2-feldriger Zählerschrank mit einem Zählerplatz)",
         required=False,
         widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank"}),
+    )
+    zaehlerschrank_2 = forms.BooleanField(
+        label="Zählerschrankerneuerung nach TAB (3-feldriger Zählerschrank mit zwei Zählerplätzen)",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input", "id": "zaehlerschrank_2"}),
     )
     potentialausgleich = forms.BooleanField(
         label="Potentialausgleich inkl. Erdspieß",
@@ -2622,6 +2633,7 @@ class VertriebTicketForm(ModelForm):
             "apzFeld",
             "apzFeldUVV",
             "zaehlerschrank",
+            "zaehlerschrank_2",
             "potentialausgleich",
             "beta_platte",
             "metall_ziegel",

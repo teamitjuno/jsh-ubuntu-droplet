@@ -1293,6 +1293,8 @@ def anzahlZubehoer(data):
         anzahlZubehoer += 1
     if data["zaehlerschrank"]:
         anzahlZubehoer += 1
+    if data["zaehlerschrank_2"]:
+        anzahlZubehoer += 1
     if data["potentialausgleich"]:
         anzahlZubehoer += 1
     if data["geruestKunde"]:
@@ -1540,6 +1542,18 @@ def page4(pdf, data, eintrag, limit):
         eintrag += 1
         tab28_eintrag_nummer = str(eintrag) + "."
         tab28_content_1, tab28_content_4 = get_zubehoer_name("zaehlerschrank")
+        tab28_content_2 = "1"
+        pdf.setup_eintrag_text(
+            "zubehoer_platzhalter",
+            tab28_eintrag_nummer,
+            tab28_content_1,
+            content_2=tab28_content_2,
+            content_4=tab28_content_4,
+        )
+    if data["zaehlerschrank_2"] == True:
+        eintrag += 1
+        tab28_eintrag_nummer = str(eintrag) + "."
+        tab28_content_1, tab28_content_4 = get_zubehoer_name("zaehlerschrank_2")
         tab28_content_2 = "1"
         pdf.setup_eintrag_text(
             "zubehoer_platzhalter",

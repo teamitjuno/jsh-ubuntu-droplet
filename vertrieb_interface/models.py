@@ -349,6 +349,7 @@ class VertriebAngebot(TimeStampMixin):
     apzFeld = models.BooleanField(default=False)
     apzFeldUVV = models.BooleanField(default=False)
     zaehlerschrank = models.BooleanField(default=False)
+    zaehlerschrank_2 = models.BooleanField(default=False)
     potentialausgleich = models.BooleanField(default=False)
     beta_platte = models.BooleanField(default=False)
     metall_ziegel = models.BooleanField(default=False)
@@ -1160,6 +1161,8 @@ class VertriebAngebot(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("apzFeldUVV"))
         if self.zaehlerschrank:
             accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
+        if self.zaehlerschrank_2:
+            accessories_price += float(self.get_optional_accessory_price("zaehlerschrank_2"))
         if self.potentialausgleich:
             accessories_price += float(self.get_optional_accessory_price("potentialausgleich"))
         if self.beta_platte:
@@ -1338,6 +1341,7 @@ class VertriebAngebot(TimeStampMixin):
             "apzFeld": self.apzFeld,
             "apzFeldUVV": self.apzFeldUVV,
             "zaehlerschrank": self.zaehlerschrank,
+            "zaehlerschrank_2": self.zaehlerschrank_2,
             "potentialausgleich": self.potentialausgleich,
             "geruestKunde": self.geruestKunde,
             "geruestOeffentlich": self.geruestOeffentlich,
@@ -1503,6 +1507,7 @@ class VertriebTicket(TimeStampMixin):
     apzFeld = models.BooleanField(default=False)
     apzFeldUVV = models.BooleanField(default=False)
     zaehlerschrank = models.BooleanField(default=False)
+    zaehlerschrank_2 = models.BooleanField(default=False)
     potentialausgleich = models.BooleanField(default=False)
     beta_platte = models.BooleanField(default=False)
     metall_ziegel = models.BooleanField(default=False)
@@ -2239,6 +2244,8 @@ class VertriebTicket(TimeStampMixin):
             accessories_price += float(self.get_optional_accessory_price("apzFeldUVV"))
         if self.zaehlerschrank:
             accessories_price += float(self.get_optional_accessory_price("zaehlerschrank"))
+        if self.zaehlerschrank_2:
+            accessories_price += float(self.get_optional_accessory_price("zaehlerschrank_2"))
         if self.potentialausgleich:
             accessories_price += float(self.get_optional_accessory_price("potentialausgleich"))
         if self.beta_platte:
@@ -2354,6 +2361,7 @@ class VertriebTicket(TimeStampMixin):
             "apzFeld": self.apzFeld,
             "apzFeldUVV": self.apzFeldUVV,
             "zaehlerschrank": self.zaehlerschrank,
+            "zaehlerschrank_2": self.zaehlerschrank_2,
             "potentialausgleich": self.potentialausgleich,
             "geruestKunde": self.geruestKunde,
             "geruestOeffentlich": self.geruestOeffentlich,
