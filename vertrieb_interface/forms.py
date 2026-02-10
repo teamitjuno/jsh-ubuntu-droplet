@@ -1553,6 +1553,8 @@ class VertriebAngebotForm(ModelForm):
         anz_speicher = cleaned_data.get("anz_speicher")
         ersatzstrom = cleaned_data.get("ersatzstrom")
         smartmeter_model = cleaned_data.get("smartmeter_model")
+        zaehlerschrank = cleaned_data.get("zaehlerschrank")
+        zaehlerschrank_2 = cleaned_data.get("zaehlerschrank_2")
         message, is_valid = validate_range(anz_speicher, speicher_model)
         if not is_valid:
             self.add_error(
@@ -1572,6 +1574,19 @@ class VertriebAngebotForm(ModelForm):
                         },
                     ),
                 )
+        if zaehlerschrank and zaehlerschrank_2:
+            self.add_error(
+                "zaehlerschrank",
+                ValidationError(
+                    (
+                        "Bei der Auswahl einer Zählerschrankerneuerung darf nur eine Auswahl getroffen werden"
+                    ),
+                    params={
+                        "zaehlerschrank": zaehlerschrank,
+                        "zaehlerschrank_2": zaehlerschrank_2,
+                    },
+                ),
+            )
         if ersatzstrom and smartmeter_model != "kein EMS":
             self.add_error(
                 "ersatzstrom",
@@ -2793,6 +2808,8 @@ class VertriebTicketForm(ModelForm):
         ersatzstrom = cleaned_data.get("ersatzstrom")
         smartmeter_model = cleaned_data.get("smartmeter_model")
         angenommenes_angebot = cleaned_data.get("angenommenes_angebot")
+        zaehlerschrank = cleaned_data.get("zaehlerschrank")
+        zaehlerschrank_2 = cleaned_data.get("zaehlerschrank_2")
         origAngebot = None
         if VertriebAngebot.objects.filter(angebot_id=angenommenes_angebot):
             origAngebot = VertriebAngebot.objects.get(angebot_id=angenommenes_angebot)
@@ -2899,6 +2916,20 @@ class VertriebTicketForm(ModelForm):
                             },
                         ),
                     )
+
+        if zaehlerschrank and zaehlerschrank_2:
+            self.add_error(
+                "zaehlerschrank",
+                ValidationError(
+                    (
+                        "Bei der Auswahl einer Zählerschrankerneuerung darf nur eine Auswahl getroffen werden"
+                    ),
+                    params={
+                        "zaehlerschrank": zaehlerschrank,
+                        "zaehlerschrank_2": zaehlerschrank_2,
+                    },
+                ),
+            )
 
         if ersatzstrom and smartmeter_model != "kein EMS":
             self.add_error(
