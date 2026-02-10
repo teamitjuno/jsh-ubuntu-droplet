@@ -605,6 +605,23 @@ class PDF(FPDF):
             "auftragserteilung_2", "content"
         )
         self.setup_text("auftragserteilung_2", auftragserteilung_2, alignment="L")
+        # Zahlungsmodalitäten
+        if data["istNachkauf"]:
+            y = self.get_y()
+            self.set_y(y + 5)
+            self.set_font("JUNO Solar Lt", "B", 12)
+            # zahlungsmodalitäten
+            self.cell(0, 6, "Zahlungsmodalitäten", 0, 0, "L")
+            self.set_font("JUNO Solar Lt", "", 11)
+            self.set_y(y + 11)
+            self.multi_cell(
+                0,
+                6,
+                "50% bei Terminvergabe\n50% nach dem Bau",
+                0,
+                0,
+                "L",
+            )  # type: ignore
         # Unterschriten
         self.set_font("JUNO Solar Lt", "", 12)
         self.set_y(265)
