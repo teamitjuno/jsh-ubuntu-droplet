@@ -404,7 +404,7 @@ class VertriebAngebot(TimeStampMixin):
     wallbox_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
-    optimizer_angebot_price = models.FloatField(
+    zubehoer_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
 
@@ -491,7 +491,7 @@ class VertriebAngebot(TimeStampMixin):
 
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
-        self.optimizer_angebot_price = float(self.full_optimizer_preis)
+        self.zubehoer_angebot_price = float(self.full_accessories_price)
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
         self.zoho_kundennumer = self.kundennumer_finder
@@ -1205,8 +1205,8 @@ class VertriebAngebot(TimeStampMixin):
             for lower, upper in ranges
             if lower < kwp
         )
-
         angebotsSumme *= float(self.get_komplexity)
+        self.solar_module_angebot_price = angebotsSumme
         angebotsSumme += float(self.full_accessories_price)
         angebotsSumme += float(self.get_wechselrichter_price)
 
@@ -1558,7 +1558,7 @@ class VertriebTicket(TimeStampMixin):
     wallbox_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
-    optimizer_angebot_price = models.FloatField(
+    zubehoer_angebot_price = models.FloatField(
         default=0.00, validators=[MinValueValidator(0)]
     )
 
@@ -1614,7 +1614,7 @@ class VertriebTicket(TimeStampMixin):
         self.status_pva = self.get_status_pva
         self.modulleistungWp = self.extract_modulleistungWp_from_name
         self.wallbox_angebot_price = self.full_wallbox_preis
-        self.optimizer_angebot_price = float(self.full_optimizer_preis)
+        self.zubehoer_angebot_price = float(self.full_accessories_price)
         self.name = self.swap_name_order
         self.name_display_value = self.swap_name_order_PDF
         self.batteriespeicher_angebot_price = self.batteriespeicher_preis
@@ -2269,6 +2269,7 @@ class VertriebTicket(TimeStampMixin):
     @property
     def angebots_summe(self):
         angebotsSumme = float(SolarModulePreise.objects.get(name=self.solar_module).price * self.modulanzahl)
+        self.solar_module_angebot_price = angebotsSumme
         angebotsSumme += float(self.full_accessories_price)
 
         if self.indiv_price_included:
